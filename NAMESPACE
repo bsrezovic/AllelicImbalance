@@ -1,0 +1,160 @@
+importFrom(methods, show)
+
+importFrom(GenomicRanges, GRanges)
+importFrom(GenomicRanges, granges)
+importFrom(GenomicRanges, GRangesList)
+importFrom(GenomicRanges, cigarToWidth)
+importFrom(GenomicRanges, seqnames)
+importFrom(GenomicRanges, unlist)
+importFrom(GenomicRanges, findOverlaps)
+importFrom(GenomicRanges, start)
+importFrom(GenomicRanges, end)
+importFrom(GenomicRanges, mcols)
+importFrom(GenomicRanges, elementMetadata)
+importFrom(GenomicRanges, "elementMetadata<-")
+importFrom(GenomicRanges, mcols)
+importFrom(GenomicRanges, seqnames)
+importFrom(GenomicRanges, "seqnames<-")
+importFrom(GenomicRanges, seqlevels)
+importFrom(GenomicRanges, "seqlevels<-")
+
+importClassesFrom(GenomicRanges, GAlignments)
+importClassesFrom(GenomicRanges, GAlignmentPairs)
+
+importFrom(GenomicRanges, readGAlignments)
+importFrom(GenomicRanges, readGAlignmentPairs)
+
+
+
+importFrom(IRanges, Rle)
+importFrom(IRanges, IRanges)
+importFrom(IRanges, elementMetadata)
+importFrom(IRanges, ranges)
+importFrom(IRanges, subsetByOverlaps)
+importFrom(IRanges, reduce)
+importFrom(IRanges, coverage)
+importFrom(IRanges, "%over%")
+importFrom(IRanges, "%within%")
+#importFrom(IRanges, subseq)
+importFrom(IRanges, unlist)
+importFrom(IRanges, start) ##maybe not needed if also imported from GRanges?.
+importFrom(IRanges, end) ##maybe not needed if also imported from GRanges?.
+importFrom(IRanges, width)
+importFrom(IRanges, which)
+importFrom(IRanges, resize)
+
+importFrom(BiocGenerics, strand)
+
+importFrom(Biostrings, subseq)
+importFrom(Biostrings, DNAStringSet)
+importFrom(Biostrings, append)
+
+importFrom(Rsamtools, scanBamWhat)
+importFrom(Rsamtools, ScanBamParam)
+importFrom(Rsamtools, scanBamFlag)
+importFrom(Rsamtools, scanBamHeader)
+importFrom(Rsamtools, indexBam)
+importFrom(Rsamtools, BamFileList)
+importFrom(Rsamtools, scanBam)
+importFrom(Rsamtools, ScanBcfParam)
+importFrom(Rsamtools, scanBcf)
+importFrom(Rsamtools, BcfFile)
+importFrom(Rsamtools, BcfFileList)
+importFrom(Rsamtools, indexBcf)
+importFrom(Rsamtools, FaFile)
+importFrom(Rsamtools, scanFa)
+importFrom(Rsamtools, readGAlignmentsFromBam)
+importFrom(Rsamtools, readGAlignmentPairsFromBam)
+
+
+#import classes
+importClassesFrom(GenomicRanges,GRangesList)
+importClassesFrom(GenomicRanges,GRanges)
+
+##annotation stuff
+importClassesFrom(GenomicFeatures, TranscriptDb)
+importClassesFrom(AnnotationDbi, AnnotationDb)
+importClassesFrom(AnnotationDbi, OrgDb)
+importClassesFrom(AnnotationDbi, ChipDb)
+importClassesFrom(AnnotationDbi, InparanoidDb)
+importClassesFrom(AnnotationDbi, GODb)
+importClassesFrom(AnnotationDbi, ReactomeDb)
+
+importFrom(AnnotationDbi, select)
+importFrom(AnnotationDbi, keys)
+
+importFrom(GenomicFeatures, exons)
+importFrom(GenomicFeatures, transcripts)
+importFrom(GenomicFeatures, cds)
+importFrom(GenomicFeatures, isActiveSeq)
+importFrom(GenomicFeatures, "isActiveSeq<-")
+
+
+#base functions
+importFrom(stats, t.test)
+importFrom(stats, chisq.test)
+importFrom(stats, binom.test)
+
+importFrom(graphics, plot)
+importFrom(graphics, barplot)
+
+
+
+##EXPORT SECTION
+##beneath all functions, classes and methods exported
+
+exportClasses(ASEset)
+
+
+export(
+#initialize-methods
+ ASEset,
+ ASEsetFromCountList,
+
+#auxillary-functions
+ impBamGRL,
+ impBamGAL,
+ impBcfGRL,
+ impBcfGR,
+ decorateWithGenes,
+ decorateWithExons,
+ scanForHeterozygotes,
+ getAlleleCount,
+ getGenesFromAnnotation,
+ getDefaultMapBiasExpMean,
+ getDefaultMapBiasExpMean3D,
+ getExonsFromAnnotation,
+ getTranscriptsFromAnnotation,
+ getCDSFromAnnotation,
+ getGenesVector,
+ getExonsVector,
+ getTranscriptsVector,
+ getCDSVector,
+ getAnnotationDataFrame,
+ realCigarPosition,
+ realCigarPositions,
+ realCigarPositionsList,
+ getAreaFromGeneNames,
+ getSnpIdFromLocation
+) 
+
+exportMethods(
+ #ASEset-accessors
+ alleleCounts,  
+ mapBias, 
+ fraction,
+
+ #ennobler
+ #getAnnotation,
+ 
+ #test-methods
+ chisq.test, 
+ binom.test,
+
+ #plots
+ barplot,
+ locationplot
+ 
+)
+
+

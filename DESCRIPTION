@@ -1,0 +1,20 @@
+Package: AllelicImbalance
+Type: Package
+Title: Investigates allele specific expression
+Version: 0.99.0
+Date: 2013-08-09
+Author: Jesper R Gadin, Lasse Folkersen
+Maintainer: Jesper R Gadin <j.r.gadin@gmail.com>
+Description: Provides a framework for allelic specific expression investigation using RNA-seq data
+License: GPL-3
+Suggests: RUnit, org.Hs.eg.db,
+        TxDb.Hsapiens.UCSC.hg19.knownGene,SNPlocs.Hsapiens.dbSNP.20120608
+Depends: GenomicRanges, R (>= 3.0.0)
+Imports: methods, BiocGenerics, Biostrings, IRanges, GenomicFeatures,
+        Rsamtools, AnnotationDbi
+biocViews: Genetics, Infrastructure, Allelic Imbalance, AI, ASE,
+        HighThroughputSequencing
+LazyData: TRUE
+Collate: AllClasses.R AllGenerics.R initialize-methods.R
+        ASEset-accessors.R auxillary-functions.R chisq.test-methods.R
+        binom.test-methods.R barplot-methods.R locationplot-methods.R

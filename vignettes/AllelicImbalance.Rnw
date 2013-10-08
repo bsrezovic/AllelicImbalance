@@ -1,0 +1,326 @@
+%\VignetteIndexEntry{AllelicImbalance}
+%\VignetteKeywords{Genome, SNP, Allelic Imbalance, RNA seq}
+%\VignetteDepends{AllelicImbalance}
+%\VignettePackage{AllelicImbalance}
+% 
+\documentclass[a4paper]{article}
+\usepackage[OT1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{Sweave}
+\usepackage{hyperref}
+
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\texttt{#1}}}
+\newcommand{\Rfunarg}[1]{{\texttt{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+
+
+\begin{document}
+
+\title{AllelicImbalance}
+\author{Jesper Robert Gådin and Lasse Folkersen}
+
+\maketitle
+
+\section{AllelicImbalance}
+This \Rpackage{AllelicImbalance} package contains functions for investigating
+allelic imbalance effects in RNA-seq data. Maternal and paternal
+alleles could be expected to show identical transcription rate, resulting in a
+50\%-50\% mix of maternal and paternal mRNA in a sample. However, this turns out
+to sometimes not be the case. The most extreme example is the X-chromosome
+inactivation in females, but many autosomal genes also have deviations from
+identical transcription rate. The causes of this are not always known, but one
+likely cause is the difference in DNA, namely heterozygous SNPs, affecting
+enhancers, promoter regions, splicing and stability. Identifying this allelic
+imbalance is therefore of interest to the characterization of the genome and the
+aim of the \Rpackage{AllelicImbalance} package is to facilitate this.
+
+<<intro, echo=FALSE, eval=TRUE>>=
+library(AllelicImbalance)
+@
+
+
+\section{Simple example of building an ASEset object}
+In this section we will walk through the various ways an \Robject{ASEset}
+object can be created. The ASEset object has the SummarizedExperiment as parent class, and all functions you can apply on this class you can also apply on an ASEset. Although the preprocessing of RNA-seq data is not the
+primary focus of this package, it is a necessary step before analysis. There
+exists several different methods for obtaining a bam file, and this section
+should just be considered an example. For further details we refer
+to the web-pages of tophat, bowtie, bwa and samtools found in the links section at the end of this document.
+
+\begin{verbatim}
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR009/ERR009135/*
+bowtie -q --best --threads 5 --sam hg19 +
+>      -1 ERR009135_1.fastq.gz -2 ERR009135_2.fastq.gz "ERR009135.sam"
+samtools view -S -b ERR009135.sam > ERR009135.bam
+
+\end{verbatim}
+
+In the above code one paired-end RNA sequencing sample is downloaded and
+aligned to the human genome, then converted to bam using samtools. The
+resulting bam files can be the direct input to the AllelicImbalance package. Other
+aligners can be used as well, as long as bam files are provided as input. The
+example code following illustrates how to use the import mechanism on a
+chromosome 17-located subset of 20 RNA-seq experiments of HapMap samples. The
+output is an \Robject{ASEset} object containing allele counts for all
+heterozygote coding SNPs in the region.
+
+<<createExampleASEset, eval=TRUE>>=
+
+searchArea <- GRanges(seqnames = c("17"),ranges = IRanges(79478301,79478361))
+
+pathToFiles <- system.file("extdata/ERP000101_subset", package="AllelicImbalance")
+
+reads <- impBamGAL(pathToFiles,searchArea,verbose=FALSE)
+
+heterozygotePositions <- scanForHeterozygotes(reads,verbose=FALSE)
+
+countList <- getAlleleCount(reads, heterozygotePositions, verbose=FALSE)
+
+a.simple <- ASEsetFromCountList(heterozygotePositions,countList)
+
+a.simple
+@
+
+
+\section{Building an ASEset object using Bcf files}
+If more than a few genes and a few samples are analyzed we recommend
+that a SNP-call is instead made using the samtools mpileup function (see
+links section). The \Rfunction{scanForHeterozygotes} function is merely a simple 
+SNP-caller and it is not as computationally optimized as mpileup. In this bash
+code we download reference sequence for chromosome 17 and show how to generate
+mpileup calls on one of the HapMap samples that were described above.
+
+\begin{verbatim}
+wget ftp://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/chr17.fa.gz
+samtools mpileup -uf hg19.fa ERR009135.bam | bcftools view -bvcg - > ERR009135.bcf
+\end{verbatim}
+
+Samtools mpileup generates by default a Vcf file which contains SNP and short INDEL 
+positions. Piping the output to bcftools we get its binary equivalent (Bcf), which 
+takes less space and can be queried more effective. With the Bcf files the process 
+of generating an ASEset object starts with a call to the \Robject{impBcfGR} 
+function instead. This function will import the Bcf file containing all SNP calls 
+that were generated with the samtools mpileup function.
+
+<<gettingASEsetFromBcf, eval=TRUE>>=
+BcfGR <- impBcfGR(pathToFiles,searchArea,verbose=FALSE)
+
+countListBcf <- getAlleleCount(reads, BcfGR,verbose=FALSE)
+
+a.bcf <- ASEsetFromCountList(BcfGR, countListBcf)
+@
+
+\section{Using strand information}
+Many RNA-seq experiments do not yield useful information on the strand from
+which a given read was made. This is because they involve a step in which a
+double-stranded cDNA is created without tracking strand-information. Some
+RNA-seq setups do however give this information and in those cases it is important to
+keep track of strand in the ASE-experiment. The example data from above is
+from an experiment which created double-stranded cDNA before labelling and so the '+'
+and '-' information in it is arbitrary. However, if we assume that the
+information has strand information, then the correct procedure is as follows:
+
+
+<<creating stranded ASEset, eval=TRUE>>=
+plus <- getAlleleCount(reads, heterozygotePositions, strand="+",verbose=F) 
+minus <- getAlleleCount(reads, heterozygotePositions, strand="-",verbose=F)
+
+a.stranded <-
+ASEsetFromCountList(
+heterozygotePositions,
+countListPlus=plus,
+countListMinus=minus
+)
+a.stranded
+@
+The main effect of doing this, is in the plotting functions which will separate
+reads from different strands if they are specified as done here. It is
+important, however, to make sure that the imported RNA-seq experiment does in
+fact have proper labeling and tracking of strand information before proceeding
+with this method.
+
+\section{Two useful helper functions}
+At this stage it is worth highlighting two useful helper functions that both
+uses existing BioC annotation objects. One is the
+\Robject{getAreaFromGeneNames} which quickly retrieves the above mentioned
+\Robject{searchArea} when given just genesymbols as input. The other other is
+the \Robject{getSnpIdFromLocation} function which attempts to rename
+location-based SNP names to established rs-IDs in case they exist. These
+functions work as follows:
+
+<<highlightgetAreaFromGeneNames, eval=TRUE>>=
+#Getting searchArea from genesymbol
+library(org.Hs.eg.db )
+searchArea<-getAreaFromGeneNames("ACTG1",org.Hs.eg.db)
+
+#Getting rs-IDs
+library(SNPlocs.Hsapiens.dbSNP.20120608)
+updatedGRanges<-getSnpIdFromLocation(rowData(a.simple), SNPlocs.Hsapiens.dbSNP.20120608)
+rowData(a.simple)<-updatedGRanges
+
+@
+
+\section{Adding phenotype data}
+Typically an RNA-seq experiment will include additional information about each
+sample. It is an advantage to include this information when creating an ASEset
+because it can be used for subsequent highlights or subsetting in plotting and
+analysis functions.
+
+<<creatingphenotypedASEset, eval=TRUE>>=
+
+#simulate phenotype data
+pdata <- DataFrame(
+	Treatment=sample(c("ChIP", "Input"),length(reads),replace=TRUE),
+	Gender=sample(c("male", "female"),length(reads),replace=TRUE), 
+	row.names=paste("individual",1:length(reads),sep=""))
+
+#make new ASEset with pdata
+a.new <- ASEsetFromCountList(
+		heterozygotePositions,
+		countList,
+		colData=pdata)
+
+#add to existing object
+colData(a.simple) <- pdata
+
+@
+
+\section{Statistical analysis of an ASEset object}
+
+One of the simplest statistical test for use in allelic imbalance analysis is
+the chi-square test. This test assumes that the uncertainty of ASE is represented by a normal distribution around an expected mean (i.e 0.5 for equal expression). A significant result suggests an ASE event. Every strand is tested independently. 
+
+
+<<usingStatisticsTests, eval=TRUE>>=
+
+#use a subset for tests
+a2 <- a.stranded[,5:10]
+#two types of tests
+binom.test(a2,"+")
+chisq.test(a2,"-")
+@
+
+\section{Plotting of an ASEset object}
+
+The \Robject{barplot} function for \Robject{ASEset} objects
+plots the read count of each allele in each sample. This is useful for getting a very
+detailed view of individual SNPs in few samples. As can be seen below, four
+samples from the HapMap data contains a strong imbalance at the chr17:79478331
+position on the plus strand. By default the p-value is calculated by a
+chi-square test. To use other test results the arguments \Robject{testValue} and
+\Robject{testValue2} can be used. When the counts for one allele are below 5 for
+one allele the chi-square test returns NA. This is why there is no P-value above the first bar in the example below.
+
+<<plottingDemonstration1,fig=TRUE>>=
+barplot(a.stranded[1],strand="+")
+
+#use other test
+btp <- binom.test(a.stranded[1],"+")
+
+barplot(a.stranded[1],strand="+", testValue=btp)
+
+@
+
+Another example of plotting that is useful is the one invoked with the plotting
+\Robject{type} argument "fraction". This plotting mechanism is
+useful to illustrate more SNPs and more samples in less space than the standard
+plot. As can be seen here several other samples are not heterozygote at the
+chr17:79478331 location.
+
+<<plottingDemonstration2,fig=TRUE>>=
+barplot(a.simple,type="fraction")
+@
+
+A typical question would be to ask why certain heterozygote samples have allele
+specific expression. The argument \Robject{sampleColour} argument allows for
+different highligts such as illustrated here below for gender. This could also
+be used to highlight based on genotype of proximal non-coding SNPs if available.
+
+<<plottingDemonstration3,fig=TRUE>>=
+sampleColour<-rep("palevioletred",ncol(a.simple))
+sampleColour[colData(a.simple)[,"Gender"]%in%"male"] <- "blue"
+
+barplot(a.simple[1],type="fraction",sampleColour=sampleColour)
+
+@
+
+
+\section{Plot with annotation}
+
+It is often of interest to combine the RNA
+sequencing data with genomic annotation information from online databases. For
+this purpose there is a function to extract variant specific annotation such as
+gene, exon, transcript and CDS.
+
+<<useAnnotationPlot,fig=TRUE>>=
+library(org.Hs.eg.db)
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+
+barplot(a.simple[1],OrgDb=org.Hs.eg.db,TxDb=TxDb.Hsapiens.UCSC.hg19.knownGene)
+
+@
+
+\section{locationplot}
+
+Finally a given gene or set of proximal genes will often have several SNPs close
+to each other. It is of interest to investigate all of them together, in
+connection with annotation information. This can be done using the
+\Robject{locationplot} function. This function in its simplest form just plot
+all the SNPs in an ASEset distributed by genomic location. Additionally it
+contains methods for including gene-map information through the arguments
+\Robject{OrgDb} and \Robject{TxDb}.
+
+<<locationPlot,fig=TRUE>>=
+#using count type
+locationplot(a.simple,type="count")
+
+#use annotation
+locationplot(a.simple,OrgDb=org.Hs.eg.db,TxDb=TxDb.Hsapiens.UCSC.hg19.knownGene)
+
+@
+
+
+
+\section{Conclusion}
+
+In conclusion we hope that you will find this package useful in the
+investigation of the genetics of RNA-seq experiments. The various import
+functions should assist in the task of actually retrieving allele counts for
+specific nucleotide positions from all RNA-seq reads, including the non-trivial
+cases of intron-spanning reads. Likewise, the statistical analysis and plotting
+functions should be helpful in discovering any allele specific expression
+patterns that might be found in your data.
+
+
+
+\section{Links}
+Bowtie
+\url{http://bowtie-bio.sourceforge.net}
+
+BWA
+\url{http://bio-bwa.sourceforge.net/}
+
+Samtools
+\url{http://samtools.sourceforge.net/}
+
+Samtools pileup
+\url{http://samtools.sourceforge.net/mpileup.shtml}
+
+
+\section*{Session Info}
+
+<<sessioninfo>>=
+
+sessionInfo()
+
+@
+
+\end{document}
+
+
+
+
+

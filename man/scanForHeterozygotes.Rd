@@ -1,0 +1,45 @@
+\name{scanForHeterozygotes}
+\alias{scanForHeterozygotes}
+
+\title{scanForHeterozygotes}
+\description{
+   	Identifies the positions of SNPs found in BamGR reads. 
+}
+\usage{
+    scanForHeterozygotes(BamList, minimumReadsAtPos = 20, 
+      maximumMajorAlleleFrequency = 0.9, minimumBiAllelicFrequency = 0.9,
+       maxReads=15000, verbose=TRUE)
+}
+
+\arguments{
+  \item{BamList}{A \code{GAlignmentsList object}}
+  \item{minimumReadsAtPos}{minimum number of reads required to call a SNP at a given position}
+  \item{maximumMajorAlleleFrequency}{maximum frequency allowed for the most common allele. Setting this parameter lower will minimise the SNP calls resulting from technical read errors, at the cost of missing loci with potential strong ASE}
+  \item{minimumBiAllelicFrequency}{minimum frequency allowed for the first and second most common allele. Setting a Lower value for this parameter will minimise the identification of loci with three or more alleles in one sample. This is useful if sequencing errors are suspected to be common.}
+  \item{maxReads}{max number of reads of one list-element allowed}
+  \item{verbose}{logical indicating if process information should be displayed}
+}
+\details{
+  This function scans all reads stored in a \code{GAlignmentsList} for possible heterozygote positions. The user can balance the sensitivity of the search by modifying the minimumReadsAtPos, maximumMajorAlleleFrequency and minimumBiAllelicFrequency arguments.
+}
+\value{
+    \code{scanForHeterozygotes} returns a GRanges object with the SNPs for the BamList object that was used as input.
+}
+
+\author{Jesper R. Gadin, Lasse Folkersen}
+\seealso{
+  \itemize{
+    \item The \code{\link{getAlleleCount}} which is a function that count the number of reads overlapping a site.
+  }
+}
+
+\examples{
+	data(reads)
+	s <- scanForHeterozygotes(reads,verbose=FALSE)
+}
+
+\keyword{scan}
+\keyword{SNP}
+\keyword{heterozygote}
+
+

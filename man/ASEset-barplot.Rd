@@ -1,0 +1,104 @@
+\name{ASEset-barplot}
+\docType{methods}
+\alias{ASEset-barplot}
+\alias{barplot}
+\alias{barplot,ASEset-method}
+
+
+\title{barplot ASEset objects}
+\description{
+	Generates barplots for ASEset objects. Two levels of plotting detail are provided: a detailed barplot of read counts by allele useful for fewer samples and SNPs, and a less detailed barplot of the fraction of imbalance, useful for more samples and SNPs. 
+}
+\usage{
+  \S4method{barplot}{ASEset}(
+	height,
+	type="count",
+	sampleColour=NULL,
+	legend=TRUE,
+	pValue=TRUE,
+	strand="nonStranded",
+	testValue=NULL,
+	testValue2=NULL,
+	OrgDb=NULL,
+	TxDb=NULL,
+	annotationType=c("gene","exon","transcript"),
+	main = NULL,
+	ylim=NULL,
+	yaxis=TRUE,
+	xaxis=FALSE,
+	ylab = TRUE, 
+	xlab = TRUE,
+	legend.colnames = "", 
+	las.ylab = 1,
+	las.xlab = 2,
+	cex.main = 0.9,
+	cex.pValue = 0.7,
+	cex.ylab = 0.7,
+	cex.xlab = 0.7,
+	cex.legend= 0.6,
+	add = FALSE,
+	lowerLeftCorner=c(0,0),
+	size= c(1,1),  
+	addHorizontalLine=0.5,
+	add.frame=TRUE,
+	filter.pValue.fraction=0.99,
+	verbose = FALSE,
+	...)
+}
+\arguments{
+	\item{height}{An \code{ASEset} object}
+	\item{type}{"count" or "fraction"}
+	\item{sampleColour}{User specified colours}
+	\item{legend}{Display legend}
+	\item{pValue}{Display p-value}
+	\item{strand}{Five options, "nonStranded","+", "-", "both" or "*"}
+	\item{testValue}{if set, a matrix or vector with user p-values}
+	\item{testValue2}{if set, a matrix or vector with user p-values}
+	\item{OrgDb}{an OrgDb object which provides annotation}
+	\item{TxDb}{a TranscriptDb object which provides annotation}
+	\item{annotationType}{select one or more from "gene","exon","transcript","cds". }
+	\item{main}{text to use as main label}
+	\item{ylim}{set plot y-axis limit}
+	\item{yaxis}{wheter the y-axis is to be displayed or not}
+	\item{xaxis}{wheter the x-axis is to be displayed or not}
+	\item{ylab}{showing labels for the tic marks}
+	\item{xlab}{showing labels for the tic marks}
+	\item{legend.colnames}{gives colnames to the legend matrix}
+	\item{las.ylab}{orientation of ylab text}
+	\item{las.xlab}{orientation of xlab text}
+	\item{cex.main}{set main label size}
+	\item{cex.pValue}{set pValue label size}
+	\item{cex.ylab}{set ylab label size}
+	\item{cex.xlab}{set xlab label size}
+	\item{cex.legend}{set legend label size}
+	\item{add}{\code{boolean} indicates if a new device should be started}
+	\item{lowerLeftCorner}{integer that is only useful when \code{add}=TRUE}
+	\item{size}{Used internally by locationplot. Rescales each small barplot window}
+	\item{addHorizontalLine}{adds a horizontal line that marks the default fraction of 0.5 - 0.5}
+	\item{add.frame}{\code{boolean} to give the new plot a frame or not}
+	\item{filter.pValue.fraction}{\code{numeric} between 0 and 1 that filter away pValues where the main allele has this frequency.}
+	\item{verbose}{Makes function more talkative}
+	\item{...}{for simpler generics when extending function}
+}	
+
+
+\details{
+	\code{filter.pValue.fraction} is intended to remove p-value annotation with very large difference in frequency, which could just be a sequencing mistake. This is to avoid p-values like 1e-235 or similar.
+
+	\code{sampleColour}{User specified colours, either given as named colours ('red', 'blue', etc) or as hexadecimal code. Can be either length 1 for all samples, or else of a length corresponding to the number of samples for individual colouring.}
+}
+
+\author{Jesper R. Gadin, Lasse Folkersen}
+
+\seealso{
+	\itemize{
+		\item The \code{\link{ASEset}} class which the barplot function can be called up on.
+	}
+}
+
+\examples{
+	data(ASEset)
+	barplot(ASEset[1])
+}
+\keyword{barplot}
+

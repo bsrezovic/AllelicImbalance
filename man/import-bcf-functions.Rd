@@ -1,0 +1,53 @@
+\name{import-bcf-functions}
+\alias{impBcfGRL}
+\alias{impBcfGR}
+
+\title{Import Bcf Selection}
+\description{
+Imports a selection of a bcf file or files specified by a GenomicRanges object as search area. 
+}
+
+\usage{
+impBcfGRL(UserDir, searchArea, verbose = TRUE)
+impBcfGR(UserDir, searchArea, verbose = TRUE)
+}
+\arguments{
+  \item{UserDir}{The relative or full path of folder containing bam files.}
+  \item{searchArea}{A \code{GenomicRanges} object that contains the regions of interest}
+  \item{verbose}{Setting \code{verbose=TRUE} gives details of the procedure during function run.}
+}
+\details{
+	 A wrapper to import bcf files into R in the form of GenomicRanges objects.
+}
+\value{
+    \code{BcfImpGRList} returns a GRangesList object.
+    \code{BcfImpGR} returns one GRanges object of all unique entries from one or more bcf files.
+}
+
+\author{Jesper R. Gadin, Lasse Folkersen}
+
+\note{
+	Make sure there is a complementary index file \code{*.bcf.bci} for each bcf file in \code{UserDir}. If there is not, then the functions \code{impBcfGRL} and \code{impBcfGR} will try to create them.
+}
+
+
+\seealso{
+  \itemize{
+    \item  The \code{\link{impBamGRL}} for importing bam files
+ 	\item  The \code{\link{getAlleleCount}} for how to get allele(SNP) counts
+ 	\item  The \code{\link{scanForHeterozygotes}} for how to find possible heterozygote positions
+ 	}
+}
+\examples{
+#Declare searchArea
+searchArea <- GRanges(seqnames=c("17"), ranges=IRanges(79478301,79478361))
+
+#Relative or full path  
+pathToFiles <- system.file("extdata/ERP000101_subset", package="AllelicImbalance")
+
+#import
+reads <- impBcfGRL(pathToFiles, searchArea, verbose=FALSE)
+
+}
+\keyword{ bcf }
+\keyword{ import }
