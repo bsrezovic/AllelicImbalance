@@ -858,7 +858,8 @@ getGenesVector <- function(OrgDb, GR,verbose=FALSE){
 				seqnames=unique(seqnames(GenesInRegion[TF])),
 				ranges=IRanges(min(start(GenesInRegion[TF])),max(end(GenesInRegion[TF]))),
 				strand=unique(strand(GenesInRegion[TF])))
-			mcols(G) <- unique(mcols(GenesInRegion[TF]))
+			mcols(G) <- unique(mcols(GenesInRegion[TF])[,"Symbol",drop=FALSE])
+
 		newGenesInRegion <- c(newGenesInRegion,G) 
 		}
 	}

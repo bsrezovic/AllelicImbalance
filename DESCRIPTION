@@ -1,7 +1,7 @@
 Package: AllelicImbalance
 Type: Package
 Title: Investigates allele specific expression
-Version: 0.99.1
+Version: 0.99.2
 Date: 2013-08-09
 Author: Jesper R Gadin, Lasse Folkersen
 Maintainer: Jesper R Gadin <j.r.gadin@gmail.com>
