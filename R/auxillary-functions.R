@@ -86,14 +86,17 @@ impBamGRL <- function(UserDir,searchArea,verbose=TRUE){
 }
 
 
-impBamGAL <- function(UserDir,searchArea,verbose=TRUE){
+impBamGAL <- function(UserDir,searchArea,XStag=FALSE,verbose=TRUE){
 	#Set parameters
 	which <- searchArea #A GRanges, RangesList, RangedData, or missing object, from which a IRangesList instance will be constructed.
 	what <- scanBamWhat() #A character vector naming the fields to return. scanBamWhat() returns a vector of available fields. Fields are described on the scanBam help page.
 	flag <- scanBamFlag(isUnmappedQuery=FALSE)
 	
-	param<-ScanBamParam(flag=flag,which=which,what=what) #store ScanBamParam in param.
-	
+	if(XStag){
+		param<-ScanBamParam(flag=flag,which=which,what=what,tag="XS") #store ScanBamParam in param.
+	}else{
+		param<-ScanBamParam(flag=flag,which=which,what=what) #store ScanBamParam in param.		
+	}
 	#Point to correct directory and create a BamFileList object
 	bamDir <- normalizePath(UserDir) #Point to the directory containing your Bam files and its respective bam.bai files.
 	allFiles <- list.files(bamDir,full.names = TRUE) #list files in a folder.
@@ -234,8 +237,8 @@ realCigarPosition <- function(RleCigar,BpPos){
 
 	v[e=="M"] <- 1
 	v[e=="I"] <- unlist(lapply(runLength(RleCigar)[runValue(RleCigar)=="I"],function(x){c(x+1,rep(1,x-1))}))
-	v[e=="D"] <- 0 
-	v[e=="N"] <- 0
+	#v[e=="D"] <- 0 #already zero 
+	#v[e=="N"] <- 0 #already zero
 
 	#sum all until interesting position
 	cs <- cumsum(v)
@@ -244,8 +247,11 @@ realCigarPosition <- function(RleCigar,BpPos){
 	}else if(names(cs[BpPos])=="N"){retPos <- -1
 	}else {
 		retPos <- cs[BpPos]
-		names(retPos) <- NULL}	
-	
+		names(retPos) <- NULL
+		if(retPos>sum(e=="M" | e=="I")){
+			retPos <- -1 # the position went outside the read
+		}
+	}
 	retPos
 }
 

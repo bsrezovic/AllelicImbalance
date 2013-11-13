@@ -1,0 +1,9 @@
+CHANGES IN DEVEL-BRANCH
+-----------------------
+
+BUG FIXES
+
+    o Fix bug in the "realCigarPosition" function, that otherwise could generate an error. 
+
+
+
