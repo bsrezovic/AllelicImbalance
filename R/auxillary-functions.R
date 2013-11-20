@@ -1246,7 +1246,7 @@ extractReferenceAllele <- function(GR,path){
 
 }
 
-getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank=1000,rightFlank=1000,rm.na=FALSE, verbose=TRUE){
+getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank=1000,rightFlank=1000,na.rm=FALSE, verbose=TRUE){
 	
 	#start up sets
 	if(!class(genesymbols)%in%c("character"))stop(paste("genesymbols must be of class character, not:",class(genesymbols)))
@@ -1276,7 +1276,7 @@ getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank=1000,rightFlank=1
 	}
 	
 	#remove NAs
-	if(rm.na==TRUE){
+	if(na.rm==TRUE){
 		s <- s[!(is.na(s[,"CHR"]) | is.na(s[,"CHRLOC"]) | is.na(s[,"CHRLOCEND"])),]
 	}else{
 		warningGenes <- s[is.na(s[,"CHR"]) | is.na(s[,"CHRLOC"]) | is.na(s[,"CHRLOCEND"]),]
