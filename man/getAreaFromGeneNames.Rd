@@ -6,18 +6,21 @@
 }
 \usage{
 	getAreaFromGeneNames(genesymbols, OrgDb, leftFlank=1000,
-	rightFlank=1000, verbose=TRUE)}
+	rightFlank=1000,na.rm=FALSE verbose=TRUE)}
 
 \arguments{
   \item{genesymbols}{A character vector that contains genesymbols of genes from which we wish to retrieve the coordinates}
   \item{OrgDb}{An \code{OrgDb} object containing gene annotation}
   \item{leftFlank}{A \code{integer} specifying number of additional nucleotides before the genes}
   \item{rightFlank}{A \code{integer} specifying number of additional nucleotides after the genes}
+  \item{na.rm}{A \code{boolean} removing genes that returned NA from the annotation}
   \item{verbose}{Setting \code{verbose=TRUE} makes function more talkative}
   
 }
 \details{
 	This function is a convenience function that can be used to determine which genomic coordinates to specify to e.g. \code{impBamGAL} when retrieving reads. 
+
+	The function cannot handle genes that do not exist in the annotation. To remove these please set the na.rm=TRUE.
 }
 \value{
     \code{getAreaFromGeneNames} returns a GRanges object with genomic coordinates around the specified genes  

@@ -1246,7 +1246,7 @@ extractReferenceAllele <- function(GR,path){
 
 }
 
-getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank=1000,rightFlank=1000, verbose=TRUE){
+getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank=1000,rightFlank=1000,rm.na=FALSE, verbose=TRUE){
 	
 	#start up sets
 	if(!class(genesymbols)%in%c("character"))stop(paste("genesymbols must be of class character, not:",class(genesymbols)))
@@ -1275,6 +1275,14 @@ getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank=1000,rightFlank=1
 		if(verbose)cat("Found all requested genes in annotation","\n")
 	}
 	
+	#remove NAs
+	if(rm.na=TRUE){
+		s <- s[!(is.na(s[,"CHR"]) | is.na(s[,"CHRLOC"]) | is.na(s[,"CHRLOCEND"])),]
+	}else{
+		warningGenes <- s[is.na(s[,"CHR"]) | is.na(s[,"CHRLOC"]) | is.na(s[,"CHRLOCEND"]),]
+		warning(paste(warningGenes[,"SYMBOL"],"had NAs","\n"))
+	}
+
 	searchArea<-GRanges(
 			seqnames = paste("chr",s[,"CHR"],sep=""),
 			ranges = IRanges(
