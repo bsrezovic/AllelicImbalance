@@ -6,7 +6,7 @@
 }
 \usage{
 	getAreaFromGeneNames(genesymbols, OrgDb, leftFlank=1000,
-	rightFlank=1000,na.rm=FALSE verbose=TRUE)}
+	rightFlank=1000,na.rm=FALSE, verbose=TRUE)}
 
 \arguments{
   \item{genesymbols}{A character vector that contains genesymbols of genes from which we wish to retrieve the coordinates}

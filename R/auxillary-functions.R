@@ -1276,7 +1276,7 @@ getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank=1000,rightFlank=1
 	}
 	
 	#remove NAs
-	if(rm.na=TRUE){
+	if(rm.na==TRUE){
 		s <- s[!(is.na(s[,"CHR"]) | is.na(s[,"CHRLOC"]) | is.na(s[,"CHRLOCEND"])),]
 	}else{
 		warningGenes <- s[is.na(s[,"CHR"]) | is.na(s[,"CHRLOC"]) | is.na(s[,"CHRLOCEND"]),]
