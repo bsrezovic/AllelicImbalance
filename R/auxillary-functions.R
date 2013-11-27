@@ -1280,7 +1280,9 @@ getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank=1000,rightFlank=1
 		s <- s[!(is.na(s[,"CHR"]) | is.na(s[,"CHRLOC"]) | is.na(s[,"CHRLOCEND"])),]
 	}else{
 		warningGenes <- s[is.na(s[,"CHR"]) | is.na(s[,"CHRLOC"]) | is.na(s[,"CHRLOCEND"]),]
-		warning(paste(warningGenes[,"SYMBOL"],"had NAs","\n"))
+		if(!nrow(warningGenes)==0){
+			warning(paste(warningGenes[,"SYMBOL"],"had NAs","\n"),"you better remove these genes from your 'genesymbols'")
+		}
 	}
 
 	searchArea<-GRanges(
