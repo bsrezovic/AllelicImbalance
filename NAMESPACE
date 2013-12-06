@@ -59,6 +59,7 @@ importFrom(Rsamtools, scanFa)
 
 importClassesFrom(GenomicAlignments, GAlignments)
 importClassesFrom(GenomicAlignments, GAlignmentPairs)
+importClassesFrom(GenomicAlignments, GAlignmentsList)
 
 importFrom(GenomicAlignments, cigarToWidth)
 importFrom(GenomicAlignments, readGAlignmentsFromBam)
