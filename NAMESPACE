@@ -3,7 +3,6 @@ importFrom(methods, show)
 importFrom(GenomicRanges, GRanges)
 importFrom(GenomicRanges, granges)
 importFrom(GenomicRanges, GRangesList)
-importFrom(GenomicRanges, cigarToWidth)
 importFrom(GenomicRanges, seqnames)
 importFrom(GenomicRanges, unlist)
 importFrom(GenomicRanges, findOverlaps)
@@ -17,9 +16,6 @@ importFrom(GenomicRanges, seqnames)
 importFrom(GenomicRanges, "seqnames<-")
 importFrom(GenomicRanges, seqlevels)
 importFrom(GenomicRanges, "seqlevels<-")
-
-importClassesFrom(GenomicRanges, GAlignments)
-importClassesFrom(GenomicRanges, GAlignmentPairs)
 
 
 
@@ -61,6 +57,10 @@ importFrom(Rsamtools, indexBcf)
 importFrom(Rsamtools, FaFile)
 importFrom(Rsamtools, scanFa)
 
+importClassesFrom(GenomicAlignments, GAlignments)
+importClassesFrom(GenomicAlignments, GAlignmentPairs)
+
+importFrom(GenomicAlignments, cigarToWidth)
 importFrom(GenomicAlignments, readGAlignmentsFromBam)
 importFrom(GenomicAlignments, readGAlignmentPairsFromBam)
 importFrom(GenomicAlignments, readGAlignments)
