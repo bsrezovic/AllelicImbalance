@@ -9,9 +9,9 @@ Description: Provides a framework for allelic specific expression investigation 
 License: GPL-3
 Suggests: RUnit, org.Hs.eg.db,
         TxDb.Hsapiens.UCSC.hg19.knownGene,SNPlocs.Hsapiens.dbSNP.20120608
-Depends: GenomicRanges, R (>= 3.0.0)
+Depends: GenomicAlignments, GenomicRanges, R (>= 3.0.0)
 Imports: methods, BiocGenerics, IRanges, Biostrings, Rsamtools,
-        GenomicAlignments, GenomicFeatures, AnnotationDbi
+        GenomicFeatures, AnnotationDbi
 biocViews: Genetics, Infrastructure, Allelic Imbalance, AI, ASE,
         HighThroughputSequencing
 LazyData: TRUE
