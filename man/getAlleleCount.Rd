@@ -24,7 +24,7 @@ getAlleleCount(BamList, GRvariants, strand, verbose=TRUE)}
 
 \seealso{
   \itemize{
-    \item The \code{\link{scanForHeterozygotes}} which is a function to find possible heterozygote sites in a \code{\link[GenomicRanges]{GAlignmentsList}} object
+    \item The \code{\link{scanForHeterozygotes}} which is a function to find possible heterozygote sites in a \code{\link[GenomicAlignments]{GAlignmentsList}} object
   }
 }
 
