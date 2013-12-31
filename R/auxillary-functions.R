@@ -1290,10 +1290,18 @@ getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank=1000,rightFlank=1
 			ranges = IRanges(
 					abs(s[,"CHRLOC"])-leftFlank,
 					abs(s[,"CHRLOCEND"])+rightFlank
-			)
+			),
+			symbol = s[["SYMBOL"]]
 	)
 	
-	searchArea<-reduce(searchArea)
+	searchArea<-reduce(searchArea, with.mapping=TRUE)
+	l <- lapply(searchArea$mapping,function(x){
+			paste(unique(s[x,"SYMBOL"]),collapse=",")		
+		}
+	)
+	mcols(searchArea)[,"symbol"] <- unlist(l)
+	#remove the mapping column
+	mcols(searchArea)[["mapping"]] <- NULL 
 	
 	return(searchArea)
 }
