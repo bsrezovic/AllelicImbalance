@@ -1285,12 +1285,17 @@ getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank=1000,rightFlank=1
 		}
 	}
 
+	strand <- rep("+",nrow(s))
+	TFstrand <- s[,"CHRLOC"] < 0
+	strand[TFstrand] <- "-"
+
 	searchArea<-GRanges(
 			seqnames = paste("chr",s[,"CHR"],sep=""),
 			ranges = IRanges(
 					abs(s[,"CHRLOC"])-leftFlank,
 					abs(s[,"CHRLOCEND"])+rightFlank
 			),
+			strand=strand,
 			symbol = s[["SYMBOL"]]
 	)
 	
