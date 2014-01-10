@@ -20,7 +20,7 @@
 \begin{document}
 
 \title{AllelicImbalance}
-\author{Jesper Robert Gådin and Lasse Folkersen}
+\author{Jesper Robert G\r{a}din and Lasse Folkersen}
 
 \maketitle
 
