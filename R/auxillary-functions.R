@@ -1,5 +1,4 @@
 #These are non class specific functions, availanble as utilities to ease for example import of sequence data.
-
 impBamGRL <- function(UserDir,searchArea,verbose=TRUE){
 	#Set parameters
 	which <- searchArea #A GRanges, RangesList, RangedData, or missing object, from which a IRangesList instance will be constructed.
@@ -148,11 +147,14 @@ impBamGAL <- function(UserDir,searchArea,XStag=FALSE,verbose=TRUE){
 	return(BamGAL)
 }
 
-impBcfGRL <- function(UserDir,searchArea,verbose=TRUE){
+impBcfGRL <- function(UserDir,searchArea=NULL,verbose=TRUE){
 	
 	#Set parameters
-	which <- searchArea #A GRanges, RangesList, RangedData, or missing object, from which a IRangesList instance will be constructed.
-	param <- ScanBcfParam(which=which)
+	if(is.null(searchArea)){ 
+		param <- ScanBcfParam()
+	}else{ 
+		param <- ScanBcfParam(which=searchArea)
+	}
 	#Point to correct directory and create a BcfFileList object
 	bcfDir <- normalizePath(UserDir) #Point to the directory containing your Bam files and its respective bam.bai files.
 	allFiles <- list.files(bcfDir,full.names = TRUE) #list files in a folder.
@@ -215,7 +217,7 @@ impBcfGRL <- function(UserDir,searchArea,verbose=TRUE){
 }
 
 #Function that wraps around BcfImpGRList, but returns a GRanges instead of GRangesList - since that seems to be more useful in many cases
-impBcfGR <- function(UserDir, searchArea,verbose=TRUE){
+impBcfGR <- function(UserDir, searchArea=NULL,verbose=TRUE){
 	BcfGRList <- impBcfGRL(UserDir, searchArea, verbose)
 	BcfGR<-do.call(c,unname(as.list(BcfGRList )))
 	BcfGR<-unique(BcfGR)

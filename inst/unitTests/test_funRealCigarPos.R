@@ -78,3 +78,27 @@ test_cigar_introns <- function() {
 
 }
 
+# test_cigar_mixed <- function() {
+# 
+# 
+# 	#position on the ref-genome
+# 	refPOS <- c(
+# 		20,204,98 #
+# 	)
+# 	
+# 	#the actual position in the read
+# 	readPOS <- c(
+# 		-1,4,-1 #
+# 	)
+# 	CIGARS <- c("78M12I2M1I7M")
+# 
+# 
+# 	cl <- cigarToRleList(CIGARS)
+# 	
+# 	funPOS <- realCigarPositionsList(cl)
+# 
+# 	checkEquals(funPOS,readPOS)
+# 
+# }
+
+
