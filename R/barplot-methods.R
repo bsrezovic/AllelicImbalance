@@ -42,7 +42,12 @@ setMethod("barplot",signature(height = "ASEset"),
 				verbose=FALSE,
 				...)
 		{ 
-			
+		
+			#catch useful graphical parameters that can be used to later add onto plot.
+			#This list will be retireved by using 'glst <- barplot(x)'
+			graphParamList <- list()
+
+
 			x <- height
 						
 			
@@ -339,6 +344,7 @@ setMethod("barplot",signature(height = "ASEset"),
 						
 						#y-axis
 						yat <- (ylabels+abs(min(ylabels)))/(sum(abs(min(ylabels))+max(ylabels)))
+						graphParamList[["yat"]] <- yat 
 						if(yaxis){
 							#vertical line
 							lines(c(lowerLeftCorner[1],lowerLeftCorner[1]),c(lowerLeftCorner[2],lowerLeftCorner[2]+1))
@@ -351,6 +357,7 @@ setMethod("barplot",signature(height = "ASEset"),
 						}
 						#x-axis labels
 						xat <- xPoints1+(xPoints2-xPoints1)/2
+						graphParamList[["xat"]] <- xat 
 
 						if(xaxis){
 							#vertical line
@@ -473,7 +480,7 @@ setMethod("barplot",signature(height = "ASEset"),
 
 						}
 					}
-					
+				
 				}else if(strand=="both") {
 					for(i in 1:length(snps)){
 						
@@ -629,6 +636,7 @@ setMethod("barplot",signature(height = "ASEset"),
 						
 						#y-axis
 						yat <- (ylabels+abs(min(ylabels)))/(sum(abs(min(ylabels))+max(ylabels)))
+						graphParamList[["yat"]] <- yat 
 						if(yaxis){
 							#vertical line
 							lines(c(lowerLeftCorner[1],lowerLeftCorner[1]),c(lowerLeftCorner[2],lowerLeftCorner[2]+1))
@@ -639,9 +647,10 @@ setMethod("barplot",signature(height = "ASEset"),
 							if(las.ylab==2){text(lowerLeftCorner[1]-size[1]*0.02,yat,labels=abs(ylabels),xpd=TRUE,srt=90, adj=c(1,0.5),cex=cex.ylab)}
 							if(las.ylab==1){text(lowerLeftCorner[1]-size[1]*0.02,yat,labels=abs(ylabels),xpd=TRUE,srt=0, adj=c(1,0.5),cex=cex.ylab)}
 						}
+
 						#x-axis labels
 						xat <- xPoints1+(xPoints2-xPoints1)/2
-
+						graphParamList[["xat"]] <- xat 
 						if(xaxis){
 							#vertical line
 							lines(c(lowerLeftCorner[1],lowerLeftCorner[1]+1),c(lowerLeftCorner[2],lowerLeftCorner[2]))
@@ -869,6 +878,8 @@ setMethod("barplot",signature(height = "ASEset"),
 					}
 				}			
 			}
+			#return graphical paramlist (does not work for fraction type yet)
+			invisible(graphParamList)
 		}
 )
 
