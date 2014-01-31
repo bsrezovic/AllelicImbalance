@@ -1319,7 +1319,7 @@ getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank=1000,rightFlank=1
 
 
 
-getSnpIdFromLocation <- function(GR, SNPloc, verbose=TRUE) {
+getSnpIdFromLocation <- function(GR, SNPloc, return.vector=FALSE, verbose=TRUE) {
 	
 	if(class(GR)!="GRanges")stop(paste("GR must of class GRanges, not",class(GR)))
 	if(class(SNPloc)!="SNPlocs")stop(paste("SNPlocs must of class SNPlocs, not",class(SNPloc)))
@@ -1356,8 +1356,10 @@ getSnpIdFromLocation <- function(GR, SNPloc, verbose=TRUE) {
 
 	#change back to chr from ch
 	seqlevels(GR) <- sub("^ch","chr",seqlevels(GR))
+	
+	if(return.vector){names(GR)
+	}else{return(GR)}
 
-	return(GR)
 }
 
 

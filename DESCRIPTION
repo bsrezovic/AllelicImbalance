@@ -7,6 +7,7 @@ Author: Jesper R Gadin, Lasse Folkersen
 Maintainer: Jesper R Gadin <j.r.gadin@gmail.com>
 Description: Provides a framework for allelic specific expression investigation using RNA-seq data
 License: GPL-3
+URL: https://github.com/pappewaio/AllelicImbalance
 Suggests: RUnit, org.Hs.eg.db,
         TxDb.Hsapiens.UCSC.hg19.knownGene,SNPlocs.Hsapiens.dbSNP.20120608
 Depends: GenomicAlignments, GenomicRanges, R (>= 3.0.0)

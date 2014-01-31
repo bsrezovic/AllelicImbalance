@@ -5,11 +5,12 @@
     Given a GRanges object of SNPs and a SNPlocs annotation, this function attempts to replace the names of the GRanges object entries with rs-IDs. 
 }
 \usage{
-	getSnpIdFromLocation(GR, SNPloc, verbose=TRUE)}
+	getSnpIdFromLocation(GR, SNPloc, return.vector=FALSE, verbose=TRUE)}
 
 \arguments{
   \item{GR}{A \code{GRanges} that contains positions of SNPs to look up}
   \item{SNPloc}{A \code{SNPlocs object} containing information on SNP locations (e.g. SNPlocs.Hsapiens.dbSNP.xxxxxxxx)}
+  \item{return.vector}{Setting \code{return.vector=TRUE} returns vector with rsIds}
   \item{verbose}{Setting \code{verbose=TRUE} makes function more talkative}
 }
 \details{
