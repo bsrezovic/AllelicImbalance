@@ -77,7 +77,9 @@ reads <- impBamGAL(pathToFiles,searchArea,verbose=FALSE)
 
 heterozygotePositions <- scanForHeterozygotes(reads,verbose=FALSE)
 
-countList <- getAlleleCount(reads, heterozygotePositions, verbose=FALSE)
+seqlevels(reads) <- "17" 
+
+countList <- getAlleleCounts(reads, heterozygotePositions, verbose=FALSE)
 
 a.simple <- ASEsetFromCountList(heterozygotePositions,countList)
 
@@ -108,7 +110,7 @@ that were generated with the samtools mpileup function.
 <<gettingASEsetFromBcf, eval=TRUE>>=
 BcfGR <- impBcfGR(pathToFiles,searchArea,verbose=FALSE)
 
-countListBcf <- getAlleleCount(reads, BcfGR,verbose=FALSE)
+countListBcf <- getAlleleCounts(reads, BcfGR,verbose=FALSE)
 
 a.bcf <- ASEsetFromCountList(BcfGR, countListBcf)
 @
@@ -125,8 +127,8 @@ information has strand information, then the correct procedure is as follows:
 
 
 <<creating stranded ASEset, eval=TRUE>>=
-plus <- getAlleleCount(reads, heterozygotePositions, strand="+",verbose=F) 
-minus <- getAlleleCount(reads, heterozygotePositions, strand="-",verbose=F)
+plus <- getAlleleCounts(reads, heterozygotePositions, strand="+",verbose=F) 
+minus <- getAlleleCounts(reads, heterozygotePositions, strand="-",verbose=F)
 
 a.stranded <-
 ASEsetFromCountList(

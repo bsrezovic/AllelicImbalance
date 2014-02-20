@@ -28,7 +28,7 @@ ASEsetFromCountList(rowData, countListNonStranded = NULL, countListPlus =
 \details{
 	The resulting \code{ASEset} object is based on the \code{SummarizedExperiment}, and will therefore inherit the same accessors and ranges operations.
 
-	countListNonStranded, countListPlus, countListMinus and countListUnknown are i.e. the outputs from the \code{\link{getAlleleCount}} function. 
+	countListNonStranded, countListPlus, countListMinus and countListUnknown are i.e. the outputs from the \code{\link{getAlleleCounts}} function. 
  }
 
  \note{

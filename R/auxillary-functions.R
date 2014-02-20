@@ -314,11 +314,94 @@ realCigarPositionsList <- function(RleCigarList){
 	)
 }
 
+#new version
+getAlleleCounts<-function(BamList, GRvariants, strand="nonStranded", return.type="list", verbose=TRUE){
+
+	if(!class(BamList)%in%c("GAlignments","GAlignmentsList")){stop("BamList has to be of class GAlignments or GAlignmnetsList\n")}
+	#if just one element of, make list (which is a convenient way of handling this input type)
+	if(class(BamList)=="GAlignments"){BamList <- GAlignmentsList(BamList)}
+
+	#check for strand name
+	if(!class(strand)=="character"){stop("strand has to be of class character")}
+	if(!length(strand)==1){stop("strand has to be of length 1")}
+	if(!sum(strand %in% c("+","-","*","nonStranded"))>0){stop("strand parameter has to be either '+', '-', '*' or 'nonStranded' ")}
+
+	#if the user sent in the GRangesList for GRvariants, take out only the unique entries.
+	if(class(GRvariants)=="GRangesList"){	
+	    GRvariants <- unique(unlist( GRvariants, use.names = FALSE)) #merge BcfGRL to one unique set of Snps
+	}
+
+	#check that seqlevels are the same	
+	if(!identical(seqlevels(BamList), seqlevels(GRvariants))){stop("!identical(seqlevels(BamList), seqlevels(GRvariants))\n")}
+
+	
+	#checking that GRvariants is ok
+	if(class(GRvariants) != "GRanges")stop(paste("GRvariants must be of class GRanges, not",class(GRvariants)))
+	if(length(GRvariants)== 0) stop("GRvariants was given as an empty GRanges object. There can be no Snps retrieved by getAlleleCount then")
+	if(any(width(GRvariants)!=1))stop("GRvariants can contain only entries of width=1, corresponding to SNPs.")
+	
+	
+	
+	#checking that verbose is ok
+	if(class(verbose) !="logical")stop(paste("verbose must be of class logical, not",class(verbose)))
+	if(length(verbose) !=1)stop(paste("verbose must be of length 1, not",length(verbose)))
+	
+	
+	#make row-names
+	if(sum(grepl("chr",seqnames(GRvariants)))>0) { snpNames <- paste(seqnames(GRvariants),"_",start(GRvariants),sep="")
+	}else{snpNames <- paste("chr",seqnames(GRvariants),"_",start(GRvariants),sep="")}
+	
+	dimnames= list(snpNames,names(BamList),c("A","C","G","T","del"))
+	ar1 <- array(NA,c(length(GRvariants),length(BamList),5),dimnames=dimnames) #empty array that handles only four nucleotides + one del columns
+	
+	#use strand choice to only get reads from that strand
+	if(!strand=="nonStranded"){BamList <- GAlignmentsList(mapply(function(x,y){x[y]},BamList,strand(BamList)==strand))}
+
+	for(j in 1:length(names(BamList))){
+		sample <- names(BamList)[j]	
+		if(verbose)cat("sample ",sample,"\n")
+
+		gal <-BamList[[j]]
+	
+		nuclpiles <- pileLettersAt(mcols(gal)[,"seq"], seqnames(gal), start(gal), cigar(gal), GRvariants)
+
+		#fill array
+		nstr <- strsplit(as.character(nuclpiles),"")
+		for(k in 1:length(GRvariants)){
+			ar1[k,j,] <- c(sum(nstr[[k]]%in%"A"),sum(nstr[[k]]%in%"C"),sum(nstr[[k]]%in%"G"),sum(nstr[[k]]%in%"T"),0) #del will always be 0. Could have set it to NA, but then it makes problem further  down in the chain of functions...			
+		}
+
+		
+	}
+
+	#check return.type argument	
+	if(return.type=="list"){
+		alleleCountList <- list()
+		for(i in 1:nrow(ar1)){
+			mat <- ar1[i,,]
+			if(class(mat)=="numeric"){
+					mat <- t(mat)
+					colnames(mat) <- dimnames[[3]]
+				}else{
+					colnames(mat) <- dimnames[[3]]
+				}
+			rownames(mat) <- dimnames[[2]] 
+			alleleCountList[[i]] <- mat
+		}
+		names(alleleCountList) <- dimnames[[1]]	
+		alleleCountList
+	}else if(return.type=="array"){
+		ar1
+	}else{cat("return.type unknown\n Nothing will be returned from function!")}
+}
+
+
 
 
 
 #create ldf object (i.e. for SnpAfList slot) based on a pre-defined list of Snps
-getAlleleCount<-function(BamList, GRvariants,strand="nonStranded", verbose=TRUE){
+#old version
+getAlleleCounts2<-function(BamList, GRvariants,strand="nonStranded", verbose=TRUE){
 
 	#if just one element of, make list (which is a convenient way of handling this input type)
 	if(class(BamList)=="GAlignments"){BamList <- GAlignmentsList(BamList)}

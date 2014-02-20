@@ -29,7 +29,7 @@
 \author{Jesper R. Gadin, Lasse Folkersen}
 \seealso{
   \itemize{
-    \item The \code{\link{getAlleleCount}} which is a function that count the number of reads overlapping a site.
+    \item The \code{\link{getAlleleCounts}} which is a function that count the number of reads overlapping a site.
   }
 }
 

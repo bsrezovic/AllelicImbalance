@@ -34,7 +34,7 @@
 \arguments{
 	\item{x}{ an ASEset object.}
 	\item{type}{"fraction" or "count"}
-	\item{strand}{"+","-","*","both" or "nonStranded". This argument determines which strand is plotted. See \code{getAlleleCount} for more information on strand.}
+	\item{strand}{"+","-","*","both" or "nonStranded". This argument determines which strand is plotted. See \code{getAlleleCounts} for more information on strand.}
 	\item{yaxis}{wheter the y-axis is to be displayed or not}
 	\item{xaxis}{wheter the x-axis is to be displayed or not}
 	\item{ylab}{showing labels for the tic marks}
@@ -54,7 +54,7 @@
 
 
 \details{
-	The locationplot methods visualises how fractions are distributed over a larger region of genes on one chromosome. It takes and ASEset object as well as additional information on plot type (see \code{\link{barplot}}), strand type (see \code{\link{getAlleleCount}}), colouring, as well as annotation. The annotation is taken either from the bioconductor OrgDb-sets, the TxDb sets or both. It is obviously important to make sure that the genome build used is the same as used in aligning the RNA-seq data.  
+	The locationplot methods visualises how fractions are distributed over a larger region of genes on one chromosome. It takes and ASEset object as well as additional information on plot type (see \code{\link{barplot}}), strand type (see \code{\link{getAlleleCounts}}), colouring, as well as annotation. The annotation is taken either from the bioconductor OrgDb-sets, the TxDb sets or both. It is obviously important to make sure that the genome build used is the same as used in aligning the RNA-seq data.  
 
 } 
  

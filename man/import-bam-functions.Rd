@@ -35,7 +35,7 @@ If the sequence data is strand-specific you may want to set XStag=TRUE. The stra
 }
 
 \note{
-    A typical next step after the import of bam files is to obtain SNP information. This can be done either with the \code{\link{impBcfGRL}} and \code{\link{getAlleleCount}} functions. Alternatively the \code{\link{scanForHeterozygotes}} function provides R-based functionality for identifying heterozygote coding SNPs.
+    A typical next step after the import of bam files is to obtain SNP information. This can be done either with the \code{\link{impBcfGRL}} and \code{\link{getAlleleCounts}} functions. Alternatively the \code{\link{scanForHeterozygotes}} function provides R-based functionality for identifying heterozygote coding SNPs.
 }
 
 \seealso{
