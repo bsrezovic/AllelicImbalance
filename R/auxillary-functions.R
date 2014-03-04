@@ -1411,32 +1411,38 @@ getSnpIdFromLocation <- function(GR, SNPloc, return.vector=FALSE, verbose=TRUE) 
 	# add chr to seqnames if not present
 	if(length(grep("^chr",seqnames(GR)))!=length(GR)){
 		if(length(grep("^chr",seqnames(GR)))!=0)stop("seqnames must all begin with 'chr'. In the GR it seemed that some, but not all, seqnames began with chr. Please correct manually")
-		seqnames<-paste("chr",seqnames(GR),sep="")
-		seqlevels(GR)<-as.character(unique(seqnames))
-		seqnames(GR)<-seqnames
+		seqlevels(GR)<-paste("chr",seqlevels(GR),sep="")
+		#seqnames(GR)<-seqnames
 	}
 	
 	#changing chr to ch to adapt to SNPloc
 	if(length(grep("^chr",seqnames(GR)))==length(GR)){
-		seqnames<-seqnames(GR)
-		seqnames<-sub("^chr","ch",seqnames(GR))
-		seqlevels(GR)<-as.character(unique(seqnames))
-		seqnames(GR)<-seqnames
+		#seqnames<-seqnames(GR)
+		seqlevels(GR)<-sub("^chr","ch",seqlevels(GR))
+		#seqlevels(GR)<-as.character(unique(seqnames))
+		#seqlevels(GR) <- levels(seqnames)
+		#seqnames(GR)<-seqnames
 	}
 	
 	
 	SNPlocThisChr<-getSNPlocs(seqlevels(GR), as.GRanges=TRUE, caching=FALSE)
-	
+
+	seqlevels(SNPlocThisChr,force=TRUE) <- seqlevels(GR) 		
+#	seqlengths(GR) <- seqlengths(SNPlocThisChr)
+
 	overlaps<-findOverlaps(GR, SNPlocThisChr) 
 	
 	if(verbose)cat(paste("Replacing position-based SNP name with rs-ID for",length(overlaps),"SNP(s)"),"\n")
 	
 	#replace name in GR
-	for(i in 1:length(overlaps)){
-		snp<-paste("rs",mcols(SNPlocThisChr[subjectHits(overlaps[i])])[,"RefSNP_id"],sep="")
-		names(GR)[queryHits(overlaps[i])] <-snp
-	}
+	#for(i in 1:length(overlaps)){
+	#	snp<-paste("rs",mcols(SNPlocThisChr[subjectHits(overlaps[i])])[,"RefSNP_id"],sep="")
+	#	names(GR)[queryHits(overlaps[i])] <-snp
+	#}
 
+	snp<-paste("rs",mcols(SNPlocThisChr[subjectHits(overlaps)])[,"RefSNP_id"],sep="")
+	names(GR)[queryHits(overlaps)] <-snp
+		
 	#change back to chr from ch
 	seqlevels(GR) <- sub("^ch","chr",seqlevels(GR))
 	

@@ -12,8 +12,8 @@ Package \code{AllelicImbalance} has functions for importing, filtering and plott
 	\tabular{ll}{
 	Package: \tab AllelicImbalance\cr
 	Type: \tab Package\cr
-	Version: \tab 1.1.13\cr
-	Date: \tab 2014-01-28\cr
+	Version: \tab 1.1.15\cr
+	Date: \tab 2014-03-04\cr
 	License: \tab GPL-3\cr
 	}
 }

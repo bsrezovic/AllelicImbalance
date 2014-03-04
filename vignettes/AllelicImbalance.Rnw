@@ -160,7 +160,9 @@ searchArea<-getAreaFromGeneNames("ACTG1",org.Hs.eg.db)
 
 #Getting rs-IDs
 library(SNPlocs.Hsapiens.dbSNP.20120608)
-updatedGRanges<-getSnpIdFromLocation(rowData(a.simple), SNPlocs.Hsapiens.dbSNP.20120608)
+#seqlevels(a.simple) <- "chr17"
+gr <- rowData(a.simple)
+updatedGRanges<-getSnpIdFromLocation(gr, SNPlocs.Hsapiens.dbSNP.20120608)
 rowData(a.simple)<-updatedGRanges
 
 @

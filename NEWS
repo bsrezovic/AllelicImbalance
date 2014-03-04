@@ -1,9 +1,13 @@
 CHANGES IN DEVEL-BRANCH
 -----------------------
 
+NEW FEATURES
+
+    o Faster getAlleleCounts()  
+
 BUG FIXES
 
-    o Fix bug in the "realCigarPosition" function, that otherwise could generate an error. 
+    o Fixed bug in the "realCigarPosition" function, that otherwise could generate an error. 
 
 
 
