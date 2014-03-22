@@ -20,19 +20,19 @@
 }
 
 \usage{
-	getGenesFromAnnotation(OrgDb,GR,leftFlank=1000,rightFlank=1000,
+	getGenesFromAnnotation(OrgDb,GR,leftFlank=0,rightFlank=0,
     getUCSC=FALSE,verbose=FALSE)
-  getExonsFromAnnotation(TxDb,GR,leftFlank=1000,rightFlank=1000,
+  getExonsFromAnnotation(TxDb,GR,leftFlank=0,rightFlank=0,
       verbose=FALSE)
-  getTranscriptsFromAnnotation(TxDb,GR,leftFlank=1000,
-      rightFlank=1000,verbose=FALSE)
-  getCDSFromAnnotation(TxDb,GR,leftFlank=1000,rightFlank=1000,
+  getTranscriptsFromAnnotation(TxDb,GR,leftFlank=0,
+      rightFlank=0,verbose=FALSE)
+  getCDSFromAnnotation(TxDb,GR,leftFlank=0,rightFlank=0,
     verbose=FALSE)
 
-  getGenesVector(OrgDb, GR,verbose=FALSE)
-  getExonsVector(TxDb, GR,verbose=FALSE)
-  getTranscriptsVector(TxDb, GR,verbose=FALSE)
-  getCDSVector(TxDb, GR,verbose=FALSE)
+  getGenesVector(OrgDb, GR, leftFlank=0, rightFlank=0, verbose=FALSE)
+  getExonsVector(TxDb, GR,leftFlank=0,rightFlank=0, verbose=FALSE)
+  getTranscriptsVector(TxDb, GR,leftFlank=0,rightFlank=0, verbose=FALSE)
+  getCDSVector(TxDb, GR,leftFlank=0,rightFlank=0,verbose=FALSE)
 
   getAnnotationDataFrame(GR,strand="+",annotationType=NULL,
     OrgDb=NULL, TxDb=NULL,verbose=FALSE)

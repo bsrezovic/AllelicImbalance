@@ -5,8 +5,8 @@
     Given a character vector with genesymbols and an OrgDb object, this function returns a GRanges giving the coordinates of the genes.
 }
 \usage{
-	getAreaFromGeneNames(genesymbols, OrgDb, leftFlank=1000,
-	rightFlank=1000,na.rm=FALSE, verbose=TRUE)}
+	getAreaFromGeneNames(genesymbols, OrgDb, leftFlank=0,
+	rightFlank=0,na.rm=FALSE, verbose=TRUE)}
 
 \arguments{
   \item{genesymbols}{A character vector that contains genesymbols of genes from which we wish to retrieve the coordinates}
