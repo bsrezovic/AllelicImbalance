@@ -1384,14 +1384,14 @@ getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank=0,rightFlank=0,na
 			symbol = s[["SYMBOL"]]
 	)
 	
-	searchArea<-reduce(searchArea, with.mapping=TRUE)
-	l <- lapply(searchArea$mapping,function(x){
+	searchArea<-reduce(searchArea, with.revmap=TRUE)
+	l <- lapply(searchArea$revmap,function(x){
 			paste(unique(s[x,"SYMBOL"]),collapse=",")		
 		}
 	)
 	mcols(searchArea)[,"symbol"] <- unlist(l)
 	#remove the mapping column
-	mcols(searchArea)[["mapping"]] <- NULL 
+	mcols(searchArea)[["revmap"]] <- NULL 
 	
 	return(searchArea)
 }
