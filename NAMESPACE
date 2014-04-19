@@ -63,7 +63,6 @@ importClassesFrom(GenomicAlignments, GAlignmentPairs)
 importClassesFrom(GenomicAlignments, GAlignmentsList)
 
 importFrom(GenomicAlignments, cigarToRleList)
-importFrom(GenomicAlignments, cigarToWidth)
 importFrom(GenomicAlignments, GAlignments)
 importFrom(GenomicAlignments, GAlignmentPairs)
 importFrom(GenomicAlignments, GAlignmentsList)
