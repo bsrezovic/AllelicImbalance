@@ -1,4 +1,6 @@
-importFrom(methods, show)
+import(methods)
+import(BiocGenerics)
+import(S4Vectors)
 
 importFrom(GenomicRanges, GRanges)
 importFrom(GenomicRanges, granges)
@@ -10,9 +12,6 @@ importFrom(GenomicRanges, findOverlaps)
 importFrom(GenomicRanges, start)
 importFrom(GenomicRanges, end)
 importFrom(GenomicRanges, mcols)
-importFrom(GenomicRanges, elementMetadata)
-importFrom(GenomicRanges, "elementMetadata<-")
-importFrom(GenomicRanges, mcols)
 importFrom(GenomicRanges, seqnames)
 importFrom(GenomicRanges, "seqnames<-")
 importFrom(GenomicRanges, seqlevels)
@@ -20,10 +19,8 @@ importFrom(GenomicRanges, "seqlevels<-")
 importFrom(GenomicAlignments, pileLettersAt)
 importFrom(GenomicAlignments, cigar)
 
-
 importFrom(IRanges, Rle)
 importFrom(IRanges, IRanges)
-importFrom(IRanges, elementMetadata)
 importFrom(IRanges, ranges)
 importFrom(IRanges, subsetByOverlaps)
 importFrom(IRanges, coverage)
@@ -36,8 +33,6 @@ importFrom(IRanges, end) ##maybe not needed if also imported from GRanges?.
 importFrom(IRanges, width)
 importFrom(IRanges, which)
 importFrom(IRanges, resize)
-
-importFrom(BiocGenerics, strand)
 
 importFrom(Biostrings, subseq)
 importFrom(Biostrings, DNAStringSet)
