@@ -2,7 +2,6 @@ import(methods)
 import(BiocGenerics)
 import(S4Vectors)
 
-importFrom(IRanges, Rle)
 importFrom(IRanges, IRanges)
 importFrom(IRanges, ranges)
 importFrom(IRanges, subsetByOverlaps)
@@ -11,9 +10,6 @@ importFrom(IRanges, "%over%")
 importFrom(IRanges, "%within%")
 #importFrom(IRanges, subseq)
 importFrom(IRanges, unlist)
-importFrom(IRanges, start) ##maybe not needed if also imported from GRanges?.
-importFrom(IRanges, end) ##maybe not needed if also imported from GRanges?.
-importFrom(IRanges, width)
 importFrom(IRanges, which)
 importFrom(IRanges, resize)
 
@@ -25,9 +21,6 @@ importFrom(GenomicRanges, GRangesList)
 importFrom(GenomicRanges, unlist)
 importFrom(GenomicRanges, reduce)
 importFrom(GenomicRanges, findOverlaps)
-importFrom(GenomicRanges, start)
-importFrom(GenomicRanges, end)
-importFrom(GenomicRanges, mcols)
 
 importFrom(Biostrings, subseq)
 importFrom(Biostrings, DNAStringSet)
