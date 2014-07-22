@@ -18,4 +18,5 @@ LazyData: TRUE
 Collate: AllClasses.R AllGenerics.R initialize-methods.R
         ASEset-accessors.R auxillary-functions.R chisq.test-methods.R
         binom.test-methods.R barplot-methods.R locationplot-methods.R
+	GvizTrack-methods.R
 biocViews: Genetics, Infrastructure, Sequencing

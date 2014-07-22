@@ -220,51 +220,10 @@ setMethod("glocationplot", signature(x = "ASEset"),
 		type="fraction",
 		strand="nonStranded"
 	){
-		ASEset <- x
-		ranges <- rowData(ASEset)
-		#strand <- "+"
-		if(strand=="nonStranded"){
-			strand(ranges) <- "*" 
-		}else{
-			strand(ranges) <- strand 
-		}
-		
-		
-		colnames(ASEset)<- 1:ncol(ASEset)
 
-		details <- function(identifier, ...) {
-
-		type <- get("type",envir=AllelicImbalance.extra)
-		arank <- get("arank",envir=AllelicImbalance.extra)
-		afraction <- get("afraction",envir=AllelicImbalance.extra)
-		acounts <- get("acounts",envir=AllelicImbalance.extra)
-
-			if(type == "fraction"){
-				print(barplot.lattice.fraction(identifier,afraction, arank, ... ), 
-				newpage = FALSE,
-				prefix = "plot")
-
-			}else if(type == "counts"){
-				print(barplot.lattice.counts(identifier, arank, acounts, ...), 
-				newpage = FALSE,
-				prefix = "plot")
-			}
-
-		}
-
-		#pick out plot data from ASEset
-		#strand="+"
-		AllelicImbalance.extra <- new.env(parent = emptyenv())
-
-		assign("acounts", alleleCounts(ASEset,strand=strand), envir = AllelicImbalance.extra)
-		assign("arank", arank(ASEset,strand=strand), envir = AllelicImbalance.extra)
-		assign("afraction", fraction(ASEset, strand=strand), envir = AllelicImbalance.extra)
-		assign("type", type , envir = AllelicImbalance.extra)
-
-		#plot the fraction
-		deTrack <- AnnotationTrack(range = ranges, genome = "hg19",
-			chromosome = 17, id = rownames(ASEset), name = paste("Gviz locationplot",type ),
-			stacking = "squish", fun = details)
+		#make deTrack the fraction
+		deTrack <- ASEDAnnotationTrack(x,type,strand)
+		#plot
 		plotTracks(deTrack)
 
 	}

@@ -1530,6 +1530,73 @@ barplot.lattice.counts <- function(identifier, arank, acounts, ...){
 	 abbreviate=TRUE
 	)
 	b
+}
 
+coverageMatrixListFromGAL <- function(BamList,start=NULL,end=NULL,strand=NULL,ignore.empty.bam=TRUE){
+
+	#If having common start and end points for all gviz track objects the matrix will start on the specific start regardless if there are reads in the bamList or not. 
+	
+	#TODO, to conveniently access data without loading into memory, the bam file should be read again by using the argument BamPath. 
+
+	GAL <- BamList
+
+	#Could be good with a check that the matrix is not longer than
+	#CNTNAP2 - 2300000bp long which is the  longest gene
+	#But will wait with that.
+	pstrand=FALSE
+	mstrand=FALSE
+	if(!is.null(strand)){
+		if(strand=="+"){pstrand=TRUE}
+		else if(strand=="-"){mstrand=TRUE}
+		else{stop("strand has to be '+' or '-' if not NULL\n")}
+	}
+
+	if(!length(seqlevels(GAL))==1){stop("can only be one seq level\n")}
+
+	#get start and end before filtering on strand, will make things easier downstream.
+	suppressWarnings(bamStart <- min(min(start(GAL))))
+	suppressWarnings(bamEnd <- max(max(end(GAL))))
+	bamWidth <- bamEnd-bamStart+1
+
+	if(is.null(start) | is.null(end)){
+		start <- bamStart
+		end <- bamEnd
+		width <- bamWidth
+	}
+
+	if(pstrand){GALp <- GAL[strand(GAL)=="+"]}
+	if(mstrand){GALm <- GAL[strand(GAL)=="-"]}
+
+	if(pstrand){matP <- matrix(0,ncol=(width),nrow=length(GAL))}
+	if(mstrand){matM <- matrix(0,ncol=(width),nrow=length(GAL))}
+	if(pstrand){rownames(matP) <- names(GAL)}
+	if(mstrand){rownames(matM) <- names(GAL)}
+	##################################################
+
+	covVecFromGA <- function(GA){
+			mcols(GA) <- NULL
+			one <- unlist(grglist(GA))
+			covRle <- coverage(one)[[1]]
+			cov <- as.integer(window(covRle,start,end))
+			cov
+	}
+
+	if(pstrand){for(i in 1:length(GALp)){matP[i,]<- covVecFromGA(GALp[[i]])}}
+	if(mstrand){for(i in 1:length(GALm)){matM[i,]<- covVecFromGA(GALm[[i]])}}
+	
+	#make mat from matP or matM
+	if(pstrand){mat <- matP }
+	if(mstrand){mat <- matM }
+
+	#store in a list
+	if(!is.null(strand)){
+		retList <- list(mat,start,end)
+	}else{stop("strand must be present")}
+	#set name on list
+	if(!is.null(strand)){
+		names(retList) <- c("mat","start","end")
+	}else{stop("strand must be present")}
+	
+	retList
 }
 

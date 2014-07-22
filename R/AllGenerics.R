@@ -4,6 +4,10 @@ setGeneric("mapBias", function(x) {standardGeneric("mapBias")})
 setGeneric("fraction", function(x, strand="nonStranded", verbose=FALSE) {standardGeneric("fraction")})
 setGeneric("arank", function(x, ret="names", strand="nonStranded", ... ) {standardGeneric("arank")})
 
+#gviz track
+setGeneric("ASEDAnnotationTrack", function(x, type="fraction", strand="nonStranded", ... ) {standardGeneric("ASEDAnnotationTrack")})
+setGeneric("CoverageDataTrack", function(x, BamList=NULL, strand=NULL, start=NULL, end=NULL, genome="hg19",verbose=TRUE, ... ) {standardGeneric("CoverageDataTrack")})
+
 #visuals
 setGeneric("barplot")
 setGeneric("glocationplot", function(x,

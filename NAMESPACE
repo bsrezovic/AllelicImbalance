@@ -128,7 +128,8 @@ export(
  getAreaFromGeneNames,
  getSnpIdFromLocation,
  barplot.lattice.counts,
- barplot.lattice.fraction
+ barplot.lattice.fraction,
+ coverageMatrixListFromGAL
 ) 
 
 exportMethods(
@@ -144,6 +145,10 @@ exportMethods(
  #test-methods
  chisq.test, 
  binom.test,
+ 
+ #gviz tracks
+ ASEDAnnotationTrack,
+ CoverageDataTrack,
 
  #plots
  barplot,
