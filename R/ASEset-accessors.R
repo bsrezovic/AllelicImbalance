@@ -87,7 +87,7 @@ setMethod("fraction",
 		}else{stop("unknown strand option")}	
 
 		#check if strand option is present as assay
-		if(!(el%in%names(assays(x)))){stop("strand is not present as assay in ASEset object")}
+		if(!(el%in%names(assays(x)))){stop(paste("strand",strand," is not present as assay in ASEset object"))}
 		
 		fractionList <- list()
 
@@ -111,7 +111,7 @@ setMethod("fraction",
 			
 			#calculating percentage and ylim and setting no-count samples to colour grey90
 			fraction <- tmp[,majorAllele] / (tmp[,majorAllele] + tmp[,minorAllele])
-			fraction[is.nan(fraction)]<-1
+			#fraction[is.nan(fraction)]<-1
 			fractionList[[i]] <- fraction
 		}
 		names(fractionList) <- rownames(x)	
@@ -122,6 +122,28 @@ setMethod("fraction",
     
 	}
 )
+
+setMethod("arank",
+    signature(x = "ASEset"),
+    function (x, ret="names", strand="nonStranded", ...)
+	{
+		acounts <- alleleCounts(x, strand=strand)
+
+		if(ret == "names") {
+			arank <- lapply(acounts, function(x){
+				       names(sort(apply(x,2,sum),decreasing=TRUE))
+			} )
+		}
+		if(ret == "counts") {
+			arank <- lapply(acounts, function(x){
+				       as.numeric(sort(apply(x,2,sum),decreasing=TRUE))
+			} )
+		}
+		arank
+	}
+)
+
+
 
 
 

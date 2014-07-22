@@ -351,8 +351,8 @@ getAlleleCounts<-function(BamList, GRvariants, strand="nonStranded", return.type
 	if(sum(grepl("chr",seqnames(GRvariants)))>0) { snpNames <- paste(seqnames(GRvariants),"_",start(GRvariants),sep="")
 	}else{snpNames <- paste("chr",seqnames(GRvariants),"_",start(GRvariants),sep="")}
 	
-	dimnames= list(snpNames,names(BamList),c("A","C","G","T","del"))
-	ar1 <- array(NA,c(length(GRvariants),length(BamList),5),dimnames=dimnames) #empty array that handles only four nucleotides + one del columns
+	dimnames= list(snpNames,names(BamList),c("A","C","G","T"))
+	ar1 <- array(NA,c(length(GRvariants),length(BamList),4),dimnames=dimnames) #empty array that handles only four nucleotides + one del columns
 	
 	#use strand choice to only get reads from that strand
 	if(!strand=="nonStranded"){BamList <- GAlignmentsList(mapply(function(x,y){x[y]},BamList,strand(BamList)==strand))}
@@ -368,7 +368,7 @@ getAlleleCounts<-function(BamList, GRvariants, strand="nonStranded", return.type
 		#fill array
 		nstr <- strsplit(as.character(nuclpiles),"")
 		for(k in 1:length(GRvariants)){
-			ar1[k,j,] <- c(sum(nstr[[k]]%in%"A"),sum(nstr[[k]]%in%"C"),sum(nstr[[k]]%in%"G"),sum(nstr[[k]]%in%"T"),0) #del will always be 0. Could have set it to NA, but then it makes problem further  down in the chain of functions...			
+			ar1[k,j,] <- c(sum(nstr[[k]]%in%"A"),sum(nstr[[k]]%in%"C"),sum(nstr[[k]]%in%"G"),sum(nstr[[k]]%in%"T")) #del will always be 0. Could have set it to NA, but then it makes problem further  down in the chain of functions...			
 		}
 
 		
@@ -1289,7 +1289,7 @@ getDefaultMapBiasExpMean <- function(alleleCountList){
 		}
 	)
 
-	MapBiasExpMean <- matrix(unlist(l),byrow=TRUE,nrow=length(alleleCountList),ncol=5,dimnames=list(c(names(alleleCountList)),colnames(alleleCountList[[1]]))) # alleleCountList[[1]] assumes that in each list the colnames are the same.
+	MapBiasExpMean <- matrix(unlist(l),byrow=TRUE,nrow=length(alleleCountList),ncol=4,dimnames=list(c(names(alleleCountList)),colnames(alleleCountList[[1]]))) # alleleCountList[[1]] assumes that in each list the colnames are the same.
 	MapBiasExpMean
 }
 
@@ -1297,7 +1297,7 @@ getDefaultMapBiasExpMean3D <- function(alleleCountList){
 
 	MapBiasExpMean <- getDefaultMapBiasExpMean(alleleCountList)
 	#make 3D array	
-	MapBiasExpMean3D <- array(NA,c(length(alleleCountList),length(unlist(unique(lapply(alleleCountList,rownames)))),5)) #empty array
+	MapBiasExpMean3D <- array(NA,c(length(alleleCountList),length(unlist(unique(lapply(alleleCountList,rownames)))),4)) #empty array
 	for(i in 1:length(unlist(unique(lapply(alleleCountList,rownames))))) {
 		MapBiasExpMean3D[,i,] <- MapBiasExpMean
 	}
@@ -1458,4 +1458,78 @@ getAlleleCount <- function()
     ## use new function, or remainder of myOldFunc
 }
 
+barplot.lattice.fraction <- function(identifier,afraction,arank, ... ){
+#afraction 
+#arank
+
+	a.r <- arank[[identifier]][1:2]	
+	a.f <- afraction[,identifier]
+	a.f2 <- 1-a.f
+	values <- vector()
+	for (i in 1:length(a.f)){values <- c(values,a.f[i],a.f2[i])}
+	allele <- rep(a.r,length(a.f))
+
+	#sample <- names(a.f)
+	sample <- vector()
+	for (i in 1:length(a.f)){sample <- c(sample,names(a.f)[i],names(a.f)[i])}
+	df <- data.frame(values=values,sample=sample,allele=allele)
+
+	TFna <- is.na(df$values)
+	df$values[TFna] <- 0 # 0.5 + 0.5 -> 1
+	na <-rep("no",length(values)) 
+	na[TFna] <- "yes"
+	df <- cbind(df,na)
+
+	my_cols <- c("green", "red")
+
+	#replace empty counts allele types as "low count"
+	#allele[TFna] <- "low count"
+
+	b <- barchart(values~sample,
+	 #horiz=FALSE,
+ 	 group=allele,
+	 data=df,
+	 col = my_cols,
+       	 origin=0,
+	 #auto.key=list(points = FALSE, rectangles = TRUE,space="top",size=2,cex=0.8),
+	 stack=TRUE,
+	 scales = list(rot=c(90,0)),
+	 #box.ratio=2,
+	 #abbreviate=TRUE
+	)
+	b
+
+}
+###
+#Counts
+###
+
+
+barplot.lattice.counts <- function(identifier, arank, acounts, ...){
+	
+
+	a.r <- arank[[identifier]][1:2]	
+	a.c <- acounts[[identifier]][,a.r,drop=FALSE]
+
+	values <- as.vector(a.c)
+	allele <- rep(colnames(a.c),nrow(a.c))
+
+	sample <- vector()
+	for (i in 1:nrow(a.c)){sample <- c(sample,rownames(a.c)[i],rownames(a.c)[i])}
+	df <- data.frame(values=values,sample=sample,allele=allele)
+	
+	b <- barchart(values~sample,
+	 horiz=FALSE,
+	 origin=0,
+	 group=allele,
+	 data=df,
+	 auto.key=list(points = FALSE, rectangles = TRUE,space="top",size=2,cex=0.8),
+	 stack=FALSE,
+	 scales = list(rot=c(90,0)),
+	 box.ratio=2,
+	 abbreviate=TRUE
+	)
+	b
+
+}
 

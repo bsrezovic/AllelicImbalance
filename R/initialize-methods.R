@@ -97,7 +97,7 @@ ASEsetFromCountList <- function(rowData, countListNonStranded=NULL, countListPlu
 
 	#plus
 	if(!is.null(countListPlus)){
-		ar1 <- array(NA,c(snps,ind,5)) #empty array that handles only four nucleotides + one del columns
+		ar1 <- array(NA,c(snps,ind,4)) #empty array that handles only four nucleotides + one del columns
 		for(i in 1:snps){
 			ar1[i,,] <- countListPlus[[i]]
 		}
@@ -105,7 +105,7 @@ ASEsetFromCountList <- function(rowData, countListNonStranded=NULL, countListPlu
 	}
 	#minus
 	if(!is.null(countListMinus)){
-		ar2 <- array(NA,c(snps,ind,5)) #empty array that handles only four nucleotides + one del columns
+		ar2 <- array(NA,c(snps,ind,4)) #empty array that handles only four nucleotides + one del columns
 		for(i in 1:snps){
 			ar2[i,,] <- countListMinus[[i]]
 		}
@@ -114,7 +114,7 @@ ASEsetFromCountList <- function(rowData, countListNonStranded=NULL, countListPlu
 	}
 	#unknown
 	if(!is.null(countListUnknown)){
-		ar3 <- array(NA,c(snps,ind,5)) #empty array that handles only four nucleotides + one del columns
+		ar3 <- array(NA,c(snps,ind,4)) #empty array that handles only four nucleotides + one del columns
 		for(i in 1:snps){
 			ar3[i,,] <- countListUnknown[[i]]
 		}
@@ -123,7 +123,7 @@ ASEsetFromCountList <- function(rowData, countListNonStranded=NULL, countListPlu
 	}
 	#nonStranded
 	if(!is.null(countListNonStranded)){
-		ar4 <- array(NA,c(snps,ind,5)) #empty array that handles only four nucleotides + one del columns
+		ar4 <- array(NA,c(snps,ind,4)) #empty array that handles only four nucleotides + one del columns
 		for(i in 1:snps){
 			ar4[i,,] <- countListNonStranded[[i]]
 		}
