@@ -128,7 +128,7 @@ impBamGAL <- function(UserDir,searchArea,XStag=FALSE,verbose=TRUE){
 	}
 	
 	#Loop through, open scanBam, store in GRList and then close each object in the BamFileList object.
-	BamGAL<-GAlignmentsList()
+	BamGAL<- list()
 	i <- 1
 	for(bamName in names(bamFilesList)) {
 		#Description
@@ -144,6 +144,8 @@ impBamGAL <- function(UserDir,searchArea,XStag=FALSE,verbose=TRUE){
 		close(bf)
 		i <- i +1
 	}
+	BamGAL <- GAlignmentsList(BamGAL)
+
 	return(BamGAL)
 }
 
