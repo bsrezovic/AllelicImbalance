@@ -29,7 +29,7 @@ setMethod("ASEDAnnotationTrack",
 				newpage = FALSE,
 				prefix = "plot")
 
-			}else if(type == "counts"){
+			}else if(type == "count"){
 				print(barplot.lattice.counts(identifier, arank, acounts, ...), 
 				newpage = FALSE,
 				prefix = "plot")

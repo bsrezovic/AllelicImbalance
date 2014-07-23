@@ -11,7 +11,7 @@ setGeneric("CoverageDataTrack", function(x, BamList=NULL, strand=NULL, start=NUL
 #visuals
 setGeneric("barplot")
 setGeneric("lbarplot", function(x,
-		type="counts",
+		type="count",
 		strand="nonStranded",
 		...)
 		{standardGeneric("lbarplot")})

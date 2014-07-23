@@ -895,7 +895,7 @@ setMethod("barplot",signature(height = "ASEset"),
 setMethod("lbarplot",signature(x = "ASEset"),
 		
 		function(x,
-				type="counts",
+				type="count",
 				strand="nonStranded",
 				...
 		)
@@ -922,9 +922,9 @@ setMethod("lbarplot",signature(x = "ASEset"),
 			if(type == "fraction"){
 				b <- barplot.lattice.fraction(identifier=name,afraction, arank, ... ) 
 
-			}else if(type == "counts"){
+			}else if(type == "count"){
 				b <- barplot.lattice.counts(identifier=name, arank, acounts, ...) 
-			}else{stop("type has to be fraction or counts")}
+			}else{stop("type has to be fraction or count")}
 		}
 		b
 })
