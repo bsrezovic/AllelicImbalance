@@ -152,6 +152,7 @@ exportMethods(
 
  #plots
  barplot,
+ lbarplot,
  locationplot,
  glocationplot
 )

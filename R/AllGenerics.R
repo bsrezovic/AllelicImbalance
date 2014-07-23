@@ -10,6 +10,12 @@ setGeneric("CoverageDataTrack", function(x, BamList=NULL, strand=NULL, start=NUL
 
 #visuals
 setGeneric("barplot")
+setGeneric("lbarplot", function(x,
+		type="counts",
+		strand="nonStranded",
+		...)
+		{standardGeneric("lbarplot")})
+
 setGeneric("glocationplot", function(x,
 		type="fraction",
 		strand="nonStranded")

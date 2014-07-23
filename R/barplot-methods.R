@@ -887,3 +887,44 @@ setMethod("barplot",signature(height = "ASEset"),
 
 
 
+
+#######################
+#lattice barplots
+######################
+
+setMethod("lbarplot",signature(x = "ASEset"),
+		
+		function(x,
+				type="counts",
+				strand="nonStranded",
+				...
+		)
+		{
+
+		ASEset <- x
+		ranges <- rowData(ASEset)
+		#strand <- "+"
+		if(strand=="nonStranded"){
+			strand(ranges) <- "*" 
+		}else{
+			strand(ranges) <- strand 
+		}
+		
+		colnames(ASEset)<- 1:ncol(ASEset)
+
+		acounts <-  alleleCounts(ASEset,strand=strand)
+		arank <-  arank(ASEset,strand=strand)
+		afraction <- fraction(ASEset, strand=strand)
+
+		for(name in rownames(ASEset)) {
+
+
+			if(type == "fraction"){
+				b <- barplot.lattice.fraction(identifier=name,afraction, arank, ... ) 
+
+			}else if(type == "counts"){
+				b <- barplot.lattice.counts(identifier=name, arank, acounts, ...) 
+			}else{stop("type has to be fraction or counts")}
+		}
+		b
+})
