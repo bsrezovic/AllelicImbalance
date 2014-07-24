@@ -168,8 +168,6 @@ setMethod("locationplot", signature(x = "ASEset"),
 			#calculate on-plot position and barplot size (for evenly spaced barplots)
 			sizeHere <- c((xlim[2] - xlim[1]) / nrow(x), 1)	
 			lowerLeftCorner <- c(xlim[1] + (i-1)*sizeHere[1],0)
-			
-			#give some space in between graphs
 			sizeHere <- sizeHere*size
 
 			#do bar plots
@@ -218,17 +216,47 @@ setMethod("locationplot", signature(x = "ASEset"),
 setMethod("glocationplot", signature(x = "ASEset"), 
 	function(x,
 		type="fraction",
-		strand="nonStranded"
+		strand="nonStranded",
+		BamGAL=NULL
 	){
+		#change to "*"
+		#if(strand=="nonStranded"){strand <- "*"} not possile as long as nonStranded is an option
+
+		#check genome
+		if(is.null(genome(x)) | is.na(genome(x))){
+			stop(paste("genome have be set for object x", "e.g. genome(x) <- \"hg19\" "))	
+		}
+
+		#check seqnames has length=0
+		if(!(length(seqlevels(x))==1)){stop("This function can only use objects with one seqlevel")}
+
+
+		if(!nrow(x)==1){
+			if(strand=="nonStranded"){
+				GR <- GRanges(seqnames=seqlevels(x),ranges=IRanges(start=min(start(x)),end=max(end(x))),strand="*", genome=genome(x))
+			}else{
+				GR <- GRanges(seqnames=seqlevels(x),ranges=IRanges(start=min(start(x)),end=max(end(x))),strand=strand, genome=genome(x))
+			}
+		}
+
+		seqlevels(BamGAL) <- seqlevels(x)
+		start <- min(start(x))
+		end <- max(end(x))
 
 		#make deTrack the fraction
-		deTrack <- ASEDAnnotationTrack(x,type,strand)
-		#plot
-		plotTracks(deTrack)
+		deTrack <- ASEDAnnotationTrack(x, GR=GR, type,strand)
+		covTracks <- CoverageDataTrack(x,BamList=BamList,strand="+") 
 
+		lst <- c(deTrack,covTracks)
+		parts <- 0.5/length(covTracks)
+		sizes <- c(0.5,rep(parts,length(covTracks)))
+
+		if(!is.null(BamGAL)){
+			plotTracks(lst, from=start, to=end,sizes=sizes, col.line = NULL, showId = FALSE, main="mainText", cex.main=1, title.width=1, type="histogram")
+		}else{
+			#plot
+			plotTracks(deTrack)
+		}
 	}
 )
-
-
-
 
