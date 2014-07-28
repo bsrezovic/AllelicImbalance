@@ -975,7 +975,7 @@ getGenesVector <- function(OrgDb, GR, leftFlank=0, rightFlank=0, verbose=FALSE){
 getExonsFromAnnotation <- function(TxDb, GR,leftFlank=0,rightFlank=0,verbose=FALSE) {
 	
 	#checks
-	if(class(TxDb)!="TranscriptDb")stop(paste("GR must of class TranscriptDb, not",class(TxDb)))
+	if(class(TxDb)!="TxDb")stop(paste("GR must of class TxDb, not",class(TxDb)))
 	
 	if(class(GR)!="GRanges")stop(paste("GR must of class GRanges, not",class(GR)))
 		
@@ -1066,7 +1066,7 @@ getExonsVector <- function(TxDb, GR,leftFlank=0,rightFlank=0,verbose=FALSE){
 getTranscriptsFromAnnotation <- function(TxDb, GR,leftFlank=0,rightFlank=0,verbose=FALSE) {
 	
 	#checks
-	if(class(TxDb)!="TranscriptDb")stop(paste("GR must of class TranscriptDb, not",class(TxDb)))
+	if(class(TxDb)!="TxDb")stop(paste("GR must of class TxDb, not",class(TxDb)))
 	
 	if(class(GR)!="GRanges")stop(paste("GR must of class GRanges, not",class(GR)))
 	
@@ -1149,7 +1149,7 @@ getCDSFromAnnotation <- function(TxDb, GR,leftFlank=0,rightFlank=0,verbose=FALSE
 	#CDS are the coding regions that do not only code for proteins, but other also other types like RNA.
 
 	#checks
-	if(class(TxDb)!="TranscriptDb")stop(paste("GR must of class TranscriptDb, not",class(TxDb)))
+	if(class(TxDb)!="TxDb")stop(paste("GR must of class TxDb, not",class(TxDb)))
 	
 	if(class(GR)!="GRanges")stop(paste("GR must of class GRanges, not",class(GR)))
 	

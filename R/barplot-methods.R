@@ -158,7 +158,7 @@ setMethod("barplot",signature(height = "ASEset"),
 			
 			#check OrgDb
 			if(!is.null(OrgDb)){if(!class(OrgDb)=="OrgDb"){stop("class of OrgDb has to be an OrgDb class")}}
-			if(!is.null(TxDb)){if(!class(TxDb)=="TranscriptDb"){stop("class of TxDb has to be a TranscriptDb class")}}
+			if(!is.null(TxDb)){if(!class(TxDb)=="TxDb"){stop("class of TxDb has to be a TxDb class")}}
 			
 			#check annotationType
 			okAnnotationTypes <- c("gene","exon","cds","transcript")

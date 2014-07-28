@@ -47,7 +47,7 @@
 	\item{cex.ylab}{set ylab label size}
 	\item{cex.legend}{set legend label size}
 	\item{OrgDb}{an OrgDb object from which to plot a gene map. If given together with argument TxDb this will only be used to extract genesymbols.}
-	\item{TxDb}{a TranscriptDb object from which to plot an exon map.}
+	\item{TxDb}{a TxDb object from which to plot an exon map.}
 	\item{verbose}{Setting \code{verbose=TRUE} gives details of procedure during function run}
 	\item{...}{arguments passed on to barplot function}
 }	

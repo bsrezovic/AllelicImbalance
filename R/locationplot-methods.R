@@ -58,7 +58,7 @@ setMethod("locationplot", signature(x = "ASEset"),
 		
 		#check if annotation is present, and if it is, then check if it is the right class.
 		if(!is.null(OrgDb)){if(!class(OrgDb)%in%c("OrgDb"))stop(paste("if given, annotation should be of class OrgDb, not",class(OrgDb)))}
-		if(!is.null(TxDb)){if(!class(TxDb)%in%c("TranscriptDb"))stop(paste("if given, annotation should be of class TranscriptDb, not",class(TxDb)))}
+		if(!is.null(TxDb)){if(!class(TxDb)%in%c("TxDb"))stop(paste("if given, annotation should be of class TxDb, not",class(TxDb)))}
 		
 		#check verbose argument is a logical with length 1
 		if(class(verbose) != "logical")stop(paste("verbose should be of class logical, not",class(verbose)))
@@ -128,7 +128,7 @@ setMethod("locationplot", signature(x = "ASEset"),
 
 		#check OrgDb
 		if(!is.null(OrgDb)){if(!class(OrgDb)=="OrgDb"){stop("class of OrgDb has to be an OrgDb class")}}
-		if(!is.null(TxDb)){if(!class(TxDb)=="TranscriptDb"){stop("class of TxDb has to be a TranscriptDb class")}}
+		if(!is.null(TxDb)){if(!class(TxDb)=="TxDb"){stop("class of TxDb has to be a TxDb class")}}
 			
 
 

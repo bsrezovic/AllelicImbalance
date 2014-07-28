@@ -62,7 +62,7 @@ importClassesFrom(GenomicRanges,GRangesList)
 importClassesFrom(GenomicRanges,GRanges)
 
 ##annotation stuff
-importClassesFrom(GenomicFeatures, TranscriptDb)
+importClassesFrom(GenomicFeatures, TxDb)
 importClassesFrom(AnnotationDbi, AnnotationDb)
 importClassesFrom(AnnotationDbi, OrgDb)
 importClassesFrom(AnnotationDbi, ChipDb)

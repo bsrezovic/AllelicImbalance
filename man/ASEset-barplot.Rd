@@ -55,7 +55,7 @@
 	\item{testValue}{if set, a matrix or vector with user p-values}
 	\item{testValue2}{if set, a matrix or vector with user p-values}
 	\item{OrgDb}{an OrgDb object which provides annotation}
-	\item{TxDb}{a TranscriptDb object which provides annotation}
+	\item{TxDb}{a TxDb object which provides annotation}
 	\item{annotationType}{select one or more from "gene","exon","transcript","cds". }
 	\item{main}{text to use as main label}
 	\item{ylim}{set plot y-axis limit}
