@@ -217,7 +217,8 @@ setMethod("glocationplot", signature(x = "ASEset"),
 	function(x,
 		type="fraction",
 		strand="nonStranded",
-		BamGAL=NULL
+		BamGAL=NULL,
+		...
 	){
 		#change to "*"
 		#if(strand=="nonStranded"){strand <- "*"} not possile as long as nonStranded is an option
@@ -230,26 +231,30 @@ setMethod("glocationplot", signature(x = "ASEset"),
 		#check seqnames has length=0
 		if(!(length(seqlevels(x))==1)){stop("This function can only use objects with one seqlevel")}
 
-
-		if(!nrow(x)==1){
-			if(strand=="nonStranded"){
-				GR <- GRanges(seqnames=seqlevels(x),ranges=IRanges(start=min(start(x)),end=max(end(x))),strand="*", genome=genome(x))
-			}else{
-				GR <- GRanges(seqnames=seqlevels(x),ranges=IRanges(start=min(start(x)),end=max(end(x))),strand=strand, genome=genome(x))
-			}
+		if(sum(strand=="+"| strand=="-")==0){
+			stop("strand must be plus or minus at the moment")
 		}
-
-		seqlevels(BamGAL) <- seqlevels(x)
-		start <- min(start(x))
-		end <- max(end(x))
+		if(!nrow(x)==1){
+			
+			GR <- GRanges(seqnames=seqlevels(x),ranges=IRanges(start=min(start(x)),end=max(end(x))),strand=strand, genome=genome(x))
+		
+		}
 
 		#make deTrack the fraction
 		deTrack <- ASEDAnnotationTrack(x, GR=GR, type,strand)
-		covTracks <- CoverageDataTrack(x,BamList=BamList,strand="+") 
 
-		lst <- c(deTrack,covTracks)
-		parts <- 0.5/length(covTracks)
-		sizes <- c(0.5,rep(parts,length(covTracks)))
+		if(!is.null(BamGAL)){
+			seqlevels(BamGAL) <- seqlevels(x)
+			start <- min(start(x))
+			end <- max(end(x))
+		
+			covTracks <- CoverageDataTrack(x,BamList=BamGAL,strand="+") 
+				
+			lst <- c(deTrack,covTracks)
+			parts <- 0.5/length(covTracks)
+			sizes <- c(0.5,rep(parts,length(covTracks)))
+		}else{lst <- c(deTrack)}
+
 
 		if(!is.null(BamGAL)){
 			plotTracks(lst, from=start, to=end,sizes=sizes, col.line = NULL, showId = FALSE, main="mainText", cex.main=1, title.width=1, type="histogram")

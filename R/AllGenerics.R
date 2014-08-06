@@ -19,7 +19,8 @@ setGeneric("lbarplot", function(x,
 setGeneric("glocationplot", function(x,
 		type="fraction",
 		strand="nonStranded",
-		BamGAL=NULL)
+		BamGAL=NULL,
+	   	...)
 		{standardGeneric("glocationplot")})
 				     	
 setGeneric("locationplot", function(x,

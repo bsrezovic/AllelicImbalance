@@ -18,12 +18,13 @@ setMethod("ASEDAnnotationTrack",
 		#check seqnames has length=0
 		if(!(length(seqlevels(x))==1)){stop("This function can only use objects with one seqlevel")}
 
+		if(sum(strand=="+"| strand=="-")==0){
+			stop("strand must be plus or minus at the moment")
+		}
 		if(!nrow(x)==1){
-			if(strand=="nonStranded"){
-				GR <- GRanges(seqnames=seqlevels(x),ranges=IRanges(start=min(start(x)),end=max(end(x))),strand="*", genome=genome(x))
-			}else{
-				GR <- GRanges(seqnames=seqlevels(x),ranges=IRanges(start=min(start(x)),end=max(end(x))),strand=strand, genome=genome(x))
-			}
+			
+			GR <- GRanges(seqnames=seqlevels(x),ranges=IRanges(start=min(start(x)),end=max(end(x))),strand=strand, genome=genome(x))
+		
 		}
 		
 		ranges <- rowData(x)
