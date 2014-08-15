@@ -5,7 +5,7 @@ setGeneric("fraction", function(x, strand="nonStranded", verbose=FALSE) {standar
 setGeneric("arank", function(x, ret="names", strand="nonStranded", ... ) {standardGeneric("arank")})
 
 #gviz track
-setGeneric("ASEDAnnotationTrack", function(x, GR=rowData(x), type="fraction", strand="nonStranded",   ... ) {standardGeneric("ASEDAnnotationTrack")})
+setGeneric("ASEDAnnotationTrack", function(x, GR=rowData(x), type="fraction", strand="nonStranded",mainVec=vector(),   ... ) {standardGeneric("ASEDAnnotationTrack")})
 setGeneric("CoverageDataTrack", function(x, GR=rowData(x), BamList=NULL, strand=NULL, start=NULL, end=NULL, verbose=TRUE, ... ) {standardGeneric("CoverageDataTrack")})
 
 #visuals
@@ -13,6 +13,7 @@ setGeneric("barplot")
 setGeneric("lbarplot", function(x,
 		type="count",
 		strand="nonStranded",
+		mainVec=vector(),
 		...)
 		{standardGeneric("lbarplot")})
 
@@ -20,6 +21,8 @@ setGeneric("glocationplot", function(x,
 		type="fraction",
 		strand="nonStranded",
 		BamGAL=NULL,
+		GenomeAxisTrack=FALSE,
+		verbose=FALSE,
 	   	...)
 		{standardGeneric("glocationplot")})
 				     	

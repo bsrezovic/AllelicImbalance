@@ -218,6 +218,8 @@ setMethod("glocationplot", signature(x = "ASEset"),
 		type="fraction",
 		strand="nonStranded",
 		BamGAL=NULL,
+		GenomeAxisTrack=FALSE,
+		verbose=FALSE,
 		...
 	){
 		#change to "*"
@@ -241,9 +243,12 @@ setMethod("glocationplot", signature(x = "ASEset"),
 		}
 
 		#make deTrack the fraction
+		if(verbose)(cat("preparing detailedAnnotationTrack\n"))
 		deTrack <- ASEDAnnotationTrack(x, GR=GR, type,strand)
+		lst <- list(deTrack)
 
 		if(!is.null(BamGAL)){
+			if(verbose)(cat("preparing coverageDataTrack\n"))
 			seqlevels(BamGAL) <- seqlevels(x)
 			start <- min(start(x))
 			end <- max(end(x))
@@ -255,13 +260,20 @@ setMethod("glocationplot", signature(x = "ASEset"),
 			sizes <- c(0.5,rep(parts,length(covTracks)))
 		}else{lst <- c(deTrack)}
 
+		if(GenomeAxisTrack){
+			if(verbose)(cat("preparing GenomeAxisTrack\n"))
+			axTrack <- GenomeAxisTrack()
+			lst[[length(lst)+1]] <- axTrack
+		}
 
 		if(!is.null(BamGAL)){
 			plotTracks(lst, from=start, to=end,sizes=sizes, col.line = NULL, showId = FALSE, main="mainText", cex.main=1, title.width=1, type="histogram")
 		}else{
 			#plot
-			plotTracks(deTrack)
+			plotTracks(lst)
 		}
 	}
 )
+
+
 

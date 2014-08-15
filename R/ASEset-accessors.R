@@ -113,7 +113,12 @@ setMethod("fraction",
 			fraction <- tmp[,majorAllele] / (tmp[,majorAllele] + tmp[,minorAllele])
 			#fraction[is.nan(fraction)]<-1
 			fractionList[[i]] <- fraction
+	
+			if(i%%300==0){
+				cat(paste("processed ",i," snps\n",sep=""))
+			}
 		}
+
 		names(fractionList) <- rownames(x)	
 		
 		#return object

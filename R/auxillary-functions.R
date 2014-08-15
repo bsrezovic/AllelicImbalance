@@ -1460,9 +1460,10 @@ getAlleleCount <- function()
     ## use new function, or remainder of myOldFunc
 }
 
-barplot.lattice.fraction <- function(identifier,afraction,arank, ... ){
+barplot.lattice.fraction <- function(identifier,afraction,arank, mainVec, ... ){
 #afraction 
 #arank
+
 
 	a.r <- arank[[identifier]][1:2]	
 	a.f <- afraction[,identifier]
@@ -1482,6 +1483,8 @@ barplot.lattice.fraction <- function(identifier,afraction,arank, ... ){
 	na[TFna] <- "yes"
 	df <- cbind(df,na)
 
+	df$sample <- factor(df$sample,levels=rownames(df))
+
 	my_cols <- c("green", "red")
 
 	#replace empty counts allele types as "low count"
@@ -1496,6 +1499,7 @@ barplot.lattice.fraction <- function(identifier,afraction,arank, ... ){
 	 #auto.key=list(points = FALSE, rectangles = TRUE,space="top",size=2,cex=0.8),
 	 stack=TRUE,
 	 scales = list(rot=c(90,0)),
+	 main=mainVec
 	 #box.ratio=2,
 	 #abbreviate=TRUE
 	)
@@ -1507,19 +1511,23 @@ barplot.lattice.fraction <- function(identifier,afraction,arank, ... ){
 ###
 
 
-barplot.lattice.counts <- function(identifier, arank, acounts, ...){
+barplot.lattice.counts <- function(identifier, arank, acounts, mainVec, ...){
 	
 
 	a.r <- arank[[identifier]][1:2]	
 	a.c <- acounts[[identifier]][,a.r,drop=FALSE]
 
-	values <- as.vector(a.c)
+	values <- as.vector(t(a.c))
 	allele <- rep(colnames(a.c),nrow(a.c))
 
 	sample <- vector()
 	for (i in 1:nrow(a.c)){sample <- c(sample,rownames(a.c)[i],rownames(a.c)[i])}
 	df <- data.frame(values=values,sample=sample,allele=allele)
-	
+
+	#to get right order in barchart
+	df$sample <- factor(df$sample,levels=rownames(df))
+	#df$values[is.na(df$values)] <- 0 #doesnt work
+
 	b <- barchart(values~sample,
 	 horiz=FALSE,
 	 origin=0,
@@ -1529,7 +1537,8 @@ barplot.lattice.counts <- function(identifier, arank, acounts, ...){
 	 stack=FALSE,
 	 scales = list(rot=c(90,0)),
 	 box.ratio=2,
-	 abbreviate=TRUE
+	 abbreviate=TRUE,
+	 main=mainVec
 	)
 	b
 }

@@ -4,6 +4,7 @@ setMethod("ASEDAnnotationTrack",
 		GR=rowData(x),
 		type="fraction",
 		strand="nonStranded",
+		mainVec=vector(),
 		...
 	){
 
@@ -37,14 +38,15 @@ setMethod("ASEDAnnotationTrack",
 		arank <- get("arank",envir=AllelicImbalance.extra)
 		afraction <- get("afraction",envir=AllelicImbalance.extra)
 		acounts <- get("acounts",envir=AllelicImbalance.extra)
+		amainVec <- get("mainVec",envir=AllelicImbalance.extra)
 
 			if(type == "fraction"){
-				print(barplot.lattice.fraction(identifier,afraction, arank, ... ), 
+				print(barplot.lattice.fraction(identifier,afraction, arank,mainVec, ... ), 
 				newpage = FALSE,
 				prefix = "plot")
 
 			}else if(type == "count"){
-				print(barplot.lattice.counts(identifier, arank, acounts, ...), 
+				print(barplot.lattice.counts(identifier, arank, acounts, mainVec, ...), 
 				newpage = FALSE,
 				prefix = "plot")
 			}
@@ -59,6 +61,7 @@ setMethod("ASEDAnnotationTrack",
 		assign("arank", arank(x,strand=strand), envir = AllelicImbalance.extra)
 		assign("afraction", fraction(x, strand=strand), envir = AllelicImbalance.extra)
 		assign("type", type , envir = AllelicImbalance.extra)
+		assign("mainVec", mainVec , envir = AllelicImbalance.extra)
 
 		#plot the fraction
 		deTrack <- AnnotationTrack(range = ranges, genome = genome(x),
