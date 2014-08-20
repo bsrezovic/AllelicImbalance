@@ -28,6 +28,7 @@ setGeneric("CoverageDataTrack",
 		   {standardGeneric("CoverageDataTrack")})
 
 #visuals
+setGeneric("plotTracks")
 setGeneric("barplot")
 setGeneric("lbarplot", 
 	   function(x,

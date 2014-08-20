@@ -1,8 +1,8 @@
 import(methods)
 import(BiocGenerics)
 import(S4Vectors)
-import(Gviz)
-import(lattice)
+import(grid)
+import(GenomeInfoDb)
 
 
 importFrom(IRanges, IRanges)
@@ -11,12 +11,10 @@ importFrom(IRanges, subsetByOverlaps)
 importFrom(IRanges, coverage)
 importFrom(IRanges, "%over%")
 importFrom(IRanges, "%within%")
-#importFrom(IRanges, subseq)
 importFrom(IRanges, unlist)
 importFrom(IRanges, which)
 importFrom(IRanges, resize)
 
-import(GenomeInfoDb)
 
 importFrom(GenomicRanges, GRanges)
 importFrom(GenomicRanges, granges)
@@ -59,10 +57,21 @@ importFrom(GenomicAlignments, readGAlignmentPairsFromBam)
 importFrom(GenomicAlignments, readGAlignments)
 importFrom(GenomicAlignments, readGAlignmentPairs)
 
+#lattice
+importFrom(lattice, barchart)
+
+#Gviz
+importFrom(Gviz, DetailsAnnotationTrack)
+importFrom(Gviz, AnnotationTrack)
+importFrom(Gviz, DataTrack)
+importFrom(Gviz, plotTracks)
 
 #import classes
-importClassesFrom(GenomicRanges,GRangesList)
-importClassesFrom(GenomicRanges,GRanges)
+importClassesFrom(GenomicRanges, GRangesList)
+importClassesFrom(GenomicRanges, GRanges)
+importClassesFrom(Gviz, DataTrack)
+importClassesFrom(Gviz, AnnotationTrack)
+importClassesFrom(Gviz, DetailsAnnotationTrack)
 
 ##annotation stuff
 importClassesFrom(GenomicFeatures, TxDb)
@@ -97,6 +106,10 @@ importFrom(graphics, barplot)
 ##beneath all functions, classes and methods exported
 
 exportClasses(ASEset)
+
+#to use the plotTracks with the 
+#AllelicImbalance custom tracks
+export(plotTracks)
 
 
 export(

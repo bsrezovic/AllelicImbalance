@@ -11,9 +11,10 @@ License: GPL-3
 URL: https://github.com/pappewaio/AllelicImbalance
 Suggests: RUnit, org.Hs.eg.db,
         TxDb.Hsapiens.UCSC.hg19.knownGene,SNPlocs.Hsapiens.dbSNP.20120608
-Depends: R (>= 3.1.0), BiocGenerics, S4Vectors, IRanges, GenomeInfoDb,
-        GenomicRanges, GenomicAlignments, Gviz, lattice
-Imports: methods, AnnotationDbi, Biostrings, Rsamtools, GenomicFeatures
+Depends: R (>= 3.1.0), BiocGenerics, S4Vectors, IRanges, 
+        GenomicRanges, GenomicAlignments, grid, GenomeInfoDb
+Imports: methods, AnnotationDbi, Biostrings, Rsamtools, GenomicFeatures,
+	Gviz, lattice
 LazyData: TRUE
 Collate: AllClasses.R AllGenerics.R initialize-methods.R
         ASEset-accessors.R auxillary-functions.R chisq.test-methods.R
