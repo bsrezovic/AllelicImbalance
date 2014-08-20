@@ -53,11 +53,11 @@ set.seed(42)
 countListPlus <- list()
 snps <- c("snp1","snp2","snp3","snp4","snp5")
 for(snp in snps){
-	count<-matrix(rep(0,20),ncol=5,dimnames=list(
+	count<-matrix(rep(0,16),ncol=4,dimnames=list(
 		c("sample1","sample2","sample3","sample4"),
-		c("A","T","G","C","del")))
+		c("A","T","G","C")))
 	#insert random counts in two of the alleles 
-	for(allele in sample(c("A","T","G","C","del"),2)){
+	for(allele in sample(c("A","T","G","C"),2)){
 		count[,allele]<-as.integer(rnorm(4,mean=50,sd=10))
 	}
 	countListPlus[[snp]] <- count
@@ -67,11 +67,11 @@ for(snp in snps){
 countListMinus <- list()
 snps <- c("snp1","snp2","snp3","snp4","snp5")
 for(snp in snps){
-	count<-matrix(rep(0,20),ncol=5,dimnames=list(
+	count<-matrix(rep(0,16),ncol=4,dimnames=list(
 		c("sample1","sample2","sample3","sample4"),
-		c("A","T","G","C","del")))
+		c("A","T","G","C")))
 	#insert random counts in two of the alleles 
-	for(allele in sample(c("A","T","G","C","del"),2)){
+	for(allele in sample(c("A","T","G","C"),2)){
 		count[,allele]<-as.integer(rnorm(4,mean=50,sd=10))
 	}
 	countListMinus[[snp]] <- count

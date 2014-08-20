@@ -1,6 +1,9 @@
 import(methods)
 import(BiocGenerics)
 import(S4Vectors)
+import(Gviz)
+import(lattice)
+
 
 importFrom(IRanges, IRanges)
 importFrom(IRanges, ranges)
@@ -127,8 +130,8 @@ export(
  realCigarPositionsList,
  getAreaFromGeneNames,
  getSnpIdFromLocation,
- barplot.lattice.counts,
- barplot.lattice.fraction,
+ barplotLatticeCounts,
+ barplotLatticeFraction,
  coverageMatrixListFromGAL
 ) 
 

@@ -3,8 +3,9 @@ setMethod("ASEDAnnotationTrack",
     function (x,
 		GR=rowData(x),
 		type="fraction",
-		strand="nonStranded",
-		mainVec=vector(),
+		strand="+",
+		mainVec=rep("",nrow(x)),
+		verbose=TRUE,
 		...
 	){
 
@@ -16,16 +17,18 @@ setMethod("ASEDAnnotationTrack",
 			stop(paste("genome have be set for object x", "e.g. genome(x) <- \"hg19\" "))	
 		}
 
-		#check seqnames has length=0
+		#check seqnames has length=1
 		if(!(length(seqlevels(x))==1)){stop("This function can only use objects with one seqlevel")}
 
 		if(sum(strand=="+"| strand=="-")==0){
 			stop("strand must be plus or minus at the moment")
 		}
 		if(!nrow(x)==1){
-			
-			GR <- GRanges(seqnames=seqlevels(x),ranges=IRanges(start=min(start(x)),end=max(end(x))),strand=strand, genome=genome(x))
-		
+			GR <- GRanges(seqnames=seqlevels(x),
+				      ranges=IRanges(start=min(start(x)),end=max(end(x))),
+				      strand=strand,
+				      genome=genome(x)
+				      )
 		}
 		
 		ranges <- rowData(x)
@@ -34,19 +37,20 @@ setMethod("ASEDAnnotationTrack",
 
 		details <- function(identifier, ...) {
 
-		type <- get("type",envir=AllelicImbalance.extra)
-		arank <- get("arank",envir=AllelicImbalance.extra)
-		afraction <- get("afraction",envir=AllelicImbalance.extra)
-		acounts <- get("acounts",envir=AllelicImbalance.extra)
-		amainVec <- get("mainVec",envir=AllelicImbalance.extra)
+
+			type <- get("type",envir=AllelicImbalance.extra)
+			arank <- get("arank",envir=AllelicImbalance.extra)
+			afraction <- get("afraction",envir=AllelicImbalance.extra)
+			acounts <- get("acounts",envir=AllelicImbalance.extra)
+			amainVec <- get("amainVec",envir=AllelicImbalance.extra)
 
 			if(type == "fraction"){
-				print(barplot.lattice.fraction(identifier,afraction, arank,mainVec, ... ), 
+				print(barplotLatticeFraction(identifier,afraction, arank,amainVec, ... ), 
 				newpage = FALSE,
 				prefix = "plot")
 
 			}else if(type == "count"){
-				print(barplot.lattice.counts(identifier, arank, acounts, mainVec, ...), 
+				print(barplotLatticeCounts(identifier, acounts, arank, amainVec, ...), 
 				newpage = FALSE,
 				prefix = "plot")
 			}
@@ -56,12 +60,13 @@ setMethod("ASEDAnnotationTrack",
 		#pick out plot data from ASEset
 		#strand="+"
 		AllelicImbalance.extra <- new.env(parent = emptyenv())
+		amainVec <- mainVec
 
 		assign("acounts", alleleCounts(x,strand=strand), envir = AllelicImbalance.extra)
 		assign("arank", arank(x,strand=strand), envir = AllelicImbalance.extra)
 		assign("afraction", fraction(x, strand=strand), envir = AllelicImbalance.extra)
 		assign("type", type , envir = AllelicImbalance.extra)
-		assign("mainVec", mainVec , envir = AllelicImbalance.extra)
+		assign("amainVec", amainVec , envir = AllelicImbalance.extra)
 
 		#plot the fraction
 		deTrack <- AnnotationTrack(range = ranges, genome = genome(x),
@@ -105,27 +110,19 @@ setMethod("CoverageDataTrack",
 
 		GR <- GRanges(seqnames=seqlevels(x),ranges=IRanges(start=min(start(x)),end=max(end(x))),strand=strand)
 
-
 #	start <- start(GR)
 #	end <- end(GR)
 #	chr <- seqnames(GR)	
-
-
 
 	if(is.null(BamList)){
 		stop("must include GappedAlignmentsList as BamList ")
 	}else{
 		#check that only one chromosome is present
 		if(!length(seqlevels(BamList))==1){stop("can only be one seq level\n")}
-
 		covMatList <- coverageMatrixListFromGAL(BamList,strand)
 	}
-
+	
 		trackList <- list() 
-
-		#set matP or matM to only mat
-		#if(strand=="+"){mat <- covMatList[["matP"]]}
-		#if(strand=="-"){mat <- covMatList[["matM"]]}
 
 		mat <- covMatList[["mat"]]
 		start <- covMatList[["start"]]
@@ -148,7 +145,3 @@ setMethod("CoverageDataTrack",
 		trackList
 	}
     )
-
-
-
-

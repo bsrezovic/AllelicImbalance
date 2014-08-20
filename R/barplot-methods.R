@@ -891,19 +891,21 @@ setMethod("barplot",signature(height = "ASEset"),
 #######################
 #lattice barplots
 ######################
-
 setMethod("lbarplot",signature(x = "ASEset"),
-		
 		function(x,
-				type="count",
-				strand="nonStranded",
-				mainVec=vector(),
-				...
+			type="count",
+			strand="+",
+			mainVec=rep("",nrow(x)),
+			verbose=FALSE,
+			...
 		)
 		{
 
-		ASEset <- x
-		ranges <- rowData(ASEset)
+#type="count"
+#strand="+"
+#mainVec=rep("",nrow(x))
+		a <- x
+		ranges <- rowData(a)
 		#strand <- "+"
 		if(strand=="nonStranded"){
 			strand(ranges) <- "*" 
@@ -911,23 +913,21 @@ setMethod("lbarplot",signature(x = "ASEset"),
 			strand(ranges) <- strand 
 		}
 		
-		colnames(ASEset)<- 1:ncol(ASEset)
+		colnames(a)<- 1:ncol(a)
 
-		acounts <-  alleleCounts(ASEset,strand=strand)
-		arank <-  arank(ASEset,strand=strand)
-		afraction <- fraction(ASEset, strand=strand)
+		acounts <-  alleleCounts(a,strand=strand)
+		arank <-  arank(a,strand=strand)
+		afraction <- fraction(a, strand=strand)
+		amainVec <- mainVec
 
-		for(name in rownames(ASEset)) {
-
+		for(name in rownames(a)) {
 			if(type == "fraction"){
-				b <- barplot.lattice.fraction(identifier=name,afraction, arank, mainVec, ... ) 
+				b <- barplotLatticeFraction(identifier=name, afraction, arank, amainVec, ... ) 
 			}else if(type == "count"){
-				b <- barplot.lattice.counts(identifier=name, arank, acounts, mainVec, ...) 
+				b <- barplotLatticeCounts(identifier=name,  acounts, arank, amainVec, ...) 
 			}else{stop("type has to be fraction or count")}
 		}
 		b
 })
-
-
 
 
