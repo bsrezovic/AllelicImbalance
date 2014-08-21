@@ -1473,7 +1473,7 @@ barplotLatticeFraction <- function(identifier,afraction,arank, amainVec, ... ){
 
 	#sample <- names(a.f)
 	sample <- vector()
-	for (i in 1:length(a.f)){sample <- c(sample,names(a.f)[i],names(a.f)[i])}
+	for (i in 1:length(a.f)){sample <- c(sample,rownames(afraction)[i],rownames(afraction)[i])}
 	df <- data.frame(values=values,sample=sample,allele=allele)
 
 	TFna <- is.na(df$values)
@@ -1482,7 +1482,8 @@ barplotLatticeFraction <- function(identifier,afraction,arank, amainVec, ... ){
 	na[TFna] <- "yes"
 	df <- cbind(df,na)
 
-	df$sample <- factor(df$sample,levels=rownames(df))
+	df$sample <- factor(df$sample,levels=unique(df$sample))
+	#df$sample <- factor(df$sample,levels=rownames(df))
 
 	my_cols <- c("green", "red")
 
@@ -1525,7 +1526,7 @@ barplotLatticeCounts <- function(identifier, acounts, arank, amainVec, ...){
 	df <- data.frame(values=values,sample=sample,allele=allele)
 
 	#to get right order in barchart
-	df$sample <- factor(df$sample,levels=rownames(df))
+	df$sample <- factor(df$sample,levels=unique(df$sample))
 	#df$values[is.na(df$values)] <- 0 #doesnt work
 
 	b <- barchart(values~sample,

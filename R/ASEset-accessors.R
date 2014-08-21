@@ -24,6 +24,10 @@ setMethod("alleleCounts",
 
 		for(i in 1:nrow(assays(x)[[el]])){
 			mat <- assays(x)[[el]][i,,]
+			if(class(mat)=="integer"){
+				mat <- t(as.matrix(mat))
+				#rownames(mat) <- colnames(x)
+			}
 			if(class(mat)=="numeric"){
 					mat <- t(mat)
 					colnames(mat) <- x@variants
@@ -52,7 +56,7 @@ setMethod("mapBias",
 		for(i in 1:nrow(x)){
 			mat <- assays(x)[["mapBias"]][i,,]
 			if(class(mat)=="numeric"){
-				dim(mat) <- c(1,5)
+				dim(mat) <- c(1,4)
 				rownames(mat) <- colnames(x)
 			}
 			colnames(mat) <- x@variants
@@ -123,8 +127,12 @@ setMethod("fraction",
 		
 		#return object
 		#fractionList
-		as.matrix(as.data.frame(fractionList))
+		m <- as.matrix(as.data.frame(fractionList))
+		rownames(m) <- colnames(x)
     
+		m
+
+
 	}
 )
 

@@ -913,7 +913,7 @@ setMethod("lbarplot",signature(x = "ASEset"),
 			strand(ranges) <- strand 
 		}
 		
-		colnames(a)<- 1:ncol(a)
+		#colnames(a)<- 1:ncol(a)
 
 		acounts <-  alleleCounts(a,strand=strand)
 		arank <-  arank(a,strand=strand)
