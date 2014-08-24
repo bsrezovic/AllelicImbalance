@@ -1,4 +1,40 @@
+#'@include auxillary-functions.R
+NULL
 
+#' chi-square test
+#' 
+#' Performs a chisq.test on an ASEset object.
+#' 
+#' The test is performed on one strand in an ASEset object.
+#' 
+#' @name chisq.test
+#' @rdname chisq.test
+#' @aliases chisq.test,ASEset-method
+#' @docType methods
+#' @param x \code{ASEset} object
+#' @param y strand option
+#' @return \code{chisq.test} returns a matrix with the chisq.test P-value for
+#' each SNP and sample
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @seealso \itemize{ \item The \code{\link{binom.test}} which is another test
+#' that can be applied on an \link{ASEset} object.  }
+#' @keywords chi-square test
+#' @examples
+#' 
+#' 	#load example data
+#' 	data(ASEset)
+#' 	
+#' 	#make a chi-square test on default nonStranded strand 
+#' 	chisq.test(ASEset)
+#' 
+#'  @importFrom stats chisq.test
+#'  @exportMethod chisq.test
+NULL
+
+#' @rdname chisq.test
+setGeneric("chisq.test")
+
+#' @rdname chisq.test
 setMethod("chisq.test", signature(x = "ASEset",y="ANY"), function(x,y="nonStranded") 
 	{
 		strand=y

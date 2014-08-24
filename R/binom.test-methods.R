@@ -1,4 +1,40 @@
+#'@include chisq.test-methods.R
+NULL
 
+#' binomial test
+#' 
+#' Performs a binomial test on an ASEset object.
+#' 
+#' the test can only be applied to one strand at the time.
+#' 
+#' @name binom.test
+#' @rdname binom.test
+#' @aliases binom.test,ASEset-method
+#' @docType methods
+#' @param x \code{ASEset} object
+#' @param n strand option
+#' @return \code{binom.test} returns a matrix
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @seealso \itemize{ \item The \code{\link{chisq.test}} which is another test
+#' that can be applied on an \link{ASEset} object.  }
+#' @keywords binomial test
+#' @examples
+#' 
+#' 	#load example data
+#' 	data(ASEset)
+#' 	
+#' 	#make a binomial test
+#' 	binom.test(ASEset,"nonStranded")
+#' 
+#' 
+#'  @importFrom stats binom.test
+#'  @exportMethod binom.test
+NULL
+
+#' @rdname binom.test
+setGeneric("binom.test")
+
+#' @rdname binom.test
 setMethod("binom.test", signature(x = "ASEset", n="ANY"), function(x,n="nonStranded") 
 	{
 

@@ -1,3 +1,82 @@
+#'@include barplot-methods.R
+NULL
+
+#' locationplot ASEset objects
+#' 
+#' plotting ASE effects over a specific genomic region
+#' 
+#' The locationplot methods visualises how fractions are distributed over a
+#' larger region of genes on one chromosome. It takes and ASEset object as well
+#' as additional information on plot type (see \code{\link{barplot}}), strand
+#' type (see \code{\link{getAlleleCounts}}), colouring, as well as annotation.
+#' The annotation is taken either from the bioconductor OrgDb-sets, the TxDb
+#' sets or both. It is obviously important to make sure that the genome build
+#' used is the same as used in aligning the RNA-seq data.
+#' 
+#' @name ASEset-locationplot
+#' @aliases ASEset-locationplot locationplot locationplot,ASEset-method
+#' @docType methods
+#' @param x an ASEset object.
+#' @param type "fraction" or "count"
+#' @param strand "+","-","*","both" or "nonStranded". This argument determines
+#' which strand is plotted. See \code{getAlleleCounts} for more information on
+#' strand.
+#' @param yaxis wheter the y-axis is to be displayed or not
+#' @param xaxis wheter the x-axis is to be displayed or not
+#' @param ylab showing labels for the tic marks
+#' @param xlab showing labels for the tic marks
+#' @param legend.colnames gives colnames to the legend matrix
+#' @param size will give extra space in the margins of the inner plots
+#' @param main text to use as main label
+#' @param pValue Display p-value
+#' @param cex.main set main label size
+#' @param cex.ylab set ylab label size
+#' @param cex.legend set legend label size
+#' @param OrgDb an OrgDb object from which to plot a gene map. If given
+#' together with argument TxDb this will only be used to extract genesymbols.
+#' @param TxDb a TxDb object from which to plot an exon map.
+#' @param verbose Setting \code{verbose=TRUE} gives details of procedure during
+#' function run
+#' @param ... arguments passed on to barplot function
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @seealso \itemize{ \item The \code{\link{ASEset}} class which the
+#' locationplot function can be called up on.  }
+#' @keywords locationplot
+#' @examples
+#' 
+#' 
+#' 	data(ASEset)
+#' 	locationplot(ASEset)
+#' 
+#' 	#SNPs are plotted in the order in which they are found. 
+#' 	#This can be sorted according to location as follows:
+#' 	locationplot(ASEset[order(start(rowData(ASEset))),])
+#' 	
+#' 	#for ASEsets with fewer SNPs the 'count' type plot is
+#' 	# useful for detailed visualization.
+#' 	locationplot(ASEset,type="count",strand="nonStranded")
+#' 
+#' @exportMethod locationplot
+
+setGeneric("locationplot", function(x,
+		type="fraction",
+		strand="nonStranded",
+		yaxis=TRUE,
+		xaxis=FALSE,
+		xlab=FALSE,
+		ylab=TRUE,
+		legend.colnames = "", 
+		size=0.9,
+		main=NULL,
+		pValue=FALSE,
+		cex.main=0.7,
+		cex.ylab=0.6,
+		cex.legend= 0.6,
+		OrgDb=NULL,
+		TxDb=NULL,
+		verbose=TRUE,
+		...) {standardGeneric("locationplot")})
+
 setMethod("locationplot", signature(x = "ASEset"), 
 	function(x,
 		type="fraction",
@@ -212,7 +291,54 @@ setMethod("locationplot", signature(x = "ASEset"),
 	}
 )
 
-# Gviz locationplot
+#' glocationplot ASEset objects
+#' 
+#' plotting ASE effects over a specific genomic region using Gviz functionality
+#' 
+#' The glocationplot methods visualises the distribution of ASE over a larger
+#' region on one chromosome. It takes and ASEset object as well as additional
+#' information on plot type (see \code{\link{lbarplot}}), strand type (see
+#' \code{\link{getAlleleCounts}}), Annotation tracks are created from the Gviz
+#' packageh. It is obviously important to make sure that the genome build used
+#' is set correctly, e.g. "hg19".
+#' 
+#' @name ASEset-glocationplot
+#' @aliases ASEset-glocationplot glocationplot glocationplot,ASEset-method
+#' @docType methods
+#' @param x an ASEset object.
+#' @param type "fraction" or "count"
+#' @param strand "+","-","both". This argument determines which strand is
+#' plotted. See \code{getAlleleCounts} for more information on strand.
+#' @param BamGAL GAlignmentsList covering the same genomic region as the ASEset
+#' @param GenomeAxisTrack include an genomic axis track
+#' @param verbose Makes function more talkative
+#' @param ... arguments passed on to barplot function
+#' @author Jesper R. Gadin
+#' @seealso \itemize{ \item The \code{\link{ASEset}} class which the
+#' glocationplot function can be called up on.  }
+#' @keywords glocationplot
+#' @examples
+#' 
+#' 	data(ASEset)
+#' 	genome(ASEset) <- "hg19"
+#' 
+#' 	glocationplot(ASEset,strand="+")
+#' 	
+#' 	#for ASEsets with fewer SNPs the 'count' type plot is useful 
+#' 	glocationplot(ASEset,type="count",strand="+")
+#' 
+
+#' @exportMethod glocationplot
+setGeneric("glocationplot", 
+	   function(x,
+		type="fraction",
+		strand="nonStranded",
+		BamGAL=NULL,
+		GenomeAxisTrack=FALSE,
+		verbose=FALSE,
+	   	...)
+		{standardGeneric("glocationplot")})
+				     	
 setMethod("glocationplot", signature(x = "ASEset"), 
 	function(x,
 		type="fraction",

@@ -1,12 +1,95 @@
+#'@include AllelicImbalance-package.R
+NULL
+
 #setMethods("initialize") is not required at the moment
 
-#wrapper function to create ASEset object from AlleleCountList
-ASEset <- function(sset,variants){
-	
-	#create object
-	new("ASEset",sset,variants=variants)
-}	
+#' Initialize ASEset
+#' 
+#' Functions to construct ASEset objects
+#' 
+#' The resulting \code{ASEset} object is based on the
+#' \code{SummarizedExperiment}, and will therefore inherit the same accessors
+#' and ranges operations.
+#' 
+#' countListNonStranded, countListPlus, countListMinus and countListUnknown are
+#' i.e. the outputs from the \code{\link{getAlleleCounts}} function.
+#' 
+#' @name initialize-ASEset
+#' @rdname initialize-ASEset
+#' @aliases initialize-ASEset ASEsetFromCountList
+#' @param rowData A \code{GenomicRanges object} that contains the variants of
+#' interest
+#' @param countListNonStranded A \code{list} where each entry is a matrix with
+#' allele counts as columns and sample counts as rows
+#' @param countListPlus A \code{list} where each entry is a matrix with allele
+#' counts as columns and sample counts as rows
+#' @param countListMinus A \code{list} where each entry is a matrix with allele
+#' counts as columns and sample counts as rows
+#' @param countListUnknown A \code{list} where each entry is a matrix with
+#' allele counts as columns and sample counts as rows
+#' @param colData A \code{DataFrame} object containing sample specific data
+#' @param mapBiasExpMean A 3D \code{array} where the SNPs are in the 1st
+#' dimension, samples in the 2nd dimension and variants in the 3rd dimension.
+#' @param verbose Makes function more talkative
+#' @param ... arguments passed on to SummarizedExperiment constructor
+#' @return \code{ASEsetFromCountList} returns an \code{ASEset} object.
+#' @note \code{ASEsetFromCountList} requires the same input data as an
+#' SummarizedExperiment, but with minimum one assay for the allele counts.
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @seealso \itemize{ \item The
+#' \code{\link[GenomicRanges]{SummarizedExperiment}} for ranges operations.  }
+#' @keywords ASEset ASEsetFromCountList
+#' @examples
+#' 
+#' #make example alleleCountListPlus
+#' set.seed(42)
+#' countListPlus <- list()
+#' snps <- c("snp1","snp2","snp3","snp4","snp5")
+#' for(snp in snps){
+#' 	count<-matrix(rep(0,16),ncol=4,dimnames=list(
+#' 		c("sample1","sample2","sample3","sample4"),
+#' 		c("A","T","G","C")))
+#' 	#insert random counts in two of the alleles 
+#' 	for(allele in sample(c("A","T","G","C"),2)){
+#' 		count[,allele]<-as.integer(rnorm(4,mean=50,sd=10))
+#' 	}
+#' 	countListPlus[[snp]] <- count
+#' }
+#' 
+#' #make example alleleCountListMinus
+#' countListMinus <- list()
+#' snps <- c("snp1","snp2","snp3","snp4","snp5")
+#' for(snp in snps){
+#' 	count<-matrix(rep(0,16),ncol=4,dimnames=list(
+#' 		c("sample1","sample2","sample3","sample4"),
+#' 		c("A","T","G","C")))
+#' 	#insert random counts in two of the alleles 
+#' 	for(allele in sample(c("A","T","G","C"),2)){
+#' 		count[,allele]<-as.integer(rnorm(4,mean=50,sd=10))
+#' 	}
+#' 	countListMinus[[snp]] <- count
+#' }
+#' 
+#' 
+#' #make example rowData
+#' rowData <- GRanges(
+#' 		seqnames = Rle(c("chr1", "chr2", "chr1", "chr3", "chr1")),
+#'          ranges = IRanges(1:5, width = 1, names = head(letters,5)),
+#'          snp = paste("snp",1:5,sep="")
+#'          )
+#' #make example colData
+#' colData <- DataFrame(Treatment=c("ChIP", "Input","Input","ChIP"), 
+#'  	row.names=c("ind1","ind2","ind3","ind4"))
+#' 
+#' #make ASEset 
+#' a <- ASEsetFromCountList(rowData, countListPlus=countListPlus, 
+#' countListMinus=countListMinus, colData=colData)
+#' 
+#' @export ASEsetFromCountList
+NULL
 
+
+#' @rdname initialize-ASEset
 ASEsetFromCountList <- function(rowData, countListNonStranded=NULL, countListPlus=NULL, countListMinus=NULL, countListUnknown=NULL, colData=NULL, mapBiasExpMean=NULL,verbose=FALSE ,...){	
 	
 	if(verbose){
@@ -149,6 +232,11 @@ ASEsetFromCountList <- function(rowData, countListNonStranded=NULL, countListPlu
 	#use colnames in list matrices as variants
 	variants <-unlist(unique(lapply(countList,colnames)))
 	
+	ASEset <- function(sset,variants){
+		#create object
+		new("ASEset",sset,variants=variants)
+	}	
+
 	#create object
 	ASEset(sset,variants=variants)
 }

@@ -1,4 +1,82 @@
-#basic barplot visualization
+#'@include binom.test-methods.R
+NULL
+
+#' barplot ASEset objects
+#' 
+#' Generates barplots for ASEset objects. Two levels of plotting detail are
+#' provided: a detailed barplot of read counts by allele useful for fewer
+#' samples and SNPs, and a less detailed barplot of the fraction of imbalance,
+#' useful for more samples and SNPs.
+#' 
+#' \code{filter.pValue.fraction} is intended to remove p-value annotation with
+#' very large difference in frequency, which could just be a sequencing
+#' mistake. This is to avoid p-values like 1e-235 or similar.
+#' 
+#' \code{sampleColour}User specified colours, either given as named colours
+#' ('red', 'blue', etc) or as hexadecimal code. Can be either length 1 for all
+#' samples, or else of a length corresponding to the number of samples for
+#' individual colouring.
+#' 
+#' @name ASEset-barplot
+#' @rdname ASEset-barplot
+#' @aliases ASEset-barplot barplot barplot,ASEset-method
+#' @docType methods
+#' @param height An \code{ASEset} object
+#' @param type "count" or "fraction"
+#' @param sampleColour User specified colours
+#' @param legend Display legend
+#' @param pValue Display p-value
+#' @param strand Five options, "nonStranded","+", "-", "both" or "*"
+#' @param testValue if set, a matrix or vector with user p-values
+#' @param testValue2 if set, a matrix or vector with user p-values
+#' @param OrgDb an OrgDb object which provides annotation
+#' @param TxDb a TxDb object which provides annotation
+#' @param annotationType select one or more from
+#' "gene","exon","transcript","cds".
+#' @param main text to use as main label
+#' @param ylim set plot y-axis limit
+#' @param yaxis wheter the y-axis is to be displayed or not
+#' @param xaxis wheter the x-axis is to be displayed or not
+#' @param ylab showing labels for the tic marks
+#' @param xlab showing labels for the tic marks
+#' @param legend.colnames gives colnames to the legend matrix
+#' @param las.ylab orientation of ylab text
+#' @param las.xlab orientation of xlab text
+#' @param cex.main set main label size
+#' @param cex.pValue set pValue label size
+#' @param cex.ylab set ylab label size
+#' @param cex.xlab set xlab label size
+#' @param cex.legend set legend label size
+#' @param add \code{boolean} indicates if a new device should be started
+#' @param lowerLeftCorner integer that is only useful when \code{add}=TRUE
+#' @param size Used internally by locationplot. Rescales each small barplot
+#' window
+#' @param addHorizontalLine adds a horizontal line that marks the default
+#' fraction of 0.5 - 0.5
+#' @param add.frame \code{boolean} to give the new plot a frame or not
+#' @param filter.pValue.fraction \code{numeric} between 0 and 1 that filter
+#' away pValues where the main allele has this frequency.
+#' @param verbose Makes function more talkative
+#' @param ... for simpler generics when extending function
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @seealso \itemize{ \item The \code{\link{ASEset}} class which the barplot
+#' function can be called up on.  }
+#' @keywords barplot
+#' @examples
+#' 
+#' 	data(ASEset)
+#' 	barplot(ASEset[1])
+#'
+#' @importFrom graphics plot
+#' @importFrom graphics barplot
+#'
+#' @exportMethod barplot
+NULL
+
+#' @rdname ASEset-barplot
+setGeneric("barplot")
+
+#' @rdname ASEset-barplot
 setMethod("barplot",signature(height = "ASEset"),
 		
 		function(height,
@@ -883,14 +961,47 @@ setMethod("barplot",signature(height = "ASEset"),
 		}
 )
 
+#' lbarplot ASEset objects
+#' 
+#' Generates lbarplots for ASEset objects. Two levels of plotting detail are
+#' provided: a detailed lbarplot of read counts by allele useful for fewer
+#' samples and SNPs, and a less detailed lbarplot of the fraction of imbalance,
+#' useful for more samples and SNPs.
+#' 
+#' This function serves the same purpose as the normal barplot, but with
+#' trellis graphics using lattice, to be able to integrate well with Gviz track
+#' functionality.
+#' 
+#' @name ASEset-lbarplot
+#' @aliases ASEset-lbarplot lbarplot lbarplot,ASEset-method
+#' @docType methods
+#' @param x An \code{ASEset} object
+#' @param type "count" or "fraction"
+#' @param strand Five options, "nonStranded","+", "-", "both" or "*"
+#' @param mainVec text to use as main label
+#' @param verbose Makes function more talkative
+#' @param ... for simpler generics when extending function
+#' @author Jesper R. Gadin
+#' @seealso \itemize{ \item The \code{\link{ASEset}} class which the lbarplot
+#' function can be called up on.  \item The \code{\link{barplot}} non trellis
+#' barplot.  }
+#' @keywords lbarplot
+#' @examples
+#' 
+#' 	data(ASEset)
+#' 	lbarplot(ASEset[1])
+#' 
+#' @exportMethod lbarplot
 
+setGeneric("lbarplot", 
+	   function(x,
+		type="count",
+		strand="+",
+		mainVec=vector(),
+		verbose=FALSE,
+		...)
+		{standardGeneric("lbarplot")})
 
-
-
-
-#######################
-#lattice barplots
-######################
 setMethod("lbarplot",signature(x = "ASEset"),
 		function(x,
 			type="count",

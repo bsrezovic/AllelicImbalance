@@ -1,4 +1,67 @@
-#These are non class specific functions, availanble as utilities to ease for example import of sequence data.
+#'@include ASEset-class.R
+NULL
+
+#' Import Bam
+#' 
+#' Imports a specified genomic region from a bam file using a GenomicRanges
+#' object as search area.
+#' 
+#' These functions are wrappers to import bam files into R and store them into
+#' either GRanges, GAlignments or GappedAlignmentpairs objects.
+#' 
+#' It is recommended to use the impBamGAL() which takes information of gaps
+#' into account. It is also possible to use the other variants as well, but
+#' then pre-filtering becomes important because gapped, intron-spanning reads
+#' will cause problems. This is because the GRanges objects can not handle if
+#' gaps are present and will then give a wrong result when calculating the
+#' allele (SNP) count table.
+#' 
+#' If the sequence data is strand-specific you may want to set XStag=TRUE. The
+#' strand specific information will then be stored in the meta columns with
+#' column name 'XS'.
+#' 
+#' @name import-bam
+#' @rdname import-bam
+#' @aliases import-bam impBamGAL impBamGRL
+#' @param UserDir The relative or full path of folder containing bam files.
+#' @param searchArea A \code{GenomicRanges object} that contains the regions of
+#' interest
+#' @param XStag Setting \code{XStag=TRUE} stores the strand specific
+#' information in the mcols slot 'XS'
+#' @param verbose Setting \code{verbose=TRUE} gives details of procedure during
+#' function run.
+#' @return \code{impBamGRL} returns a GRangesList object containing the RNA-seq
+#' reads in the region defined by the \code{searchArea} argument.
+#' \code{impBamGAL} returns a list with GAlignments objects containing the
+#' RNA-seq reads in the region defined by the \code{searchArea} argument.
+#' \code{funImpBamGAPL} returns a list with GappedAlignmentPairs object
+#' containing the RNA-seq reads in the region defined by the \code{searchArea}
+#' argument.
+#' @note A typical next step after the import of bam files is to obtain SNP
+#' information. This can be done either with the \code{\link{impBcfGRL}} and
+#' \code{\link{getAlleleCounts}} functions. Alternatively the
+#' \code{\link{scanForHeterozygotes}} function provides R-based functionality
+#' for identifying heterozygote coding SNPs.
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @seealso \itemize{ \item The \code{\link{impBcfGRL}} for importing Bcf
+#' files.  }
+#' @keywords bam import
+#' @examples
+#' 
+#' #Declare searchArea
+#' searchArea <- GRanges(seqnames=c("17"), ranges=IRanges(79478301,79478361))
+#' 
+#' #Relative or full path  
+#' pathToFiles <- system.file("extdata/ERP000101_subset", package="AllelicImbalance")
+#' 
+#' reads <- impBamGAL(pathToFiles,searchArea,verbose=FALSE)
+#' 
+#' @export impBamGRL
+#' @export impBamGAL
+NULL
+
+
+#' @rdname import-bam
 impBamGRL <- function(UserDir,searchArea,verbose=TRUE){
 	#Set parameters
 	which <- searchArea #A GRanges, RangesList, RangedData, or missing object, from which a IRangesList instance will be constructed.
@@ -84,7 +147,7 @@ impBamGRL <- function(UserDir,searchArea,verbose=TRUE){
 	return(BamGRL)
 }
 
-
+#' @rdname import-bam
 impBamGAL <- function(UserDir,searchArea,XStag=FALSE,verbose=TRUE){
 	#Set parameters
 	which <- searchArea #A GRanges, RangesList, RangedData, or missing object, from which a IRangesList instance will be constructed.
@@ -149,6 +212,49 @@ impBamGAL <- function(UserDir,searchArea,XStag=FALSE,verbose=TRUE){
 	return(BamGAL)
 }
 
+#' Import Bcf Selection
+#' 
+#' Imports a selection of a bcf file or files specified by a GenomicRanges
+#' object as search area.
+#' 
+#' A wrapper to import bcf files into R in the form of GenomicRanges objects.
+#' 
+#' @name import-bcf
+#' @rdname import-bcf
+#' @aliases import-bcf impBcfGRL impBcfGR
+#' @param UserDir The relative or full path of folder containing bam files.
+#' @param searchArea A \code{GenomicRanges} object that contains the regions of
+#' interest
+#' @param verbose Setting \code{verbose=TRUE} gives details of the procedure
+#' during function run.
+#' @return \code{BcfImpGRList} returns a GRangesList object.  \code{BcfImpGR}
+#' returns one GRanges object of all unique entries from one or more bcf files.
+#' @note Make sure there is a complementary index file \code{*.bcf.bci} for
+#' each bcf file in \code{UserDir}. If there is not, then the functions
+#' \code{impBcfGRL} and \code{impBcfGR} will try to create them.
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @seealso \itemize{ \item The \code{\link{impBamGRL}} for importing bam files
+#' \item The \code{\link{getAlleleCounts}} for how to get allele(SNP) counts
+#' \item The \code{\link{scanForHeterozygotes}} for how to find possible
+#' heterozygote positions }
+#' @keywords bcf import
+#' @examples
+#' 
+#' #Declare searchArea
+#' searchArea <- GRanges(seqnames=c("17"), ranges=IRanges(79478301,79478361))
+#' 
+#' #Relative or full path  
+#' pathToFiles <- system.file("extdata/ERP000101_subset", package="AllelicImbalance")
+#' 
+#' #import
+#' reads <- impBcfGRL(pathToFiles, searchArea, verbose=FALSE)
+#' 
+#' 
+#' @export impBcfGRL
+#' @export impBcfGR
+NULL
+
+#' @rdname import-bcf
 impBcfGRL <- function(UserDir,searchArea=NULL,verbose=TRUE){
 	
 	#Set parameters
@@ -218,7 +324,7 @@ impBcfGRL <- function(UserDir,searchArea=NULL,verbose=TRUE){
 	return(BcfGRL)
 }
 
-#Function that wraps around BcfImpGRList, but returns a GRanges instead of GRangesList - since that seems to be more useful in many cases
+#' @rdname import-bcf
 impBcfGR <- function(UserDir, searchArea=NULL,verbose=TRUE){
 	BcfGRList <- impBcfGRL(UserDir, searchArea, verbose)
 	BcfGR<-do.call(c,unname(as.list(BcfGRList )))
@@ -228,6 +334,45 @@ impBcfGR <- function(UserDir, searchArea=NULL,verbose=TRUE){
 }
 
 
+#' realCigarPosition
+#' 
+#' From a GAlignments calculate the real corresponding position for each read
+#' based on its cigar.
+#' 
+#' The main intention for these functions are to be the internal functions for
+#' \code{scanForHeterozygotes} and \code{getAlleleCount}.
+#' 
+#' @name cigar-utilities
+#' @rdname cigar-utilities
+#' @aliases cigar-utilities realCigarPosition realCigarPositions
+#' realCigarPositionsList
+#' @param RleCigar An \code{Rle} containing cigar information
+#' @param RleCigarList An \code{RleList} containing cigar information
+#' @param BpPos the absolute position on the chromosome of interest
+#' @return \code{realCigarPosition} returns the new position
+#' \code{realCigarPositions} returns a vector with the corrected positions to
+#' be subsetted from a read.  \code{realCigarPositionsList} returns a list
+#' where each element i a vector with the corrected positions to be subsetted
+#' from a read.
+#' @author Jesper R. Gadin
+#' @seealso \itemize{ \item The \code{\link{scanForHeterozygotes}} which is a
+#' function to find possible heterozygote sites in a
+#' \code{\link[GenomicAlignments]{GAlignmentsList}} object }
+#' @keywords internal
+#' @examples
+#' 
+#'   RleCigarList <-  cigarToRleList("3M4I93M")
+#'   BpPos <- 5
+#' 
+#'   newPos <- realCigarPosition(RleCigar=RleCigarList[[1]], BpPos)
+#'   newPositions <- realCigarPositions(RleCigar=RleCigarList[[1]])
+#'   newPositionsList <- realCigarPositionsList(RleCigarList=RleCigarList)
+#' @export realCigarPosition
+#' @export realCigarPositions
+#' @export realCigarPositionsList
+NULL
+
+#' @rdname cigar-utilities
 realCigarPosition <- function(RleCigar,BpPos){
 
 	#because of speed issues, checks are best performed outside this function.
@@ -261,6 +406,7 @@ realCigarPosition <- function(RleCigar,BpPos){
 
 
 
+#' @rdname cigar-utilities
 realCigarPositions <- function(RleCigar){
 	#returns a vector that have order all positions to match with the cigar
 
@@ -288,6 +434,7 @@ realCigarPositions <- function(RleCigar){
 }
 
 
+#' @rdname cigar-utilities
 realCigarPositionsList <- function(RleCigarList){
 
 	#because of speed issues, checks are best performed outside this function.
@@ -316,7 +463,63 @@ realCigarPositionsList <- function(RleCigarList){
 	)
 }
 
-#new version
+#' snp count data
+#' 
+#' Given the positions of known SNPs, this function returns allele counts from
+#' a BamGRL object
+#' 
+#' This function is used to retrieve the allele counts from specified positions
+#' in a set of RNA-seq reads. The \code{BamList} argument will typically have
+#' been created using the \code{impBamGAL} function on bam-files. The
+#' \code{GRvariants} is either a GRanges with user-specified locations or else
+#' it is generated through scanning the same bam-files as in \code{BamList} for
+#' heterozygote locations (e.g. using \code{scanForHeterozygotes}). The
+#' GRvariants will currently only accept locations having width=1,
+#' corresponding to SNPs.  In the \code{strand} argument, specifying
+#' 'nonStranded' is the same as retrieving the sum count of '+' and '-' reads
+#' (and '*' unknown in case these are found in the bam file). 'nonStranded' is
+#' the default behaviour and can be used when the RNA-seq experiments strand
+#' information is not available.
+#' 
+#' @param BamList A \code{GAlignmentsList object} or \code{GRangesList object}
+#' containing data imported from a bam file
+#' @param GRvariants A \code{GRanges object} that contains positions of SNPs to
+#' retrieve
+#' @param strand A length 1 \code{character} with value 'nonStranded', '+',
+#' '-', or '*'.  This argument determines if \code{getAlleleCounts} will
+#' retrieve counts from all reads, or only from reads marked as '+', '-' or '*'
+#' (unknown), respectively.
+#' @param return.type "list" or "array"
+#' @param verbose Setting \code{verbose=TRUE} makes function more talkative
+#' @return \code{getAlleleCounts} returns a list of several data.frame objects,
+#' each storing the count data for one SNP.
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @seealso \itemize{ \item The \code{\link{scanForHeterozygotes}} which is a
+#' function to find possible heterozygote sites in a
+#' \code{\link[GenomicAlignments]{GAlignmentsList}} object }
+#' @keywords SNP count
+#' @examples
+#' 
+#' 	#load example data
+#' 	data(reads)
+#' 	data(GRvariants)
+#' 
+#' 	#set seqlevels in reads equal to seqlevels in GRvariants
+#' 	seqlevels(reads) <- "17"
+#' 
+#' 	#get counts at the three positions specified in GRvariants
+#' 	alleleCount <- getAlleleCounts(BamList=reads,GRvariants,
+#' 		strand="nonStranded")
+#' 	
+#' 	#if the reads had contained stranded data, these two calls would 
+#' 	#have given the correct input objects for getAlleleCounts
+#' 	alleleCountPlus <- getAlleleCounts(BamList=reads,GRvariants,
+#' 		strand="+")
+#' 	alleleCountMinus <- getAlleleCounts(BamList=reads,GRvariants,
+#' 		strand="-")
+#' 	
+#' 
+#' @export getAlleleCounts
 getAlleleCounts<-function(BamList, GRvariants, strand="nonStranded", return.type="list", verbose=TRUE){
 
 	if(!class(BamList)%in%c("GAlignments","GAlignmentsList")){stop("BamList has to be of class GAlignments or GAlignmnetsList\n")}
@@ -403,6 +606,64 @@ getAlleleCounts<-function(BamList, GRvariants, strand="nonStranded", return.type
 
 #create ldf object (i.e. for SnpAfList slot) based on a pre-defined list of Snps
 #old version
+
+
+#' snp count data
+#' 
+#' Given the positions of known SNPs, this function returns allele counts from
+#' a BamGRL object
+#' 
+#' This function is used to retrieve the allele counts from specified positions
+#' in a set of RNA-seq reads. The \code{BamList} argument will typically have
+#' been created using the \code{impBamGAL} function on bam-files. The
+#' \code{GRvariants} is either a GRanges with user-specified locations or else
+#' it is generated through scanning the same bam-files as in \code{BamList} for
+#' heterozygote locations (e.g. using \code{scanForHeterozygotes}). The
+#' GRvariants will currently only accept locations having width=1,
+#' corresponding to SNPs.  In the \code{strand} argument, specifying
+#' 'nonStranded' is the same as retrieving the sum count of '+' and '-' reads
+#' (and '*' unknown in case these are found in the bam file). 'nonStranded' is
+#' the default behaviour and can be used when the RNA-seq experiments strand
+#' information is not available.
+#' 
+#' @param BamList A \code{GAlignmentsList object} or \code{GRangesList object}
+#' containing data imported from a bam file
+#' @param GRvariants A \code{GRanges object} that contains positions of SNPs to
+#' retrieve
+#' @param strand A length 1 \code{character} with value 'nonStranded', '+',
+#' '-', or '*'.  This argument determines if \code{getAlleleCounts2} will
+#' retrieve counts from all reads, or only from reads marked as '+', '-' or '*'
+#' (unknown), respectively.
+#' @param verbose Setting \code{verbose=TRUE} makes function more talkative
+#' @return \code{getAlleleCounts2} returns a list of several data.frame
+#' objects, each storing the count data for one SNP.
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @seealso \itemize{ \item The \code{\link{scanForHeterozygotes}} which is a
+#' function to find possible heterozygote sites in a
+#' \code{\link[GenomicAlignments]{GAlignmentsList}} object }
+#' @keywords SNP count
+#' @examples
+#' 
+#' 	#load example data
+#' 	data(reads)
+#' 	data(GRvariants)
+#' 
+#' 	#set seqlevels in reads equal to seqlevels in GRvariants
+#' 	seqlevels(reads) <- "17"
+#' 
+#' 	#get counts at the three positions specified in GRvariants
+#' 	alleleCount <- getAlleleCounts2(BamList=reads,GRvariants,
+#' 		strand="nonStranded")
+#' 	
+#' 	#if the reads had contained stranded data, these two calls would 
+#' 	#have given the correct input objects for getAlleleCounts2
+#' 	alleleCountPlus <- getAlleleCounts2(BamList=reads,GRvariants,
+#' 		strand="+")
+#' 	alleleCountMinus <- getAlleleCounts2(BamList=reads,GRvariants,
+#' 		strand="-")
+#' 	
+#' 
+#' @export getAlleleCounts2
 getAlleleCounts2<-function(BamList, GRvariants,strand="nonStranded", verbose=TRUE){
 
 	#if just one element of, make list (which is a convenient way of handling this input type)
@@ -595,6 +856,42 @@ getAlleleCounts2<-function(BamList, GRvariants,strand="nonStranded", verbose=TRU
 
 
 #investigate BamList sequence data for possible heterozygotes. Returns a vector of positions, which can be used with extractFromUserDefinedSnps to retrieve counts 
+
+
+#' scanForHeterozygotes
+#' 
+#' Identifies the positions of SNPs found in BamGR reads.
+#' 
+#' This function scans all reads stored in a \code{GAlignmentsList} for
+#' possible heterozygote positions. The user can balance the sensitivity of the
+#' search by modifying the minimumReadsAtPos, maximumMajorAlleleFrequency and
+#' minimumBiAllelicFrequency arguments.
+#' 
+#' @param BamList A \code{GAlignmentsList object}
+#' @param minimumReadsAtPos minimum number of reads required to call a SNP at a
+#' given position
+#' @param maximumMajorAlleleFrequency maximum frequency allowed for the most
+#' common allele. Setting this parameter lower will minimise the SNP calls
+#' resulting from technical read errors, at the cost of missing loci with
+#' potential strong ASE
+#' @param minimumBiAllelicFrequency minimum frequency allowed for the first and
+#' second most common allele. Setting a Lower value for this parameter will
+#' minimise the identification of loci with three or more alleles in one
+#' sample. This is useful if sequencing errors are suspected to be common.
+#' @param maxReads max number of reads of one list-element allowed
+#' @param verbose logical indicating if process information should be displayed
+#' @return \code{scanForHeterozygotes} returns a GRanges object with the SNPs
+#' for the BamList object that was used as input.
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @seealso \itemize{ \item The \code{\link{getAlleleCounts}} which is a
+#' function that count the number of reads overlapping a site.  }
+#' @keywords scan SNP heterozygote
+#' @examples
+#' 
+#' 	data(reads)
+#' 	s <- scanForHeterozygotes(reads,verbose=FALSE)
+#' 
+#' @export scanForHeterozygotes
 scanForHeterozygotes<-function(BamList, minimumReadsAtPos = 20, maximumMajorAlleleFrequency = 0.9, minimumBiAllelicFrequency = 0.9,maxReads=15000, verbose=TRUE){
 
 	#if just one element of, make list (which is a convenient way of handling this input type)
@@ -709,576 +1006,32 @@ scanForHeterozygotes<-function(BamList, minimumReadsAtPos = 20, maximumMajorAlle
 
 
 
-decorateWithGenes <- function(x,genesInRegion,xlim,ylim,chromosome){
-	
-	#check the input variables
-	if(class(xlim) != "integer")xlim<-as.numeric(xlim)
-	if(class(xlim) != "numeric")stop(paste("xlim must be of class numeric, not",class(xlim)))
-	if(length(xlim) != 2)stop(paste("xlim must be of length 2, not",length(xlim)))
-	if(class(ylim) != "integer")ylim<-as.numeric(ylim)
-	if(class(ylim) != "numeric")stop(paste("ylim must be of class numeric, not",class(ylim)))
-	if(length(ylim) != 2)stop(paste("ylim must be of length 2, not",length(ylim)))
-	if(class(chromosome) != "character")stop(paste("chromosome must be of class character, not",class(chromosome)))
-	if(length(chromosome) != 1)stop(paste("chromosome must be of length 1, not",length(chromosome)))
-	if(!chromosome%in%unique(seqnames(genesInRegion))){
-		if(sub("^chr","",chromosome)%in%unique(seqnames(genesInRegion))){
-			chromosome<-sub("^chr","",chromosome)				
-		}else{
-			stop(paste("chromosome",chromosome,"was not found amongst the seqnames of the genesInRegion object:",paste(sort(unique(seqnames(genesInRegion))),collapse=", ")))
-		}
-	}
-	
-	
-	#only work with genes on current chromosome
-	genesInRegion<-genesInRegion[seqnames(genesInRegion)==chromosome]
-	
-	#calculate how many "rows" have to be made available
-	maxCoverage <- max(coverage(genesInRegion)[[chromosome]])
-	
-	#loop over all unique genes, drawing them as specified
-	uniqueGenes<-unique(mcols(genesInRegion)[["Symbol"]])
-	
-	for(i in 1:length(uniqueGenes)){
-		#getting the name of the gene and the height on the Y-axis 
-		genesymbol <- uniqueGenes[i]
-		yPos <- ylim[1] + (i-1)%%maxCoverage * ((ylim[2] - ylim[1]) / maxCoverage)
-		
-		#this block checks for double instances and just arbitrarily take the first (typically miRNAs with two locations)
-		if(sum(mcols(genesInRegion)[["Symbol"]]%in%genesymbol) > 1){
-			geneData<-genesInRegion[which(mcols(genesInRegion)[["Symbol"]]%in%genesymbol)[1],]
-		}else{
-			geneData<-genesInRegion[which(mcols(genesInRegion)[["Symbol"]]%in%genesymbol),]	
-		}
-		
-		#draw and label
-		start <- max(c(xlim[1]-(xlim[2]-xlim[1])/10,start(geneData)))
-		end <- min(c(xlim[2]+(xlim[2]-xlim[1])/10,end(geneData)))
-		lines(x = c(start,end), y=c(yPos,yPos),lwd=2)
-		text(x = start + (end-start)/2 , y = yPos+(ylim[2]-ylim[1])/6, label=genesymbol,cex=0.8)
-	}
-}
-
-
-
-
-
-decorateWithExons <- function(x,exonsInRegion,xlim,ylim,chromosome){
-	
-	#check the input variables
-	if(class(exonsInRegion)!="GRanges")stop(paste("exonsInRegion must be of class GRanges, not",class(exonsInRegion)))
-	if(!"tx_name"%in%colnames(mcols(exonsInRegion)))stop("exonsInRegion must contain an mcol variable named 'tx_name'")
-	if(class(xlim) != "integer")xlim<-as.numeric(xlim)
-	if(class(xlim) != "numeric")stop(paste("xlim must be of class numeric, not",class(xlim)))
-	if(length(xlim) != 2)stop(paste("xlim must be of length 2, not",length(xlim)))
-	if(class(ylim) != "integer")ylim<-as.numeric(ylim)
-	if(class(ylim) != "numeric")stop(paste("ylim must be of class numeric, not",class(ylim)))
-	if(length(ylim) != 2)stop(paste("ylim must be of length 2, not",length(ylim)))
-	if(class(chromosome) != "character")stop(paste("chromosome must be of class character, not",class(chromosome)))
-	if(length(chromosome) != 1)stop(paste("chromosome must be of length 1, not",length(chromosome)))
-	if(!chromosome%in%unique(seqnames(exonsInRegion))){
-		if(sub("^chr","",chromosome)%in%unique(seqnames(exonsInRegion))){
-			chromosome<-sub("^chr","",chromosome)				
-		}else{
-			stop(paste("chromosome",chromosome,"was not found amongst the seqnames of the exonInRegion object:",paste(sort(unique(seqnames(exonsInRegion))),collapse=", ")))
-		}
-	}
-	#only work with exons on current chromosome
-	exonsInRegion<-exonsInRegion[seqnames(exonsInRegion)==chromosome]
-	
-	
-	#calculate how many "rows" have to be made available (corresponding to the number of unique transcripts in exonsInRegion
-	uniqueGenes<-unique(unlist(as.list(mcols(exonsInRegion)[["tx_name"]])))
-	maxCoverage <- length(uniqueGenes)
-	
-
-	for(i in 1:length(uniqueGenes)){
-		#getting the name of the gene and the height on the Y-axis 
-		tx_name <- uniqueGenes[i]
-		yPos <- ylim[1] + (i-1)%%maxCoverage * ((ylim[2] - ylim[1]) / maxCoverage)
-		
-		#extracting and drawing all exons for each transcript
-		exonsInTranscript<-which(sapply(as.list(mcols(exonsInRegion)[["tx_name"]]),function(x){tx_name%in%x}))
-		for(exonInTranscript in exonsInTranscript){
-			x1<-start(exonsInRegion[exonInTranscript])
-			x2<-end(exonsInRegion[exonInTranscript])
-			lines(x=c(x1,x2),y=c(yPos,yPos),lwd=2)
-		}
-		
-		
-		#draw a thin connecting line for each transcript	
-		end<-max(end(exonsInRegion[exonsInTranscript])) 
-		start<-min(start(exonsInRegion[exonsInTranscript]))
-		lines(x=c(start,end),y=c(yPos,yPos),lwd=0.5)		
-		
-		#label with the tx_name
-		start<-max(c(start,xlim[1]))	
-		end<-min(c(end,xlim[2]))
-		text(x = start + (end-start)/2 , y = yPos+(ylim[2]-ylim[1])/6, label=tx_name,cex=0.8)
-		
-	}
-}
-
-getGenesFromAnnotation <- function(OrgDb, GR, leftFlank=0,rightFlank=0, getUCSC=FALSE, verbose=FALSE) {
-	#checks
-	if(class(OrgDb)!="OrgDb")stop(paste("OrgDb must of class OrgDb, not",class(OrgDb)))
-	
-	if(class(GR)!="GRanges")stop(paste("GR must of class GRanges, not",class(GR)))
-	
-	if(!class(leftFlank)%in%c("numeric"))stop(paste("leftFlank must be of class numeric, not:",class(leftFlank)))
-	if(length(leftFlank)!=1)stop(paste("leftFlank must be of length 1, not:",length(leftFlank)))
-	if(leftFlank<0)stop(paste("leftFlank must be equal to or larger than 0"))
-	
-	if(!class(rightFlank)%in%c("numeric"))stop(paste("rightFlank must be of class numeric, not:",class(rightFlank)))
-	if(length(rightFlank)!=1)stop(paste("rightFlank must be of length 1, not:",length(rightFlank)))
-	if(rightFlank<0)stop(paste("rightFlank must be equal to or larger than 0"))
-
-	if(!class(getUCSC)%in%c("logical"))stop(paste("getUCSC must be of class logical, not:",class(getUCSC)))
-	if(length(getUCSC)!=1)stop(paste("getUCSC must be of length 1, not:",length(getUCSC)))
-	
-	if(!"UCSCKG"%in%columns(OrgDb)){
-		if(verbose)message("Unable to retrieve UCSCKG column from OrgDb. Omitting")
-		getUCSC<-FALSE
-	}
-	
-	if(!class(verbose)%in%c("logical"))stop(paste("verbose must be of class logical, not:",class(verbose)))
-	if(length(verbose)!=1)stop(paste("verbose must be of length 1, not:",length(verbose)))
-	
-	#remove chr in seqnames
-	seqLevels <- sub("^chr", "", seqlevels(GR))
-	seqlevels(GR) <- seqLevels
-	
-	#pre-filtering to local region +/- 1MB (for speed purposes) 
-	startFilter<- max(c(1,start(range(GR)) - 10^6))
-	endFilter<- end(range(GR)) + 10^6
-	colsFilter<-c("CHR","CHRLOC","CHRLOCEND","SYMBOL")
-	sFilter<-suppressWarnings(select(OrgDb, keys=seqLevels, cols=colsFilter , keytype="CHR"))
-	symbolsToGet<- sFilter[abs(sFilter[,"CHRLOC"]) > startFilter & abs(sFilter[,"CHRLOCEND"]) < endFilter & !is.na(sFilter[,"CHRLOCEND"]) & !is.na(sFilter[,"CHRLOC"]),"SYMBOL"] 
-	
-	
-	#then create an annGR for genes in range
-	if(getUCSC){
-		cols <- c("SYMBOL","CHR","CHRLOC","CHRLOCEND","ENSEMBL","UCSCKG")
-	}else{
-		cols <- c("SYMBOL","CHR","CHRLOC","CHRLOCEND","ENSEMBL")
-	}
-	s <- suppressWarnings(select(OrgDb, keys=symbolsToGet, cols=cols, keytype="SYMBOL"))
-	
-	
-	#remove Symbols with NAs
-	TFminusStrand <- s[["CHRLOC"]] <0
-	TFplusStrand <- s[["CHRLOC"]] >0
-	sNoNas <- s[c(which(TFminusStrand),which(TFplusStrand)),]
-	
-	#make Strand vector
-	TFminusStrand2 <- sNoNas[["CHRLOC"]] <0
-	strand <- rep("+",length=(dim(sNoNas)[1] ))
-	
-	strand[TFminusStrand2] <- "-"
-	
-	#make start and end vector 
-	sNonNegative <- sNoNas
-	sNonNegative[TFminusStrand2,c("CHRLOC","CHRLOCEND")] <- -sNonNegative[TFminusStrand2,c("CHRLOC","CHRLOCEND")]
-	start <- sNonNegative[["CHRLOC"]]
-	end <- sNonNegative[["CHRLOCEND"]]
-	
-	#make seqnames
-	seqnames <- sNonNegative[["CHR"]]
-	
-	#make the annGR containing all genes
-	if(getUCSC){	
-		annGR <- GRanges(
-				seqnames=Rle(seqnames),
-				ranges=IRanges(start,end),
-				strand= Rle(strand),
-				Symbol=sNonNegative[["SYMBOL"]],
-				Ensembl=sNonNegative[["ENSEMBL"]],
-				UCSCKG=sNonNegative[["UCSCKG"]]
-		)
-	}else{
-		annGR <- GRanges(
-				seqnames=Rle(seqnames),
-				ranges=IRanges(start,end),
-				strand= Rle(strand),
-				Symbol=sNonNegative[["SYMBOL"]],
-				Ensembl=sNonNegative[["ENSEMBL"]]
-		)
-		
-	}
-	
-	#check that all levels in GR exist in annGR, if not exclude these levels
-	if(sum(!levels(seqnames(GR)) %in% levels(seqnames(annGR)))>0){
-		TFkeepLevels <- levels(seqnames(GR)) %in% levels(seqnames(annGR))
-		seqlevels(GR, force=FALSE) <- seqlevels(GR)[TFkeepLevels]
-	
-	}
-
-	#check that all levels in annGR exist in GR, if not exclude these levels
-	if(sum(!levels(seqnames(annGR)) %in% levels(seqnames(GR)))>0){
-		TFkeepLevels <- levels(seqnames(annGR)) %in% levels(seqnames(GR))
-		seqlevels(annGR, force=TRUE) <- seqlevels(annGR)[TFkeepLevels]	
-	}
-
-	#the seqlevels comes in different orders. This will give the correct order.
-	seqlevels(GR) <- seqlevels(annGR)
-
-	#find overlaps between annGR and Snps incl. flank region
-	GenesInRegion <- subsetByOverlaps(annGR,GR) #put in flankSize here when you have time ;)
-	seqlengths(GenesInRegion) <- seqlengths(GR)
-	GenesInRegion
-}
-
-
-
-
-getGenesVector <- function(OrgDb, GR, leftFlank=0, rightFlank=0, verbose=FALSE){
-	if(verbose){cat("start gene extraction\n")}
-	GenesInRegion <- getGenesFromAnnotation(OrgDb, GR, leftFlank=leftFlank,rightFlank=rightFlank,verbose=FALSE)	
-
-	seqlevels(GR) <- seqlevels(GenesInRegion)
-
-	#remove duplicate symbol names
-	#if same symbol merge regions
-	symbolList <- unique(mcols(GenesInRegion)[["Symbol"]])
-	newGenesInRegion <- GRanges()
-	
-	#check if GenesInRegion is zero
-	if(!length(GenesInRegion)==0){
-		for(i in 1:length(symbolList)){
-			symbol <- symbolList[i]
-			TF <- mcols(GenesInRegion)[["Symbol"]]==symbol
-
-			G <- GRanges(
-				seqnames=unique(seqnames(GenesInRegion[TF])),
-				ranges=IRanges(min(start(GenesInRegion[TF])),max(end(GenesInRegion[TF]))),
-				strand=unique(strand(GenesInRegion[TF])))
-			mcols(G) <- unique(mcols(GenesInRegion[TF])[,"Symbol",drop=FALSE])
-
-		newGenesInRegion <- c(newGenesInRegion,G) 
-		}
-	}
-
-	#half-vectorized solution
-	h <- findOverlaps(newGenesInRegion,GR)
-	symbolVec <- vector() 
-	for(i in 1:length(GR)){
-		symbolVec[i] <- paste(mcols(newGenesInRegion[queryHits(h)[subjectHits(h)==i]])[["Symbol"]], collapse=",")
-	}
-	#set NAs where appropriate
-	symbolVec[symbolVec==""] <- NA
-	#return list with symbols
-	symbolVec
-	
-	#return list with symbols
-	symbolVec
-}
-
-getExonsFromAnnotation <- function(TxDb, GR,leftFlank=0,rightFlank=0,verbose=FALSE) {
-	
-	#checks
-	if(class(TxDb)!="TxDb")stop(paste("GR must of class TxDb, not",class(TxDb)))
-	
-	if(class(GR)!="GRanges")stop(paste("GR must of class GRanges, not",class(GR)))
-		
-	if(!class(leftFlank)%in%c("numeric"))stop(paste("leftFlank must be of class numeric, not:",class(leftFlank)))
-	if(length(leftFlank)!=1)stop(paste("leftFlank must be of length 1, not:",length(leftFlank)))
-	if(leftFlank<0)stop(paste("leftFlank must be equal to or larger than 0"))
-	
-	if(!class(rightFlank)%in%c("numeric"))stop(paste("rightFlank must be of class numeric, not:",class(rightFlank)))
-	if(length(rightFlank)!=1)stop(paste("rightFlank must be of length 1, not:",length(rightFlank)))
-	if(rightFlank<0)stop(paste("rightFlank must be equal to or larger than 0"))
-	
-	if(!class(verbose)%in%c("logical"))stop(paste("verbose must be of class logical, not:",class(verbose)))
-	if(length(verbose)!=1)stop(paste("verbose must be of length 1, not:",length(verbose)))
-	
-	#remove chr in seqnames for GR
-	seqLevels <- sub("^chr", "", seqlevels(GR))
-	seqlevels(GR) <- seqLevels
-
-	seqlevels(TxDb, force=TRUE) <- paste("chr",names(seqlengths(GR)),sep="")
-
-	#Get all exons from the active chromosomes
-	#By creating a GRanges from TxDb
-	annGR <- exons(TxDb, columns=c("exon_id","tx_name"))
-
-	#remove chr in seqnames for annGR
-	seqLevels <- sub("^chr", "", seqlevels(annGR))
-	seqlevels(annGR) <- seqLevels
-	
-	#check that all levels in GR exist in annGR, if not exclude these levels
-	if(sum(!levels(seqnames(GR)) %in% levels(seqnames(annGR)))>0){
-		TFkeepLevels <- levels(seqnames(GR)) %in% levels(seqnames(annGR))
-		seqlevels(GR, force=FALSE) <- seqlevels(GR)[TFkeepLevels]
-		
-	}
-
-	#check that all levels in annGR exist in GR, if not exclude these levels
-	if(sum(!levels(seqnames(annGR)) %in% levels(seqnames(GR)))>0){
-		TFkeepLevels <- levels(seqnames(annGR)) %in% levels(seqnames(GR))
-		seqlevels(annGR, force=TRUE) <- seqlevels(annGR)[TFkeepLevels]	
-	}
-
-	#the seqlevels comes in different orders. This will give the correct order.
-	seqlevels(GR) <- seqlevels(annGR)
-
-	#add flanking regions
-	lf <- flank(GR,leftFlank,start=TRUE)
-	rf <- flank(GR,rightFlank,start=FALSE)
-	GR <- c(lf,GR,rf)
-	start<-max(c(1,min(start(GR))))	
-	end<-max(end(GR))	
-	
-	#speed-increasing coarse subset to +/- 1MB before extracting (because smaller annGR is faster and we have to access several times)
-	annGR<-annGR[start(ranges(annGR))> max(c(1,start-10^6)) & end(ranges(annGR)) < (end+10^6)]
-	
-	#extract names of all transcripts with exons in plotting window
-	tx_names<-unique(unlist(as.list(mcols(annGR[start(ranges(annGR))>start & end(ranges(annGR)) < end])[["tx_name"]])))
-	
-	#retrieve all transcript annotation, including potential off-plot tails and heads
-	ExonsInRegion<-annGR[sapply(mcols(annGR)[["tx_name"]],function(x){any(tx_names%in%x)})]
-	
-	seqlengths(ExonsInRegion) <- seqlengths(GR)
-	ExonsInRegion
-
-}
-
-
-getExonsVector <- function(TxDb, GR,leftFlank=0,rightFlank=0,verbose=FALSE){
-	if(verbose){cat("start exon extraction\n")}
-
-	ExonsInRegion <- getExonsFromAnnotation(TxDb, GR,leftFlank,rightFlank,verbose=verbose)
-
-	seqlevels(GR) <- seqlevels(ExonsInRegion)
-
-	#half-vectorized solution
-	h <- findOverlaps(ExonsInRegion,GR)
-	ExonVec <- vector() 
-	for(i in 1:length(GR)){
-		ExonVec[i] <- paste(mcols(ExonsInRegion[queryHits(h)[subjectHits(h)==i]])[["exon_id"]], collapse=",")
-	}
-	#set NAs where appropriate
-	ExonVec[ExonVec==""] <- NA
-	#return list with symbols
-	ExonVec
-
-}
-
-
-getTranscriptsFromAnnotation <- function(TxDb, GR,leftFlank=0,rightFlank=0,verbose=FALSE) {
-	
-	#checks
-	if(class(TxDb)!="TxDb")stop(paste("GR must of class TxDb, not",class(TxDb)))
-	
-	if(class(GR)!="GRanges")stop(paste("GR must of class GRanges, not",class(GR)))
-	
-	if(!class(leftFlank)%in%c("numeric"))stop(paste("leftFlank must be of class numeric, not:",class(leftFlank)))
-	if(length(leftFlank)!=1)stop(paste("leftFlank must be of length 1, not:",length(leftFlank)))
-	if(leftFlank<0)stop(paste("leftFlank must be equal to or larger than 0"))
-	
-	if(!class(rightFlank)%in%c("numeric"))stop(paste("rightFlank must be of class numeric, not:",class(rightFlank)))
-	if(length(rightFlank)!=1)stop(paste("rightFlank must be of length 1, not:",length(rightFlank)))
-	if(rightFlank<0)stop(paste("rightFlank must be equal to or larger than 0"))
-	
-	if(!class(verbose)%in%c("logical"))stop(paste("verbose must be of class logical, not:",class(verbose)))
-	if(length(verbose)!=1)stop(paste("verbose must be of length 1, not:",length(verbose)))
-	
-	
-	
-	#remove chr in seqnames for GR
-	seqLevels <- sub("^chr", "", seqlevels(GR))
-	seqlevels(GR) <- seqLevels
-
-	seqlevels(TxDb, force=TRUE) <- paste("chr",names(seqlengths(GR)),sep="")
-
-
-	#Get all exons from the active chromosomes
-	#By creating a GRanges from TxDb
-	annGR <- transcripts(TxDb)
-
-
-	#remove chr in seqnames for annGR
-	seqLevels <- sub("^chr", "", seqlevels(annGR))
-	seqlevels(annGR) <- seqLevels
-	
-	#check that all levels in GR exist in annGR, if not exclude these levels
-	if(sum(!levels(seqnames(GR)) %in% levels(seqnames(annGR)))>0){
-		TFkeepLevels <- levels(seqnames(GR)) %in% levels(seqnames(annGR))
-		seqlevels(GR, force=FALSE) <- seqlevels(GR)[TFkeepLevels]
-		
-	}
-
-	#check that all levels in annGR exist in GR, if not exclude these levels
-	if(sum(!levels(seqnames(annGR)) %in% levels(seqnames(GR)))>0){
-		TFkeepLevels <- levels(seqnames(annGR)) %in% levels(seqnames(GR))
-		seqlevels(annGR, force=TRUE) <- seqlevels(annGR)[TFkeepLevels]	
-	}
-
-	#the seqlevels comes in different orders. This will give the correct order.
-	seqlevels(GR) <- seqlevels(annGR)
-
-	#add flanking regions
-	lf <- flank(GR,leftFlank,start=TRUE)
-	rf <- flank(GR,rightFlank,start=FALSE)
-	GR <- c(lf,GR,rf)
-	#find overlaps between annGR and Snps incl. flank region
-	TxInRegion <- subsetByOverlaps(annGR,GR) #put in flankSize here when you have time ;)
-	seqlengths(TxInRegion) <- seqlengths(GR)
-	TxInRegion
-}
-
-getTranscriptsVector <- function(TxDb, GR,leftFlank=0,rightFlank=0,verbose=FALSE){
-	if(verbose){cat("start transcript extraction\n")}
-
-	TxInRegion <- getTranscriptsFromAnnotation(TxDb, GR,leftFlank,rightFlank)
-
-	seqlevels(GR) <- seqlevels(TxInRegion)
-
-	#half-vectorized solution
-	h <- findOverlaps(TxInRegion,GR)
-	TxVec <- vector() 
-	for(i in 1:length(GR)){
-		TxVec[i] <- paste(mcols(TxInRegion[queryHits(h)[subjectHits(h)==i]])[["tx_id"]], collapse=",")
-	}
-	#set NAs where appropriate
-	TxVec[TxVec==""] <- NA
-	#return list with symbols
-	TxVec
-
-}
-
-getCDSFromAnnotation <- function(TxDb, GR,leftFlank=0,rightFlank=0,verbose=FALSE) {
-	#CDS are the coding regions that do not only code for proteins, but other also other types like RNA.
-
-	#checks
-	if(class(TxDb)!="TxDb")stop(paste("GR must of class TxDb, not",class(TxDb)))
-	
-	if(class(GR)!="GRanges")stop(paste("GR must of class GRanges, not",class(GR)))
-	
-	if(!class(leftFlank)%in%c("numeric"))stop(paste("leftFlank must be of class numeric, not:",class(leftFlank)))
-	if(length(leftFlank)!=1)stop(paste("leftFlank must be of length 1, not:",length(leftFlank)))
-	if(leftFlank<0)stop(paste("leftFlank must be equal to or larger than 0"))
-	
-	if(!class(rightFlank)%in%c("numeric"))stop(paste("rightFlank must be of class numeric, not:",class(rightFlank)))
-	if(length(rightFlank)!=1)stop(paste("rightFlank must be of length 1, not:",length(rightFlank)))
-	if(rightFlank<0)stop(paste("rightFlank must be equal to or larger than 0"))
-	
-	if(!class(verbose)%in%c("logical"))stop(paste("verbose must be of class logical, not:",class(verbose)))
-	if(length(verbose)!=1)stop(paste("verbose must be of length 1, not:",length(verbose)))
-	
-	#remove chr in seqnames for GR
-	seqLevels <- sub("^chr", "", seqlevels(GR))
-	seqlevels(GR) <- seqLevels
-
-	seqlevels(TxDb, force=TRUE) <- paste("chr",names(seqlengths(GR)),sep="")
-
-
-	#Get all exons from the active chromosomes
-	#By creating a GRanges from TxDb
-	annGR <- cds(TxDb)
-
-	
-	#remove chr in seqnames for annGR
-	seqLevels <- sub("^chr", "", seqlevels(annGR))
-	seqlevels(annGR) <- seqLevels
-	
-	#check that all levels in GR exist in annGR, if not exclude these levels
-	if(sum(!levels(seqnames(GR)) %in% levels(seqnames(annGR)))>0){
-		TFkeepLevels <- levels(seqnames(GR)) %in% levels(seqnames(annGR))
-		seqlevels(GR, force=FALSE) <- seqlevels(GR)[TFkeepLevels]
-		
-	}
-
-	#check that all levels in annGR exist in GR, if not exclude these levels
-	if(sum(!levels(seqnames(annGR)) %in% levels(seqnames(GR)))>0){
-		TFkeepLevels <- levels(seqnames(annGR)) %in% levels(seqnames(GR))
-		seqlevels(annGR, force=TRUE) <- seqlevels(annGR)[TFkeepLevels]	
-	}
-
-	#the seqlevels comes in different orders. This will give the correct order.
-	seqlevels(GR) <- seqlevels(annGR)
-
-	#add flanking regions
-	lf <- flank(GR,leftFlank,start=TRUE)
-	rf <- flank(GR,rightFlank,start=FALSE)
-	GR <- c(lf,GR,rf)
-	#find overlaps between annGR and Snps incl. flank region
-	CDSInRegion <- subsetByOverlaps(annGR,GR) #put in flankSize here when you have time ;)
-	seqlengths(CDSInRegion) <- seqlengths(GR)
-	CDSInRegion
-	
-}
-
-
-
-getCDSVector <- function(TxDb, GR,leftFlank=0,rightFlank=0,verbose=FALSE){
-	if(verbose){cat("start CDS extraction\n")}
-
-	CDSInRegion <- getCDSFromAnnotation(TxDb, GR,leftFlank,rightFlank)
-
-	seqlevels(GR) <- seqlevels(CDSInRegion)
-
-	#half-vectorized solution
-	h <- findOverlaps(CDSInRegion,GR)
-	CDSVec <- vector() 
-	for(i in 1:length(GR)){
-		CDSVec[i] <- paste(mcols(CDSInRegion[queryHits(h)[subjectHits(h)==i]])[["cds_id"]], collapse=",")
-	}
-	#set NAs where appropriate
-	CDSVec[CDSVec==""] <- NA
-	#return list with symbols
-	CDSVec
-}
-
-getAnnotationDataFrame <- function(GR,strand="+",annotationType=NULL,OrgDb=NULL, TxDb=NULL,verbose=FALSE)
-{
-	#main checks
-	if(sum(!(annotationType %in% c("gene","exon","cds","transcript")))>0){
-		stop("annotationType must be one or more of these arguments 'gene','exon','cds','transcript'")}
-
-	if(is.null(OrgDb) & is.null(TxDb)){
-		stop("at least one of parameters OrgDb or TxDb must be used")}
-	
-	#nr of columns for return df
-	ncol <- 0
-	if(!is.null(OrgDb)){ncol <- ncol + 1}
-	if(!is.null(TxDb)){ncol <- ncol + (length(annotationType) -1)}	 
-	
-	#return dataframe
-	df <- data.frame(row.names=1:length(GR))
-	
-	#set strand
-	strand(GR) <- strand
-	
-	#extract annotation
-	if(!is.null(OrgDb)){
-		if("gene"%in%annotationType){
-			gene <- getGenesVector(OrgDb=OrgDb, GR=GR, verbose=verbose)
-			df[["symbol"]] <- gene
-		}
-		if(is.null(annotationType)){
-			gene <- getGenesVector(OrgDb=OrgDb, GR=GR, verbose=verbose)
-			df[["symbol"]] <- gene
-		}
-	}
-	if(!is.null(TxDb)){
-		if("exon"%in%annotationType){
-			df[["exon_id"]] <-getExonsVector(TxDb=TxDb,GR=GR, verbose=verbose)
-		}
-		if("transcript"%in%annotationType){
-			df[["tx_id"]] <- getTranscriptsVector(TxDb=TxDb,GR=GR, verbose=verbose)
-		}
-		if("cds"%in%annotationType){
-			df[["cds_id"]] <- getCDSVector(TxDb=TxDb,GR=GR, verbose=verbose)
-		}
-
-		if(is.null(annotationType)) {
-			df[["exon_id"]] <-getExonsVector(TxDb=TxDb,GR=GR, verbose=verbose)
-			df[["tx_id"]] <- getTranscriptsVector(TxDb=TxDb,GR=GR, verbose=verbose)
-			df[["cds_id"]] <- getCDSVector(TxDb=TxDb,GR=GR, verbose=verbose)
-		}
-	}
-	df
-}
-
+#' Map Bias
+#' 
+#' an allele frequency list
+#' 
+#' This function will assume there is no bias that comes from the mapping of
+#' reads, and therefore create a matrix with expected frequency of 0.5 for each
+#' allele.
+#' 
+#' @aliases getDefaultMapBiasExpMean getDefaultMapBiasExpMean3D
+#' @param alleleCountList A \code{GRangesList object} containing read
+#' information
+#' @return \code{getDefaultMapBiasExpMean} returns a matrix with a default
+#' expected mean of 0.5 for every element.
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords mapping bias
+#' @examples
+#' 
+#' 	#load example data
+#' 	data(ASEset)
+#' 	#access SnpAfList
+#' 	alleleCountList <- alleleCounts(ASEset)
+#' 	#get default map bias exp mean
+#' 	matExpMean <- getDefaultMapBiasExpMean(alleleCountList)
+#' 
+#' 
+#' @export getDefaultMapBiasExpMean
 getDefaultMapBiasExpMean <- function(alleleCountList){
 
 	l <- lapply(alleleCountList,function(x){
@@ -1333,6 +1086,44 @@ extractReferenceAllele <- function(GR,path){
 
 }
 
+
+
+#' Get Gene Area
+#' 
+#' Given a character vector with genesymbols and an OrgDb object, this function
+#' returns a GRanges giving the coordinates of the genes.
+#' 
+#' This function is a convenience function that can be used to determine which
+#' genomic coordinates to specify to e.g. \code{impBamGAL} when retrieving
+#' reads.
+#' 
+#' The function cannot handle genes that do not exist in the annotation. To
+#' remove these please set the na.rm=TRUE.
+#' 
+#' @param genesymbols A character vector that contains genesymbols of genes
+#' from which we wish to retrieve the coordinates
+#' @param OrgDb An \code{OrgDb} object containing gene annotation
+#' @param leftFlank A \code{integer} specifying number of additional
+#' nucleotides before the genes
+#' @param rightFlank A \code{integer} specifying number of additional
+#' nucleotides after the genes
+#' @param na.rm A \code{boolean} removing genes that returned NA from the
+#' annotation
+#' @param verbose Setting \code{verbose=TRUE} makes function more talkative
+#' @return \code{getAreaFromGeneNames} returns a GRanges object with genomic
+#' coordinates around the specified genes
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords genes locations
+#' @examples
+#' 
+#' 	#load example data
+#' 	data(ASEset)
+#' 	
+#' 	#get counts at the three positions specified in GRvariants
+#' 	library(org.Hs.eg.db )
+#' 	searchArea<-getAreaFromGeneNames(c("PAX8","TLR7"), org.Hs.eg.db)	
+#' 
+#' @export getAreaFromGeneNames
 getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank=0,rightFlank=0,na.rm=FALSE, verbose=TRUE){
 	
 	#start up sets
@@ -1404,6 +1195,38 @@ getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank=0,rightFlank=0,na
 
 
 
+
+
+#' Get rsIDs from locations of SNP
+#' 
+#' Given a GRanges object of SNPs and a SNPlocs annotation, this function
+#' attempts to replace the names of the GRanges object entries with rs-IDs.
+#' 
+#' This function is used to try to identify the rs-IDs of SNPs in a GRanges
+#' object.
+#' 
+#' @param GR A \code{GRanges} that contains positions of SNPs to look up
+#' @param SNPloc A \code{SNPlocs object} containing information on SNP
+#' locations (e.g. SNPlocs.Hsapiens.dbSNP.xxxxxxxx)
+#' @param return.vector Setting \code{return.vector=TRUE} returns vector with
+#' rsIds
+#' @param verbose Setting \code{verbose=TRUE} makes function more talkative
+#' @return \code{getSnpIdFromLocation} returns the same GRanges object it was
+#' given with, but with updated with rs.id information.
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords SNP rs-id
+#' @examples
+#' 
+#' 	#load example data
+#' 	data(ASEset)
+#' 	
+#' 	#get counts at the three positions specified in GRvariants
+#' 	if(require(SNPlocs.Hsapiens.dbSNP.20120608)){
+#'		updatedGRanges<-getSnpIdFromLocation(rowData(ASEset), SNPlocs.Hsapiens.dbSNP.20120608)
+#'		rowData(ASEset)<-updatedGRanges
+#'	}
+#' 
+#' @export getSnpIdFromLocation
 getSnpIdFromLocation <- function(GR, SNPloc, return.vector=FALSE, verbose=TRUE) {
 	
 	if(class(GR)!="GRanges")stop(paste("GR must of class GRanges, not",class(GR)))
@@ -1460,6 +1283,55 @@ getAlleleCount <- function()
     ## use new function, or remainder of myOldFunc
 }
 
+#' lattice barplot inner functions for ASEset objects
+#' 
+#' Generates lattice barplots for ASEset objects. Two levels of plotting detail
+#' are provided: a detailed barplot of read counts by allele useful for fewer
+#' samples and SNPs, and a less detailed barplot of the fraction of imbalance,
+#' useful for more samples and SNPs.
+#' 
+#' \code{filter.pValue.fraction} is intended to remove p-value annotation with
+#' very large difference in frequency, which could just be a sequencing
+#' mistake. This is to avoid p-values like 1e-235 or similar.
+#' 
+#' \code{sampleColour}User specified colours, either given as named colours
+#' ('red', 'blue', etc) or as hexadecimal code. Can be either length 1 for all
+#' samples, or else of a length corresponding to the number of samples for
+#' individual colouring.
+#' 
+#' @name barplot-lattice-support
+#' @rdname barplot-lattice-support
+#' @aliases barplot-lattice-support barplotLatticeCounts barplotLatticeFraction
+#' @param identifier, the single snp name to plot
+#' @param afraction the fractions in matrix for each snp
+#' @param arank the ranks for each snp
+#' @param acounts the counts for each snp
+#' @param amainVec, vector for each plots main
+#' @param ... for simpler generics when extending function
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @seealso \itemize{ \item The \code{\link{ASEset}} class which the barplot
+#' function can be called up on.  }
+#' @keywords barplot
+#' @examples
+#' 
+#' 	a <- ASEset
+#' 	strand <- "+"
+#' 	acounts <-  alleleCounts(a,strand=strand)
+#' 	arank <-  arank(a,strand=strand)
+#' 	afraction <- fraction(a, strand=strand)
+#' 	amainVec <- rep("",nrow(a))
+#' 
+#' 	name <- rownames(a)[1]
+#' 
+#' 	barplotLatticeFraction(identifier=name, afraction, arank, amainVec) 
+#' 	barplotLatticeCounts(identifier=name,  acounts, arank, amainVec) 
+#' 
+#' @export barplotLatticeFraction
+#' @export barplotLatticeCounts
+#' 
+NULL
+
+#' @rdname barplot-lattice-support
 barplotLatticeFraction <- function(identifier,afraction,arank, amainVec, ... ){
 #afraction 
 #arank
@@ -1504,13 +1376,9 @@ barplotLatticeFraction <- function(identifier,afraction,arank, amainVec, ... ){
 	 #abbreviate=TRUE
 	)
 	b
-
 }
-###
-#Counts
-###
 
-
+#' @rdname barplot-lattice-support
 barplotLatticeCounts <- function(identifier, acounts, arank, amainVec, ...){
 	
 
@@ -1544,6 +1412,29 @@ barplotLatticeCounts <- function(identifier, acounts, arank, amainVec, ...){
 	b
 }
 
+
+
+#' coverage matrix of GAlignmentsList
+#' 
+#' Get coverage per nucleotide for reads covering a region
+#' 
+#' a convenience function to get the coverage from a list of reads stored in
+#' GAlignmnetsList, and returns by default a list with one matrix, and
+#' information about the genomic start and stop positions.
+#' 
+#' @param BamList GAlignmentsList containing reads over the region to calculate
+#' coverage
+#' @param strand strand has to be '+' or '-'
+#' @param ignore.empty.bam.row argument not in use atm
+#' @author Jesper R. Gadin
+#' @keywords coverage
+#' @examples
+#' 
+#' 	r <- reads
+#' 	seqlevels(r) <- "17"
+#' 	covMatList <- coverageMatrixListFromGAL(BamList=r, strand="+")
+#' 
+#' @export coverageMatrixListFromGAL
 coverageMatrixListFromGAL <- function(BamList,strand=NULL,ignore.empty.bam.row=TRUE){
 
 	#If having common start and end points for all gviz track objects the matrix will start on the specific start regardless if there are reads in the bamList or not. 

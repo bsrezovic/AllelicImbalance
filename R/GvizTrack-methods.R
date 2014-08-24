@@ -1,3 +1,83 @@
+#'@include locationplot-methods.R
+NULL
+
+#' ASEset-gviztrack ASEset objects
+#' 
+#' plotting ASE effects over a specific genomic region
+#' 
+#' For information of how to use these tracks in more ways, visit the Gviz
+#' package manual.
+#' 
+#' @name ASEset-gviztrack
+#' @rdname ASEset-gviztrack
+#' @aliases ASEset-gviztrack CoverageDataTrack ASEDAnnotationTrack
+#' CoverageDataTrack,ASEset-method ASEDAnnotationTrack,ASEset-method
+#' @docType methods
+#' @param x an ASEset object.
+#' @param GR genomic range of plotting
+#' @param type "fraction" or "count"
+#' @param strand "+","-". This argument determines which strand is plotted.
+#' @param mainVec vector of text for the main of each plot
+#' @param BamList GAlignmnentsList object of reads from the same genomic region
+#' as the ASEset
+#' @param start start position of reads to be plotted
+#' @param end end position of reads to be plotted
+#' @param verbose Setting \code{verbose=TRUE} gives details of procedure during
+#' function run
+#' @param ... arguments passed on to barplot function
+#' @author Jesper R. Gadin
+#' @seealso \itemize{ \item The \code{\link{ASEset}} class which the functions
+#' can be called up on.  }
+#' @keywords ASEDAnnotationTrack CoverageDataTrack
+#' @examples
+#' 
+#' 	data(ASEset)
+#' 	x <- ASEset[,1:2]
+#' 	r <- reads[1:2]
+#' 	genome(x) <- "hg19"
+#' 	seqlevels(r) <- seqlevels(x)
+#' 
+#' 	GR <- GRanges(seqnames=seqlevels(x),ranges=IRanges(start=min(start(x)),end=max(end(x))),strand="+", genome=genome(x))
+#' 
+#' 	deTrack <- ASEDAnnotationTrack(x, GR=GR, type="fraction",strand="+")
+#' 	covTracks <- CoverageDataTrack(x,BamList=r,strand="+") 
+#' 
+#' 	lst <- c(deTrack,covTracks)
+#' 
+#' 	sizes <- c(0.5,rep(0.5/length(covTracks),length(covTracks)))
+#' 	#plotTracks(lst, from=min(start(x)), to=max(end(x)),sizes=sizes, col.line = NULL, showId = FALSE, main="mainText", cex.main=1, title.width=1, type="histogram")
+#' 
+#'
+#' @importFrom Gviz DetailsAnnotationTrack
+#' @importFrom Gviz AnnotationTrack
+#' @importFrom Gviz DataTrack
+#' @importFrom Gviz plotTracks
+#' 
+#' @importClassesFrom Gviz DataTrack
+#' @importClassesFrom Gviz AnnotationTrack
+#' @importClassesFrom Gviz DetailsAnnotationTrack
+#'
+#' @exportMethod ASEDAnnotationTrack
+#' @exportMethod CoverageDataTrack
+NULL
+
+# @export plotTracks
+
+##' @rdname ASEset-gviztrack
+#setGeneric("plotTracks")
+
+#' @rdname ASEset-gviztrack
+setGeneric("ASEDAnnotationTrack",
+	   function(x, 
+		   GR=rowData(x),
+		   type="fraction",
+		   strand="+",
+		   mainVec=vector(),
+		   verbose=TRUE,
+		   ... ) 
+		   {standardGeneric("ASEDAnnotationTrack")}
+	   )
+
 setMethod("ASEDAnnotationTrack",
     signature(x = "ASEset"),
     function (x,
@@ -75,6 +155,19 @@ setMethod("ASEDAnnotationTrack",
 		deTrack
 	}
     )
+
+##' @rdname ASEset-gviztrack
+setGeneric("CoverageDataTrack",
+	   function(x,
+		    GR=rowData(x),
+		    BamList=NULL,
+		    strand=NULL,
+		    start=NULL,
+		    end=NULL,
+		    verbose=TRUE,
+		    ... )
+		   {standardGeneric("CoverageDataTrack")})
+
 
 
 setMethod("CoverageDataTrack",
