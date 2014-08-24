@@ -1335,6 +1335,7 @@ NULL
 barplotLatticeFraction <- function(identifier,afraction,arank, amainVec, ... ){
 #afraction 
 #arank
+	args <- list(...)
 
 	a.r <- arank[[identifier]][1:2]	
 	a.f <- afraction[,identifier]
@@ -1361,7 +1362,18 @@ barplotLatticeFraction <- function(identifier,afraction,arank, amainVec, ... ){
 
 	#replace empty counts allele types as "low count"
 	#allele[TFna] <- "low count"
-
+#	einfo <- list()
+#	print(get("gparam", envir = parent.env(as.environment(-1))))
+#	einfo$one <- parent.env(as.environment(-1))
+#	einfo$two <- ls()
+#	assign("einfo", einfo , pos=1)
+	#fetch graphical params from environment
+#	if(exist(gpar,envir=AllelicImbalance.extra)){
+#		gpar <- get("gpar",envir=AllelicImbalance.extra)
+#	}
+#	#check if gpar includes useful parameters d
+#	gparUseful <- c("ylab","xlab") 
+	
 	b <- barchart(values~sample,
 	 #horiz=FALSE,
  	 group=allele,
@@ -1371,7 +1383,11 @@ barplotLatticeFraction <- function(identifier,afraction,arank, amainVec, ... ){
 	 #auto.key=list(points = FALSE, rectangles = TRUE,space="top",size=2,cex=0.8),
 	 stack=TRUE,
 	 scales = list(rot=c(90,0)),
-	 main=amainVec
+	 main=amainVec,
+	 ylab=args$ylab
+	 #ylab=get("gpar",envir="AllelicImbalance.extra")$ylab
+	 #ylab=get("gpar", envir = parent.env(as.environment(-1)))$ylab,
+	 #ylab=get("gpar", envir = parent.env(parent.env(as.environment(-1))))$ylab,
 	 #box.ratio=2,
 	 #abbreviate=TRUE
 	)

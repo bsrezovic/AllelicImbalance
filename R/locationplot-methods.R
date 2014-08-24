@@ -311,6 +311,7 @@ setMethod("locationplot", signature(x = "ASEset"),
 #' plotted. See \code{getAlleleCounts} for more information on strand.
 #' @param BamGAL GAlignmentsList covering the same genomic region as the ASEset
 #' @param GenomeAxisTrack include an genomic axis track
+#' @param add add to existing plot
 #' @param verbose Makes function more talkative
 #' @param ... arguments passed on to barplot function
 #' @author Jesper R. Gadin
@@ -335,6 +336,7 @@ setGeneric("glocationplot",
 		strand="nonStranded",
 		BamGAL=NULL,
 		GenomeAxisTrack=FALSE,
+		add=FALSE,
 		verbose=FALSE,
 	   	...)
 		{standardGeneric("glocationplot")})
@@ -345,6 +347,7 @@ setMethod("glocationplot", signature(x = "ASEset"),
 		strand="+",
 		BamGAL=NULL,
 		GenomeAxisTrack=FALSE,
+		add=FALSE,
 		verbose=FALSE,
 		...
 	){
@@ -393,10 +396,10 @@ setMethod("glocationplot", signature(x = "ASEset"),
 		}
 
 		if(!is.null(BamGAL)){
-			plotTracks(lst, from=start, to=end,sizes=sizes, col.line = NULL, showId = FALSE, main="mainText", cex.main=1, title.width=1, type="histogram")
+			plotTracks(lst, from=start, to=end,sizes=sizes, col.line = NULL, showId = FALSE, main="mainText", cex.main=1, title.width=1, type="histogram",add=add)
 		}else{
 			#plot
-			plotTracks(lst)
+			plotTracks(lst,add=add)
 		}
 	}
 )

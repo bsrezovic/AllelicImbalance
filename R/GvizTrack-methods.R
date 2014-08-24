@@ -22,6 +22,7 @@ NULL
 #' as the ASEset
 #' @param start start position of reads to be plotted
 #' @param end end position of reads to be plotted
+#' @param gpar graphical parameters for each small plot
 #' @param verbose Setting \code{verbose=TRUE} gives details of procedure during
 #' function run
 #' @param ... arguments passed on to barplot function
@@ -74,6 +75,7 @@ setGeneric("ASEDAnnotationTrack",
 		   strand="+",
 		   mainVec=vector(),
 		   verbose=TRUE,
+		   gpar=list(),
 		   ... ) 
 		   {standardGeneric("ASEDAnnotationTrack")}
 	   )
@@ -86,6 +88,7 @@ setMethod("ASEDAnnotationTrack",
 		strand="+",
 		mainVec=rep("",nrow(x)),
 		verbose=TRUE,
+		gpar=list(),
 		...
 	){
 
@@ -110,19 +113,36 @@ setMethod("ASEDAnnotationTrack",
 				      genome=genome(x)
 				      )
 		}
-		
+	
+		#check gpar, set default if not set by user
+		gparDefault <- 
+			list(
+				ylab="",
+				xlab=""
+			)
+		gparSet <- names(gparDefault) %in% names(gpar)
+		gpar <- mapply(gparDefault,gparSet,names(gparDefault),FUN=function(x,y,z,gpar){
+			if(y){gpar[[z]]
+			}else{x}
+
+		},MoreArgs=list(gpar=gpar))
+
 		ranges <- rowData(x)
 
 		colnames(x)<- 1:ncol(x)
 
 		details <- function(identifier, ...) {
 
+			#an option to use more
+			#print(list(...))
 
 			type <- get("type",envir=AllelicImbalance.extra)
 			arank <- get("arank",envir=AllelicImbalance.extra)
 			afraction <- get("afraction",envir=AllelicImbalance.extra)
 			acounts <- get("acounts",envir=AllelicImbalance.extra)
 			amainVec <- get("amainVec",envir=AllelicImbalance.extra)
+		#	gparam <- get("gpar",envir=AllelicImbalance.extra)
+
 
 			if(type == "fraction"){
 				print(barplotLatticeFraction(identifier,afraction, arank,amainVec, ... ), 
@@ -148,10 +168,11 @@ setMethod("ASEDAnnotationTrack",
 		assign("type", type , envir = AllelicImbalance.extra)
 		assign("amainVec", amainVec , envir = AllelicImbalance.extra)
 
+
 		#plot the fraction
 		deTrack <- AnnotationTrack(range = ranges, genome = genome(x),
 			id = rownames(x), name = paste("Gviz locationplot",type ),
-			stacking = "squish", fun = details)
+			stacking = "squish", fun = details,detailsFunArgs=gpar)
 		deTrack
 	}
     )

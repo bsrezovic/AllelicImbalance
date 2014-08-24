@@ -7,7 +7,7 @@
 \title{glocationplot ASEset objects}
 \usage{
 glocationplot(x, type = "fraction", strand = "nonStranded", BamGAL = NULL,
-  GenomeAxisTrack = FALSE, verbose = FALSE, ...)
+  GenomeAxisTrack = FALSE, add = FALSE, verbose = FALSE, ...)
 }
 \arguments{
 \item{x}{an ASEset object.}
@@ -20,6 +20,8 @@ plotted. See \code{getAlleleCounts} for more information on strand.}
 \item{BamGAL}{GAlignmentsList covering the same genomic region as the ASEset}
 
 \item{GenomeAxisTrack}{include an genomic axis track}
+
+\item{add}{add to existing plot}
 
 \item{verbose}{Makes function more talkative}
 

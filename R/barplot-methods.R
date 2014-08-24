@@ -1035,7 +1035,7 @@ setMethod("lbarplot",signature(x = "ASEset"),
 			if(type == "fraction"){
 				b <- barplotLatticeFraction(identifier=name, afraction, arank, amainVec, ... ) 
 			}else if(type == "count"){
-				b <- barplotLatticeCounts(identifier=name,  acounts, arank, amainVec, ...) 
+				b <- barplotLatticeCounts(identifier=name,  acounts, arank, amainVec ,...) 
 			}else{stop("type has to be fraction or count")}
 		}
 		b
