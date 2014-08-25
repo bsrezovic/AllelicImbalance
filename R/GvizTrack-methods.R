@@ -118,7 +118,8 @@ setMethod("ASEDAnnotationTrack",
 		gparDefault <- 
 			list(
 				ylab="",
-				xlab=""
+				xlab="",
+				deAnnoPlot=TRUE
 			)
 		gparSet <- names(gparDefault) %in% names(gpar)
 		gpar <- mapply(gparDefault,gparSet,names(gparDefault),FUN=function(x,y,z,gpar){

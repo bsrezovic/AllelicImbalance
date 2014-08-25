@@ -1332,7 +1332,7 @@ getAlleleCount <- function()
 NULL
 
 #' @rdname barplot-lattice-support
-barplotLatticeFraction <- function(identifier,afraction,arank, amainVec, ... ){
+barplotLatticeFraction <- function(identifier, afraction, arank, amainVec, ... ){
 #afraction 
 #arank
 	args <- list(...)
@@ -1360,38 +1360,42 @@ barplotLatticeFraction <- function(identifier,afraction,arank, amainVec, ... ){
 
 	my_cols <- c("green", "red")
 
-	#replace empty counts allele types as "low count"
-	#allele[TFna] <- "low count"
-#	einfo <- list()
-#	print(get("gparam", envir = parent.env(as.environment(-1))))
-#	einfo$one <- parent.env(as.environment(-1))
-#	einfo$two <- ls()
-#	assign("einfo", einfo , pos=1)
-	#fetch graphical params from environment
-#	if(exist(gpar,envir=AllelicImbalance.extra)){
-#		gpar <- get("gpar",envir=AllelicImbalance.extra)
-#	}
-#	#check if gpar includes useful parameters d
-#	gparUseful <- c("ylab","xlab") 
-	
-	b <- barchart(values~sample,
+	#set default values 
+	scales = list(rot=c(90,0))
+
+	#potentially override default settings with trellis settings
+	if(args$deAnnoPlot){
+
+		trellis.par.set(
+			 layout.widths = list(
+			 left.padding = 0,
+			 axis.left = 0,
+			 ylab.axis.padding =0,
+			 right.padding = 0,
+			 axis.right = 0
+		))
+
+		scales = list(y=list(at=NULL,labels=NULL),rot=c(90,0))
+	}
+
+ 	 b <- barchart(values~sample,
 	 #horiz=FALSE,
  	 group=allele,
 	 data=df,
 	 col = my_cols,
-       	 origin=0,
+	 origin=0,
 	 #auto.key=list(points = FALSE, rectangles = TRUE,space="top",size=2,cex=0.8),
 	 stack=TRUE,
-	 scales = list(rot=c(90,0)),
+	 scales = scales,
 	 main=amainVec,
-	 ylab=args$ylab
-	 #ylab=get("gpar",envir="AllelicImbalance.extra")$ylab
-	 #ylab=get("gpar", envir = parent.env(as.environment(-1)))$ylab,
-	 #ylab=get("gpar", envir = parent.env(parent.env(as.environment(-1))))$ylab,
+	 ylab=args$ylab,
+	 xlab=args$xlab
 	 #box.ratio=2,
 	 #abbreviate=TRUE
 	)
+
 	b
+
 }
 
 #' @rdname barplot-lattice-support
