@@ -312,6 +312,7 @@ setMethod("locationplot", signature(x = "ASEset"),
 #' @param BamGAL GAlignmentsList covering the same genomic region as the ASEset
 #' @param GenomeAxisTrack include an genomic axis track
 #' @param add add to existing plot
+#' @param trackNameDeAn  trackname for deAnnotation track
 #' @param verbose Makes function more talkative
 #' @param ... arguments passed on to barplot function
 #' @author Jesper R. Gadin
@@ -336,6 +337,7 @@ setGeneric("glocationplot",
 		strand="nonStranded",
 		BamGAL=NULL,
 		GenomeAxisTrack=FALSE,
+		trackNameDeAn=paste("deTrack",type ),
 		add=FALSE,
 		verbose=FALSE,
 	   	...)
@@ -347,6 +349,7 @@ setMethod("glocationplot", signature(x = "ASEset"),
 		strand="+",
 		BamGAL=NULL,
 		GenomeAxisTrack=FALSE,
+		trackNameDeAn=paste("deTrack",type ),
 		add=FALSE,
 		verbose=FALSE,
 		...
@@ -373,7 +376,7 @@ setMethod("glocationplot", signature(x = "ASEset"),
 
 		#make deTrack the fraction
 		if(verbose)(cat("preparing detailedAnnotationTrack\n"))
-		deTrack <- ASEDAnnotationTrack(x, GR=GR, type,strand)
+		deTrack <- ASEDAnnotationTrack(x, GR=GR, type,strand, trackName=trackNameDeAn)
 		lst <- list(deTrack)
 
 		if(!is.null(BamGAL)){

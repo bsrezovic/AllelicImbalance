@@ -9,10 +9,11 @@
 \title{ASEset-gviztrack ASEset objects}
 \usage{
 ASEDAnnotationTrack(x, GR = rowData(x), type = "fraction", strand = "+",
-  mainVec = vector(), verbose = TRUE, ...)
+  mainVec = vector(), trackName = paste("deTrack", type), verbose = TRUE,
+  gpar = list(), ...)
 
 CoverageDataTrack(x, GR = rowData(x), BamList = NULL, strand = NULL,
-  start = NULL, end = NULL, verbose = TRUE, ...)
+  start = NULL, end = NULL, trackNameVec = NULL, verbose = TRUE, ...)
 }
 \arguments{
 \item{x}{an ASEset object.}
@@ -30,7 +31,13 @@ as the ASEset}
 
 \item{start}{start position of reads to be plotted}
 
+\item{trackName}{name of track (ASEDAnnotationTrack)}
+
+\item{trackNameVec}{names of tracks (CoverageDataTrack)}
+
 \item{end}{end position of reads to be plotted}
+
+\item{gpar}{graphical parameters for each small plot}
 
 \item{verbose}{Setting \code{verbose=TRUE} gives details of procedure during
 function run}
@@ -66,7 +73,7 @@ Jesper R. Gadin
 }
 \seealso{
 \itemize{ \item The \code{\link{ASEset}} class which the functions
-can be called up on.  }
+can be called up on.}
 }
 \keyword{ASEDAnnotationTrack}
 \keyword{CoverageDataTrack}

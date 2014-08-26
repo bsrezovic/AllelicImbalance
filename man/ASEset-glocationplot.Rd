@@ -7,7 +7,8 @@
 \title{glocationplot ASEset objects}
 \usage{
 glocationplot(x, type = "fraction", strand = "nonStranded", BamGAL = NULL,
-  GenomeAxisTrack = FALSE, add = FALSE, verbose = FALSE, ...)
+  GenomeAxisTrack = FALSE, trackNameDeAn = paste("deTrack", type),
+  add = FALSE, verbose = FALSE, ...)
 }
 \arguments{
 \item{x}{an ASEset object.}
@@ -22,6 +23,8 @@ plotted. See \code{getAlleleCounts} for more information on strand.}
 \item{GenomeAxisTrack}{include an genomic axis track}
 
 \item{add}{add to existing plot}
+
+\item{trackNameDeAn}{trackname for deAnnotation track}
 
 \item{verbose}{Makes function more talkative}
 

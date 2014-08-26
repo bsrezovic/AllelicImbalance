@@ -21,6 +21,8 @@ NULL
 #' @param BamList GAlignmnentsList object of reads from the same genomic region
 #' as the ASEset
 #' @param start start position of reads to be plotted
+#' @param trackName name of track (ASEDAnnotationTrack)
+#' @param trackNameVec names of tracks (CoverageDataTrack)
 #' @param end end position of reads to be plotted
 #' @param gpar graphical parameters for each small plot
 #' @param verbose Setting \code{verbose=TRUE} gives details of procedure during
@@ -28,7 +30,7 @@ NULL
 #' @param ... arguments passed on to barplot function
 #' @author Jesper R. Gadin
 #' @seealso \itemize{ \item The \code{\link{ASEset}} class which the functions
-#' can be called up on.  }
+#' can be called up on.}
 #' @keywords ASEDAnnotationTrack CoverageDataTrack
 #' @examples
 #' 
@@ -74,6 +76,7 @@ setGeneric("ASEDAnnotationTrack",
 		   type="fraction",
 		   strand="+",
 		   mainVec=vector(),
+		   trackName=paste("deTrack",type ),
 		   verbose=TRUE,
 		   gpar=list(),
 		   ... ) 
@@ -87,6 +90,7 @@ setMethod("ASEDAnnotationTrack",
 		type="fraction",
 		strand="+",
 		mainVec=rep("",nrow(x)),
+		trackName=paste("deTrack",type ),
 		verbose=TRUE,
 		gpar=list(),
 		...
@@ -172,13 +176,13 @@ setMethod("ASEDAnnotationTrack",
 
 		#plot the fraction
 		deTrack <- AnnotationTrack(range = ranges, genome = genome(x),
-			id = rownames(x), name = paste("Gviz locationplot",type ),
+			id = rownames(x), name=trackName,
 			stacking = "squish", fun = details,detailsFunArgs=gpar)
 		deTrack
 	}
     )
 
-##' @rdname ASEset-gviztrack
+#' @rdname ASEset-gviztrack
 setGeneric("CoverageDataTrack",
 	   function(x,
 		    GR=rowData(x),
@@ -186,6 +190,7 @@ setGeneric("CoverageDataTrack",
 		    strand=NULL,
 		    start=NULL,
 		    end=NULL,
+		    trackNameVec=NULL,
 		    verbose=TRUE,
 		    ... )
 		   {standardGeneric("CoverageDataTrack")})
@@ -198,6 +203,9 @@ setMethod("CoverageDataTrack",
 		GR=NULL,
 		BamList=NULL,
 		strand=NULL,
+		start=NULL,
+		end=NULL,
+		trackNameVec=NULL,
 		verbose=TRUE,
 		...
 	){
@@ -243,6 +251,13 @@ setMethod("CoverageDataTrack",
 		start <- covMatList[["start"]]
 		end <- covMatList[["end"]]
 
+		if(is.null(trackNameVec)){
+			trackNameVec[1:ncol(x)] <- colnames(x)
+		}else{
+			if(!length(trackNameVec) == nrow(x)){
+				stop("length of trackNameVec must be equal to cols in (ASEset)")}
+		}
+
 		#prepare Gviz dtracks
 		for(j in 1:nrow(mat) ){
 			trackList[[length(trackList)+1]] <- 
@@ -252,7 +267,7 @@ setMethod("CoverageDataTrack",
 			  	  width=1, 
 			  	  chromosome = seqlevels(x), 
 			  	  genome = genome(x), 
-			  	  name = rownames(mat)[j], 
+			  	  name = trackNameVec[j], 
 			  	  type="s"
 				)
 		}
