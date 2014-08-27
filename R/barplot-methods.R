@@ -997,7 +997,7 @@ setGeneric("lbarplot",
 	   function(x,
 		type="count",
 		strand="+",
-		mainVec=vector(),
+		mainVec=rownames(x),
 		verbose=FALSE,
 		...)
 		{standardGeneric("lbarplot")})
@@ -1006,7 +1006,7 @@ setMethod("lbarplot",signature(x = "ASEset"),
 		function(x,
 			type="count",
 			strand="+",
-			mainVec=rep("",nrow(x)),
+			mainVec=rownames(x),
 			verbose=FALSE,
 			...
 		)

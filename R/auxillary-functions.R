@@ -1335,7 +1335,7 @@ NULL
 barplotLatticeFraction <- function(identifier, afraction, arank, amainVec, ... ){
 #afraction 
 #arank
-	args <- list(...)
+	gargs <- list(...)
 
 	a.r <- arank[[identifier]][1:2]	
 	a.f <- afraction[,identifier]
@@ -1362,6 +1362,7 @@ barplotLatticeFraction <- function(identifier, afraction, arank, amainVec, ... )
 
 	#set default values 
 	scales = list(rot=c(90,0))
+	gargs$deAnnoPlot <- FALSE
 
 	#potentially override default settings with trellis settings
 	if(args$deAnnoPlot){
@@ -1388,8 +1389,8 @@ barplotLatticeFraction <- function(identifier, afraction, arank, amainVec, ... )
 	 stack=TRUE,
 	 scales = scales,
 	 main=amainVec,
-	 ylab=args$ylab,
-	 xlab=args$xlab
+	 ylab=gargs$ylab,
+	 xlab=gargs$xlab
 	 #box.ratio=2,
 	 #abbreviate=TRUE
 	)

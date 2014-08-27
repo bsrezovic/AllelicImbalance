@@ -6,7 +6,7 @@
 \alias{lbarplot,ASEset-method}
 \title{lbarplot ASEset objects}
 \usage{
-lbarplot(x, type = "count", strand = "+", mainVec = vector(),
+lbarplot(x, type = "count", strand = "+", mainVec = rownames(x),
   verbose = FALSE, ...)
 }
 \arguments{
