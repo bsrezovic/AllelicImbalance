@@ -1365,7 +1365,7 @@ barplotLatticeFraction <- function(identifier, afraction, arank, amainVec, ... )
 	gargs$deAnnoPlot <- FALSE
 
 	#potentially override default settings with trellis settings
-	if(args$deAnnoPlot){
+	if(gargs$deAnnoPlot){
 
 		trellis.par.set(
 			 layout.widths = list(
