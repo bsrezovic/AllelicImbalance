@@ -361,6 +361,10 @@ setMethod("glocationplot", signature(x = "ASEset"),
 		if(is.null(genome(x)) | is.na(genome(x))){
 			stop(paste("genome have be set for object x", "e.g. genome(x) <- \"hg19\" "))	
 		}
+		#check type argument
+		if(!(type %in% c("fraction","count"))){
+			stop(paste("type has to be","fraction","or","count"))	
+		}
 
 		#check seqnames has length=0
 		if(!(length(seqlevels(x))==1)){stop("This function can only use objects with one seqlevel")}
@@ -370,8 +374,15 @@ setMethod("glocationplot", signature(x = "ASEset"),
 		}
 		if(!nrow(x)==1){
 			
-			GR <- GRanges(seqnames=seqlevels(x),ranges=IRanges(start=min(start(x)),end=max(end(x))),strand=strand, genome=genome(x))
+			GR <- GRanges(seqnames=seqlevels(x),
+						 ranges=IRanges(start=min(start(x)),
+						 end=max(end(x))),
+						 strand=strand, genome=genome(x)
+						 )
 		
+			#if(sum(width(reduce(GR)))==1 ){
+			#	GR <- flank(GR,2,both=TRUE)	
+			#}
 		}
 
 		#make deTrack the fraction

@@ -1358,16 +1358,19 @@ barplotLatticeFraction <- function(identifier, afraction, arank, amainVec, ... )
 	df$sample <- factor(df$sample,levels=unique(df$sample))
 	#df$sample <- factor(df$sample,levels=rownames(df))
 
+
+	#Grah params
 	my_cols <- c("green", "red")
 
 	#set default values 
+	parset<- list()
+
 	scales = list(rot=c(90,0))
 	gargs$deAnnoPlot <- FALSE
 
-	#potentially override default settings with trellis settings
 	if(gargs$deAnnoPlot){
 
-		trellis.par.set(
+		parset<- list(
 			 layout.widths = list(
 			 left.padding = 0,
 			 axis.left = 0,
@@ -1377,22 +1380,27 @@ barplotLatticeFraction <- function(identifier, afraction, arank, amainVec, ... )
 		))
 
 		scales = list(y=list(at=NULL,labels=NULL),rot=c(90,0))
+
+		#tmp
+		gargs$ylab <- ""
+		gargs$xlab <- ""
 	}
 
  	 b <- barchart(values~sample,
-	 #horiz=FALSE,
- 	 group=allele,
-	 data=df,
-	 col = my_cols,
-	 origin=0,
-	 #auto.key=list(points = FALSE, rectangles = TRUE,space="top",size=2,cex=0.8),
-	 stack=TRUE,
-	 scales = scales,
-	 main=amainVec,
-	 ylab=gargs$ylab,
-	 xlab=gargs$xlab
-	 #box.ratio=2,
-	 #abbreviate=TRUE
+		 #horiz=FALSE,
+		 group=allele,
+		 data=df,
+		 col = my_cols,
+		 origin=0,
+		 #auto.key=list(points = FALSE, rectangles = TRUE,space="top",size=2,cex=0.8),
+		 stack=TRUE,
+		 scales = scales,
+		 main=amainVec,
+		 ylab=gargs$ylab,
+		 xlab=gargs$xlab,
+		 par.settings=parset
+		 #box.ratio=2,
+		 #abbreviate=TRUE
 	)
 
 	b
@@ -1402,6 +1410,9 @@ barplotLatticeFraction <- function(identifier, afraction, arank, amainVec, ... )
 #' @rdname barplot-lattice-support
 barplotLatticeCounts <- function(identifier, acounts, arank, amainVec, ...){
 	
+	gargs <- list(...)
+
+	#implodeList(gargs)
 
 	a.m <- amainVec[identifier]
 	a.r <- arank[[identifier]][1:2]	
@@ -1418,6 +1429,31 @@ barplotLatticeCounts <- function(identifier, acounts, arank, amainVec, ...){
 	df$sample <- factor(df$sample,levels=unique(df$sample))
 	#df$values[is.na(df$values)] <- 0 #doesnt work
 
+	###
+	#Grah params
+	###
+	#set default values 
+	parset<- list()
+	
+	scales = list(rot=c(90,0))
+	gargs$deAnnoPlot <- FALSE
+
+	#potentially override default settings with trellis settings
+	if(gargs$deAnnoPlot){
+
+		parset<- list(
+			 layout.widths = list(
+			 left.padding = 0,
+			 axis.left = 0,
+			 ylab.axis.padding =0,
+			 right.padding = 0,
+			 axis.right = 0
+		))
+
+
+		scales = list(y=list(at=NULL,labels=NULL),rot=c(90,0))
+	}
+
 	b <- barchart(values~sample,
 	 horiz=FALSE,
 	 origin=0,
@@ -1425,11 +1461,15 @@ barplotLatticeCounts <- function(identifier, acounts, arank, amainVec, ...){
 	 data=df,
 	 auto.key=list(points = FALSE, rectangles = TRUE,space="top",size=2,cex=0.8),
 	 stack=FALSE,
-	 scales = list(rot=c(90,0)),
+	 scales = scales,
+	 ylab=gargs$ylab,
+	 xlab=gargs$xlab,
 	 box.ratio=2,
 	 abbreviate=TRUE,
+	 par.settings=parset,
 	 main=amainVec
 	)
+
 	b
 }
 
@@ -1523,4 +1563,28 @@ coverageMatrixListFromGAL <- function(BamList,strand=NULL,ignore.empty.bam.row=T
 	
 	retList
 }
+
+#' implode list of arguments into environment
+#' 
+#' apply on list of variables to be put in the local environment
+#' 
+#' help the propagation of e.g. graphical paramters 
+#' 
+#' @param x list of variables
+#' @author Jesper R. Gadin
+#' @keywords implode
+#' @examples
+#' 
+#' 	lst <- list(hungry="yes", thirsty="no")
+#' 	implodeList(lst)
+#'	#the check ls()
+#'  ls()
+#' @export implodeList
+implodeList <- function(x){ 
+	oname <- deparse(substitute(x))
+	eval(parse(text=paste0("for(i in 1:length(",oname,")){assign(names(",oname,")[i],",oname,"[[i]])}")), 
+		 parent.frame())
+}
+
+
 

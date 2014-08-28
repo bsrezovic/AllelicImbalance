@@ -100,6 +100,7 @@
 #' 
 #'
 #' @importFrom lattice barchart
+#' @importFrom lattice trellis.par.set
 #'
 #' @importClassesFrom GenomicRanges GRangesList
 #' @importClassesFrom GenomicRanges GRanges

@@ -1039,6 +1039,10 @@ setMethod("lbarplot",signature(x = "ASEset"),
 			}else{stop("type has to be fraction or count")}
 		}
 		b
+
+		#dev
+		#lbarplot(a[1],strand="+",type="fraction",deAnnoPlot=TRUE)
+
 })
 
 

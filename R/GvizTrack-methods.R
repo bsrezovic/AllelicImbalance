@@ -116,6 +116,9 @@ setMethod("ASEDAnnotationTrack",
 				      strand=strand,
 				      genome=genome(x)
 				      )
+			#if(sum(width(reduce(GR)))==1 ){
+			#	GR <- flank(GR,2,both=TRUE)	
+			#}
 		}
 	
 		#check gpar, set default if not set by user
