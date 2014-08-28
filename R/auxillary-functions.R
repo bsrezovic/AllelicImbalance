@@ -1333,10 +1333,16 @@ NULL
 
 #' @rdname barplot-lattice-support
 barplotLatticeFraction <- function(identifier, afraction, arank, amainVec, ... ){
-#afraction 
-#arank
-	gargs <- list(...)
 
+	if(length(list(...))==0){
+		e <- new.env(hash=TRUE)
+	}else{
+		e <- list2env(list(...))
+	}
+
+	if(!exists("deAnnoPlot",envir=e,inherits=FALSE)){e$deAnnoPlot <- FALSE}
+
+	#prepare data to be plotted
 	a.r <- arank[[identifier]][1:2]	
 	a.f <- afraction[,identifier]
 	a.f2 <- 1-a.f
@@ -1364,11 +1370,12 @@ barplotLatticeFraction <- function(identifier, afraction, arank, amainVec, ... )
 
 	#set default values 
 	parset<- list()
-
 	scales = list(rot=c(90,0))
-	gargs$deAnnoPlot <- FALSE
 
-	if(gargs$deAnnoPlot){
+	if(!exists("ylab",envir=e,inherits=FALSE)){e$ylab <- ""}
+	if(!exists("xlab",envir=e,inherits=FALSE)){e$ylab <- ""}
+
+	if(e$deAnnoPlot){
 
 		parset<- list(
 			 layout.widths = list(
@@ -1381,9 +1388,6 @@ barplotLatticeFraction <- function(identifier, afraction, arank, amainVec, ... )
 
 		scales = list(y=list(at=NULL,labels=NULL),rot=c(90,0))
 
-		#tmp
-		gargs$ylab <- ""
-		gargs$xlab <- ""
 	}
 
  	 b <- barchart(values~sample,
@@ -1396,8 +1400,8 @@ barplotLatticeFraction <- function(identifier, afraction, arank, amainVec, ... )
 		 stack=TRUE,
 		 scales = scales,
 		 main=amainVec,
-		 ylab=gargs$ylab,
-		 xlab=gargs$xlab,
+		 ylab=e$ylab,
+		 xlab=e$xlab,
 		 par.settings=parset
 		 #box.ratio=2,
 		 #abbreviate=TRUE
@@ -1410,10 +1414,14 @@ barplotLatticeFraction <- function(identifier, afraction, arank, amainVec, ... )
 #' @rdname barplot-lattice-support
 barplotLatticeCounts <- function(identifier, acounts, arank, amainVec, ...){
 	
-	gargs <- list(...)
+	if(length(list(...))==0){
+		e <- new.env(hash=TRUE)
+	}else{
+		e <- list2env(list(...))
+	}
+	if(!exists("deAnnoPlot",envir=e,inherits=FALSE)){e$deAnnoPlot <- FALSE}
 
-	#implodeList(gargs)
-
+	#prepare data to be plotted
 	a.m <- amainVec[identifier]
 	a.r <- arank[[identifier]][1:2]	
 	a.c <- acounts[[identifier]][,a.r,drop=FALSE]
@@ -1434,12 +1442,13 @@ barplotLatticeCounts <- function(identifier, acounts, arank, amainVec, ...){
 	###
 	#set default values 
 	parset<- list()
-	
 	scales = list(rot=c(90,0))
-	gargs$deAnnoPlot <- FALSE
+
+	if(!exists("ylab",envir=e,inherits=FALSE)){e$ylab <- ""}
+	if(!exists("xlab",envir=e,inherits=FALSE)){e$ylab <- ""}
 
 	#potentially override default settings with trellis settings
-	if(gargs$deAnnoPlot){
+	if(e$deAnnoPlot){
 
 		parset<- list(
 			 layout.widths = list(
@@ -1449,7 +1458,6 @@ barplotLatticeCounts <- function(identifier, acounts, arank, amainVec, ...){
 			 right.padding = 0,
 			 axis.right = 0
 		))
-
 
 		scales = list(y=list(at=NULL,labels=NULL),rot=c(90,0))
 	}
@@ -1462,8 +1470,8 @@ barplotLatticeCounts <- function(identifier, acounts, arank, amainVec, ...){
 	 auto.key=list(points = FALSE, rectangles = TRUE,space="top",size=2,cex=0.8),
 	 stack=FALSE,
 	 scales = scales,
-	 ylab=gargs$ylab,
-	 xlab=gargs$xlab,
+	 ylab=e$ylab,
+	 xlab=e$xlab,
 	 box.ratio=2,
 	 abbreviate=TRUE,
 	 par.settings=parset,
