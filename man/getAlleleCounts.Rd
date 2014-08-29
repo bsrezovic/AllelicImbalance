@@ -18,7 +18,7 @@ retrieve}
 retrieve counts from all reads, or only from reads marked as '+', '-' or '*'
 (unknown), respectively.}
 
-\item{return.type}{"list" or "array"}
+\item{return.type}{'list' or 'array'}
 
 \item{verbose}{Setting \code{verbose=TRUE} makes function more talkative}
 }
@@ -45,23 +45,24 @@ the default behaviour and can be used when the RNA-seq experiments strand
 information is not available.
 }
 \examples{
-#load example data
-	data(reads)
-	data(GRvariants)
+\\t#load example data
+\\tdata(reads)
+\\tdata(GRvariants)
 
-	#set seqlevels in reads equal to seqlevels in GRvariants
-	seqlevels(reads) <- "17"
+\\t#set seqlevels in reads equal to seqlevels in GRvariants
+\\tseqlevels(reads) <- '17'
 
-	#get counts at the three positions specified in GRvariants
-	alleleCount <- getAlleleCounts(BamList=reads,GRvariants,
-		strand="nonStranded")
-
-	#if the reads had contained stranded data, these two calls would
-	#have given the correct input objects for getAlleleCounts
-	alleleCountPlus <- getAlleleCounts(BamList=reads,GRvariants,
-		strand="+")
-	alleleCountMinus <- getAlleleCounts(BamList=reads,GRvariants,
-		strand="-")
+\\t#get counts at the three positions specified in GRvariants
+\\talleleCount <- getAlleleCounts(BamList=reads,GRvariants,
+\\t\\tstrand='nonStranded')
+\\t
+\\t#if the reads had contained stranded data, these two calls would
+\\t#have given the correct input objects for getAlleleCounts
+\\talleleCountPlus <- getAlleleCounts(BamList=reads,GRvariants,
+\\t\\tstrand='+')
+\\talleleCountMinus <- getAlleleCounts(BamList=reads,GRvariants,
+\\t\\tstrand='-')
+\\t
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

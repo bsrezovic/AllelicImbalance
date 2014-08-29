@@ -45,11 +45,11 @@ Performs a chisq.test on an ASEset object.
 The test is performed on one strand in an ASEset object.
 }
 \examples{
-#load example data
-	data(ASEset)
-
-	#make a chi-square test on default nonStranded strand
-	chisq.test(ASEset)
+\\t#load example data
+\\tdata(ASEset)
+\\t
+\\t#make a chi-square test on default nonStranded strand
+\\tchisq.test(ASEset)
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

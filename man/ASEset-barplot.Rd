@@ -22,7 +22,7 @@ barplot(height, ...)
 \arguments{
 \item{height}{An \code{ASEset} object}
 
-\item{type}{"count" or "fraction"}
+\item{type}{'count' or 'fraction'}
 
 \item{sampleColour}{User specified colours}
 
@@ -30,7 +30,7 @@ barplot(height, ...)
 
 \item{pValue}{Display p-value}
 
-\item{strand}{Five options, "nonStranded","+", "-", "both" or "*"}
+\item{strand}{Five options, 'nonStranded','+', '-', 'both' or '*'}
 
 \item{testValue}{if set, a matrix or vector with user p-values}
 
@@ -41,7 +41,7 @@ barplot(height, ...)
 \item{TxDb}{a TxDb object which provides annotation}
 
 \item{annotationType}{select one or more from
-"gene","exon","transcript","cds".}
+'gene','exon','transcript','cds'.}
 
 \item{main}{text to use as main label}
 
@@ -107,8 +107,8 @@ samples, or else of a length corresponding to the number of samples for
 individual colouring.
 }
 \examples{
-data(ASEset)
-	barplot(ASEset[1])
+\\tdata(ASEset)
+\\tbarplot(ASEset[1])
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

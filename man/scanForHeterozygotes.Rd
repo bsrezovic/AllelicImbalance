@@ -41,8 +41,8 @@ search by modifying the minimumReadsAtPos, maximumMajorAlleleFrequency and
 minimumBiAllelicFrequency arguments.
 }
 \examples{
-data(reads)
-	s <- scanForHeterozygotes(reads,verbose=FALSE)
+\\tdata(reads)
+\\ts <- scanForHeterozygotes(reads,verbose=FALSE)
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

@@ -13,9 +13,9 @@ glocationplot(x, type = "fraction", strand = "nonStranded", BamGAL = NULL,
 \arguments{
 \item{x}{an ASEset object.}
 
-\item{type}{"fraction" or "count"}
+\item{type}{'fraction' or 'count'}
 
-\item{strand}{"+","-","both". This argument determines which strand is
+\item{strand}{'+','-','both'. This argument determines which strand is
 plotted. See \code{getAlleleCounts} for more information on strand.}
 
 \item{BamGAL}{GAlignmentsList covering the same genomic region as the ASEset}
@@ -39,16 +39,16 @@ region on one chromosome. It takes and ASEset object as well as additional
 information on plot type (see \code{\link{lbarplot}}), strand type (see
 \code{\link{getAlleleCounts}}), Annotation tracks are created from the Gviz
 packageh. It is obviously important to make sure that the genome build used
-is set correctly, e.g. "hg19".
+is set correctly, e.g. 'hg19'.
 }
 \examples{
-data(ASEset)
-	genome(ASEset) <- "hg19"
+\\tdata(ASEset)
+\\tgenome(ASEset) <- 'hg19'
 
-	glocationplot(ASEset,strand="+")
-
-	#for ASEsets with fewer SNPs the 'count' type plot is useful
-	glocationplot(ASEset,type="count",strand="+")
+\\tglocationplot(ASEset,strand='+')
+\\t
+\\t#for ASEsets with fewer SNPs the 'count' type plot is useful
+\\tglocationplot(ASEset,type='count',strand='+')
 }
 \author{
 Jesper R. Gadin

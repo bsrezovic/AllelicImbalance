@@ -41,8 +41,8 @@
 #' @importFrom IRanges ranges
 #' @importFrom IRanges subsetByOverlaps
 #' @importFrom IRanges coverage
-#' @importFrom IRanges "%over%"
-#' @importFrom IRanges "%within%"
+#' @importFrom IRanges '%over%'
+#' @importFrom IRanges '%within%'
 #' @importFrom IRanges unlist
 #' @importFrom IRanges which
 #' @importFrom IRanges resize
@@ -125,7 +125,7 @@
 #' @importFrom GenomicFeatures transcripts
 #' @importFrom GenomicFeatures cds
 #' @importFrom GenomicFeatures isActiveSeq
-#' @importFrom GenomicFeatures "isActiveSeq<-"
+#' @importFrom GenomicFeatures 'isActiveSeq<-'
 NULL
 
 ## @importFrom SNPlocs.Hsapiens.dbSNP.20120608 getSNPlocs
@@ -144,9 +144,9 @@ NULL
 #' @keywords data object example
 #' @examples
 #' 
-#' 	#load example data
-#' 	data(GRvariants)
-#' 	
+#' \t#load example data
+#' \tdata(GRvariants)
+#' \t
 #' 
 NULL
 
@@ -169,10 +169,7 @@ NULL
 #' @keywords data object example
 #' @examples
 #' 
-#' 	##load eample data (Not Run)  
-#' 	#data(reads)
+#' \t##load eample data (Not Run)  
+#' \t#data(reads)
 #' 
-NULL
-
-
-
+NULL 

@@ -40,12 +40,12 @@ The function cannot handle genes that do not exist in the annotation. To
 remove these please set the na.rm=TRUE.
 }
 \examples{
-#load example data
-	data(ASEset)
-
-	#get counts at the three positions specified in GRvariants
-	library(org.Hs.eg.db )
-	searchArea<-getAreaFromGeneNames(c("PAX8","TLR7"), org.Hs.eg.db)
+\\t#load example data
+\\tdata(ASEset)
+\\t
+\\t#get counts at the three positions specified in GRvariants
+\\tlibrary(org.Hs.eg.db )
+\\tsearchArea<-getAreaFromGeneNames(c('PAX8','TLR7'), org.Hs.eg.db)\\t
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

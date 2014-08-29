@@ -52,10 +52,10 @@ also be retrieved}
 
 \item{TxDb}{A \code{transcriptDb} object}
 
-\item{strand}{Two options,"+" or "-"}
+\item{strand}{Two options,'+' or '-'}
 
-\item{annotationType}{select one or more from "gene", "exon", "transcript",
-"cds".}
+\item{annotationType}{select one or more from 'gene', 'exon', 'transcript',
+'cds'.}
 
 \item{verbose}{A \code{logical} making the functions more talkative}
 }

@@ -64,217 +64,212 @@ NULL
 #' @examples
 #' 
 #' 
-#' 	#make example countList
-#' 	set.seed(42)
-#' 	countListPlus <- list()
-#' 	snps <- c("snp1","snp2","snp3","snp4","snp5")
-#' 	for(snp in snps){
-#' 	  count<-matrix(rep(0,16),ncol=4,dimnames=list(
-#' 		c("sample1","sample2","sample3","sample4"),
-#' 		c("A","T","G","C")))
-#' 	  #insert random counts in two of the alleles 
-#' 	  for(allele in sample(c("A","T","G","C"),2)){
-#' 		count[,allele]<-as.integer(rnorm(4,mean=50,sd=10))
-#' 	  }
-#' 	  countListPlus[[snp]] <- count
-#' 	}
+#' \t#make example countList
+#' \tset.seed(42)
+#' \tcountListPlus <- list()
+#' \tsnps <- c('snp1','snp2','snp3','snp4','snp5')
+#' \tfor(snp in snps){
+#' \t  count<-matrix(rep(0,16),ncol=4,dimnames=list(
+#' \t\tc('sample1','sample2','sample3','sample4'),
+#' \t\tc('A','T','G','C')))
+#' \t  #insert random counts in two of the alleles 
+#' \t  for(allele in sample(c('A','T','G','C'),2)){
+#' \t\tcount[,allele]<-as.integer(rnorm(4,mean=50,sd=10))
+#' \t  }
+#' \t  countListPlus[[snp]] <- count
+#' \t}
 #' 
-#' 	#make example rowData
-#' 	rowData <- GRanges(
-#' 	  seqnames = Rle(c("chr1", "chr2", "chr1", "chr3", "chr1")),
-#' 	  ranges = IRanges(1:5, width = 1, names = head(letters,5)),
-#' 	  snp = paste("snp",1:5,sep="")
-#' 	)
-#' 	#make example colData
-#' 	colData <- DataFrame(Treatment=c("ChIP", "Input","Input","ChIP"), 
-#' 	 	row.names=c("ind1","ind2","ind3","ind4"))
+#' \t#make example rowData
+#' \trowData <- GRanges(
+#' \t  seqnames = Rle(c('chr1', 'chr2', 'chr1', 'chr3', 'chr1')),
+#' \t  ranges = IRanges(1:5, width = 1, names = head(letters,5)),
+#' \t  snp = paste('snp',1:5,sep='')
+#' \t)
+#' \t#make example colData
+#' \tcolData <- DataFrame(Treatment=c('ChIP', 'Input','Input','ChIP'), 
+#' \t \trow.names=c('ind1','ind2','ind3','ind4'))
 #' 
-#' 	#make ASEset 
-#' 	a <- ASEsetFromCountList(rowData, countListPlus=countListPlus, 
-#' 	colData=colData)
+#' \t#make ASEset 
+#' \ta <- ASEsetFromCountList(rowData, countListPlus=countListPlus, 
+#' \tcolData=colData)
 #' 
 #' 
 #'
 #' @exportClass ASEset
 #' @exportMethod alleleCounts mapBias fraction arank
-setClass("ASEset",
-	contains = "SummarizedExperiment",
-	representation(
-		variants="vector"
-	)	
-)
+setClass("ASEset", contains = "SummarizedExperiment", representation(variants = "vector"))
 
 #' @rdname ASEset-class
-setGeneric("alleleCounts", function(x,strand="nonStranded") {standardGeneric("alleleCounts")})
+setGeneric("alleleCounts", function(x, strand = "nonStranded") {
+    standardGeneric("alleleCounts")
+})
 
-setMethod("alleleCounts",
-    signature(x = "ASEset"),
-    function (x,strand="nonStranded")
-	{
-		if(!sum(strand %in% c("+","-","*","nonStranded"))>0){stop("strand parameter has to be either '+', '-', '*' or 'nonStranded' ")}
-	
-		if(strand=="+"){
-			el <- "countsPlus"
-		}else if(strand=="-"){
-			el <- "countsMinus"
-		}else if(strand=="*"){
-			el <- "countsUnknown"
-		}else if(strand=="nonStranded"){
-			el <- "countsNonStranded"
-		}else{stop("unknown strand option")}	
-
-		#check if strand option is present as assay
-		if(!(el%in%names(assays(x)))){stop("strand is not present as assay in ASEset object")}
-
-		#assume alleleCount information is
-		#stored as element 1
-		alleleCountList <- list()
-
-		for(i in 1:nrow(assays(x)[[el]])){
-			mat <- assays(x)[[el]][i,,]
-			if(class(mat)=="integer"){
-				mat <- t(as.matrix(mat))
-				#rownames(mat) <- colnames(x)
-			}
-			if(class(mat)=="numeric"){
-					mat <- t(mat)
-					colnames(mat) <- x@variants
-				}else{
-					colnames(mat) <- x@variants
-				}
-			rownames(mat) <- colnames(x)
-			alleleCountList[[i]] <- mat
-		}	
-		#add snp id
-		names(alleleCountList) <- rownames(x)	
-	
-		#return object
-		alleleCountList
-
-	}
-)
-
-#' @rdname ASEset-class
-setGeneric("mapBias", function(x) {standardGeneric("mapBias")})
-
-setMethod("mapBias",
-    signature(x = "ASEset"),
-    function (x)
-	{
-		#assume alleleCount information is
-		#stored as element 1
-		mapBiasList <- list()
-		for(i in 1:nrow(x)){
-			mat <- assays(x)[["mapBias"]][i,,]
-			if(class(mat)=="numeric"){
-				dim(mat) <- c(1,4)
-				rownames(mat) <- colnames(x)
-			}
-			colnames(mat) <- x@variants
-
-			mapBiasList[[i]] <- mat
-		}	
-		#add snp id
-		names(mapBiasList) <- rownames(x)	
-		
-
-		#return object
-		mapBiasList
+setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "nonStranded") {
+    if (!sum(strand %in% c("+", "-", "*", "nonStranded")) > 0) {
+        stop("strand parameter has to be either '+', '-', '*' or 'nonStranded' ")
+    }
     
-	}
-)
-
-#' @rdname ASEset-class
-setGeneric("fraction", function(x, strand="nonStranded", verbose=FALSE) {standardGeneric("fraction")})
-
-setMethod("fraction",
-    signature(x = "ASEset"),
-    function (x, strand="nonStranded",verbose=FALSE)
-	{
-
-		if(!sum(strand %in% c("+","-","*","nonStranded"))>0){stop("strand parameter has to be either '+', '-', '*' or 'nonStranded' ")}
-	
-		if(strand=="+"){
-			el <- "countsPlus"
-		}else if(strand=="-"){
-			el <- "countsMinus"
-		}else if(strand=="*"){
-			el <- "countsUnknown"
-		}else if(strand=="nonStranded"){
-			el <- "countsNonStranded"
-		}else{stop("unknown strand option")}	
-
-		#check if strand option is present as assay
-		if(!(el%in%names(assays(x)))){stop(paste("strand",strand," is not present as assay in ASEset object"))}
-		
-		fractionList <- list()
-
-		for(i in 1:nrow(x)){
-			#getting revelant data
-			tmp <- alleleCounts(x, strand)[[i]]
-			
-			#calculating major and minor allele, warn if the two remaining alleles have too many counts
-			if(nrow(tmp)>1){
-				countsByAllele<-apply(tmp,2,sum,na.rm=TRUE)
-			}else{
-				countsByAllele<-tmp
-			}
-			majorAllele <-colnames(tmp)[order(countsByAllele,decreasing=TRUE)][1]
-			minorAllele <-colnames(tmp)[order(countsByAllele,decreasing=TRUE)][2]
-			majorAndMinorFraction <- sum(countsByAllele[c(majorAllele,minorAllele)]) / sum(countsByAllele)
-			if(verbose & majorAndMinorFraction < 0.9){
-				cat(paste("Snp","was possible tri-allelic, but only two most frequent alleles were plotted. Counts:"),"\n")
-				cat(paste(paste(names(countsByAllele),countsByAllele,sep="="),collapse=", "),"\n")
-			}
-			
-			#calculating percentage and ylim and setting no-count samples to colour grey90
-			fraction <- tmp[,majorAllele] / (tmp[,majorAllele] + tmp[,minorAllele])
-			#fraction[is.nan(fraction)]<-1
-			fractionList[[i]] <- fraction
-	
-			if(i%%300==0){
-				cat(paste("processed ",i," snps\n",sep=""))
-			}
-		}
-
-		names(fractionList) <- rownames(x)	
-		
-		#return object
-		#fractionList
-		m <- as.matrix(as.data.frame(fractionList))
-		rownames(m) <- colnames(x)
+    if (strand == "+") {
+        el <- "countsPlus"
+    } else if (strand == "-") {
+        el <- "countsMinus"
+    } else if (strand == "*") {
+        el <- "countsUnknown"
+    } else if (strand == "nonStranded") {
+        el <- "countsNonStranded"
+    } else {
+        stop("unknown strand option")
+    }
     
-		m
-
-
-	}
-)
+    # check if strand option is present as assay
+    if (!(el %in% names(assays(x)))) {
+        stop("strand is not present as assay in ASEset object")
+    }
+    
+    # assume alleleCount information is stored as element 1
+    alleleCountList <- list()
+    
+    for (i in 1:nrow(assays(x)[[el]])) {
+        mat <- assays(x)[[el]][i, , ]
+        if (class(mat) == "integer") {
+            mat <- t(as.matrix(mat))
+            # rownames(mat) <- colnames(x)
+        }
+        if (class(mat) == "numeric") {
+            mat <- t(mat)
+            colnames(mat) <- x@variants
+        } else {
+            colnames(mat) <- x@variants
+        }
+        rownames(mat) <- colnames(x)
+        alleleCountList[[i]] <- mat
+    }
+    # add snp id
+    names(alleleCountList) <- rownames(x)
+    
+    # return object
+    alleleCountList
+    
+})
 
 #' @rdname ASEset-class
-setGeneric("arank", function(x, ret="names", strand="nonStranded", ... ) {standardGeneric("arank")})
+setGeneric("mapBias", function(x) {
+    standardGeneric("mapBias")
+})
 
-setMethod("arank",
-    signature(x = "ASEset"),
-    function (x, ret="names", strand="nonStranded", ...)
-	{
-		acounts <- alleleCounts(x, strand=strand)
+setMethod("mapBias", signature(x = "ASEset"), function(x) {
+    # assume alleleCount information is stored as element 1
+    mapBiasList <- list()
+    for (i in 1:nrow(x)) {
+        mat <- assays(x)[["mapBias"]][i, , ]
+        if (class(mat) == "numeric") {
+            dim(mat) <- c(1, 4)
+            rownames(mat) <- colnames(x)
+        }
+        colnames(mat) <- x@variants
+        
+        mapBiasList[[i]] <- mat
+    }
+    # add snp id
+    names(mapBiasList) <- rownames(x)
+    
+    
+    # return object
+    mapBiasList
+    
+})
 
-		if(ret == "names") {
-			arank <- lapply(acounts, function(x){
-				       names(sort(apply(x,2,sum),decreasing=TRUE))
-			} )
-		}
-		if(ret == "counts") {
-			arank <- lapply(acounts, function(x){
-				       as.numeric(sort(apply(x,2,sum),decreasing=TRUE))
-			} )
-		}
-		arank
-	}
-)
+#' @rdname ASEset-class
+setGeneric("fraction", function(x, strand = "nonStranded", verbose = FALSE) {
+    standardGeneric("fraction")
+})
 
+setMethod("fraction", signature(x = "ASEset"), function(x, strand = "nonStranded", 
+    verbose = FALSE) {
+    
+    if (!sum(strand %in% c("+", "-", "*", "nonStranded")) > 0) {
+        stop("strand parameter has to be either '+', '-', '*' or 'nonStranded' ")
+    }
+    
+    if (strand == "+") {
+        el <- "countsPlus"
+    } else if (strand == "-") {
+        el <- "countsMinus"
+    } else if (strand == "*") {
+        el <- "countsUnknown"
+    } else if (strand == "nonStranded") {
+        el <- "countsNonStranded"
+    } else {
+        stop("unknown strand option")
+    }
+    
+    # check if strand option is present as assay
+    if (!(el %in% names(assays(x)))) {
+        stop(paste("strand", strand, " is not present as assay in ASEset object"))
+    }
+    
+    fractionList <- list()
+    
+    for (i in 1:nrow(x)) {
+        # getting revelant data
+        tmp <- alleleCounts(x, strand)[[i]]
+        
+        # calculating major and minor allele, warn if the two remaining alleles have too
+        # many counts
+        if (nrow(tmp) > 1) {
+            countsByAllele <- apply(tmp, 2, sum, na.rm = TRUE)
+        } else {
+            countsByAllele <- tmp
+        }
+        majorAllele <- colnames(tmp)[order(countsByAllele, decreasing = TRUE)][1]
+        minorAllele <- colnames(tmp)[order(countsByAllele, decreasing = TRUE)][2]
+        majorAndMinorFraction <- sum(countsByAllele[c(majorAllele, minorAllele)])/sum(countsByAllele)
+        if (verbose & majorAndMinorFraction < 0.9) {
+            cat(paste("Snp", "was possible tri-allelic, but only two most frequent alleles were plotted. Counts:"), 
+                "\n")
+            cat(paste(paste(names(countsByAllele), countsByAllele, sep = "="), collapse = ", "), 
+                "\n")
+        }
+        
+        # calculating percentage and ylim and setting no-count samples to colour grey90
+        fraction <- tmp[, majorAllele]/(tmp[, majorAllele] + tmp[, minorAllele])
+        # fraction[is.nan(fraction)]<-1
+        fractionList[[i]] <- fraction
+        
+        if (i%%300 == 0) {
+            cat(paste("processed ", i, " snps\n", sep = ""))
+        }
+    }
+    
+    names(fractionList) <- rownames(x)
+    
+    # return object fractionList
+    m <- as.matrix(as.data.frame(fractionList))
+    rownames(m) <- colnames(x)
+    
+    m
+    
+    
+})
 
+#' @rdname ASEset-class
+setGeneric("arank", function(x, ret = "names", strand = "nonStranded", ...) {
+    standardGeneric("arank")
+})
 
-
-
-
+setMethod("arank", signature(x = "ASEset"), function(x, ret = "names", strand = "nonStranded", 
+    ...) {
+    acounts <- alleleCounts(x, strand = strand)
+    
+    if (ret == "names") {
+        arank <- lapply(acounts, function(x) {
+            names(sort(apply(x, 2, sum), decreasing = TRUE))
+        })
+    }
+    if (ret == "counts") {
+        arank <- lapply(acounts, function(x) {
+            as.numeric(sort(apply(x, 2, sum), decreasing = TRUE))
+        })
+    }
+    arank
+}) 

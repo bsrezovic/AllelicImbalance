@@ -23,12 +23,12 @@ reads, and therefore create a matrix with expected frequency of 0.5 for each
 allele.
 }
 \examples{
-#load example data
-	data(ASEset)
-	#access SnpAfList
-	alleleCountList <- alleleCounts(ASEset)
-	#get default map bias exp mean
-	matExpMean <- getDefaultMapBiasExpMean(alleleCountList)
+\\t#load example data
+\\tdata(ASEset)
+\\t#access SnpAfList
+\\talleleCountList <- alleleCounts(ASEset)
+\\t#get default map bias exp mean
+\\tmatExpMean <- getDefaultMapBiasExpMean(alleleCountList)
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

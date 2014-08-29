@@ -35,7 +35,7 @@ The main intention for these functions are to be the internal functions for
 \code{scanForHeterozygotes} and \code{getAlleleCount}.
 }
 \examples{
-RleCigarList <-  cigarToRleList("3M4I93M")
+RleCigarList <-  cigarToRleList('3M4I93M')
   BpPos <- 5
 
   newPos <- realCigarPosition(RleCigar=RleCigarList[[1]], BpPos)

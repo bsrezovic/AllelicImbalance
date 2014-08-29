@@ -15,9 +15,9 @@ apply on list of variables to be put in the local environment
 help the propagation of e.g. graphical paramters
 }
 \examples{
-lst <- list(hungry="yes", thirsty="no")
-	implodeList(lst)
-	#the check ls()
+\\tlst <- list(hungry='yes', thirsty='no')
+\\timplodeList(lst)
+\\t#the check ls()
  ls()
 }
 \author{

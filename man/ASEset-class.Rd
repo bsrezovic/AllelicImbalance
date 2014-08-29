@@ -82,34 +82,34 @@ are in the 1st dimension, samples in the 2nd dimension and variants in the
 \item{...}{arguments passed on to SummarizedExperiment constructor} }
 }
 \examples{
-#make example countList
-	set.seed(42)
-	countListPlus <- list()
-	snps <- c("snp1","snp2","snp3","snp4","snp5")
-	for(snp in snps){
-	  count<-matrix(rep(0,16),ncol=4,dimnames=list(
-		c("sample1","sample2","sample3","sample4"),
-		c("A","T","G","C")))
-	  #insert random counts in two of the alleles
-	  for(allele in sample(c("A","T","G","C"),2)){
-		count[,allele]<-as.integer(rnorm(4,mean=50,sd=10))
-	  }
-	  countListPlus[[snp]] <- count
-	}
+\\t#make example countList
+\\tset.seed(42)
+\\tcountListPlus <- list()
+\\tsnps <- c('snp1','snp2','snp3','snp4','snp5')
+\\tfor(snp in snps){
+\\t  count<-matrix(rep(0,16),ncol=4,dimnames=list(
+\\t\\tc('sample1','sample2','sample3','sample4'),
+\\t\\tc('A','T','G','C')))
+\\t  #insert random counts in two of the alleles
+\\t  for(allele in sample(c('A','T','G','C'),2)){
+\\t\\tcount[,allele]<-as.integer(rnorm(4,mean=50,sd=10))
+\\t  }
+\\t  countListPlus[[snp]] <- count
+\\t}
 
-	#make example rowData
-	rowData <- GRanges(
-	  seqnames = Rle(c("chr1", "chr2", "chr1", "chr3", "chr1")),
-	  ranges = IRanges(1:5, width = 1, names = head(letters,5)),
-	  snp = paste("snp",1:5,sep="")
-	)
-	#make example colData
-	colData <- DataFrame(Treatment=c("ChIP", "Input","Input","ChIP"),
-	 	row.names=c("ind1","ind2","ind3","ind4"))
+\\t#make example rowData
+\\trowData <- GRanges(
+\\t  seqnames = Rle(c('chr1', 'chr2', 'chr1', 'chr3', 'chr1')),
+\\t  ranges = IRanges(1:5, width = 1, names = head(letters,5)),
+\\t  snp = paste('snp',1:5,sep='')
+\\t)
+\\t#make example colData
+\\tcolData <- DataFrame(Treatment=c('ChIP', 'Input','Input','ChIP'),
+\\t \\trow.names=c('ind1','ind2','ind3','ind4'))
 
-	#make ASEset
-	a <- ASEsetFromCountList(rowData, countListPlus=countListPlus,
-	colData=colData)
+\\t#make ASEset
+\\ta <- ASEsetFromCountList(rowData, countListPlus=countListPlus,
+\\tcolData=colData)
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

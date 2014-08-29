@@ -58,10 +58,10 @@ for identifying heterozygote coding SNPs.
 }
 \examples{
 #Declare searchArea
-searchArea <- GRanges(seqnames=c("17"), ranges=IRanges(79478301,79478361))
+searchArea <- GRanges(seqnames=c('17'), ranges=IRanges(79478301,79478361))
 
 #Relative or full path
-pathToFiles <- system.file("extdata/ERP000101_subset", package="AllelicImbalance")
+pathToFiles <- system.file('extdata/ERP000101_subset', package='AllelicImbalance')
 
 reads <- impBamGAL(pathToFiles,searchArea,verbose=FALSE)
 }

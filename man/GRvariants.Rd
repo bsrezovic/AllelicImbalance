@@ -8,8 +8,9 @@ this data is a \code{GRanges} object that contains the ranges for three
 example SNPs.
 }
 \examples{
-#load example data
-	data(GRvariants)
+\\t#load example data
+\\tdata(GRvariants)
+\\t
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

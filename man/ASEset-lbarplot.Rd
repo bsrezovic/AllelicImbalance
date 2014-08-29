@@ -12,9 +12,9 @@ lbarplot(x, type = "count", strand = "+", mainVec = rownames(x),
 \arguments{
 \item{x}{An \code{ASEset} object}
 
-\item{type}{"count" or "fraction"}
+\item{type}{'count' or 'fraction'}
 
-\item{strand}{Five options, "nonStranded","+", "-", "both" or "*"}
+\item{strand}{Five options, 'nonStranded','+', '-', 'both' or '*'}
 
 \item{mainVec}{text to use as main label}
 
@@ -34,8 +34,8 @@ trellis graphics using lattice, to be able to integrate well with Gviz track
 functionality.
 }
 \examples{
-data(ASEset)
-	lbarplot(ASEset[1])
+\\tdata(ASEset)
+\\tlbarplot(ASEset[1])
 }
 \author{
 Jesper R. Gadin

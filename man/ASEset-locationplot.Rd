@@ -15,9 +15,9 @@ locationplot(x, type = "fraction", strand = "nonStranded", yaxis = TRUE,
 \arguments{
 \item{x}{an ASEset object.}
 
-\item{type}{"fraction" or "count"}
+\item{type}{'fraction' or 'count'}
 
-\item{strand}{"+","-","*","both" or "nonStranded". This argument determines
+\item{strand}{'+','-','*','both' or 'nonStranded'. This argument determines
 which strand is plotted. See \code{getAlleleCounts} for more information on
 strand.}
 
@@ -66,16 +66,16 @@ sets or both. It is obviously important to make sure that the genome build
 used is the same as used in aligning the RNA-seq data.
 }
 \examples{
-data(ASEset)
-	locationplot(ASEset)
+\\tdata(ASEset)
+\\tlocationplot(ASEset)
 
-	#SNPs are plotted in the order in which they are found.
-	#This can be sorted according to location as follows:
-	locationplot(ASEset[order(start(rowData(ASEset))),])
-
-	#for ASEsets with fewer SNPs the 'count' type plot is
-	# useful for detailed visualization.
-	locationplot(ASEset,type="count",strand="nonStranded")
+\\t#SNPs are plotted in the order in which they are found.
+\\t#This can be sorted according to location as follows:
+\\tlocationplot(ASEset[order(start(rowData(ASEset))),])
+\\t
+\\t#for ASEsets with fewer SNPs the 'count' type plot is
+\\t# useful for detailed visualization.
+\\tlocationplot(ASEset,type='count',strand='nonStranded')
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen
