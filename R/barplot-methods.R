@@ -1,5 +1,3 @@
-#'@include binom.test-methods.R
-NULL
 
 #' barplot ASEset objects
 #' 
@@ -42,7 +40,7 @@ NULL
 #' @param legend.colnames gives colnames to the legend matrix
 #' @param las.ylab orientation of ylab text
 #' @param las.xlab orientation of xlab text
-#' @param cex.main set main label size
+#' @param cex.main set main label size (max 2)
 #' @param cex.pValue set pValue label size
 #' @param cex.ylab set ylab label size
 #' @param cex.xlab set xlab label size
@@ -80,7 +78,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     sampleColour = NULL, legend = TRUE, pValue = TRUE, strand = "nonStranded", testValue = NULL, 
     testValue2 = NULL, OrgDb = NULL, TxDb = NULL, annotationType = c("gene", "exon", 
         "transcript"), main = NULL, ylim = NULL, yaxis = TRUE, xaxis = FALSE, ylab = TRUE, 
-    xlab = TRUE, legend.colnames = "", las.ylab = 1, las.xlab = 2, cex.main = 0.9, 
+    xlab = TRUE, legend.colnames = "", las.ylab = 1, las.xlab = 2, cex.main = 1, 
     cex.pValue = 0.7, cex.ylab = 0.7, cex.xlab = 0.7, cex.legend = 0.6, add = FALSE, 
     lowerLeftCorner = c(0, 0), size = c(1, 1), addHorizontalLine = 0.5, add.frame = TRUE, 
     filter.pValue.fraction = 0.99, verbose = FALSE, ...) {
