@@ -34,11 +34,11 @@ Performs a binomial test on an ASEset object.
 the test can only be applied to one strand at the time.
 }
 \examples{
-\\t#load example data
-\\tdata(ASEset)
-\\t
-\\t#make a binomial test
-\\tbinom.test(ASEset,'nonStranded')
+#load example data
+data(ASEset)
+
+#make a binomial test
+binom.test(ASEset,'nonStranded')
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

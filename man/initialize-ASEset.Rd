@@ -57,40 +57,40 @@ set.seed(42)
 countListPlus <- list()
 snps <- c('snp1','snp2','snp3','snp4','snp5')
 for(snp in snps){
-\\tcount<-matrix(rep(0,16),ncol=4,dimnames=list(
-\\t\\tc('sample1','sample2','sample3','sample4'),
-\\t\\tc('A','T','G','C')))
-\\t#insert random counts in two of the alleles
-\\tfor(allele in sample(c('A','T','G','C'),2)){
-\\t\\tcount[,allele]<-as.integer(rnorm(4,mean=50,sd=10))
-\\t}
-\\tcountListPlus[[snp]] <- count
+count<-matrix(rep(0,16),ncol=4,dimnames=list(
+c('sample1','sample2','sample3','sample4'),
+c('A','T','G','C')))
+#insert random counts in two of the alleles
+for(allele in sample(c('A','T','G','C'),2)){
+count[,allele]<-as.integer(rnorm(4,mean=50,sd=10))
+}
+countListPlus[[snp]] <- count
 }
 
 #make example alleleCountListMinus
 countListMinus <- list()
 snps <- c('snp1','snp2','snp3','snp4','snp5')
 for(snp in snps){
-\\tcount<-matrix(rep(0,16),ncol=4,dimnames=list(
-\\t\\tc('sample1','sample2','sample3','sample4'),
-\\t\\tc('A','T','G','C')))
-\\t#insert random counts in two of the alleles
-\\tfor(allele in sample(c('A','T','G','C'),2)){
-\\t\\tcount[,allele]<-as.integer(rnorm(4,mean=50,sd=10))
-\\t}
-\\tcountListMinus[[snp]] <- count
+count<-matrix(rep(0,16),ncol=4,dimnames=list(
+c('sample1','sample2','sample3','sample4'),
+c('A','T','G','C')))
+#insert random counts in two of the alleles
+for(allele in sample(c('A','T','G','C'),2)){
+count[,allele]<-as.integer(rnorm(4,mean=50,sd=10))
+}
+countListMinus[[snp]] <- count
 }
 
 
 #make example rowData
 rowData <- GRanges(
-\\t\\tseqnames = Rle(c('chr1', 'chr2', 'chr1', 'chr3', 'chr1')),
+seqnames = Rle(c('chr1', 'chr2', 'chr1', 'chr3', 'chr1')),
          ranges = IRanges(1:5, width = 1, names = head(letters,5)),
          snp = paste('snp',1:5,sep='')
          )
 #make example colData
 colData <- DataFrame(Treatment=c('ChIP', 'Input','Input','ChIP'),
- \\trow.names=c('ind1','ind2','ind3','ind4'))
+ row.names=c('ind1','ind2','ind3','ind4'))
 
 #make ASEset
 a <- ASEsetFromCountList(rowData, countListPlus=countListPlus,

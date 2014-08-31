@@ -45,16 +45,16 @@ NULL
 #' @examples
 #' 
 #' 
-#' \tdata(ASEset)
-#' \tlocationplot(ASEset)
+#' data(ASEset)
+#' locationplot(ASEset)
 #' 
-#' \t#SNPs are plotted in the order in which they are found. 
-#' \t#This can be sorted according to location as follows:
-#' \tlocationplot(ASEset[order(start(rowData(ASEset))),])
-#' \t
-#' \t#for ASEsets with fewer SNPs the 'count' type plot is
-#' \t# useful for detailed visualization.
-#' \tlocationplot(ASEset,type='count',strand='nonStranded')
+#' #SNPs are plotted in the order in which they are found. 
+#' #This can be sorted according to location as follows:
+#' locationplot(ASEset[order(start(rowData(ASEset))),])
+#' 
+#' #for ASEsets with fewer SNPs the 'count' type plot is
+#' # useful for detailed visualization.
+#' locationplot(ASEset,type='count',strand='nonStranded')
 #' 
 #' @exportMethod locationplot
 
@@ -371,13 +371,13 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
 #' @keywords glocationplot
 #' @examples
 #' 
-#' \tdata(ASEset)
-#' \tgenome(ASEset) <- 'hg19'
+#' data(ASEset)
+#' genome(ASEset) <- 'hg19'
 #' 
-#' \tglocationplot(ASEset,strand='+')
-#' \t
-#' \t#for ASEsets with fewer SNPs the 'count' type plot is useful 
-#' \tglocationplot(ASEset,type='count',strand='+')
+#' glocationplot(ASEset,strand='+')
+#' 
+#' #for ASEsets with fewer SNPs the 'count' type plot is useful 
+#' glocationplot(ASEset,type='count',strand='+')
 #' 
 
 #' @exportMethod glocationplot

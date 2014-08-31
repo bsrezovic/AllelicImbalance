@@ -39,17 +39,17 @@ samples, or else of a length corresponding to the number of samples for
 individual colouring.
 }
 \examples{
-\\ta <- ASEset
-\\tstrand <- '+'
-\\tacounts <-  alleleCounts(a,strand=strand)
-\\tarank <-  arank(a,strand=strand)
-\\tafraction <- fraction(a, strand=strand)
-\\tamainVec <- rep('',nrow(a))
+a <- ASEset
+strand <- '+'
+acounts <-  alleleCounts(a,strand=strand)
+arank <-  arank(a,strand=strand)
+afraction <- fraction(a, strand=strand)
+amainVec <- rep('',nrow(a))
 
-\\tname <- rownames(a)[1]
+name <- rownames(a)[1]
 
-\\tbarplotLatticeFraction(identifier=name, afraction, arank, amainVec)
-\\tbarplotLatticeCounts(identifier=name,  acounts, arank, amainVec)
+barplotLatticeFraction(identifier=name, afraction, arank, amainVec)
+barplotLatticeCounts(identifier=name,  acounts, arank, amainVec)
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

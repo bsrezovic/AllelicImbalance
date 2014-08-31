@@ -13,7 +13,7 @@ barplot(height, ...)
   testValue = NULL, testValue2 = NULL, OrgDb = NULL, TxDb = NULL,
   annotationType = c("gene", "exon", "transcript"), main = NULL,
   ylim = NULL, yaxis = TRUE, xaxis = FALSE, ylab = TRUE, xlab = TRUE,
-  legend.colnames = "", las.ylab = 1, las.xlab = 2, cex.main = 0.9,
+  legend.colnames = "", las.ylab = 1, las.xlab = 2, cex.main = 1,
   cex.pValue = 0.7, cex.ylab = 0.7, cex.xlab = 0.7, cex.legend = 0.6,
   add = FALSE, lowerLeftCorner = c(0, 0), size = c(1, 1),
   addHorizontalLine = 0.5, add.frame = TRUE,
@@ -61,7 +61,7 @@ barplot(height, ...)
 
 \item{las.xlab}{orientation of xlab text}
 
-\item{cex.main}{set main label size}
+\item{cex.main}{set main label size (max 2)}
 
 \item{cex.pValue}{set pValue label size}
 
@@ -107,8 +107,8 @@ samples, or else of a length corresponding to the number of samples for
 individual colouring.
 }
 \examples{
-\\tdata(ASEset)
-\\tbarplot(ASEset[1])
+data(ASEset)
+barplot(ASEset[1])
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

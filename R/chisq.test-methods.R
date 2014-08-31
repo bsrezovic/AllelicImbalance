@@ -21,11 +21,11 @@ NULL
 #' @keywords chi-square test
 #' @examples
 #' 
-#' \t#load example data
-#' \tdata(ASEset)
-#' \t
-#' \t#make a chi-square test on default nonStranded strand 
-#' \tchisq.test(ASEset)
+#' #load example data
+#' data(ASEset)
+#' 
+#' #make a chi-square test on default nonStranded strand 
+#' chisq.test(ASEset)
 #' 
 #'  @importFrom stats chisq.test
 #'  @exportMethod chisq.test

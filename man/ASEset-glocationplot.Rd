@@ -42,13 +42,13 @@ packageh. It is obviously important to make sure that the genome build used
 is set correctly, e.g. 'hg19'.
 }
 \examples{
-\\tdata(ASEset)
-\\tgenome(ASEset) <- 'hg19'
+data(ASEset)
+genome(ASEset) <- 'hg19'
 
-\\tglocationplot(ASEset,strand='+')
-\\t
-\\t#for ASEsets with fewer SNPs the 'count' type plot is useful
-\\tglocationplot(ASEset,type='count',strand='+')
+glocationplot(ASEset,strand='+')
+
+#for ASEsets with fewer SNPs the 'count' type plot is useful
+glocationplot(ASEset,type='count',strand='+')
 }
 \author{
 Jesper R. Gadin

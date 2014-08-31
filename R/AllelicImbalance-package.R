@@ -144,9 +144,9 @@ NULL
 #' @keywords data object example
 #' @examples
 #' 
-#' \t#load example data
-#' \tdata(GRvariants)
-#' \t
+#' #load example data
+#' data(GRvariants)
+#' 
 #' 
 NULL
 
@@ -169,7 +169,7 @@ NULL
 #' @keywords data object example
 #' @examples
 #' 
-#' \t##load eample data (Not Run)  
-#' \t#data(reads)
+#' ##load eample data (Not Run)  
+#' #data(reads)
 #' 
 NULL 

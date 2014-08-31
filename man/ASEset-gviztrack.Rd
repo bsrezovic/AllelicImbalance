@@ -52,21 +52,24 @@ For information of how to use these tracks in more ways, visit the Gviz
 package manual.
 }
 \examples{
-\\tdata(ASEset)
-\\tx <- ASEset[,1:2]
-\\tr <- reads[1:2]
-\\tgenome(x) <- 'hg19'
-\\tseqlevels(r) <- seqlevels(x)
+data(ASEset)
+x <- ASEset[,1:2]
+r <- reads[1:2]
+genome(x) <- 'hg19'
+seqlevels(r) <- seqlevels(x)
 
-\\tGR <- GRanges(seqnames=seqlevels(x),ranges=IRanges(start=min(start(x)),end=max(end(x))),strand='+', genome=genome(x))
+GR <- GRanges(seqnames=seqlevels(x),ranges=IRanges(start=min(start(x)),end=max(end(x))),strand='+', genome=genome(x))
 
-\\tdeTrack <- ASEDAnnotationTrack(x, GR=GR, type='fraction',strand='+')
-\\tcovTracks <- CoverageDataTrack(x,BamList=r,strand='+')
+deTrack <- ASEDAnnotationTrack(x, GR=GR, type='fraction',strand='+')
+covTracks <- CoverageDataTrack(x,BamList=r,strand='+')
 
-\\tlst <- c(deTrack,covTracks)
+lst <- c(deTrack,covTracks)
 
-\\tsizes <- c(0.5,rep(0.5/length(covTracks),length(covTracks)))
-\\t#plotTracks(lst, from=min(start(x)), to=max(end(x)),sizes=sizes, col.line = NULL, showId = FALSE, main='mainText', cex.main=1, title.width=1, type='histogram')
+sizes <- c(0.5,rep(0.5/length(covTracks),length(covTracks)))
+#temporarily do not run this function
+#plotTracks(lst, from=min(start(x)), to=max(end(x)),
+#sizes=sizes, col.line = NULL, showId = FALSE, main='mainText',
+#cex.main=1, title.width=1, type='histogram')
 }
 \author{
 Jesper R. Gadin

@@ -9,8 +9,8 @@ vignette. The data set consists of a chromosome 17 region from 20 RNA-seq
 experiments of HapMap samples.
 }
 \examples{
-\\t##load eample data (Not Run)
-\\t#data(reads)
+##load eample data (Not Run)
+#data(reads)
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

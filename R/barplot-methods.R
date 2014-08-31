@@ -62,8 +62,8 @@
 #' @keywords barplot
 #' @examples
 #' 
-#' \tdata(ASEset)
-#' \tbarplot(ASEset[1])
+#' data(ASEset)
+#' barplot(ASEset[1])
 #'
 #' @importFrom graphics plot
 #' @importFrom graphics barplot
@@ -1338,8 +1338,8 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
 #' @keywords lbarplot
 #' @examples
 #' 
-#' \tdata(ASEset)
-#' \tlbarplot(ASEset[1])
+#' data(ASEset)
+#' lbarplot(ASEset[1])
 #' 
 #' @exportMethod lbarplot
 

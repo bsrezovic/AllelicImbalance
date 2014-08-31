@@ -34,8 +34,8 @@ trellis graphics using lattice, to be able to integrate well with Gviz track
 functionality.
 }
 \examples{
-\\tdata(ASEset)
-\\tlbarplot(ASEset[1])
+data(ASEset)
+lbarplot(ASEset[1])
 }
 \author{
 Jesper R. Gadin

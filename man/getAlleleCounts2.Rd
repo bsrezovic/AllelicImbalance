@@ -43,24 +43,23 @@ the default behaviour and can be used when the RNA-seq experiments strand
 information is not available.
 }
 \examples{
-\\t#load example data
-\\tdata(reads)
-\\tdata(GRvariants)
+#load example data
+data(reads)
+data(GRvariants)
 
-\\t#set seqlevels in reads equal to seqlevels in GRvariants
-\\tseqlevels(reads) <- '17'
+#set seqlevels in reads equal to seqlevels in GRvariants
+seqlevels(reads) <- '17'
 
-\\t#get counts at the three positions specified in GRvariants
-\\talleleCount <- getAlleleCounts2(BamList=reads,GRvariants,
-\\t\\tstrand='nonStranded')
-\\t
-\\t#if the reads had contained stranded data, these two calls would
-\\t#have given the correct input objects for getAlleleCounts2
-\\talleleCountPlus <- getAlleleCounts2(BamList=reads,GRvariants,
-\\t\\tstrand='+')
-\\talleleCountMinus <- getAlleleCounts2(BamList=reads,GRvariants,
-\\t\\tstrand='-')
-\\t
+#get counts at the three positions specified in GRvariants
+alleleCount <- getAlleleCounts2(BamList=reads,GRvariants,
+strand='nonStranded')
+
+#if the reads had contained stranded data, these two calls would
+#have given the correct input objects for getAlleleCounts2
+alleleCountPlus <- getAlleleCounts2(BamList=reads,GRvariants,
+strand='+')
+alleleCountMinus <- getAlleleCounts2(BamList=reads,GRvariants,
+strand='-')
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

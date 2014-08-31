@@ -520,24 +520,24 @@ realCigarPositionsList <- function(RleCigarList) {
 #' @keywords SNP count
 #' @examples
 #' 
-#' \t#load example data
-#' \tdata(reads)
-#' \tdata(GRvariants)
+#' #load example data
+#' data(reads)
+#' data(GRvariants)
 #' 
-#' \t#set seqlevels in reads equal to seqlevels in GRvariants
-#' \tseqlevels(reads) <- '17'
+#' #set seqlevels in reads equal to seqlevels in GRvariants
+#' seqlevels(reads) <- '17'
 #' 
-#' \t#get counts at the three positions specified in GRvariants
-#' \talleleCount <- getAlleleCounts(BamList=reads,GRvariants,
-#' \t\tstrand='nonStranded')
-#' \t
-#' \t#if the reads had contained stranded data, these two calls would 
-#' \t#have given the correct input objects for getAlleleCounts
-#' \talleleCountPlus <- getAlleleCounts(BamList=reads,GRvariants,
-#' \t\tstrand='+')
-#' \talleleCountMinus <- getAlleleCounts(BamList=reads,GRvariants,
-#' \t\tstrand='-')
-#' \t
+#' #get counts at the three positions specified in GRvariants
+#' alleleCount <- getAlleleCounts(BamList=reads,GRvariants,
+#' strand='nonStranded')
+#' 
+#' #if the reads had contained stranded data, these two calls would 
+#' #have given the correct input objects for getAlleleCounts
+#' alleleCountPlus <- getAlleleCounts(BamList=reads,GRvariants,
+#' strand='+')
+#' alleleCountMinus <- getAlleleCounts(BamList=reads,GRvariants,
+#' strand='-')
+#' 
 #' 
 #' @export getAlleleCounts
 getAlleleCounts <- function(BamList, GRvariants, strand = "nonStranded", return.type = "list", 
@@ -696,24 +696,24 @@ getAlleleCounts <- function(BamList, GRvariants, strand = "nonStranded", return.
 #' @keywords SNP count
 #' @examples
 #' 
-#' \t#load example data
-#' \tdata(reads)
-#' \tdata(GRvariants)
+#' #load example data
+#' data(reads)
+#' data(GRvariants)
 #' 
-#' \t#set seqlevels in reads equal to seqlevels in GRvariants
-#' \tseqlevels(reads) <- '17'
+#' #set seqlevels in reads equal to seqlevels in GRvariants
+#' seqlevels(reads) <- '17'
 #' 
-#' \t#get counts at the three positions specified in GRvariants
-#' \talleleCount <- getAlleleCounts2(BamList=reads,GRvariants,
-#' \t\tstrand='nonStranded')
-#' \t
-#' \t#if the reads had contained stranded data, these two calls would 
-#' \t#have given the correct input objects for getAlleleCounts2
-#' \talleleCountPlus <- getAlleleCounts2(BamList=reads,GRvariants,
-#' \t\tstrand='+')
-#' \talleleCountMinus <- getAlleleCounts2(BamList=reads,GRvariants,
-#' \t\tstrand='-')
-#' \t
+#' #get counts at the three positions specified in GRvariants
+#' alleleCount <- getAlleleCounts2(BamList=reads,GRvariants,
+#' strand='nonStranded')
+#' 
+#' #if the reads had contained stranded data, these two calls would 
+#' #have given the correct input objects for getAlleleCounts2
+#' alleleCountPlus <- getAlleleCounts2(BamList=reads,GRvariants,
+#' strand='+')
+#' alleleCountMinus <- getAlleleCounts2(BamList=reads,GRvariants,
+#' strand='-')
+#' 
 #' 
 #' @export getAlleleCounts2
 getAlleleCounts2 <- function(BamList, GRvariants, strand = "nonStranded", verbose = TRUE) {
@@ -986,8 +986,8 @@ getAlleleCounts2 <- function(BamList, GRvariants, strand = "nonStranded", verbos
 #' @keywords scan SNP heterozygote
 #' @examples
 #' 
-#' \tdata(reads)
-#' \ts <- scanForHeterozygotes(reads,verbose=FALSE)
+#' data(reads)
+#' s <- scanForHeterozygotes(reads,verbose=FALSE)
 #' 
 #' @export scanForHeterozygotes
 scanForHeterozygotes <- function(BamList, minimumReadsAtPos = 20, maximumMajorAlleleFrequency = 0.9, 
@@ -1158,12 +1158,12 @@ scanForHeterozygotes <- function(BamList, minimumReadsAtPos = 20, maximumMajorAl
 #' @keywords mapping bias
 #' @examples
 #' 
-#' \t#load example data
-#' \tdata(ASEset)
-#' \t#access SnpAfList
-#' \talleleCountList <- alleleCounts(ASEset)
-#' \t#get default map bias exp mean
-#' \tmatExpMean <- getDefaultMapBiasExpMean(alleleCountList)
+#' #load example data
+#' data(ASEset)
+#' #access SnpAfList
+#' alleleCountList <- alleleCounts(ASEset)
+#' #get default map bias exp mean
+#' matExpMean <- getDefaultMapBiasExpMean(alleleCountList)
 #' 
 #' 
 #' @export getDefaultMapBiasExpMean
@@ -1251,12 +1251,12 @@ extractReferenceAllele <- function(GR, path) {
 #' @keywords genes locations
 #' @examples
 #' 
-#' \t#load example data
-#' \tdata(ASEset)
-#' \t
-#' \t#get counts at the three positions specified in GRvariants
-#' \tlibrary(org.Hs.eg.db )
-#' \tsearchArea<-getAreaFromGeneNames(c('PAX8','TLR7'), org.Hs.eg.db)\t
+#' #load example data
+#' data(ASEset)
+#' 
+#' #get counts at the three positions specified in GRvariants
+#' library(org.Hs.eg.db )
+#' searchArea<-getAreaFromGeneNames(c('PAX8','TLR7'), org.Hs.eg.db)
 #' 
 #' @export getAreaFromGeneNames
 getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank = 0, rightFlank = 0, 
@@ -1360,18 +1360,20 @@ getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank = 0, rightFlank =
 #' @keywords SNP rs-id
 #' @examples
 #' 
-#' \t#load example data
-#' \tdata(ASEset)
-#' \t
-#' \t#get counts at the three positions specified in GRvariants
-#' \tif(require(SNPlocs.Hsapiens.dbSNP.20120608)){
-#'\t\tupdatedGRanges<-getSnpIdFromLocation(rowData(ASEset), SNPlocs.Hsapiens.dbSNP.20120608)
-#'\t\trowData(ASEset)<-updatedGRanges
-#'\t}
+#' #load example data
+#' data(ASEset)
+#' 
+#' #get counts at the three positions specified in GRvariants
+#' if(require(SNPlocs.Hsapiens.dbSNP.20120608)){
+#' updatedGRanges<-getSnpIdFromLocation(rowData(ASEset), SNPlocs.Hsapiens.dbSNP.20120608)
+#' rowData(ASEset)<-updatedGRanges
+#'}
 #' 
 #' @export getSnpIdFromLocation
 getSnpIdFromLocation <- function(GR, SNPloc, return.vector = FALSE, verbose = TRUE) {
-    
+   
+	#genome <- genome(GR)
+
     if (class(GR) != "GRanges") 
         stop(paste("GR must of class GRanges, not", class(GR)))
     if (class(SNPloc) != "SNPlocs") 
@@ -1400,6 +1402,7 @@ getSnpIdFromLocation <- function(GR, SNPloc, return.vector = FALSE, verbose = TR
     
     seqlevels(SNPlocThisChr, force = TRUE) <- seqlevels(GR)
     # seqlengths(GR) <- seqlengths(SNPlocThisChr)
+	genome(SNPlocThisChr) <- genome(GR)
     
     overlaps <- findOverlaps(GR, SNPlocThisChr)
     
@@ -1417,7 +1420,8 @@ getSnpIdFromLocation <- function(GR, SNPloc, return.vector = FALSE, verbose = TR
     
     # change back to chr from ch
     seqlevels(GR) <- sub("^ch", "chr", seqlevels(GR))
-    
+
+
     if (return.vector) {
         names(GR)
     } else {
@@ -1463,17 +1467,17 @@ getAlleleCount <- function() {
 #' @keywords barplot
 #' @examples
 #' 
-#' \ta <- ASEset
-#' \tstrand <- '+'
-#' \tacounts <-  alleleCounts(a,strand=strand)
-#' \tarank <-  arank(a,strand=strand)
-#' \tafraction <- fraction(a, strand=strand)
-#' \tamainVec <- rep('',nrow(a))
+#' a <- ASEset
+#' strand <- '+'
+#' acounts <-  alleleCounts(a,strand=strand)
+#' arank <-  arank(a,strand=strand)
+#' afraction <- fraction(a, strand=strand)
+#' amainVec <- rep('',nrow(a))
 #' 
-#' \tname <- rownames(a)[1]
+#' name <- rownames(a)[1]
 #' 
-#' \tbarplotLatticeFraction(identifier=name, afraction, arank, amainVec) 
-#' \tbarplotLatticeCounts(identifier=name,  acounts, arank, amainVec) 
+#' barplotLatticeFraction(identifier=name, afraction, arank, amainVec) 
+#' barplotLatticeCounts(identifier=name,  acounts, arank, amainVec) 
 #' 
 #' @export barplotLatticeFraction
 #' @export barplotLatticeCounts
@@ -1627,9 +1631,9 @@ barplotLatticeCounts <- function(identifier, acounts, arank, amainVec, ...) {
 #' @keywords coverage
 #' @examples
 #' 
-#' \tr <- reads
-#' \tseqlevels(r) <- '17'
-#' \tcovMatList <- coverageMatrixListFromGAL(BamList=r, strand='+')
+#' r <- reads
+#' seqlevels(r) <- '17'
+#' covMatList <- coverageMatrixListFromGAL(BamList=r, strand='+')
 #' 
 #' @export coverageMatrixListFromGAL
 coverageMatrixListFromGAL <- function(BamList, strand = NULL, ignore.empty.bam.row = TRUE) {
@@ -1748,9 +1752,9 @@ coverageMatrixListFromGAL <- function(BamList, strand = NULL, ignore.empty.bam.r
 #' @keywords implode
 #' @examples
 #' 
-#' \tlst <- list(hungry='yes', thirsty='no')
-#' \timplodeList(lst)
-#'\t#the check ls()
+#' lst <- list(hungry='yes', thirsty='no')
+#' implodeList(lst)
+#' #the check ls()
 #'  ls()
 #' @export implodeList
 implodeList <- function(x) {

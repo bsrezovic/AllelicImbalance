@@ -29,14 +29,14 @@ This function is used to try to identify the rs-IDs of SNPs in a GRanges
 object.
 }
 \examples{
-\\t#load example data
-\\tdata(ASEset)
-\\t
-\\t#get counts at the three positions specified in GRvariants
-\\tif(require(SNPlocs.Hsapiens.dbSNP.20120608)){
-\\t\\tupdatedGRanges<-getSnpIdFromLocation(rowData(ASEset), SNPlocs.Hsapiens.dbSNP.20120608)
-\\t\\trowData(ASEset)<-updatedGRanges
-\\t}
+#load example data
+data(ASEset)
+
+#get counts at the three positions specified in GRvariants
+if(require(SNPlocs.Hsapiens.dbSNP.20120608)){
+updatedGRanges<-getSnpIdFromLocation(rowData(ASEset), SNPlocs.Hsapiens.dbSNP.20120608)
+rowData(ASEset)<-updatedGRanges
+}
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

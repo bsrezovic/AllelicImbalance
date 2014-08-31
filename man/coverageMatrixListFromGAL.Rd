@@ -23,9 +23,9 @@ GAlignmnetsList, and returns by default a list with one matrix, and
 information about the genomic start and stop positions.
 }
 \examples{
-\\tr <- reads
-\\tseqlevels(r) <- '17'
-\\tcovMatList <- coverageMatrixListFromGAL(BamList=r, strand='+')
+r <- reads
+seqlevels(r) <- '17'
+covMatList <- coverageMatrixListFromGAL(BamList=r, strand='+')
 }
 \author{
 Jesper R. Gadin

@@ -20,11 +20,11 @@ NULL
 #' @keywords binomial test
 #' @examples
 #' 
-#' \t#load example data
-#' \tdata(ASEset)
-#' \t
-#' \t#make a binomial test
-#' \tbinom.test(ASEset,'nonStranded')
+#' #load example data
+#' data(ASEset)
+#' 
+#' #make a binomial test
+#' binom.test(ASEset,'nonStranded')
 #' 
 #' 
 #'  @importFrom stats binom.test
