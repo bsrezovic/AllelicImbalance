@@ -11,7 +11,7 @@ NULL
 #' \code{SummarizedExperiment}, and will therefore inherit the same accessors
 #' and ranges operations.
 #' 
-#' countListNonStranded, countListPlus, countListMinus and countListUnknown are
+#'  countListPlus, countListMinus and countListUnknown are
 #' i.e. the outputs from the \code{\link{getAlleleCounts}} function.
 #' 
 #' @name initialize-ASEset
@@ -19,8 +19,6 @@ NULL
 #' @aliases initialize-ASEset ASEsetFromCountList
 #' @param rowData A \code{GenomicRanges object} that contains the variants of
 #' interest
-#' @param countListNonStranded A \code{list} where each entry is a matrix with
-#' allele counts as columns and sample counts as rows
 #' @param countListPlus A \code{list} where each entry is a matrix with allele
 #' counts as columns and sample counts as rows
 #' @param countListMinus A \code{list} where each entry is a matrix with allele
@@ -90,15 +88,13 @@ NULL
 
 
 #' @rdname initialize-ASEset
-ASEsetFromCountList <- function(rowData, countListNonStranded = NULL, countListPlus = NULL, 
-    countListMinus = NULL, countListUnknown = NULL, colData = NULL, mapBiasExpMean = NULL, 
+ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus = NULL, 
+    countListMinus = NULL, colData = NULL, mapBiasExpMean = NULL, 
     verbose = FALSE, ...) {
     
     if (verbose) {
         cat("rowData\n")
         cat(class(rowData))
-        cat("countListNonStranded\n")
-        cat(class(countListNonStranded))
         cat("countListPlus\n")
         cat(class(countListPlus))
         cat("countListMinus\n")
@@ -111,11 +107,11 @@ ASEsetFromCountList <- function(rowData, countListNonStranded = NULL, countListP
         cat(class(mapBiasExpMean))
     }
     # check that at least one of the countList options are not null
-    if (is.null(c(countListNonStranded, countListPlus, countListMinus, countListUnknown))) {
+    if (is.null(c(countListPlus, countListMinus, countListUnknown))) {
         stop("at least one of the countList options has to be specified")
     }
     
-    countLists <- c("countListNonStranded", "countListPlus", "countListMinus", "countListUnknown")[(c(!is.null(countListNonStranded), 
+    countLists <- c("countListPlus", "countListMinus", "countListUnknown")[(c( 
         !is.null(countListPlus), !is.null(countListMinus), !is.null(countListUnknown)))]
     
     # check that all lengths are the same in all lists
@@ -242,14 +238,6 @@ ASEsetFromCountList <- function(rowData, countListNonStranded = NULL, countListP
         }
         assays[["countsUnknown"]] <- ar3
         
-    }
-    # nonStranded
-    if (!is.null(countListNonStranded)) {
-        ar4 <- array(NA, c(snps, ind, 4))  #empty array that handles only four nucleotides + one del columns
-        for (i in 1:snps) {
-            ar4[i, , ] <- countListNonStranded[[i]]
-        }
-        assays[["countsNonStranded"]] <- ar4
     }
     
     # assign mapBiasExpMean

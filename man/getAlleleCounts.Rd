@@ -3,8 +3,8 @@
 \alias{getAlleleCounts}
 \title{snp count data}
 \usage{
-getAlleleCounts(BamList, GRvariants, strand = "nonStranded",
-  return.type = "list", verbose = TRUE)
+getAlleleCounts(BamList, GRvariants, strand = "*", return.type = "list",
+  verbose = TRUE)
 }
 \arguments{
 \item{BamList}{A \code{GAlignmentsList object} or \code{GRangesList object}
@@ -13,7 +13,7 @@ containing data imported from a bam file}
 \item{GRvariants}{A \code{GRanges object} that contains positions of SNPs to
 retrieve}
 
-\item{strand}{A length 1 \code{character} with value 'nonStranded', '+',
+\item{strand}{A length 1 \code{character} with value  '+',
 '-', or '*'.  This argument determines if \code{getAlleleCounts} will
 retrieve counts from all reads, or only from reads marked as '+', '-' or '*'
 (unknown), respectively.}
@@ -38,9 +38,9 @@ been created using the \code{impBamGAL} function on bam-files. The
 it is generated through scanning the same bam-files as in \code{BamList} for
 heterozygote locations (e.g. using \code{scanForHeterozygotes}). The
 GRvariants will currently only accept locations having width=1,
-corresponding to SNPs.  In the \code{strand} argument, specifying
-'nonStranded' is the same as retrieving the sum count of '+' and '-' reads
-(and '*' unknown in case these are found in the bam file). 'nonStranded' is
+corresponding to bi-allelic SNPs. In the \code{strand} argument, specifying
+'*' is the same as retrieving the sum count of '+' and '-' reads
+(and unknown strand reads in case these are found in the bam file). '*' is
 the default behaviour and can be used when the RNA-seq experiments strand
 information is not available.
 }
@@ -54,7 +54,7 @@ seqlevels(reads) <- '17'
 
 #get counts at the three positions specified in GRvariants
 alleleCount <- getAlleleCounts(BamList=reads,GRvariants,
-strand='nonStranded')
+strand='*')
 
 #if the reads had contained stranded data, these two calls would
 #have given the correct input objects for getAlleleCounts

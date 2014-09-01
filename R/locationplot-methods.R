@@ -18,7 +18,7 @@ NULL
 #' @docType methods
 #' @param x an ASEset object.
 #' @param type 'fraction' or 'count'
-#' @param strand '+','-','*','both' or 'nonStranded'. This argument determines
+#' @param strand '+','-','*' or 'both'. This argument determines
 #' which strand is plotted. See \code{getAlleleCounts} for more information on
 #' strand.
 #' @param yaxis wheter the y-axis is to be displayed or not
@@ -54,11 +54,11 @@ NULL
 #' 
 #' #for ASEsets with fewer SNPs the 'count' type plot is
 #' # useful for detailed visualization.
-#' locationplot(ASEset,type='count',strand='nonStranded')
+#' locationplot(ASEset,type='count',strand='*')
 #' 
 #' @exportMethod locationplot
 
-setGeneric("locationplot", function(x, type = "fraction", strand = "nonStranded", 
+setGeneric("locationplot", function(x, type = "fraction", strand = "*", 
     yaxis = TRUE, xaxis = FALSE, xlab = FALSE, ylab = TRUE, legend.colnames = "", 
     size = 0.9, main = NULL, pValue = FALSE, cex.main = 0.7, cex.ylab = 0.6, cex.legend = 0.6, 
     OrgDb = NULL, TxDb = NULL, verbose = TRUE, ...) {
@@ -66,7 +66,7 @@ setGeneric("locationplot", function(x, type = "fraction", strand = "nonStranded"
 })
 
 setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction", 
-    strand = "nonStranded", yaxis = TRUE, xaxis = FALSE, xlab = FALSE, ylab = TRUE, 
+    strand = "*", yaxis = TRUE, xaxis = FALSE, xlab = FALSE, ylab = TRUE, 
     legend.colnames = "", size = c(0.8, 1), main = NULL, pValue = FALSE, cex.main = 0.7, 
     cex.ylab = 0.6, cex.legend = 0.5, OrgDb = NULL, TxDb = NULL, verbose = TRUE, 
     ...) {
@@ -93,7 +93,7 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
         stop(paste("strand should be of class character, not", class(strand)))
     if (length(strand) != 1) 
         stop(paste("strand should be of length 1, not", length(strand)))
-    okStrandTypes <- c("both", "+", "-", "*", "nonStranded")
+    okStrandTypes <- c("both", "+", "-", "*")
     if (!strand %in% okStrandTypes) 
         stop(paste("strand can't be '", strand, "' - it should be one of these: ", 
             paste(okStrandTypes, collapse = ", "), sep = ""))
@@ -111,11 +111,6 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
         }
     } else if (strand == "*") {
         el <- "countsUnknown"
-        if (!(el %in% names(assays(x)))) {
-            stop("strand is not present as assay in ASEset object")
-        }
-    } else if (strand == "nonStranded") {
-        el <- "countsNonStranded"
         if (!(el %in% names(assays(x)))) {
             stop("strand is not present as assay in ASEset object")
         }
@@ -381,17 +376,15 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
 #' 
 
 #' @exportMethod glocationplot
-setGeneric("glocationplot", function(x, type = "fraction", strand = "nonStranded", 
+setGeneric("glocationplot", function(x, type = "fraction", strand = "*", 
     BamGAL = NULL, GenomeAxisTrack = FALSE, trackNameDeAn = paste("deTrack", type), 
     add = FALSE, verbose = FALSE, ...) {
     standardGeneric("glocationplot")
 })
 
 setMethod("glocationplot", signature(x = "ASEset"), function(x, type = "fraction", 
-    strand = "+", BamGAL = NULL, GenomeAxisTrack = FALSE, trackNameDeAn = paste("deTrack", 
+    strand = "*", BamGAL = NULL, GenomeAxisTrack = FALSE, trackNameDeAn = paste("deTrack", 
         type), add = FALSE, verbose = FALSE, ...) {
-    # change to '*' if(strand=='nonStranded'){strand <- '*'} not possile as long as
-    # nonStranded is an option
     
     # check genome
     if (is.null(genome(x)) | is.na(genome(x))) {

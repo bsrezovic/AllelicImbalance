@@ -24,7 +24,7 @@ NULL
 #' #load example data
 #' data(ASEset)
 #' 
-#' #make a chi-square test on default nonStranded strand 
+#' #make a chi-square test on default non-stranded strand 
 #' chisq.test(ASEset)
 #' 
 #'  @importFrom stats chisq.test
@@ -35,11 +35,11 @@ NULL
 setGeneric("chisq.test")
 
 #' @rdname chisq.test
-setMethod("chisq.test", signature(x = "ASEset", y = "ANY"), function(x, y = "nonStranded") {
+setMethod("chisq.test", signature(x = "ASEset", y = "ANY"), function(x, y = "*") {
     strand = y
     
-    if (!sum(strand %in% c("+", "-", "*", "nonStranded")) > 0) {
-        stop(paste("strand parameter y has to be either '+', '-', '*' or 'nonStranded' "))
+    if (!sum(strand %in% c("+", "-", "*")) > 0) {
+        stop(paste("strand parameter y has to be either '+', '-' or '*'"))
     }
     
     biasWarning <- vector()

@@ -13,18 +13,18 @@
 \alias{mapBias,ASEset-method}
 \title{ASEset objects}
 \usage{
-alleleCounts(x, strand = "nonStranded")
+alleleCounts(x, strand = "*")
 
 mapBias(x)
 
-fraction(x, strand = "nonStranded", verbose = FALSE)
+fraction(x, strand = "*", verbose = FALSE)
 
-arank(x, ret = "names", strand = "nonStranded", ...)
+arank(x, ret = "names", strand = "*", ...)
 }
 \arguments{
 \item{x}{ASEset object}
 
-\item{strand}{which strand of 'nonStranded', '+', '-' or '*'}
+\item{strand}{which strand of '+', '-' or '*'}
 
 \item{verbose}{makes function more talkative}
 
@@ -52,7 +52,7 @@ object see more details in \code{\link{barplot}} and
 \code{\link{locationplot}}.
 
 Four different alleleCount options are available. The simples one is the
-nonStranded option, and is experiments where the strand information is not
+* option, and is experiments where the strand information is not
 known. In this option both the plus, minus and unknown strand will be
 counted and present. The unknown strand is when the aligner could not find
 any strand associated with the read. Then there are an option too add plus

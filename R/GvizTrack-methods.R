@@ -80,11 +80,8 @@ setGeneric("ASEDAnnotationTrack", function(x, GR = rowData(x), type = "fraction"
 })
 
 setMethod("ASEDAnnotationTrack", signature(x = "ASEset"), function(x, GR = rowData(x), 
-    type = "fraction", strand = "+", mainVec = rep("", nrow(x)), trackName = paste("deTrack", 
+    type = "fraction", strand = "*", mainVec = rep("", nrow(x)), trackName = paste("deTrack", 
         type), verbose = TRUE, gpar = list(), ...) {
-    
-    # change to '*' if(strand=='nonStranded'){strand <- '*'} not possile as long as
-    # nonStranded is an option
     
     # check genome
     if (is.null(genome(x)) | is.na(genome(x))) {

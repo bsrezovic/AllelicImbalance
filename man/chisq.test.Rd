@@ -8,7 +8,7 @@
 chisq.test(x, y = NULL, correct = TRUE, p = rep(1/length(x), length(x)),
   rescale.p = FALSE, simulate.p.value = FALSE, B = 2000)
 
-\S4method{chisq.test}{ASEset}(x, y = "nonStranded")
+\S4method{chisq.test}{ASEset}(x, y = "*")
 }
 \arguments{
 \item{x}{\code{ASEset} object}
@@ -48,7 +48,7 @@ The test is performed on one strand in an ASEset object.
 #load example data
 data(ASEset)
 
-#make a chi-square test on default nonStranded strand
+#make a chi-square test on default non-stranded strand
 chisq.test(ASEset)
 }
 \author{

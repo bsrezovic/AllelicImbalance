@@ -6,7 +6,7 @@
 \alias{locationplot,ASEset-method}
 \title{locationplot ASEset objects}
 \usage{
-locationplot(x, type = "fraction", strand = "nonStranded", yaxis = TRUE,
+locationplot(x, type = "fraction", strand = "*", yaxis = TRUE,
   xaxis = FALSE, xlab = FALSE, ylab = TRUE, legend.colnames = "",
   size = 0.9, main = NULL, pValue = FALSE, cex.main = 0.7,
   cex.ylab = 0.6, cex.legend = 0.6, OrgDb = NULL, TxDb = NULL,
@@ -17,7 +17,7 @@ locationplot(x, type = "fraction", strand = "nonStranded", yaxis = TRUE,
 
 \item{type}{'fraction' or 'count'}
 
-\item{strand}{'+','-','*','both' or 'nonStranded'. This argument determines
+\item{strand}{'+','-','*' or 'both'. This argument determines
 which strand is plotted. See \code{getAlleleCounts} for more information on
 strand.}
 
@@ -75,7 +75,7 @@ locationplot(ASEset[order(start(rowData(ASEset))),])
 
 #for ASEsets with fewer SNPs the 'count' type plot is
 # useful for detailed visualization.
-locationplot(ASEset,type='count',strand='nonStranded')
+locationplot(ASEset,type='count',strand='*')
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

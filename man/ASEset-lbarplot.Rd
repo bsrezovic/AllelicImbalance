@@ -14,7 +14,7 @@ lbarplot(x, type = "count", strand = "+", mainVec = rownames(x),
 
 \item{type}{'count' or 'fraction'}
 
-\item{strand}{Five options, 'nonStranded','+', '-', 'both' or '*'}
+\item{strand}{four options, '+', '-', 'both' or '*'}
 
 \item{mainVec}{text to use as main label}
 

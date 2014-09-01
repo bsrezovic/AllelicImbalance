@@ -9,8 +9,8 @@
 barplot(height, ...)
 
 \S4method{barplot}{ASEset}(height, type = "count", sampleColour = NULL,
-  legend = TRUE, pValue = TRUE, strand = "nonStranded",
-  testValue = NULL, testValue2 = NULL, OrgDb = NULL, TxDb = NULL,
+  legend = TRUE, pValue = TRUE, strand = "*", testValue = NULL,
+  testValue2 = NULL, OrgDb = NULL, TxDb = NULL,
   annotationType = c("gene", "exon", "transcript"), main = NULL,
   ylim = NULL, yaxis = TRUE, xaxis = FALSE, ylab = TRUE, xlab = TRUE,
   legend.colnames = "", las.ylab = 1, las.xlab = 2, cex.main = 1,
@@ -30,7 +30,7 @@ barplot(height, ...)
 
 \item{pValue}{Display p-value}
 
-\item{strand}{Five options, 'nonStranded','+', '-', 'both' or '*'}
+\item{strand}{four options, '+', '-', 'both' or '*'}
 
 \item{testValue}{if set, a matrix or vector with user p-values}
 

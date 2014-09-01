@@ -495,9 +495,9 @@ realCigarPositionsList <- function(RleCigarList) {
 #' it is generated through scanning the same bam-files as in \code{BamList} for
 #' heterozygote locations (e.g. using \code{scanForHeterozygotes}). The
 #' GRvariants will currently only accept locations having width=1,
-#' corresponding to SNPs.  In the \code{strand} argument, specifying
-#' 'nonStranded' is the same as retrieving the sum count of '+' and '-' reads
-#' (and '*' unknown in case these are found in the bam file). 'nonStranded' is
+#' corresponding to bi-allelic SNPs. In the \code{strand} argument, specifying
+#' '*' is the same as retrieving the sum count of '+' and '-' reads
+#' (and unknown strand reads in case these are found in the bam file). '*' is
 #' the default behaviour and can be used when the RNA-seq experiments strand
 #' information is not available.
 #' 
@@ -505,7 +505,7 @@ realCigarPositionsList <- function(RleCigarList) {
 #' containing data imported from a bam file
 #' @param GRvariants A \code{GRanges object} that contains positions of SNPs to
 #' retrieve
-#' @param strand A length 1 \code{character} with value 'nonStranded', '+',
+#' @param strand A length 1 \code{character} with value  '+',
 #' '-', or '*'.  This argument determines if \code{getAlleleCounts} will
 #' retrieve counts from all reads, or only from reads marked as '+', '-' or '*'
 #' (unknown), respectively.
@@ -529,7 +529,7 @@ realCigarPositionsList <- function(RleCigarList) {
 #' 
 #' #get counts at the three positions specified in GRvariants
 #' alleleCount <- getAlleleCounts(BamList=reads,GRvariants,
-#' strand='nonStranded')
+#' strand='*')
 #' 
 #' #if the reads had contained stranded data, these two calls would 
 #' #have given the correct input objects for getAlleleCounts
@@ -540,7 +540,7 @@ realCigarPositionsList <- function(RleCigarList) {
 #' 
 #' 
 #' @export getAlleleCounts
-getAlleleCounts <- function(BamList, GRvariants, strand = "nonStranded", return.type = "list", 
+getAlleleCounts <- function(BamList, GRvariants, strand = "*", return.type = "list", 
     verbose = TRUE) {
     
     if (!class(BamList) %in% c("GAlignments", "GAlignmentsList")) {
@@ -559,8 +559,8 @@ getAlleleCounts <- function(BamList, GRvariants, strand = "nonStranded", return.
     if (!length(strand) == 1) {
         stop("strand has to be of length 1")
     }
-    if (!sum(strand %in% c("+", "-", "*", "nonStranded")) > 0) {
-        stop("strand parameter has to be either '+', '-', '*' or 'nonStranded' ")
+    if (!sum(strand %in% c("+", "-", "*")) > 0) {
+        stop("strand parameter has to be either '+', '-' or '*' ")
     }
     
     # if the user sent in the GRangesList for GRvariants, take out only the unique
@@ -603,7 +603,7 @@ getAlleleCounts <- function(BamList, GRvariants, strand = "nonStranded", return.
     ar1 <- array(NA, c(length(GRvariants), length(BamList), 4), dimnames = dimnames)  #empty array that handles only four nucleotides + one del columns
     
     # use strand choice to only get reads from that strand
-    if (!strand == "nonStranded") {
+    if (!strand == "*") {
         BamList <- GAlignmentsList(mapply(function(x, y) {
             x[y]
         }, BamList, strand(BamList) == strand))
@@ -673,8 +673,8 @@ getAlleleCounts <- function(BamList, GRvariants, strand = "nonStranded", return.
 #' heterozygote locations (e.g. using \code{scanForHeterozygotes}). The
 #' GRvariants will currently only accept locations having width=1,
 #' corresponding to SNPs.  In the \code{strand} argument, specifying
-#' 'nonStranded' is the same as retrieving the sum count of '+' and '-' reads
-#' (and '*' unknown in case these are found in the bam file). 'nonStranded' is
+#' '*' is the same as retrieving the sum count of '+' and '-' reads
+#' (and unknown reads in case these are found in the bam file). '*' is
 #' the default behaviour and can be used when the RNA-seq experiments strand
 #' information is not available.
 #' 
@@ -682,7 +682,7 @@ getAlleleCounts <- function(BamList, GRvariants, strand = "nonStranded", return.
 #' containing data imported from a bam file
 #' @param GRvariants A \code{GRanges object} that contains positions of SNPs to
 #' retrieve
-#' @param strand A length 1 \code{character} with value 'nonStranded', '+',
+#' @param strand A length 1 \code{character} with value '+',
 #' '-', or '*'.  This argument determines if \code{getAlleleCounts2} will
 #' retrieve counts from all reads, or only from reads marked as '+', '-' or '*'
 #' (unknown), respectively.
@@ -705,7 +705,7 @@ getAlleleCounts <- function(BamList, GRvariants, strand = "nonStranded", return.
 #' 
 #' #get counts at the three positions specified in GRvariants
 #' alleleCount <- getAlleleCounts2(BamList=reads,GRvariants,
-#' strand='nonStranded')
+#' strand='*')
 #' 
 #' #if the reads had contained stranded data, these two calls would 
 #' #have given the correct input objects for getAlleleCounts2
@@ -716,7 +716,7 @@ getAlleleCounts <- function(BamList, GRvariants, strand = "nonStranded", return.
 #' 
 #' 
 #' @export getAlleleCounts2
-getAlleleCounts2 <- function(BamList, GRvariants, strand = "nonStranded", verbose = TRUE) {
+getAlleleCounts2 <- function(BamList, GRvariants, strand = "*", verbose = TRUE) {
     
     # if just one element of, make list (which is a convenient way of handling this
     # input type)
@@ -734,8 +734,8 @@ getAlleleCounts2 <- function(BamList, GRvariants, strand = "nonStranded", verbos
     if (!length(strand) == 1) {
         stop("strand has to be of length 1")
     }
-    if (!sum(strand %in% c("+", "-", "*", "nonStranded")) > 0) {
-        stop("strand parameter has to be either '+', '-', '*' or 'nonStranded' ")
+    if (!sum(strand %in% c("+", "-", "*")) > 0) {
+        stop("strand parameter has to be either '+', '-' or '*' ")
     }
     
     # if the user sent in the GRangesList, take out only the unique entries.
@@ -820,7 +820,7 @@ getAlleleCounts2 <- function(BamList, GRvariants, strand = "nonStranded", verbos
     }
     
     # use strand choice to only get reads from that strand
-    if (!strand == "nonStranded") {
+    if (!strand == "*") {
         BamList <- GAlignmentsList(mapply(function(x, y) {
             x[y]
         }, BamList, strand(BamList) == strand))

@@ -24,7 +24,7 @@ NULL
 #' data(ASEset)
 #' 
 #' #make a binomial test
-#' binom.test(ASEset,'nonStranded')
+#' binom.test(ASEset,'*')
 #' 
 #' 
 #'  @importFrom stats binom.test
@@ -35,13 +35,13 @@ NULL
 setGeneric("binom.test")
 
 #' @rdname binom.test
-setMethod("binom.test", signature(x = "ASEset", n = "ANY"), function(x, n = "nonStranded") {
+setMethod("binom.test", signature(x = "ASEset", n = "ANY"), function(x, n = "*") {
     
     strand <- n
     
     # checks
-    if (!sum(strand %in% c("+", "-", "*", "nonStranded")) > 0) {
-        stop("strand parameter n has to be either '+', '-', '*' or 'nonStranded' ")
+    if (!sum(strand %in% c("+", "-", "*")) > 0) {
+        stop("strand parameter n has to be either '+', '-' or '*' ")
     }
     
     

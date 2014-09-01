@@ -24,7 +24,7 @@
 #' @param sampleColour User specified colours
 #' @param legend Display legend
 #' @param pValue Display p-value
-#' @param strand Five options, 'nonStranded','+', '-', 'both' or '*'
+#' @param strand four options, '+', '-', 'both' or '*'
 #' @param testValue if set, a matrix or vector with user p-values
 #' @param testValue2 if set, a matrix or vector with user p-values
 #' @param OrgDb an OrgDb object which provides annotation
@@ -75,7 +75,7 @@ setGeneric("barplot")
 
 #' @rdname ASEset-barplot
 setMethod("barplot", signature(height = "ASEset"), function(height, type = "count", 
-    sampleColour = NULL, legend = TRUE, pValue = TRUE, strand = "nonStranded", testValue = NULL, 
+    sampleColour = NULL, legend = TRUE, pValue = TRUE, strand = "*", testValue = NULL, 
     testValue2 = NULL, OrgDb = NULL, TxDb = NULL, annotationType = c("gene", "exon", 
         "transcript"), main = NULL, ylim = NULL, yaxis = TRUE, xaxis = FALSE, ylab = TRUE, 
     xlab = TRUE, legend.colnames = "", las.ylab = 1, las.xlab = 2, cex.main = 1, 
@@ -105,7 +105,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     
     
     # check strand
-    okStrandTypes <- c("both", "+", "-", "*", "nonStranded")
+    okStrandTypes <- c("both", "+", "-", "*")
     if (!strand %in% okStrandTypes) 
         stop(paste("strand can't be '", strand, "' - it should be one of these: ", 
             paste(okStrandTypes, collapse = ", "), sep = ""))
@@ -123,11 +123,6 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
         }
     } else if (strand == "*") {
         el <- "countsUnknown"
-        if (!(el %in% names(assays(x)))) {
-            stop("strand is not present as assay in ASEset object")
-        }
-    } else if (strand == "nonStranded") {
-        el <- "countsNonStranded"
         if (!(el %in% names(assays(x)))) {
             stop("strand is not present as assay in ASEset object")
         }
@@ -405,14 +400,14 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     }
     
     # make annotation dataframes
-    if ((!is.null(OrgDb) | !is.null(TxDb)) & (strand == "+" | strand == "nonStranded" | 
+    if ((!is.null(OrgDb) | !is.null(TxDb)) & (strand == "+" |  
         strand == "*" | strand == "both")) {
         annDfPlus <- getAnnotationDataFrame(rowData(x), strand = "+", annotationType = annotationType, 
             OrgDb = OrgDb, TxDb = TxDb, verbose = verbose)
     } else {
         annDfPlus <- NULL
     }
-    if ((!is.null(OrgDb) | !is.null(TxDb)) & (strand == "-" | strand == "nonStranded" | 
+    if ((!is.null(OrgDb) | !is.null(TxDb)) & (strand == "-" |  
         strand == "*" | strand == "both")) {
         annDfMinus <- getAnnotationDataFrame(rowData(x), strand = "-", annotationType = annotationType, 
             OrgDb = OrgDb, TxDb = TxDb, verbose = verbose)
@@ -444,7 +439,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
         # subsets it is useful to get information on higher expression values at certain
         # points of genes etc.
         
-        if (strand == "+" | strand == "-" | strand == "*" | strand == "nonStranded") {
+        if (strand == "+" | strand == "-" | strand == "*" ) {
             for (i in 1:length(snps)) {
                 # getting revelant data
                 snp <- snps[i]
@@ -627,7 +622,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                 if (!is.null(OrgDb) | !is.null(TxDb)) {
                   
                   # placed on left side
-                  if (strand == "+" | strand == "*" | strand == "nonStranded") {
+                  if (strand == "+" | strand == "*" ) {
                     df <- annDfPlus
                     
                     yPosTmp <- lowerLeftCorner[2] + 1.03
@@ -644,7 +639,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                     }
                   }
                   # placed on left side
-                  if (strand == "-" & (!strand == "*" | !strand == "nonStranded")) {
+                  if (strand == "-" & (!strand == "*" )) {
                     df <- annDfMinus
                     
                     yPosTmp <- lowerLeftCorner[2] + 1.03
@@ -660,7 +655,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                     }
                   }
                   # placed on right side
-                  if (strand == "*" | strand == "nonStranded") {
+                  if (strand == "*" ) {
                     df <- annDfMinus
                     
                     yPosTmp <- lowerLeftCorner[2] + 1.03
@@ -689,8 +684,8 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                   o <- o[!TFz]
                   textOver <- rownames(height)[!TFz]
                   
-                  # set another xLegendPos and yLegendPos for nonStranded or '*'.
-                  if ((strand == "*" | strand == "nonStranded") & (!is.null(OrgDb) | 
+                  # set another xLegendPos and yLegendPos for  '*'.
+                  if ((strand == "*" ) & (!is.null(OrgDb) | 
                     !is.null(TxDb))) {
                     xLegendPos <- 0.5
                     yLegendPos <- 1.02
@@ -1183,7 +1178,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
         # from these plots. Intended to use for a medium number of snps and samples
         
         if (strand == "both") {
-            stop("strand must be '+', '-', '*' or 'nonStranded' for type='fraction' ")
+            stop("strand must be '+', '-' or '*' for type='fraction' ")
         }
         
         for (i in 1:length(snps)) {
@@ -1327,7 +1322,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
 #' @docType methods
 #' @param x An \code{ASEset} object
 #' @param type 'count' or 'fraction'
-#' @param strand Five options, 'nonStranded','+', '-', 'both' or '*'
+#' @param strand four options, '+', '-', 'both' or '*'
 #' @param mainVec text to use as main label
 #' @param verbose Makes function more talkative
 #' @param ... for simpler generics when extending function
@@ -1354,14 +1349,7 @@ setMethod("lbarplot", signature(x = "ASEset"), function(x, type = "count", stran
     # type='count' strand='+' mainVec=rep('',nrow(x))
     a <- x
     ranges <- rowData(a)
-    # strand <- '+'
-    if (strand == "nonStranded") {
-        strand(ranges) <- "*"
-    } else {
-        strand(ranges) <- strand
-    }
     
-    # colnames(a)<- 1:ncol(a)
     
     acounts <- alleleCounts(a, strand = strand)
     arank <- arank(a, strand = strand)

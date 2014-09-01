@@ -4,16 +4,13 @@
 \alias{initialize-ASEset}
 \title{Initialize ASEset}
 \usage{
-ASEsetFromCountList(rowData, countListNonStranded = NULL,
-  countListPlus = NULL, countListMinus = NULL, countListUnknown = NULL,
-  colData = NULL, mapBiasExpMean = NULL, verbose = FALSE, ...)
+ASEsetFromCountList(rowData, countListUnknown = NULL, countListPlus = NULL,
+  countListMinus = NULL, colData = NULL, mapBiasExpMean = NULL,
+  verbose = FALSE, ...)
 }
 \arguments{
 \item{rowData}{A \code{GenomicRanges object} that contains the variants of
 interest}
-
-\item{countListNonStranded}{A \code{list} where each entry is a matrix with
-allele counts as columns and sample counts as rows}
 
 \item{countListPlus}{A \code{list} where each entry is a matrix with allele
 counts as columns and sample counts as rows}
@@ -44,7 +41,7 @@ The resulting \code{ASEset} object is based on the
 \code{SummarizedExperiment}, and will therefore inherit the same accessors
 and ranges operations.
 
-countListNonStranded, countListPlus, countListMinus and countListUnknown are
+countListPlus, countListMinus and countListUnknown are
 i.e. the outputs from the \code{\link{getAlleleCounts}} function.
 }
 \note{

@@ -6,7 +6,7 @@
 \alias{glocationplot,ASEset-method}
 \title{glocationplot ASEset objects}
 \usage{
-glocationplot(x, type = "fraction", strand = "nonStranded", BamGAL = NULL,
+glocationplot(x, type = "fraction", strand = "*", BamGAL = NULL,
   GenomeAxisTrack = FALSE, trackNameDeAn = paste("deTrack", type),
   add = FALSE, verbose = FALSE, ...)
 }

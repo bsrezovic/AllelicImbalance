@@ -8,7 +8,7 @@
 binom.test(x, n, p = 0.5, alternative = c("two.sided", "less", "greater"),
   conf.level = 0.95)
 
-\S4method{binom.test}{ASEset}(x, n = "nonStranded")
+\S4method{binom.test}{ASEset}(x, n = "*")
 }
 \arguments{
 \item{x}{\code{ASEset} object}
@@ -38,7 +38,7 @@ the test can only be applied to one strand at the time.
 data(ASEset)
 
 #make a binomial test
-binom.test(ASEset,'nonStranded')
+binom.test(ASEset,'*')
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

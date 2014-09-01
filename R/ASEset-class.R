@@ -15,7 +15,7 @@ NULL
 #' \code{\link{locationplot}}.
 #' 
 #' Four different alleleCount options are available. The simples one is the
-#' nonStranded option, and is experiments where the strand information is not
+#' * option, and is experiments where the strand information is not
 #' known. In this option both the plus, minus and unknown strand will be
 #' counted and present. The unknown strand is when the aligner could not find
 #' any strand associated with the read. Then there are an option too add plus
@@ -30,7 +30,7 @@ NULL
 #' arank,ASEset-method
 #' @docType class
 #' @param x ASEset object
-#' @param strand which strand of 'nonStranded', '+', '-' or '*'
+#' @param strand which strand of '+', '-' or '*'
 #' @param verbose makes function more talkative
 #' @param ret return names or counts
 #' @param ... additional arguments
@@ -100,13 +100,13 @@ NULL
 setClass("ASEset", contains = "SummarizedExperiment", representation(variants = "vector"))
 
 #' @rdname ASEset-class
-setGeneric("alleleCounts", function(x, strand = "nonStranded") {
+setGeneric("alleleCounts", function(x, strand = "*") {
     standardGeneric("alleleCounts")
 })
 
-setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "nonStranded") {
-    if (!sum(strand %in% c("+", "-", "*", "nonStranded")) > 0) {
-        stop("strand parameter has to be either '+', '-', '*' or 'nonStranded' ")
+setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*") {
+    if (!sum(strand %in% c("+", "-", "*")) > 0) {
+        stop("strand parameter has to be either '+', '-', '*' ")
     }
     
     if (strand == "+") {
@@ -115,8 +115,6 @@ setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "nonStra
         el <- "countsMinus"
     } else if (strand == "*") {
         el <- "countsUnknown"
-    } else if (strand == "nonStranded") {
-        el <- "countsNonStranded"
     } else {
         stop("unknown strand option")
     }
@@ -180,15 +178,15 @@ setMethod("mapBias", signature(x = "ASEset"), function(x) {
 })
 
 #' @rdname ASEset-class
-setGeneric("fraction", function(x, strand = "nonStranded", verbose = FALSE) {
+setGeneric("fraction", function(x, strand = "*", verbose = FALSE) {
     standardGeneric("fraction")
 })
 
-setMethod("fraction", signature(x = "ASEset"), function(x, strand = "nonStranded", 
+setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*", 
     verbose = FALSE) {
     
-    if (!sum(strand %in% c("+", "-", "*", "nonStranded")) > 0) {
-        stop("strand parameter has to be either '+', '-', '*' or 'nonStranded' ")
+    if (!sum(strand %in% c("+", "-", "*")) > 0) {
+        stop("strand parameter has to be either '+', '-', '*' ")
     }
     
     if (strand == "+") {
@@ -197,8 +195,6 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "nonStranded
         el <- "countsMinus"
     } else if (strand == "*") {
         el <- "countsUnknown"
-    } else if (strand == "nonStranded") {
-        el <- "countsNonStranded"
     } else {
         stop("unknown strand option")
     }
@@ -253,11 +249,11 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "nonStranded
 })
 
 #' @rdname ASEset-class
-setGeneric("arank", function(x, ret = "names", strand = "nonStranded", ...) {
+setGeneric("arank", function(x, ret = "names", strand = "*", ...) {
     standardGeneric("arank")
 })
 
-setMethod("arank", signature(x = "ASEset"), function(x, ret = "names", strand = "nonStranded", 
+setMethod("arank", signature(x = "ASEset"), function(x, ret = "names", strand = "*", 
     ...) {
     acounts <- alleleCounts(x, strand = strand)
     
