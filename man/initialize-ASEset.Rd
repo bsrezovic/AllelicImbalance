@@ -41,6 +41,9 @@ The resulting \code{ASEset} object is based on the
 \code{SummarizedExperiment}, and will therefore inherit the same accessors
 and ranges operations.
 
+If both countListPlus and countListMinus are given they will be used to
+calculate countListUnknown, which is the sum of the plus and minus strands.
+
 countListPlus, countListMinus and countListUnknown are
 i.e. the outputs from the \code{\link{getAlleleCounts}} function.
 }

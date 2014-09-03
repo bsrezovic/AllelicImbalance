@@ -13,13 +13,13 @@
 \alias{mapBias,ASEset-method}
 \title{ASEset objects}
 \usage{
-alleleCounts(x, strand = "*")
+alleleCounts(x, strand = "*", return.class = "list")
 
 mapBias(x)
 
 fraction(x, strand = "*", verbose = FALSE)
 
-arank(x, ret = "names", strand = "*", ...)
+arank(x, return.type = "names", strand = "*", ...)
 }
 \arguments{
 \item{x}{ASEset object}
@@ -28,7 +28,9 @@ arank(x, ret = "names", strand = "*", ...)
 
 \item{verbose}{makes function more talkative}
 
-\item{ret}{return names or counts}
+\item{return.type}{return 'names' or 'counts'}
+
+\item{return.class}{return 'list' or 'array'}
 
 \item{...}{additional arguments}
 }
@@ -51,14 +53,17 @@ It is possible to use the commands barplot and locationplot on an ASEset
 object see more details in \code{\link{barplot}} and
 \code{\link{locationplot}}.
 
-Four different alleleCount options are available. The simples one is the
-* option, and is experiments where the strand information is not
-known. In this option both the plus, minus and unknown strand will be
-counted and present. The unknown strand is when the aligner could not find
-any strand associated with the read. Then there are an option too add plus
+Three different alleleCount options are available. The simples one is the
+* option, and is for experiments where the strand information is not
+known e.g. non-stranded data. The unknown strand could also be for strand
+specific data when the aligner could not find
+any strand associated with the read, but this should normally not happen,
+and if it does probably having an extremely low mapping quality.
+Then there are an option too add plus
 and minus stranded data. When using this, it is essential to make sure that
 the RNA-seq experiment under analysis has in fact been created so that
-correct strand information was obtained.
+correct strand information was obtained. The most functions will by default
+have their strand argument set to '*'.
 }
 \section{Constructor}{
  ASEsetFromCountList(rowData, countListNonStranded =

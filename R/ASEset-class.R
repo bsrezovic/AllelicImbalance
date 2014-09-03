@@ -14,14 +14,17 @@ NULL
 #' object see more details in \code{\link{barplot}} and
 #' \code{\link{locationplot}}.
 #' 
-#' Four different alleleCount options are available. The simples one is the
-#' * option, and is experiments where the strand information is not
-#' known. In this option both the plus, minus and unknown strand will be
-#' counted and present. The unknown strand is when the aligner could not find
-#' any strand associated with the read. Then there are an option too add plus
+#' Three different alleleCount options are available. The simples one is the
+#' * option, and is for experiments where the strand information is not
+#' known e.g. non-stranded data. The unknown strand could also be for strand 
+#' specific data when the aligner could not find
+#' any strand associated with the read, but this should normally not happen, 
+#' and if it does probably having an extremely low mapping quality. 
+#' Then there are an option too add plus
 #' and minus stranded data. When using this, it is essential to make sure that
 #' the RNA-seq experiment under analysis has in fact been created so that
-#' correct strand information was obtained.
+#' correct strand information was obtained. The most functions will by default 
+#' have their strand argument set to '*'.
 #' 
 #' @name ASEset-class
 #' @rdname ASEset-class
@@ -32,7 +35,8 @@ NULL
 #' @param x ASEset object
 #' @param strand which strand of '+', '-' or '*'
 #' @param verbose makes function more talkative
-#' @param ret return names or counts
+#' @param return.type return 'names' or 'counts'
+#' @param return.class return 'list' or 'array'
 #' @param ... additional arguments
 #' @return An object of class ASEset containing location information and allele
 #' counts for a number of SNPs measured in a number of samples on various
@@ -100,11 +104,11 @@ NULL
 setClass("ASEset", contains = "SummarizedExperiment", representation(variants = "vector"))
 
 #' @rdname ASEset-class
-setGeneric("alleleCounts", function(x, strand = "*") {
+setGeneric("alleleCounts", function(x, strand = "*", return.class="list") {
     standardGeneric("alleleCounts")
 })
 
-setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*") {
+setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*",return.class="list") {
     if (!sum(strand %in% c("+", "-", "*")) > 0) {
         stop("strand parameter has to be either '+', '-', '*' ")
     }
@@ -121,32 +125,57 @@ setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*") {
     
     # check if strand option is present as assay
     if (!(el %in% names(assays(x)))) {
-        stop("strand is not present as assay in ASEset object")
+		#if * is missing sum + and -, if they exist
+		#if(el=="countsUnknown"){
+		#	if(sum(c("countsPlus","countsMinus") %in% names(assays(x)))==2)	{
+		#		el <- "combine"				
+		#	}else{
+		#		stop("neither '+' '-' or '*'strand is present as assay in ASEset object")
+		#	}	
+		#}else{
+			stop("neither '+' '-' or '*'strand is present as assay in ASEset object")
+		#}
     }
     
     # assume alleleCount information is stored as element 1
     alleleCountList <- list()
-    
-    for (i in 1:nrow(assays(x)[[el]])) {
-        mat <- assays(x)[[el]][i, , ]
-        if (class(mat) == "integer") {
-            mat <- t(as.matrix(mat))
-            # rownames(mat) <- colnames(x)
-        }
-        if (class(mat) == "numeric") {
-            mat <- t(mat)
-            colnames(mat) <- x@variants
-        } else {
-            colnames(mat) <- x@variants
-        }
-        rownames(mat) <- colnames(x)
-        alleleCountList[[i]] <- mat
-    }
-    # add snp id
-    names(alleleCountList) <- rownames(x)
-    
-    # return object
-    alleleCountList
+
+	#extract array
+	if(el=="combine"){
+		ar <- assays(x)[["countsPlus"]] + assays(x)[["countsMinus"]]
+	}else{
+		ar <- assays(x)[[el]]
+	}
+
+	if(return.class=="array"){
+		ar
+	}else if(return.class=="list"){
+
+		for (i in 1:nrow(ar)) {
+			mat <- ar[i, , ]
+
+			if (class(mat) == "integer") {
+				mat <- t(as.matrix(mat))
+			}
+			if (class(mat) == "numeric") {
+				mat <- t(mat)
+			}
+			colnames(mat) <- x@variants
+			rownames(mat) <- colnames(x)
+
+			alleleCountList[[i]] <- mat
+		}
+
+		# add snp id
+		names(alleleCountList) <- rownames(x)
+		
+		# return object
+		alleleCountList
+		
+	}else{
+		stop("return.class has to be 'list' or 'array'")
+	}
+
     
 })
 
@@ -249,20 +278,20 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*",
 })
 
 #' @rdname ASEset-class
-setGeneric("arank", function(x, ret = "names", strand = "*", ...) {
+setGeneric("arank", function(x, return.type = "names", strand = "*", ...) {
     standardGeneric("arank")
 })
 
-setMethod("arank", signature(x = "ASEset"), function(x, ret = "names", strand = "*", 
+setMethod("arank", signature(x = "ASEset"), function(x, return.type = "names", strand = "*", 
     ...) {
     acounts <- alleleCounts(x, strand = strand)
     
-    if (ret == "names") {
+    if (return.type == "names") {
         arank <- lapply(acounts, function(x) {
             names(sort(apply(x, 2, sum), decreasing = TRUE))
         })
     }
-    if (ret == "counts") {
+    if (return.type == "counts") {
         arank <- lapply(acounts, function(x) {
             as.numeric(sort(apply(x, 2, sum), decreasing = TRUE))
         })

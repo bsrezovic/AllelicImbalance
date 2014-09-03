@@ -11,7 +11,10 @@ NULL
 #' \code{SummarizedExperiment}, and will therefore inherit the same accessors
 #' and ranges operations.
 #' 
-#'  countListPlus, countListMinus and countListUnknown are
+#' If both countListPlus and countListMinus are given they will be used to 
+#' calculate countListUnknown, which is the sum of the plus and minus strands.
+#' 
+#' countListPlus, countListMinus and countListUnknown are
 #' i.e. the outputs from the \code{\link{getAlleleCounts}} function.
 #' 
 #' @name initialize-ASEset
@@ -215,7 +218,8 @@ ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus 
     
     # plus
     if (!is.null(countListPlus)) {
-        ar1 <- array(NA, c(snps, ind, 4))  #empty array that handles only four nucleotides + one del columns
+		#empty array that handles only four nucleotides 
+        ar1 <- array(NA, c(snps, ind, 4))  
         for (i in 1:snps) {
             ar1[i, , ] <- countListPlus[[i]]
         }
@@ -223,7 +227,8 @@ ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus 
     }
     # minus
     if (!is.null(countListMinus)) {
-        ar2 <- array(NA, c(snps, ind, 4))  #empty array that handles only four nucleotides + one del columns
+		#empty array that handles only four nucleotides 
+        ar2 <- array(NA, c(snps, ind, 4))  
         for (i in 1:snps) {
             ar2[i, , ] <- countListMinus[[i]]
         }
@@ -232,13 +237,17 @@ ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus 
     }
     # unknown
     if (!is.null(countListUnknown)) {
-        ar3 <- array(NA, c(snps, ind, 4))  #empty array that handles only four nucleotides + one del columns
+		#empty array that handles only four nucleotides 
+        ar3 <- array(NA, c(snps, ind, 4))  
         for (i in 1:snps) {
             ar3[i, , ] <- countListUnknown[[i]]
         }
         assays[["countsUnknown"]] <- ar3
         
-    }
+    }else if((!is.null(countListMinus)) & (!is.null(countListPlus))){
+		#Calculate the non-stranded representative from the stranded data
+        assays[["countsUnknown"]] <- ar1+ar2
+	}
     
     # assign mapBiasExpMean
     if (is.null(mapBiasExpMean)) {
