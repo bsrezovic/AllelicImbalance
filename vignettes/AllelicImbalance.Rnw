@@ -77,8 +77,6 @@ reads <- impBamGAL(pathToFiles,searchArea,verbose=FALSE)
 
 heterozygotePositions <- scanForHeterozygotes(reads,verbose=FALSE)
 
-seqlevels(reads) <- "17" 
-
 countList <- getAlleleCounts(reads, heterozygotePositions, verbose=FALSE)
 
 a.simple <- ASEsetFromCountList(heterozygotePositions,countList)

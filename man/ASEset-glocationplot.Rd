@@ -15,8 +15,8 @@ glocationplot(x, type = "fraction", strand = "*", BamGAL = NULL,
 
 \item{type}{'fraction' or 'count'}
 
-\item{strand}{'+','-','both'. This argument determines which strand is
-plotted. See \code{getAlleleCounts} for more information on strand.}
+\item{strand}{'+','-','*' or 'both'. This argument determines which strand is
+plotted. See \code{getAlleleCounts} for more information of choice of strand.}
 
 \item{BamGAL}{GAlignmentsList covering the same genomic region as the ASEset}
 

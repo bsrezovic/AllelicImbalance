@@ -17,14 +17,12 @@ NULL
 #' @param GR genomic range of plotting
 #' @param type 'fraction' or 'count'
 #' @param strand '+','-'. This argument determines which strand is plotted.
-#' @param mainVec vector of text for the main of each plot
 #' @param BamList GAlignmnentsList object of reads from the same genomic region
 #' as the ASEset
 #' @param start start position of reads to be plotted
 #' @param trackName name of track (ASEDAnnotationTrack)
 #' @param trackNameVec names of tracks (CoverageDataTrack)
 #' @param end end position of reads to be plotted
-#' @param gpar graphical parameters for each small plot
 #' @param verbose Setting \code{verbose=TRUE} gives details of procedure during
 #' function run
 #' @param ... arguments passed on to barplot function
@@ -74,14 +72,14 @@ NULL
 
 #' @rdname ASEset-gviztrack
 setGeneric("ASEDAnnotationTrack", function(x, GR = rowData(x), type = "fraction", 
-    strand = "+", mainVec = vector(), trackName = paste("deTrack", type), verbose = TRUE, 
-    gpar = list(), ...) {
+    strand = "*", trackName = paste("deTrack", type), verbose = TRUE, 
+    ...) {
     standardGeneric("ASEDAnnotationTrack")
 })
 
 setMethod("ASEDAnnotationTrack", signature(x = "ASEset"), function(x, GR = rowData(x), 
-    type = "fraction", strand = "*", mainVec = rep("", nrow(x)), trackName = paste("deTrack", 
-        type), verbose = TRUE, gpar = list(), ...) {
+    type = "fraction", strand = "*",  trackName = paste("deTrack", 
+        type), verbose = TRUE, ...) {
     
     # check genome
     if (is.null(genome(x)) | is.na(genome(x))) {
@@ -93,69 +91,81 @@ setMethod("ASEDAnnotationTrack", signature(x = "ASEset"), function(x, GR = rowDa
         stop("This function can only use objects with one seqlevel")
     }
     
-    if (sum(strand == "+" | strand == "-") == 0) {
-        stop("strand must be plus or minus at the moment")
-    }
     if (!nrow(x) == 1) {
-        GR <- GRanges(seqnames = seqlevels(x), ranges = IRanges(start = min(start(x)), 
-            end = max(end(x))), strand = strand, genome = genome(x))
-        # if(sum(width(reduce(GR)))==1 ){ GR <- flank(GR,2,both=TRUE) }
+		if(strand %in% c("+","-","*")){
+			GR <- GRanges(seqnames = seqlevels(x), ranges = IRanges(start = min(start(x)), 
+				end = max(end(x))), strand = strand, genome = genome(x))
+		}else if (strand=="both"){
+			GR <- GRanges(seqnames = seqlevels(x), ranges = IRanges(start = min(start(x)), 
+				end = max(end(x))), strand = "*", genome = genome(x))
+		}else{
+			stop("strand has to be +, -, * or 'both'")
+		}
     }
-    
-    # check gpar, set default if not set by user
-    gparDefault <- list(ylab = "", xlab = "", deAnnoPlot = TRUE)
-    gparSet <- names(gparDefault) %in% names(gpar)
-    gpar <- mapply(gparDefault, gparSet, names(gparDefault), FUN = function(x, y, 
-        z, gpar) {
-        if (y) {
-            gpar[[z]]
-        } else {
-            x
-        }
-        
-    }, MoreArgs = list(gpar = gpar))
-    
+
+	#make an environment from ...
+    if (length(list(...)) == 0) {
+        e <- new.env(hash = TRUE)
+    } else {
+        e <- list2env(list(...))
+    }
+
+	#always TRUE
+	e$deAnnoPlot <- TRUE
+	e$x <- x
+	
+	#print(ls(envir=e))
+	#print(e$mainvec)	
+
+    if (!exists("mainvec", envir = e, inherits = FALSE)) {
+		e$mainvec <- rep("",nrow(e$x))
+	}
+
+    if (!exists("ylab", envir = e, inherits = FALSE)) {
+        e$ylab <- ""
+    }
+    if (!exists("xlab", envir = e, inherits = FALSE)) {
+        e$xlab <- ""
+    }
+		
     ranges <- rowData(x)
     
     colnames(x) <- 1:ncol(x)
     
     details <- function(identifier, ...) {
         
-        # an option to use more print(list(...))
-        
-        type <- get("type", envir = AllelicImbalance.extra)
-        arank <- get("arank", envir = AllelicImbalance.extra)
-        afraction <- get("afraction", envir = AllelicImbalance.extra)
-        acounts <- get("acounts", envir = AllelicImbalance.extra)
-        amainVec <- get("amainVec", envir = AllelicImbalance.extra)
-        # gparam <- get('gpar',envir=AllelicImbalance.extra)
-        
+		if (length(list(...)) == 0) {
+			e2<- new.env(hash = TRUE)
+		} else {
+			e2<- list2env(list(...))
+		}
+
+		type<- e2$type 
         
         if (type == "fraction") {
-            print(barplotLatticeFraction(identifier, afraction, arank, amainVec, 
+            print(barplotLatticeFraction(identifier, 
                 ...), newpage = FALSE, prefix = "plot")
             
         } else if (type == "count") {
-            print(barplotLatticeCounts(identifier, acounts, arank, amainVec, ...), 
-                newpage = FALSE, prefix = "plot")
+            print(barplotLatticeCounts(identifier, 
+                ...), newpage = FALSE, prefix = "plot")
         }
         
     }
-    
-    # pick out plot data from ASEset strand='+'
-    AllelicImbalance.extra <- new.env(parent = emptyenv())
-    amainVec <- mainVec
-    
-    assign("acounts", alleleCounts(x, strand = strand), envir = AllelicImbalance.extra)
-    assign("arank", arank(x, strand = strand), envir = AllelicImbalance.extra)
-    assign("afraction", fraction(x, strand = strand), envir = AllelicImbalance.extra)
-    assign("type", type, envir = AllelicImbalance.extra)
-    assign("amainVec", amainVec, envir = AllelicImbalance.extra)
-    
-    
+
     # plot the fraction
     deTrack <- AnnotationTrack(range = ranges, genome = genome(x), id = rownames(x), 
-        name = trackName, stacking = "squish", fun = details, detailsFunArgs = gpar)
+        name = trackName, stacking = "squish", fun = details, 
+		detailsFunArgs = c(ylab=e$ylab,
+						   xlab=e$xlab,
+						   deAnnoPlot = e$deAnnoPlot,
+						   mainvec=list(list(e$mainvec)),
+						   type=type, 
+						   x=x, 
+						   strand=strand, 
+						   ids=list(list(rownames(x)))
+						)
+		)
     deTrack
 })
 
@@ -164,12 +174,10 @@ setGeneric("CoverageDataTrack", function(x, GR = rowData(x), BamList = NULL, str
     start = NULL, end = NULL, trackNameVec = NULL, verbose = TRUE, ...) {
     standardGeneric("CoverageDataTrack")
 })
-
-
-
-setMethod("CoverageDataTrack", signature(x = "ASEset"), function(x, GR = NULL, BamList = NULL, 
-    strand = NULL, start = NULL, end = NULL, trackNameVec = NULL, verbose = TRUE, 
-    ...) {
+setMethod("CoverageDataTrack", signature(x = "ASEset"), function(x, GR = rowData(x), 
+	 BamList = NULL, strand = "*", start = NULL, end = NULL, trackNameVec = NULL,
+	 verbose = TRUE, ...) {
+    
     # GR is not in use atm. Missing is a subset of the return matrix based on the GR
     # values.
     
@@ -178,11 +186,17 @@ setMethod("CoverageDataTrack", signature(x = "ASEset"), function(x, GR = NULL, B
             pstrand = TRUE
         } else if (strand == "-") {
             mstrand = TRUE
+        } else if (strand == "*") {
+            pstrand = TRUE
+            mstrand = TRUE
+        } else if (strand == "both") {
+            pstrand = TRUE
+            mstrand = TRUE
         } else {
-            stop("strand has to be '+' or '-' if not NULL\n")
+            stop("strand has to be '+', '-', '*' or 'both' if not NULL\n")
         }
     } else {
-        stop("strand has to be '+' or '-' if not NULL\n")
+         stop("strand has to be '+', '-', '*' or 'both' if not NULL\n")
     }
     
     # check genome
@@ -194,22 +208,19 @@ setMethod("CoverageDataTrack", signature(x = "ASEset"), function(x, GR = NULL, B
     if (!(length(seqlevels(x)) == 1)) {
         stop("This function can only use objects with one seqlevel")
     }
+   
+	if(strand=="both"){
+		GR.p <- GRanges(seqnames = seqlevels(x), ranges = IRanges(start = min(start(x)), 
+			end = max(end(x))), strand = '+')
+		GR.m <- GRanges(seqnames = seqlevels(x), ranges = IRanges(start = min(start(x)), 
+			end = max(end(x))), strand = '-')
+	}else{
+		GR <- GRanges(seqnames = seqlevels(x), ranges = IRanges(start = min(start(x)), 
+			end = max(end(x))), strand = strand)
+	}
     
-    if (!is.null(strand)) {
-        if (strand == "+") {
-            pstrand = TRUE
-        } else if (strand == "-") {
-            mstrand = TRUE
-        } else {
-            stop("strand has to be '+' or '-' if not NULL\n")
-        }
-    }
-    
-    GR <- GRanges(seqnames = seqlevels(x), ranges = IRanges(start = min(start(x)), 
-        end = max(end(x))), strand = strand)
-    
-    # start <- start(GR) end <- end(GR) chr <- seqnames(GR)
-    
+    trackList <- list()
+	
     if (is.null(BamList)) {
         stop("must include GappedAlignmentsList as BamList ")
     } else {
@@ -217,29 +228,69 @@ setMethod("CoverageDataTrack", signature(x = "ASEset"), function(x, GR = NULL, B
         if (!length(seqlevels(BamList)) == 1) {
             stop("can only be one seq level\n")
         }
-        covMatList <- coverageMatrixListFromGAL(BamList, strand)
+		if(strand=="both"){
+			covMatList <- coverageMatrixListFromGAL(BamList, strand='both')
+
+			mat.p <- covMatList[["mat"]][["plus"]]
+			mat.m <- covMatList[["mat"]][["minus"]]
+			start <- covMatList[["start"]]
+			end <- covMatList[["end"]]
+
+			if (is.null(trackNameVec)) {
+				trackNameVec <- vector()
+				for (i in 1:ncol(x)){
+					trackNameVec <- c(trackNameVec,
+									  paste(colnames(x)[i],"(+)",sep="-"),
+									  paste(colnames(x)[i],"(-)",sep="-"))
+				}
+			} else {
+				if (!length(trackNameVec) == nrow(x)) {
+					stop("length of trackNameVec must be equal to cols in (ASEset)")
+				}
+			}
+				
+			# prepare Gviz dtracks
+			for (j in 1:ncol(x)) {
+
+				#merge strands
+				data <- matrix(0,nrow=2,ncol=ncol(mat.m))
+				data[1,] <- mat.p[j,]
+				data[2,] <- -mat.m[j,]
+				rownames(data) <- c(paste(colnames(x)[i], "(+)", sep="-"),
+									paste(colnames(x)[i], "(-)", sep="-"))
+
+				trackList[[length(trackList) + 1]] <- DataTrack(data = data, start = start:end, 
+					width = 1, chromosome = seqlevels(x), genome = genome(x),
+					name = trackNameVec[j], groups=rownames(data),
+					type = "s")
+			}
+
+		}else{
+
+			covMatList <- coverageMatrixListFromGAL(BamList, strand)
+
+			mat <- covMatList[["mat"]]
+			start <- covMatList[["start"]]
+			end <- covMatList[["end"]]
+			
+			if (is.null(trackNameVec)) {
+				trackNameVec[1:ncol(x)] <- colnames(x)
+			} else {
+				if (!length(trackNameVec) == nrow(x)) {
+					stop("length of trackNameVec must be equal to cols in (ASEset)")
+				}
+			}
+			
+			# prepare Gviz dtracks
+			for (j in 1:nrow(mat)) {
+				trackList[[length(trackList) + 1]] <- DataTrack(data = mat[j, ], start = start:end, 
+					width = 1, chromosome = seqlevels(x), genome = genome(x), name = trackNameVec[j], 
+					type = "s")
+			}
+		}
     }
     
-    trackList <- list()
     
-    mat <- covMatList[["mat"]]
-    start <- covMatList[["start"]]
-    end <- covMatList[["end"]]
-    
-    if (is.null(trackNameVec)) {
-        trackNameVec[1:ncol(x)] <- colnames(x)
-    } else {
-        if (!length(trackNameVec) == nrow(x)) {
-            stop("length of trackNameVec must be equal to cols in (ASEset)")
-        }
-    }
-    
-    # prepare Gviz dtracks
-    for (j in 1:nrow(mat)) {
-        trackList[[length(trackList) + 1]] <- DataTrack(data = mat[j, ], start = start:end, 
-            width = 1, chromosome = seqlevels(x), genome = genome(x), name = trackNameVec[j], 
-            type = "s")
-    }
     
     trackList
 }) 

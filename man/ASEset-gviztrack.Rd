@@ -8,9 +8,8 @@
 \alias{CoverageDataTrack,ASEset-method}
 \title{ASEset-gviztrack ASEset objects}
 \usage{
-ASEDAnnotationTrack(x, GR = rowData(x), type = "fraction", strand = "+",
-  mainVec = vector(), trackName = paste("deTrack", type), verbose = TRUE,
-  gpar = list(), ...)
+ASEDAnnotationTrack(x, GR = rowData(x), type = "fraction", strand = "*",
+  trackName = paste("deTrack", type), verbose = TRUE, ...)
 
 CoverageDataTrack(x, GR = rowData(x), BamList = NULL, strand = NULL,
   start = NULL, end = NULL, trackNameVec = NULL, verbose = TRUE, ...)
@@ -24,8 +23,6 @@ CoverageDataTrack(x, GR = rowData(x), BamList = NULL, strand = NULL,
 
 \item{strand}{'+','-'. This argument determines which strand is plotted.}
 
-\item{mainVec}{vector of text for the main of each plot}
-
 \item{BamList}{GAlignmnentsList object of reads from the same genomic region
 as the ASEset}
 
@@ -36,8 +33,6 @@ as the ASEset}
 \item{trackNameVec}{names of tracks (CoverageDataTrack)}
 
 \item{end}{end position of reads to be plotted}
-
-\item{gpar}{graphical parameters for each small plot}
 
 \item{verbose}{Setting \code{verbose=TRUE} gives details of procedure during
 function run}

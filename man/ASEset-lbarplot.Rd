@@ -6,8 +6,7 @@
 \alias{lbarplot,ASEset-method}
 \title{lbarplot ASEset objects}
 \usage{
-lbarplot(x, type = "count", strand = "+", mainVec = rownames(x),
-  verbose = FALSE, ...)
+lbarplot(x, type = "count", strand = "*", verbose = FALSE, ...)
 }
 \arguments{
 \item{x}{An \code{ASEset} object}
@@ -15,8 +14,6 @@ lbarplot(x, type = "count", strand = "+", mainVec = rownames(x),
 \item{type}{'count' or 'fraction'}
 
 \item{strand}{four options, '+', '-', 'both' or '*'}
-
-\item{mainVec}{text to use as main label}
 
 \item{verbose}{Makes function more talkative}
 

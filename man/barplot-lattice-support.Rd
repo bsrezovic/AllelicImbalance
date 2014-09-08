@@ -5,22 +5,14 @@
 \alias{barplotLatticeFraction}
 \title{lattice barplot inner functions for ASEset objects}
 \usage{
-barplotLatticeFraction(identifier, afraction, arank, amainVec, ...)
+barplotLatticeFraction(identifier, ...)
 
-barplotLatticeCounts(identifier, acounts, arank, amainVec, ...)
+barplotLatticeCounts(identifier, ...)
 }
 \arguments{
 \item{identifier,}{the single snp name to plot}
 
-\item{afraction}{the fractions in matrix for each snp}
-
-\item{arank}{the ranks for each snp}
-
-\item{acounts}{the counts for each snp}
-
-\item{amainVec,}{vector for each plots main}
-
-\item{...}{for simpler generics when extending function}
+\item{...}{used to pass on variables}
 }
 \description{
 Generates lattice barplots for ASEset objects. Two levels of plotting detail
@@ -40,16 +32,10 @@ individual colouring.
 }
 \examples{
 a <- ASEset
-strand <- '+'
-acounts <-  alleleCounts(a,strand=strand)
-arank <-  arank(a,strand=strand)
-afraction <- fraction(a, strand=strand)
-amainVec <- rep('',nrow(a))
-
 name <- rownames(a)[1]
 
-barplotLatticeFraction(identifier=name, afraction, arank, amainVec)
-barplotLatticeCounts(identifier=name,  acounts, arank, amainVec)
+barplotLatticeFraction(identifier=name, x=a, strand="+")
+barplotLatticeCounts(identifier=name,  x=a, strand="+")
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

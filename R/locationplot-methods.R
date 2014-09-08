@@ -352,8 +352,8 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
 #' @docType methods
 #' @param x an ASEset object.
 #' @param type 'fraction' or 'count'
-#' @param strand '+','-','both'. This argument determines which strand is
-#' plotted. See \code{getAlleleCounts} for more information on strand.
+#' @param strand '+','-','*' or 'both'. This argument determines which strand is
+#' plotted. See \code{getAlleleCounts} for more information of choice of strand.
 #' @param BamGAL GAlignmentsList covering the same genomic region as the ASEset
 #' @param GenomeAxisTrack include an genomic axis track
 #' @param add add to existing plot
@@ -400,21 +400,51 @@ setMethod("glocationplot", signature(x = "ASEset"), function(x, type = "fraction
         stop("This function can only use objects with one seqlevel")
     }
     
-    if (sum(strand == "+" | strand == "-") == 0) {
-        stop("strand must be plus or minus at the moment")
-    }
+    #if (sum(strand == "+" | strand == "-") == 0) {
+    #    stop("strand must be plus or minus at the moment")
+    #}
+
     if (!nrow(x) == 1) {
-        
-        GR <- GRanges(seqnames = seqlevels(x), ranges = IRanges(start = min(start(x)), 
-            end = max(end(x))), strand = strand, genome = genome(x))
-        
-        # if(sum(width(reduce(GR)))==1 ){ GR <- flank(GR,2,both=TRUE) }
+       
+		if(strand %in% c("+","-","*")){
+			GR <- GRanges(seqnames = seqlevels(x), ranges = IRanges(start = min(start(x)), 
+				end = max(end(x))), strand = strand, genome = genome(x))
+		}else if (strand=="both"){
+			GR <- GRanges(seqnames = seqlevels(x), ranges = IRanges(start = min(start(x)), 
+				end = max(end(x))), strand = "*", genome = genome(x))
+		}else{
+			stop("strand has to be +, -, * or 'both'")
+		}
     }
     
+	#make an environment from ...
+    if (length(list(...)) == 0) {
+        e <- new.env(hash = TRUE)
+    } else {
+        e <- list2env(list(...))
+    }
+
+	e$x <- x
+
+
+    if (!exists("mainvec", envir = e, inherits = FALSE)) {
+		e$mainvec <- rep("",nrow(e$x))
+	}
+    if (!exists("ylab", envir = e, inherits = FALSE)) {
+        e$ylab <- ""
+    }
+    if (!exists("xlab", envir = e, inherits = FALSE)) {
+        e$xlab <- ""
+    }
     # make deTrack the fraction
     if (verbose) 
         (cat("preparing detailedAnnotationTrack\n"))
-    deTrack <- ASEDAnnotationTrack(x, GR = GR, type, strand, trackName = trackNameDeAn)
+    deTrack <- ASEDAnnotationTrack(x, GR = GR, type, strand, 
+								   trackName = trackNameDeAn,
+								   mainvec=e$mainvec,
+								   ylab=e$ylab,
+								   xlab=e$xlab
+								   )
     lst <- list(deTrack)
     
     if (!is.null(BamGAL)) {
@@ -424,7 +454,7 @@ setMethod("glocationplot", signature(x = "ASEset"), function(x, type = "fraction
         start <- min(start(x))
         end <- max(end(x))
         
-        covTracks <- CoverageDataTrack(x, BamList = BamGAL, strand = "+")
+        covTracks <- CoverageDataTrack(x, BamList = BamGAL, strand = strand)
         
         lst <- c(deTrack, covTracks)
         parts <- 0.5/length(covTracks)

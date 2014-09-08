@@ -3,7 +3,7 @@
 \alias{coverageMatrixListFromGAL}
 \title{coverage matrix of GAlignmentsList}
 \usage{
-coverageMatrixListFromGAL(BamList, strand = NULL,
+coverageMatrixListFromGAL(BamList, strand = "*",
   ignore.empty.bam.row = TRUE)
 }
 \arguments{
