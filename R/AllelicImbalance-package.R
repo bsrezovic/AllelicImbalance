@@ -107,6 +107,7 @@
 #' @importClassesFrom Gviz DataTrack
 #' @importClassesFrom Gviz AnnotationTrack
 #' @importClassesFrom Gviz DetailsAnnotationTrack
+#' @importClassesFrom Gviz GeneRegionTrack
 #' 
 #' @importClassesFrom GenomicFeatures TxDb
 #' @importClassesFrom AnnotationDbi AnnotationDb

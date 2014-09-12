@@ -1467,8 +1467,8 @@ getAlleleCount <- function() {
 #' a <- ASEset
 #' name <- rownames(a)[1]
 #' 
-#' barplotLatticeFraction(identifier=name, x=a, strand="+") 
-#' barplotLatticeCounts(identifier=name,  x=a, strand="+") 
+#' barplotLatticeFraction(identifier=name, x=a, astrand="+") 
+#' barplotLatticeCounts(identifier=name,  x=a, astrand="+") 
 #' 
 #' @export barplotLatticeFraction
 #' @export barplotLatticeCounts
@@ -1485,6 +1485,7 @@ barplotLatticeFraction <- function(identifier, ...) {
     }
 
 	e$ids <- unlist(e$ids)
+	e$strand <- e$astrand
 
     if (!exists("mainvec", envir = e, inherits = FALSE)) {
 		e$mainvec <- rep("",nrow(e$x))
@@ -1517,14 +1518,14 @@ barplotLatticeFraction <- function(identifier, ...) {
     for (i in 1:length(a.f)) {
         values <- c(values, a.f[i], a.f2[i])
     }
-    allele <- rep(a.r, length(a.f))
+    alleles <- rep(a.r, length(a.f))
     
     # sample <- names(a.f)
     sample <- vector()
     for (i in 1:length(a.f)) {
         sample <- c(sample, rownames(afraction)[i], rownames(afraction)[i])
     }
-    df <- data.frame(values = values, sample = sample, allele = allele)
+    df <- data.frame(values = values, sample = sample, alleles = alleles)
     
     TFna <- is.na(df$values)
     df$values[TFna] <- 0  # 0.5 + 0.5 -> 1
@@ -1572,7 +1573,7 @@ barplotLatticeFraction <- function(identifier, ...) {
         
     }
     
-    b <- barchart(values ~ sample, group = allele, data = df, col = my_cols, origin = 0, 
+    b <- barchart(values ~ sample, group = alleles, data = df, col = my_cols, origin = 0, 
         stack = TRUE, scales = scales, main = e$main, ylab = e$ylab, xlab = e$xlab, 
         par.settings = parset)
     
@@ -1589,7 +1590,12 @@ barplotLatticeCounts <- function(identifier, ...) {
         e <- list2env(list(...))
     }
 	
+	#use requested strand instead of Gviz ranges strand
+	e$strand <- e$astrand
 	e$ids <- unlist(e$ids)
+    #e$auto.key <- list(points = FALSE, rectangles = TRUE, space = "top", size = 2, 
+	#			cex = 0.8)
+
 
     if (!exists("mainvec", envir = e, inherits = FALSE)) {
 		e$mainvec <- rep("",nrow(e$x))
@@ -1599,6 +1605,12 @@ barplotLatticeCounts <- function(identifier, ...) {
 	}
     if (!exists("main", envir = e, inherits = FALSE)) {
 		e$main <- e$mainvec[e$ids %in% identifier]
+		#print(identifier)
+		#print(e$ids)
+		#print(e$main)
+		#print(e$mainvec[which(e$ids %in% identifier)])
+		#print(e$mainvec)
+		#print(which(e$ids %in% identifier))
 	}
 
     if (!exists("deAnnoPlot", envir = e, inherits = FALSE)) {
@@ -1617,9 +1629,8 @@ barplotLatticeCounts <- function(identifier, ...) {
 	scales = list(rot = c(90, 0))
 		
 	makePlotDf <- function(strand){
-
-		acounts<-  alleleCounts(e$x, strand = e$strand)
-		arank<-  arank(e$x, strand = e$strand)
+		acounts<-  alleleCounts(e$x, strand = strand)
+		arank<-  arank(e$x, strand = "*")
 		#afraction<-  fraction(e$x, strand = strand)
 		#amainVec<-  e$amainVec
 
@@ -1629,13 +1640,17 @@ barplotLatticeCounts <- function(identifier, ...) {
 		a.c <- acounts[[identifier]][, a.r, drop = FALSE]
 		
 		values <- as.vector(t(a.c))
-		allele <- rep(colnames(a.c), nrow(a.c))
+		alleles <- rep(colnames(a.c), nrow(a.c))
 		
 		sample <- vector()
 		for (i in 1:nrow(a.c)) {
 			sample <- c(sample, rownames(a.c)[i], rownames(a.c)[i])
 		}
-		df <- data.frame(values = values, sample = sample, allele = allele)
+
+		if(strand=="-" && e$strand=="both"){
+			values <- -values
+		}
+		df <- data.frame(values = values, sample = sample, alleles = alleles)
 		
 		# to get right order in barchart
 		df$sample <- factor(df$sample, levels = unique(df$sample))
@@ -1648,30 +1663,66 @@ barplotLatticeCounts <- function(identifier, ...) {
 		df <- makePlotDf(strand=e$strand)
 
 		if (e$deAnnoPlot) {
-			parset <- list(layout.widths = list(left.padding = 0, axis.left = 0,
-				ylab.axis.padding = 0,right.padding = 0, axis.right = 0))
-			scales = list(y = list(at = NULL, labels = NULL), rot = c(90, 0))
+			e$auto.key <- FALSE
+			parset <- list(
+					   layout.widths = list(
+							left.padding = 0,
+							axis.left = 0,
+							ylab.axis.padding = 0, 
+							right.padding = 0, 
+							axis.right = 0
+							),
+					   layout.heights = list(
+							top.padding = 0.1,
+							between = 0.1,
+							xlab.top= 0.1,
+							axis.top = 0,
+							main=1.1,
+							main.key.padding=1,
+							axis.xlab.padding = 1, 
+							bottom.padding = 1, 
+							axis.bottom = 0.3
+							)
+					   )
+			scales = list(y = list(at = NULL, labels = NULL), rot = c(90, 0), auto.key = e$auto.key)
 		}
 
-		b <- barchart(values ~ sample, horiz = FALSE, origin = 0, group = allele, data = df, 
-			auto.key = list(points = FALSE, rectangles = TRUE, space = "top", size = 2, 
-				cex = 0.8), stack = FALSE, scales = scales, ylab = e$ylab, xlab = e$xlab, 
-			box.ratio = 2, abbreviate = TRUE, par.settings = parset, main = e$main)
+		b <- barchart(values ~ sample, horiz = FALSE, origin = 0, group = alleles, data = df, 
+			stack = FALSE, scales = scales, ylab = e$ylab, xlab = e$xlab, 
+			box.ratio = 2, abbreviate = TRUE, par.settings = parset, main = e$main )
 
 	}else if(e$strand=="both"){
 		
-		df <- rbind(makePlotDf("+"),makePlotDf("-"))	
+		df <- rbind(makePlotDf(strand="+"),makePlotDf(strand="-"))	
 
 		if (e$deAnnoPlot) {
-			parset <- list(layout.widths = list(left.padding = 0, axis.left = 0,
-				ylab.axis.padding = 0,right.padding = 0, axis.right = 0))
-			scales = list(y = list(at = NULL, labels = NULL), rot = c(90, 0))
+			e$auto.key <- FALSE
+			parset <- list(
+					   layout.widths = list(
+							left.padding = 0,
+							axis.left = 0,
+							ylab.axis.padding = 0, 
+							right.padding = 0, 
+							axis.right = 0
+							),
+					   layout.heights = list(
+							top.padding = 0.1,
+							between = 0.1,
+							xlab.top= 0.1,
+							axis.top = 0,
+							main=1.1,
+							main.key.padding=1,
+							axis.xlab.padding = 1, 
+							bottom.padding = 1, 
+							axis.bottom = 0.3
+							)
+					   )
+			scales = list(y = list(at = NULL, labels = NULL), rot = c(90, 0), auto.key = e$auto.key)
 		}
 		
-		b <- barchart(values ~ sample, horiz = FALSE, origin = 0, group = allele, data = df, 
-			auto.key = list(points = FALSE, rectangles = TRUE, space = "top", size = 2, 
-				cex = 0.8), stack = FALSE, scales = scales, ylab = e$ylab, xlab = e$xlab, 
-			box.ratio = 2, abbreviate = TRUE, par.settings = parset, main = main)
+		b <- barchart(values ~ sample, horiz = FALSE, origin = 0, group = alleles, data = df, 
+			stack = FALSE, scales = scales, ylab = e$ylab, xlab = e$xlab, 
+			box.ratio = 2, abbreviate = TRUE, par.settings = parset, main = e$main)
 	}else {
 		stop("strand must be + - * or both")
 	}

@@ -34,8 +34,8 @@ individual colouring.
 a <- ASEset
 name <- rownames(a)[1]
 
-barplotLatticeFraction(identifier=name, x=a, strand="+")
-barplotLatticeCounts(identifier=name,  x=a, strand="+")
+barplotLatticeFraction(identifier=name, x=a, astrand="+")
+barplotLatticeCounts(identifier=name,  x=a, astrand="+")
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

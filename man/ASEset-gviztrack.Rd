@@ -12,7 +12,8 @@ ASEDAnnotationTrack(x, GR = rowData(x), type = "fraction", strand = "*",
   trackName = paste("deTrack", type), verbose = TRUE, ...)
 
 CoverageDataTrack(x, GR = rowData(x), BamList = NULL, strand = NULL,
-  start = NULL, end = NULL, trackNameVec = NULL, verbose = TRUE, ...)
+  start = NULL, end = NULL, trackNameVec = NULL, meanCoverage = FALSE,
+  verbose = TRUE, ...)
 }
 \arguments{
 \item{x}{an ASEset object.}
@@ -29,6 +30,8 @@ as the ASEset}
 \item{start}{start position of reads to be plotted}
 
 \item{trackName}{name of track (ASEDAnnotationTrack)}
+
+\item{meanCoverage}{mean of coverage over samples (CoverageGataTrack)}
 
 \item{trackNameVec}{names of tracks (CoverageDataTrack)}
 

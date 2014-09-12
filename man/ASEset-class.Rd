@@ -11,6 +11,8 @@
 \alias{fraction,ASEset-method}
 \alias{mapBias}
 \alias{mapBias,ASEset-method}
+\alias{table}
+\alias{table,ASEset-method}
 \title{ASEset objects}
 \usage{
 alleleCounts(x, strand = "*", return.class = "list")
@@ -19,7 +21,9 @@ mapBias(x)
 
 fraction(x, strand = "*", verbose = FALSE)
 
-arank(x, return.type = "names", strand = "*", ...)
+arank(x, return.type = "names", return.class = "list", strand = "*", ...)
+
+table(...)
 }
 \arguments{
 \item{x}{ASEset object}
@@ -28,7 +32,7 @@ arank(x, return.type = "names", strand = "*", ...)
 
 \item{verbose}{makes function more talkative}
 
-\item{return.type}{return 'names' or 'counts'}
+\item{return.type}{return 'names', rank or 'counts'}
 
 \item{return.class}{return 'list' or 'array'}
 
@@ -65,6 +69,19 @@ the RNA-seq experiment under analysis has in fact been created so that
 correct strand information was obtained. The most functions will by default
 have their strand argument set to '*'.
 }
+\section{Table}{
+ table(...)
+
+\describe{
+Arguments: \item{...}{An \code{ASEset object} that contains the
+variants of interest}
+
+The generics for table does not easily allow more than one argument
+so in respect to the different strand options, \code{table} will
+return a SimpleList with length 3, one element for each strand.
+}
+}
+
 \section{Constructor}{
  ASEsetFromCountList(rowData, countListNonStranded =
 NULL, countListPlus = NULL, countListMinus = NULL, countListUnknown = NULL,
