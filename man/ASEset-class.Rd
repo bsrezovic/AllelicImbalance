@@ -9,6 +9,8 @@
 \alias{arank,ASEset-method}
 \alias{fraction}
 \alias{fraction,ASEset-method}
+\alias{frequency}
+\alias{frequency,ASEset-method}
 \alias{mapBias}
 \alias{mapBias,ASEset-method}
 \alias{table}
@@ -24,6 +26,8 @@ fraction(x, strand = "*", verbose = FALSE)
 arank(x, return.type = "names", return.class = "list", strand = "*", ...)
 
 table(...)
+
+frequency(x, ...)
 }
 \arguments{
 \item{x}{ASEset object}
@@ -79,6 +83,21 @@ variants of interest}
 The generics for table does not easily allow more than one argument
 so in respect to the different strand options, \code{table} will
 return a SimpleList with length 3, one element for each strand.
+}
+}
+
+\section{Frequency}{
+ frequency(x,
+return.class = "list", strand = "*",
+threshold.count.sample = 15)
+
+\describe{
+Arguments: \item{x}{An \code{ASEset object} that contains the
+variants of interest}
+
+\item{x}{threshold.count.samples} if sample has fewer counts the function
+return NA.
+
 }
 }
 

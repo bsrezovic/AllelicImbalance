@@ -29,8 +29,11 @@ NULL
 #' @name ASEset-class
 #' @rdname ASEset-class
 #' @aliases ASEset-class ASEset alleleCounts mapBias fraction arank table
-#' alleleCounts,ASEset-method mapBias,ASEset-method fraction,ASEset-method
-#' arank,ASEset-method table,ASEset-method
+#' frequency alleleCounts,ASEset-method mapBias,ASEset-method
+#' fraction,ASEset-method arank,ASEset-method table,ASEset-method
+#' frequency,ASEset-method
+#' 
+#' 
 #' @docType class
 #' @param x ASEset object
 #' @param strand which strand of '+', '-' or '*'
@@ -53,6 +56,18 @@ NULL
 #' return a SimpleList with length 3, one element for each strand.
 #' }
 #'
+#' @section Frequency: frequency(x, 
+#' return.class = "list", strand = "*",
+#' threshold.count.sample = 15)
+#' 
+#' \describe{
+#' Arguments: \item{x}{An \code{ASEset object} that contains the
+#' variants of interest} 
+#' 
+#' \item{x}{threshold.count.samples} if sample has fewer counts the function
+#' return NA.
+#'	
+#' }
 #' @section Constructor: ASEsetFromCountList(rowData, countListNonStranded =
 #' NULL, countListPlus = NULL, countListMinus = NULL, countListUnknown = NULL,
 #' colData = NULL, mapBiasExpMean = array(),verbose=FALSE ...)
@@ -111,7 +126,9 @@ NULL
 #' 
 #'
 #' @exportClass ASEset
-#' @exportMethod alleleCounts mapBias fraction arank table
+#' @exportMethod alleleCounts mapBias fraction arank table frequency
+#' @export frequency
+
 setClass("ASEset", contains = "SummarizedExperiment", 
 	representation(variants = "vector"))
 
@@ -304,7 +321,7 @@ setMethod("arank", signature(x = "ASEset"), function(x, return.type = "names",
 			ar <- t(apply(apply(alleleCounts(x,
 						strand=strand,return.class="array"),c(1,3),sum),
 					1, function(x){rank(x,ties.method="first")}))
-			return(matrix(a@variants[ar],ncol=4, byrow=FALSE,
+			return(matrix(x@variants[ar],ncol=4, byrow=FALSE,
 					  dimnames=list(dimnames(ar)[[1]],c(1,2,3,4))))
 		}else if (return.type == "rank") {
 			return(t(apply(apply(alleleCounts(x,
@@ -367,5 +384,37 @@ setMethod("table", signature(... = "ASEset"), function(...) {
 
 })	
 
+#' @rdname ASEset-class
+setGeneric("frequency")
 
+setMethod("frequency", signature(x = "ASEset"), function(x, 
+	return.class = "list", strand = "*",
+	threshold.count.sample = 15) {
+
+	ar <- alleleCounts(x, strand=strand, return.class="array")
+	allele.count.tot <- apply(ar, c(1,2), sum)
+
+	#set allele.count.tot to NaN for all values not passing threshold
+	#this is to indicate that we do not have enough reads to say anything
+	tf <- allele.count.tot  < threshold.count.sample
+	allele.count.tot[tf] <- NaN
+
+	#make frequency array
+	ar <- ar * array(as.vector(1/allele.count.tot),dim=dim(ar))
+
+	if(return.class=="array"){
+		return(ar)
+	}else if(return.class=="list"){
+		lst <- list()
+		for (i in 1:nrow(x)){
+			mat <- ar[i,,]
+			dimnames(mat) <- list(colnames(x),x@variants)
+			lst[[i]] <- mat
+		}
+		names(lst) <- rownames(x)
+		lst
+	}else{
+		stop("return.class has to be 'array' or 'list'")
+	}
+})
 

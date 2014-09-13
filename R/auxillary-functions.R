@@ -1871,6 +1871,8 @@ coverageMatrixListFromGAL <- function(BamList, strand = "*", ignore.empty.bam.ro
     retList
 }
 
+
+
 #' implode list of arguments into environment
 #' 
 #' apply on list of variables to be put in the local environment
