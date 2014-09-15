@@ -59,7 +59,7 @@ setMethod("refFraction", signature(x = "ASEset"), function(x, strand="*"){
 	alleleCounts(x,strand=strand) <- acounts
 
 	#calc frequency
-	fr <- frequency(x,return.class="array")
+	fr <- frequency(x,strand=strand,return.class="array")
 
 	#for loop in wait for a more ultimate solution
 	ret <- matrix(NA, ncol=ncol(x), nrow=nrow(x),
