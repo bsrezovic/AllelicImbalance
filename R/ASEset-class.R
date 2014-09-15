@@ -29,10 +29,10 @@ NULL
 #' @name ASEset-class
 #' @rdname ASEset-class
 #' @aliases ASEset-class ASEset alleleCounts mapBias fraction arank table
-#' frequency alleleCounts,ASEset-method mapBias,ASEset-method
+#' frequency genotype genotype<- alleleCounts,ASEset-method mapBias,ASEset-method
 #' fraction,ASEset-method arank,ASEset-method table,ASEset-method
-#' frequency,ASEset-method
-#' 
+#' frequency,ASEset-method genotype,ASEset-method genotype<-,ASEset-method
+#' alleleCounts<- alleleCounts<-,ASEset-method
 #' 
 #' @docType class
 #' @param x ASEset object
@@ -40,6 +40,7 @@ NULL
 #' @param verbose makes function more talkative
 #' @param return.type return 'names', rank or 'counts'
 #' @param return.class return 'list' or 'array'
+#' @param value value as replacement
 #' @param ... additional arguments
 #' @return An object of class ASEset containing location information and allele
 #' counts for a number of SNPs measured in a number of samples on various
@@ -115,6 +116,7 @@ NULL
 #'   ranges = IRanges(1:5, width = 1, names = head(letters,5)),
 #'   snp = paste('snp',1:5,sep='')
 #' )
+#'
 #' #make example colData
 #' colData <- DataFrame(Treatment=c('ChIP', 'Input','Input','ChIP'), 
 #'  row.names=c('ind1','ind2','ind3','ind4'))
@@ -123,10 +125,11 @@ NULL
 #' a <- ASEsetFromCountList(rowData, countListPlus=countListPlus, 
 #' colData=colData)
 #' 
-#' 
 #'
 #' @exportClass ASEset
-#' @exportMethod alleleCounts mapBias fraction arank table frequency
+#' @exportMethod alleleCounts alleleCounts<- mapBias fraction arank
+#' table frequency genotype genotype<-
+#' 
 #' @export frequency
 
 setClass("ASEset", contains = "SummarizedExperiment", 
@@ -206,6 +209,38 @@ setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*",
 	}
 
     
+})
+
+#' @rdname ASEset-class
+setGeneric("alleleCounts<-", function(x, strand = "*", value) {
+    standardGeneric("alleleCounts<-")
+})
+
+setMethod("alleleCounts<-", signature(x = "ASEset"), function(x,
+	 strand = "*", value) {
+
+    if (!sum(strand %in% c("+", "-", "*")) > 0) {
+        stop("strand parameter has to be either '+', '-', '*' ")
+    }
+    
+    if (strand == "+") {
+        el <- "countsPlus"
+    } else if (strand == "-") {
+        el <- "countsMinus"
+    } else if (strand == "*") {
+        el <- "countsUnknown"
+    } else {
+        stop("not existing strand option")
+    }
+    
+	#check that value has the right dimensions
+	if(!all(dim(value)==dim(assays(x)[["countsUnknown"]]))){
+		stop("dimensions in replacement object is not correct")
+	}
+
+	assays(x)[[el]] <- value
+	x
+
 })
 
 #' @rdname ASEset-class
@@ -416,5 +451,37 @@ setMethod("frequency", signature(x = "ASEset"), function(x,
 	}else{
 		stop("return.class has to be 'array' or 'list'")
 	}
+})
+
+#' @rdname ASEset-class
+setGeneric("genotype", function(x){
+    standardGeneric("genotype")
+})
+
+setMethod("genotype", signature(x = "ASEset"), function(x){
+	
+    if (!("genotype" %in% names(assays(x)))) {
+		stop(paste("genotype matrix is not present as assay in",
+				   " ASEset object, see '?inferGenotypes' "))
+    }
+	assays(x)[["genotype"]]
+})
+#' @rdname ASEset-class
+setGeneric("genotype<-", function(x,value){
+    standardGeneric("genotype<-")
+})
+
+setMethod("genotype<-", signature(x = "ASEset"), function(x,value){
+	
+	#check dimensions
+	if(!nrow(x)==nrow(value)){
+		stop("nrow(x) is not equal to nrow(value)")	
+	}
+	if(!ncol(x)==ncol(value)){
+		stop("ncol(x) is not equal to ncol(value)")	
+	}
+
+	assays(x)[["genotype"]] <- value	
+	x
 })
 

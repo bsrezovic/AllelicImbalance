@@ -13,6 +13,11 @@ NULL
 #' @docType methods
 #' @param x \code{ASEset} object
 #' @param y strand option
+#' @param p NOT USED
+#' @param correct NOT USED
+#' @param rescale.p NOT USED
+#' @param simulate.p.value NOT USED
+#' @param B NOT USED
 #' @return \code{chisq.test} returns a matrix with the chisq.test P-value for
 #' each SNP and sample
 #' @author Jesper R. Gadin, Lasse Folkersen
