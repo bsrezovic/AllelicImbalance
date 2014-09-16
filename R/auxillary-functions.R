@@ -657,299 +657,299 @@ getAlleleCounts <- function(BamList, GRvariants, strand = "*", return.type = "li
 
 
 
-# create ldf object (i.e. for SnpAfList slot) based on a pre-defined list of Snps
-# old version
-
-
-#' snp count data
-#' 
-#' Given the positions of known SNPs, this function returns allele counts from
-#' a BamGRL object
-#' 
-#' This function is used to retrieve the allele counts from specified positions
-#' in a set of RNA-seq reads. The \code{BamList} argument will typically have
-#' been created using the \code{impBamGAL} function on bam-files. The
-#' \code{GRvariants} is either a GRanges with user-specified locations or else
-#' it is generated through scanning the same bam-files as in \code{BamList} for
-#' heterozygote locations (e.g. using \code{scanForHeterozygotes}). The
-#' GRvariants will currently only accept locations having width=1,
-#' corresponding to SNPs.  In the \code{strand} argument, specifying
-#' '*' is the same as retrieving the sum count of '+' and '-' reads
-#' (and unknown reads in case these are found in the bam file). '*' is
-#' the default behaviour and can be used when the RNA-seq experiments strand
-#' information is not available.
-#' 
-#' @param BamList A \code{GAlignmentsList object} or \code{GRangesList object}
-#' containing data imported from a bam file
-#' @param GRvariants A \code{GRanges object} that contains positions of SNPs to
-#' retrieve
-#' @param strand A length 1 \code{character} with value '+',
-#' '-', or '*'.  This argument determines if \code{getAlleleCounts2} will
-#' retrieve counts from all reads, or only from reads marked as '+', '-' or '*'
-#' (unknown), respectively.
-#' @param verbose Setting \code{verbose=TRUE} makes function more talkative
-#' @return \code{getAlleleCounts2} returns a list of several data.frame
-#' objects, each storing the count data for one SNP.
-#' @author Jesper R. Gadin, Lasse Folkersen
-#' @seealso \itemize{ \item The \code{\link{scanForHeterozygotes}} which is a
-#' function to find possible heterozygote sites in a
-#' \code{\link[GenomicAlignments]{GAlignmentsList}} object }
-#' @keywords SNP count
-#' @examples
-#' 
-#' #load example data
-#' data(reads)
-#' data(GRvariants)
-#' 
-#' #set seqlevels in reads equal to seqlevels in GRvariants
-#' seqlevels(reads) <- '17'
-#' 
-#' #get counts at the three positions specified in GRvariants
-#' alleleCount <- getAlleleCounts2(BamList=reads,GRvariants,
-#' strand='*')
-#' 
-#' #if the reads had contained stranded data, these two calls would 
-#' #have given the correct input objects for getAlleleCounts2
-#' alleleCountPlus <- getAlleleCounts2(BamList=reads,GRvariants,
-#' strand='+')
-#' alleleCountMinus <- getAlleleCounts2(BamList=reads,GRvariants,
-#' strand='-')
-#' 
-#' 
-#' @export getAlleleCounts2
-getAlleleCounts2 <- function(BamList, GRvariants, strand = "*", verbose = TRUE) {
-    
-    # if just one element of, make list (which is a convenient way of handling this
-    # input type)
-    if (class(BamList) == "GAlignments") {
-        BamList <- GAlignmentsList(BamList)
-    }
-    if (class(BamList) == "GRanges") {
-        BamList <- GRangesList(BamList)
-    }
-    
-    # check for strand name
-    if (!class(strand) == "character") {
-        stop("strand has to be of class character")
-    }
-    if (!length(strand) == 1) {
-        stop("strand has to be of length 1")
-    }
-    if (!sum(strand %in% c("+", "-", "*")) > 0) {
-        stop("strand parameter has to be either '+', '-' or '*' ")
-    }
-    
-    # if the user sent in the GRangesList, take out only the unique entries.
-    if (class(GRvariants) == "GRangesList") {
-        GRvariants <- unique(unlist(GRvariants, use.names = FALSE))  #merge BcfGRL to one unique set of Snps
-    }
-    
-    # checking that BamList format is ok (has to be done quite carefully for the
-    # list-class gappedAlignments
-    if (class(BamList) == "GRangesList") {
-        warning("The use of GRangesList is not recommended. Use BamImpGAList or BamImpGAPList")
-    } else if (class(BamList) == "GAlignmentsList") {
-        # assuming GAlignments or GAlignmentPairs and performing extra consistency checks
-        # checks general for both GAlignments or GAlignmentPairs
-        if (length(unique(unlist(lapply(BamList, class)))) != 1) {
-            stop(paste("BamList was given as a list containing entries of", length(unique(unlist(lapply(BamList, 
-                class)))), "different classes. This is not allowed"))
-        }
-        if (!unique(unlist(lapply(BamList, class))) %in% c("GAlignments", "GAlignmentPairs")) {
-            stop(paste("BamList entries must be either of class\tGAlignments or GAlignmentPairs not", 
-                unique(unlist(lapply(BamList, class)))))
-        }
-        
-        # checks specific for GAlignments
-        if (unique(unlist(lapply(BamList, class))) == "GAlignments") {
-            if (!all(unlist(lapply(BamList, function(x) {
-                all(c("cigar", "qwidth") %in% colnames(mcols(x)))
-            })))) {
-                stop("BamList given as lists of GAlignments objects must contain mcols named qwidth and cigar")
-            }
-        }
-        
-        # checks specific for GAlignmentPairs
-        if (unique(unlist(lapply(BamList, class))) == "GAlignmentPairs") {
-            stop("BamList given as lists of GAlignmentPairs does not work yet (remove this when they do, and implement more consistency checks specific for these")
-        }
-    } else {
-        stop("The class of the BamList has to be either GRangesList or a list with gappedAlignments or GAlignmentPairs")
-    }
-    
-    # checking that GRvariants is ok
-    if (class(GRvariants) != "GRanges") 
-        stop(paste("GRvariants must be of class GRanges, not", class(GRvariants)))
-    if (length(GRvariants) == 0) 
-        stop("GRvariants was given as an empty GRanges object. There can be no Snps retrieved by getAlleleCount then")
-    if (any(width(GRvariants) != 1)) 
-        stop("GRvariants can contain only entries of width=1, corresponding to SNPs.")
-    
-    
-    
-    # checking that verbose is ok
-    if (class(verbose) != "logical") 
-        stop(paste("verbose must be of class logical, not", class(verbose)))
-    if (length(verbose) != 1) 
-        stop(paste("verbose must be of length 1, not", length(verbose)))
-    
-    # this added by /LF to protect against junction reads (next 2 lines)
-    if (class(BamList) == "GRangesList") 
-        {
-            typicalReadLength <- as.numeric(names(table(width(ranges(unlist(BamList))))))[1]
-        }  #this calculates the most common read-length 
-    warnAgainstImpossibleReads <- FALSE
-    
-    # make row-names
-    if (sum(grepl("chr", seqnames(GRvariants))) > 0) {
-        snpNames <- paste(seqnames(GRvariants), "_", start(GRvariants), sep = "")
-    } else {
-        snpNames <- paste("chr", seqnames(GRvariants), "_", start(GRvariants), sep = "")
-    }
-    
-    ldf <- list()
-    for (snp in snpNames) {
-        ldf[[snp]] <- matrix(rep(0, length(BamList) * 5), nrow = length(BamList), 
-            ncol = 5, dimnames = list(names(BamList), c("A", "C", "G", "T", "del")))
-    }
-    
-    # find chromosomeLevels
-    if (class(BamList) == "GRangesList") {
-        chromosomeLevels <- levels(seqnames(unlist(BamList)))
-    } else if (class(BamList) == "GAlignmentsList") {
-        chromosomeLevels <- unique(unlist(lapply(BamList, function(x) levels(droplevels(runValue(seqnames(x)))))))
-    }
-    
-    # use strand choice to only get reads from that strand
-    if (!strand == "*") {
-        BamList <- GAlignmentsList(mapply(function(x, y) {
-            x[y]
-        }, BamList, strand(BamList) == strand))
-    }
-    
-    for (chr in chromosomeLevels) {
-        if (verbose) 
-            cat(chr, "\n")
-        
-        BamListchr <- GAlignmentsList(mapply(function(x, y) {
-            x[y]
-        }, BamList, seqnames(BamList) == chr))
-        
-        for (sample in names(BamListchr)) {
-            if (verbose) 
-                cat("sample ", sample, "\n")
-            
-            BamListHere <- BamListchr[[sample]]
-            
-            # this added by /LF to protect against junction reads (next 4 lines)
-            if (class(BamList) == "GRangesList") {
-                if (any((width(ranges(BamListHere)) > (typicalReadLength - 3)) & 
-                  (width(ranges(BamListHere)) < (typicalReadLength + 3)))) {
-                  warnAgainstImpossibleReads <- TRUE
-                  BamListHere <- BamListHere[(width(ranges(BamListHere)) > (typicalReadLength - 
-                    3)) & (width(ranges(BamListHere)) < (typicalReadLength + 3))]
-                }
-            }
-            
-            # make interval tree over BamListHere
-            subject <- BamListHere
-            mcols(subject) <- NULL
-            subject <- ranges(subject)
-            tree <- IntervalTree(subject)
-            
-            snpRange <- IRanges(start = start(GRvariants), width = 1)
-            
-            if (!(length(snpRange) == 0)) {
-                
-                for (posNr in 1:length(snpRange)) {
-                  pos <- start(snpRange[posNr])
-                  if (verbose) 
-                    cat(pos, "\t", posNr, "\n")
-                  
-                  # find overlaps for this position
-                  hits <- findOverlaps(IRanges(start = pos, width = 1), tree)
-                  TFrow <- countSubjectHits(hits) == TRUE
-                  
-                  # get the reads here and the pos difference
-                  BamListThisPos <- BamListHere[TFrow]
-                  
-                  # ONLY for gappedAlignments
-                  if (class(BamList) == "GAlignmentsList") {
-                    # Watch out! gaps can be present. use the cigar information
-                    TFconsistentWidths <- width(BamListThisPos) == mcols(BamListThisPos)[["qwidth"]]
-                    TFcW <- TFconsistentWidths
-                    
-                    # premake boCount object for storing bpCount information
-                    bpCount <- rep(NA, length(BamListThisPos))
-                    # count bp for 'cigar all matched reads'
-                    bpCount[TFcW] <- pos - start(BamListThisPos[TFcW]) + 1
-                    
-                    if (sum(!TFcW) > 0) {
-                      
-                      bpTmp <- pos - start(BamListThisPos[!TFcW]) + 1
-                      
-                      # extract cigars
-                      cigar <- mcols(BamListThisPos[!TFcW])[["cigar"]]
-                      
-                      # make RleList for the cigars
-                      cl <- cigarToRleList(cigar)
-                      
-                      bpCount[!TFcW] <- mapply(realCigarPosition, cl, bpTmp)
-                      
-                      # Remove the reads that are not in the region of interest -1 ,for skipped regions
-                      # 0 ,when position is a deletion
-                      TFr <- bpCount == -1 | bpCount == 0
-                      bpCount <- bpCount[!TFr]
-                      BamListThisPos <- BamListThisPos[!TFr]
-                      
-                      NrBpOnDeletion <- sum(bpCount == 0)
-                      
-                    } else {
-                      NrBpOnDeletion <- 0
-                    }
-                    
-                  }
-                  
-                  if (class(BamList) == "GRangesList") {
-                    if (length(BamListThisPos) > 0) {
-                      bpCount <- start(GRvariants)[posNr] - start(ranges(BamListThisPos)) + 
-                        1
-                      if (length(bpCount) > 0) {
-                        TFthisSnp <- (bpCount > 0) & bpCount < width(ranges(BamListThisPos))
-                        bpCount <- bpCount[TFthisSnp]
-                        BamListThisPos <- BamListThisPos[TFthisSnp]
-                        if (any(!TFthisSnp)) {
-                          warnAgainstImpossibleReads <- TRUE
-                        }
-                      }
-                    }
-                  }
-                  
-                  if (length(bpCount) > 0) {
-                    readNucleotide <- as.character(subseq(mcols(BamListThisPos)[["seq"]], 
-                      start = bpCount, width = 1))
-                    ldf[[snpNames[posNr]]][sample, "A"] <- sum(readNucleotide %in% 
-                      "A")
-                    ldf[[snpNames[posNr]]][sample, "C"] <- sum(readNucleotide %in% 
-                      "C")
-                    ldf[[snpNames[posNr]]][sample, "G"] <- sum(readNucleotide %in% 
-                      "G")
-                    ldf[[snpNames[posNr]]][sample, "T"] <- sum(readNucleotide %in% 
-                      "T")
-                    ldf[[snpNames[posNr]]][sample, "del"] <- NrBpOnDeletion
-                  }
-                }
-            }
-        }
-    }
-    # this added by /LF to protect against junction reads (next 1 line)
-    if (warnAgainstImpossibleReads) 
-        warning("The BamList contained reads with indicated widths longer than the length of the actual contained sequence")
-    
-    ldf
-}
-
-
+## create ldf object (i.e. for SnpAfList slot) based on a pre-defined list of Snps
+## old version
+#
+#
+## snp count data
+## 
+## Given the positions of known SNPs, this function returns allele counts from
+## a BamGRL object
+## 
+## This function is used to retrieve the allele counts from specified positions
+## in a set of RNA-seq reads. The \code{BamList} argument will typically have
+## been created using the \code{impBamGAL} function on bam-files. The
+## \code{GRvariants} is either a GRanges with user-specified locations or else
+## it is generated through scanning the same bam-files as in \code{BamList} for
+## heterozygote locations (e.g. using \code{scanForHeterozygotes}). The
+## GRvariants will currently only accept locations having width=1,
+## corresponding to SNPs.  In the \code{strand} argument, specifying
+## '*' is the same as retrieving the sum count of '+' and '-' reads
+## (and unknown reads in case these are found in the bam file). '*' is
+## the default behaviour and can be used when the RNA-seq experiments strand
+## information is not available.
+## 
+## @param BamList A \code{GAlignmentsList object} or \code{GRangesList object}
+## containing data imported from a bam file
+## @param GRvariants A \code{GRanges object} that contains positions of SNPs to
+## retrieve
+## @param strand A length 1 \code{character} with value '+',
+## '-', or '*'.  This argument determines if \code{getAlleleCounts2} will
+## retrieve counts from all reads, or only from reads marked as '+', '-' or '*'
+## (unknown), respectively.
+## @param verbose Setting \code{verbose=TRUE} makes function more talkative
+## @return \code{getAlleleCounts2} returns a list of several data.frame
+## objects, each storing the count data for one SNP.
+## @author Jesper R. Gadin, Lasse Folkersen
+## @seealso \itemize{ \item The \code{\link{scanForHeterozygotes}} which is a
+## function to find possible heterozygote sites in a
+## \code{\link[GenomicAlignments]{GAlignmentsList}} object }
+## @keywords SNP count
+## @examples
+## 
+## #load example data
+## data(reads)
+## data(GRvariants)
+## 
+## #set seqlevels in reads equal to seqlevels in GRvariants
+## seqlevels(reads) <- '17'
+## 
+## #get counts at the three positions specified in GRvariants
+## alleleCount <- getAlleleCounts2(BamList=reads,GRvariants,
+## strand='*')
+## 
+## #if the reads had contained stranded data, these two calls would 
+## #have given the correct input objects for getAlleleCounts2
+## alleleCountPlus <- getAlleleCounts2(BamList=reads,GRvariants,
+## strand='+')
+## alleleCountMinus <- getAlleleCounts2(BamList=reads,GRvariants,
+## strand='-')
+## 
+## 
+## @export getAlleleCounts2
+#getAlleleCounts2 <- function(BamList, GRvariants, strand = "*", verbose = TRUE) {
+#    
+#    # if just one element of, make list (which is a convenient way of handling this
+#    # input type)
+#    if (class(BamList) == "GAlignments") {
+#        BamList <- GAlignmentsList(BamList)
+#    }
+#    if (class(BamList) == "GRanges") {
+#        BamList <- GRangesList(BamList)
+#    }
+#    
+#    # check for strand name
+#    if (!class(strand) == "character") {
+#        stop("strand has to be of class character")
+#    }
+#    if (!length(strand) == 1) {
+#        stop("strand has to be of length 1")
+#    }
+#    if (!sum(strand %in% c("+", "-", "*")) > 0) {
+#        stop("strand parameter has to be either '+', '-' or '*' ")
+#    }
+#    
+#    # if the user sent in the GRangesList, take out only the unique entries.
+#    if (class(GRvariants) == "GRangesList") {
+#        GRvariants <- unique(unlist(GRvariants, use.names = FALSE))  #merge BcfGRL to one unique set of Snps
+#    }
+#    
+#    # checking that BamList format is ok (has to be done quite carefully for the
+#    # list-class gappedAlignments
+#    if (class(BamList) == "GRangesList") {
+#        warning("The use of GRangesList is not recommended. Use BamImpGAList or BamImpGAPList")
+#    } else if (class(BamList) == "GAlignmentsList") {
+#        # assuming GAlignments or GAlignmentPairs and performing extra consistency checks
+#        # checks general for both GAlignments or GAlignmentPairs
+#        if (length(unique(unlist(lapply(BamList, class)))) != 1) {
+#            stop(paste("BamList was given as a list containing entries of", length(unique(unlist(lapply(BamList, 
+#                class)))), "different classes. This is not allowed"))
+#        }
+#        if (!unique(unlist(lapply(BamList, class))) %in% c("GAlignments", "GAlignmentPairs")) {
+#            stop(paste("BamList entries must be either of class\tGAlignments or GAlignmentPairs not", 
+#                unique(unlist(lapply(BamList, class)))))
+#        }
+#        
+#        # checks specific for GAlignments
+#        if (unique(unlist(lapply(BamList, class))) == "GAlignments") {
+#            if (!all(unlist(lapply(BamList, function(x) {
+#                all(c("cigar", "qwidth") %in% colnames(mcols(x)))
+#            })))) {
+#                stop("BamList given as lists of GAlignments objects must contain mcols named qwidth and cigar")
+#            }
+#        }
+#        
+#        # checks specific for GAlignmentPairs
+#        if (unique(unlist(lapply(BamList, class))) == "GAlignmentPairs") {
+#            stop("BamList given as lists of GAlignmentPairs does not work yet (remove this when they do, and implement more consistency checks specific for these")
+#        }
+#    } else {
+#        stop("The class of the BamList has to be either GRangesList or a list with gappedAlignments or GAlignmentPairs")
+#    }
+#    
+#    # checking that GRvariants is ok
+#    if (class(GRvariants) != "GRanges") 
+#        stop(paste("GRvariants must be of class GRanges, not", class(GRvariants)))
+#    if (length(GRvariants) == 0) 
+#        stop("GRvariants was given as an empty GRanges object. There can be no Snps retrieved by getAlleleCount then")
+#    if (any(width(GRvariants) != 1)) 
+#        stop("GRvariants can contain only entries of width=1, corresponding to SNPs.")
+#    
+#    
+#    
+#    # checking that verbose is ok
+#    if (class(verbose) != "logical") 
+#        stop(paste("verbose must be of class logical, not", class(verbose)))
+#    if (length(verbose) != 1) 
+#        stop(paste("verbose must be of length 1, not", length(verbose)))
+#    
+#    # this added by /LF to protect against junction reads (next 2 lines)
+#    if (class(BamList) == "GRangesList") 
+#        {
+#            typicalReadLength <- as.numeric(names(table(width(ranges(unlist(BamList))))))[1]
+#        }  #this calculates the most common read-length 
+#    warnAgainstImpossibleReads <- FALSE
+#    
+#    # make row-names
+#    if (sum(grepl("chr", seqnames(GRvariants))) > 0) {
+#        snpNames <- paste(seqnames(GRvariants), "_", start(GRvariants), sep = "")
+#    } else {
+#        snpNames <- paste("chr", seqnames(GRvariants), "_", start(GRvariants), sep = "")
+#    }
+#    
+#    ldf <- list()
+#    for (snp in snpNames) {
+#        ldf[[snp]] <- matrix(rep(0, length(BamList) * 5), nrow = length(BamList), 
+#            ncol = 5, dimnames = list(names(BamList), c("A", "C", "G", "T", "del")))
+#    }
+#    
+#    # find chromosomeLevels
+#    if (class(BamList) == "GRangesList") {
+#        chromosomeLevels <- levels(seqnames(unlist(BamList)))
+#    } else if (class(BamList) == "GAlignmentsList") {
+#        chromosomeLevels <- unique(unlist(lapply(BamList, function(x) levels(droplevels(runValue(seqnames(x)))))))
+#    }
+#    
+#    # use strand choice to only get reads from that strand
+#    if (!strand == "*") {
+#        BamList <- GAlignmentsList(mapply(function(x, y) {
+#            x[y]
+#        }, BamList, strand(BamList) == strand))
+#    }
+#    
+#    for (chr in chromosomeLevels) {
+#        if (verbose) 
+#            cat(chr, "\n")
+#        
+#        BamListchr <- GAlignmentsList(mapply(function(x, y) {
+#            x[y]
+#        }, BamList, seqnames(BamList) == chr))
+#        
+#        for (sample in names(BamListchr)) {
+#            if (verbose) 
+#                cat("sample ", sample, "\n")
+#            
+#            BamListHere <- BamListchr[[sample]]
+#            
+#            # this added by /LF to protect against junction reads (next 4 lines)
+#            if (class(BamList) == "GRangesList") {
+#                if (any((width(ranges(BamListHere)) > (typicalReadLength - 3)) & 
+#                  (width(ranges(BamListHere)) < (typicalReadLength + 3)))) {
+#                  warnAgainstImpossibleReads <- TRUE
+#                  BamListHere <- BamListHere[(width(ranges(BamListHere)) > (typicalReadLength - 
+#                    3)) & (width(ranges(BamListHere)) < (typicalReadLength + 3))]
+#                }
+#            }
+#            
+#            # make interval tree over BamListHere
+#            subject <- BamListHere
+#            mcols(subject) <- NULL
+#            subject <- ranges(subject)
+#            tree <- IntervalTree(subject)
+#            
+#            snpRange <- IRanges(start = start(GRvariants), width = 1)
+#            
+#            if (!(length(snpRange) == 0)) {
+#                
+#                for (posNr in 1:length(snpRange)) {
+#                  pos <- start(snpRange[posNr])
+#                  if (verbose) 
+#                    cat(pos, "\t", posNr, "\n")
+#                  
+#                  # find overlaps for this position
+#                  hits <- findOverlaps(IRanges(start = pos, width = 1), tree)
+#                  TFrow <- countSubjectHits(hits) == TRUE
+#                  
+#                  # get the reads here and the pos difference
+#                  BamListThisPos <- BamListHere[TFrow]
+#                  
+#                  # ONLY for gappedAlignments
+#                  if (class(BamList) == "GAlignmentsList") {
+#                    # Watch out! gaps can be present. use the cigar information
+#                    TFconsistentWidths <- width(BamListThisPos) == mcols(BamListThisPos)[["qwidth"]]
+#                    TFcW <- TFconsistentWidths
+#                    
+#                    # premake boCount object for storing bpCount information
+#                    bpCount <- rep(NA, length(BamListThisPos))
+#                    # count bp for 'cigar all matched reads'
+#                    bpCount[TFcW] <- pos - start(BamListThisPos[TFcW]) + 1
+#                    
+#                    if (sum(!TFcW) > 0) {
+#                      
+#                      bpTmp <- pos - start(BamListThisPos[!TFcW]) + 1
+#                      
+#                      # extract cigars
+#                      cigar <- mcols(BamListThisPos[!TFcW])[["cigar"]]
+#                      
+#                      # make RleList for the cigars
+#                      cl <- cigarToRleList(cigar)
+#                      
+#                      bpCount[!TFcW] <- mapply(realCigarPosition, cl, bpTmp)
+#                      
+#                      # Remove the reads that are not in the region of interest -1 ,for skipped regions
+#                      # 0 ,when position is a deletion
+#                      TFr <- bpCount == -1 | bpCount == 0
+#                      bpCount <- bpCount[!TFr]
+#                      BamListThisPos <- BamListThisPos[!TFr]
+#                      
+#                      NrBpOnDeletion <- sum(bpCount == 0)
+#                      
+#                    } else {
+#                      NrBpOnDeletion <- 0
+#                    }
+#                    
+#                  }
+#                  
+#                  if (class(BamList) == "GRangesList") {
+#                    if (length(BamListThisPos) > 0) {
+#                      bpCount <- start(GRvariants)[posNr] - start(ranges(BamListThisPos)) + 
+#                        1
+#                      if (length(bpCount) > 0) {
+#                        TFthisSnp <- (bpCount > 0) & bpCount < width(ranges(BamListThisPos))
+#                        bpCount <- bpCount[TFthisSnp]
+#                        BamListThisPos <- BamListThisPos[TFthisSnp]
+#                        if (any(!TFthisSnp)) {
+#                          warnAgainstImpossibleReads <- TRUE
+#                        }
+#                      }
+#                    }
+#                  }
+#                  
+#                  if (length(bpCount) > 0) {
+#                    readNucleotide <- as.character(subseq(mcols(BamListThisPos)[["seq"]], 
+#                      start = bpCount, width = 1))
+#                    ldf[[snpNames[posNr]]][sample, "A"] <- sum(readNucleotide %in% 
+#                      "A")
+#                    ldf[[snpNames[posNr]]][sample, "C"] <- sum(readNucleotide %in% 
+#                      "C")
+#                    ldf[[snpNames[posNr]]][sample, "G"] <- sum(readNucleotide %in% 
+#                      "G")
+#                    ldf[[snpNames[posNr]]][sample, "T"] <- sum(readNucleotide %in% 
+#                      "T")
+#                    ldf[[snpNames[posNr]]][sample, "del"] <- NrBpOnDeletion
+#                  }
+#                }
+#            }
+#        }
+#    }
+#    # this added by /LF to protect against junction reads (next 1 line)
+#    if (warnAgainstImpossibleReads) 
+#        warning("The BamList contained reads with indicated widths longer than the length of the actual contained sequence")
+#    
+#    ldf
+#}
+#
+#
 
 
 # investigate BamList sequence data for possible heterozygotes. Returns a vector

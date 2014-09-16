@@ -13,11 +13,6 @@ NULL
 #' @docType methods
 #' @param x \code{ASEset} object
 #' @param y strand option
-#' @param p NOT USED
-#' @param correct NOT USED
-#' @param rescale.p NOT USED
-#' @param simulate.p.value NOT USED
-#' @param B NOT USED
 #' @return \code{chisq.test} returns a matrix with the chisq.test P-value for
 #' each SNP and sample
 #' @author Jesper R. Gadin, Lasse Folkersen
@@ -32,14 +27,11 @@ NULL
 #' #make a chi-square test on default non-stranded strand 
 #' chisq.test(ASEset)
 #' 
-#'  @importFrom stats chisq.test
-#'  @exportMethod chisq.test
 NULL
 
-#' @rdname chisq.test
-setGeneric("chisq.test")
 
 #' @rdname chisq.test
+#' @export
 setMethod("chisq.test", signature(x = "ASEset", y = "ANY"), function(x, y = "*") {
     strand = y
     

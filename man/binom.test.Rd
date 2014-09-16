@@ -5,21 +5,12 @@
 \alias{binom.test,ASEset-method}
 \title{binomial test}
 \usage{
-binom.test(x, n, p = 0.5, alternative = c("two.sided", "less", "greater"),
-  conf.level = 0.95)
-
 \S4method{binom.test}{ASEset}(x, n = "*")
 }
 \arguments{
 \item{x}{\code{ASEset} object}
 
 \item{n}{strand option}
-
-\item{p}{NOT USED}
-
-\item{alternative}{NOT USED}
-
-\item{conf.level}{NOT USED}
 }
 \value{
 \code{binom.test} returns a matrix

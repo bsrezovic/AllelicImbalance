@@ -5,25 +5,12 @@
 \alias{chisq.test,ASEset-method}
 \title{chi-square test}
 \usage{
-chisq.test(x, y = NULL, correct = TRUE, p = rep(1/length(x), length(x)),
-  rescale.p = FALSE, simulate.p.value = FALSE, B = 2000)
-
 \S4method{chisq.test}{ASEset}(x, y = "*")
 }
 \arguments{
 \item{x}{\code{ASEset} object}
 
 \item{y}{strand option}
-
-\item{correct}{NOT USED}
-
-\item{p}{NOT USED}
-
-\item{rescale.p}{NOT USED}
-
-\item{simulate.p.value}{NOT USED}
-
-\item{B}{NOT USED}
 }
 \value{
 \code{chisq.test} returns a matrix with the chisq.test P-value for

@@ -13,9 +13,6 @@ NULL
 #' @docType methods
 #' @param x \code{ASEset} object
 #' @param n strand option
-#' @param p NOT USED
-#' @param alternative NOT USED
-#' @param conf.level NOT USED
 #' @return \code{binom.test} returns a matrix
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @seealso \itemize{ \item The \code{\link{chisq.test}} which is another test
@@ -30,24 +27,10 @@ NULL
 #' binom.test(ASEset,'*')
 #' 
 #' 
-#'  @importFrom stats binom.test
-#'  @export binom.test
-#'  @exportMethod binom.test
 NULL
 
 #' @rdname binom.test
-
-#.table.useAsDefault <- function(x) stats::table(...)
-#setGeneric("binom.test", signature="x",
-#    function(x) standardGeneric("binom.test"),
-#    useAsDefault=function(x){ stats::binom.test(x)}
-#
-#)
-
-#' @rdname binom.test
-setGeneric("binom.test")
-
-#' @rdname binom.test
+#'  @export 
 setMethod("binom.test", signature(x = "ASEset", n = "ANY"), function(x, n = "*") {
     
     strand <- n
