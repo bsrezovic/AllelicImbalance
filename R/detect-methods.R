@@ -86,8 +86,8 @@ setMethod("detectAI", signature(x = "ASEset"), function(x,
 	}
 
 	#select return type
-	if(return.type=="ref"){fr[fr>biasmatRef]<- NaN}
-	if(return.type=="alt"){fr[fr<biasmatRef]<- NaN}
+	if(return.type=="ref"){fr[fr<biasmatRef]<- NaN}
+	if(return.type=="alt"){fr[fr>biasmatRef]<- NaN}
 
 	#survive stat test max p-value
 	if(function.test=="binom.test" & !max.pvalue==1){
