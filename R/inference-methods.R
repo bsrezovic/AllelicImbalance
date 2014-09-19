@@ -38,7 +38,7 @@ setGeneric("inferAlleles", function(x,strand="*",return.type="all",
 	){standardGeneric("inferAlleles")
 })
 setMethod("inferAlleles", signature(x = "ASEset"), function(x,strand="*",return.type="all",
-	threshold.frequency=0.2, threshold.count.sample=5,
+	threshold.frequency=0.0, threshold.count.sample=0,
 	inferOver="eachSample", allow.NA=FALSE
 	){
 
@@ -169,12 +169,12 @@ setMethod("inferAlleles", signature(x = "ASEset"), function(x,strand="*",return.
 
 setGeneric("inferGenotypes", function(x, strand="*", return.class="matrix",
 	return.allele.allowed = c("bi","tri","quad"),
-	threshold.frequency = 0.2, threshold.count.sample = 0
+	threshold.frequency = 0.05, threshold.count.sample = 0
 	){ standardGeneric("inferGenotypes")})
 					   
 setMethod("inferGenotypes", signature(x = "ASEset"), function(x, strand="*", return.class="matrix",
 	return.allele.allowed = c("bi","tri","quad"),
-	threshold.frequency = 0.2, threshold.count.sample = 0
+	threshold.frequency = 0.05, threshold.count.sample = 0
 	){ 
 	rn <- arank(x, strand=strand,return.type="names", return.class="matrix")			
 

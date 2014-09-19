@@ -58,6 +58,7 @@
 #' @importFrom GenomicRanges reduce
 #' @importFrom GenomicRanges findOverlaps
 #' @importFrom GenomicRanges rowData
+#' @importFrom GenomicRanges colData
 #' @importFrom GenomicRanges SummarizedExperiment
 #' @importFrom GenomicRanges grglist
 #' @importFrom GenomicRanges flank
@@ -175,5 +176,22 @@ NULL
 #' 
 #' ##load eample data (Not Run)  
 #' #data(reads)
+#' 
+NULL 
+
+
+#' ASEset.sim object
+#' 
+#' ASEset with simulated data with SNPs within the first 200bp of chromosome 17,
+#' which is required to have example data for the refAllele function.
+#' 
+#' @name ASEset.sim
+#' @docType data
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords data object example
+#' @examples
+#' 
+#' ##load eample data (Not Run)  
+#' #data(ASEset.sim)
 #' 
 NULL 

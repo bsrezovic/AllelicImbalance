@@ -20,11 +20,11 @@ The alleles will be placed in the rowData() meta column 'ref'
 }
 \examples{
 #load example data
-data(ASEset)
+data(ASEset.sim)
 
-fasta <- system.file('extdata/hg19.chr17.fa', package='AllelicImbalance')
-refAllele(ASEset,fasta=fasta)
-a <- refAllele(ASEset,fasta=fasta)
+fasta <- system.file('extdata/hg19.chr17.subset.fa', package='AllelicImbalance')
+refAllele(ASEset.sim,fasta=fasta)
+a <- refAllele(ASEset.sim,fasta=fasta)
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

@@ -3,14 +3,43 @@
 \name{ReferenceBias-class}
 \alias{ReferenceBias}
 \alias{ReferenceBias-class}
-\alias{table,ReferenceBias-method}
+\alias{ReferenceBias-method}
+\alias{frequency,ReferenceBias-method}
+\alias{hetPerSample}
+\alias{hetPerSample,ReferenceBias-method}
+\alias{hetPerSnp}
+\alias{hetPerSnp,ReferenceBias-method}
+\alias{refbiasByAnnotation}
+\alias{refbiasByAnnotation,ReferenceBias-method}
 \title{ReferenceBias class}
+\usage{
+refbiasByAnnotation(x, ...)
+
+\S4method{refbiasByAnnotation}{ReferenceBias}(x, TxDb)
+
+\S4method{frequency}{ReferenceBias}(x, return.class = "matrix",
+  strand = "*")
+
+hetPerSample(x, ...)
+
+\S4method{hetPerSample}{ReferenceBias}(x, return.class = "vector",
+  strand = "*")
+
+hetPerSnp(x, ...)
+
+\S4method{hetPerSnp}{ReferenceBias}(x, return.class = "vector",
+  strand = "*")
+}
 \arguments{
 \item{x}{ReferenceBias object}
 
-\item{strand}{which strand of '+', '-' or '*'}
+\item{...}{pass arguments to internal functions}
 
-\item{verbose}{makes function more talkative}
+\item{TxDb}{A \code{transcriptDb} object}
+
+\item{return.class}{class to return}
+
+\item{strand}{'+','-' or '*'}
 }
 \value{
 An object of class ReferenceBias storing reference fractions.
@@ -21,8 +50,8 @@ Object that holds Reference bias information
 \details{
 Reference bias-class contain annotated fractions of the reference allele
 
-Shortly the RefBias-class most prominent purpose is to be able to dispatch on
-methods like, 'plot', 'table', 'summary' and similar.
+Shortly the ReferenceBias-class most prominent purpose is quikly to be able to dispatch on
+methods like, 'plot', 'summary' and similar.
 }
 \section{Constructor}{
  refBias(x = ASEset)
@@ -36,11 +65,7 @@ Arguments: \item{x}{an ASEset object  }
 \examples{
 data(ASEset)
 a <- ASEset
-genotype(a) <- inferGenotypes(a)
-a <- refAllele(a,
- 	fasta=system.file('extdata/hg19.chr17.fa',
- 	package='AllelicImbalance'))
-refbiasObject <- refBias(a)
+rb <- RBias(a)
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

@@ -5,12 +5,12 @@
 \alias{refFraction,ASEset-method}
 \title{reference fraction}
 \usage{
-refFraction(x, strand = "*")
+refFraction(x, ...)
 }
 \arguments{
 \item{x}{\code{ASEset} object}
 
-\item{strand}{strand option}
+\item{...}{arguments to forward to internal functions}
 }
 \description{
 The fractions for all heterozygote reference alleles
@@ -22,17 +22,6 @@ Neccessary to measure the effect of mapbias over heterozygous SNPs
 #load example data
 data(ASEset)
 a <- ASEset
-
-#this example data contains to few SNPs to actually
-#measure the effect reliably, but as example it serves
-#the purpose.
-
-#prepare ASEset
-genotype(a) <- inferGenotypes(a)
-a <- refAllele(a,
-		fasta=system.file('extdata/hg19.chr17.fa',
-		package='AllelicImbalance'))
-
 rf <- refFraction(a, strand="*")
 }
 \author{

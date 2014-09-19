@@ -28,9 +28,9 @@ NULL
 #' 
 #' @name ASEset-class
 #' @rdname ASEset-class
-#' @aliases ASEset-class ASEset alleleCounts mapBias fraction arank table
+#' @aliases ASEset-class ASEset alleleCounts mapBias fraction arank 
 #' frequency genotype genotype<- alleleCounts,ASEset-method mapBias,ASEset-method
-#' fraction,ASEset-method arank,ASEset-method table,ASEset-method
+#' fraction,ASEset-method arank,ASEset-method 
 #' frequency,ASEset-method genotype,ASEset-method genotype<-,ASEset-method
 #' alleleCounts<- alleleCounts<-,ASEset-method
 #' 
@@ -128,9 +128,9 @@ NULL
 #'
 #' @exportClass ASEset
 #' @exportMethod alleleCounts alleleCounts<- mapBias fraction arank
-#' table frequency genotype genotype<-
+#' frequency genotype genotype<-
 #' 
-#' @export frequency
+#' @export 
 
 setClass("ASEset", contains = "SummarizedExperiment", 
 	representation(variants = "vector"))
@@ -244,29 +244,34 @@ setMethod("alleleCounts<-", signature(x = "ASEset"), function(x,
 })
 
 #' @rdname ASEset-class
-setGeneric("mapBias", function(x) {
+setGeneric("mapBias", function(x, ...) {
     standardGeneric("mapBias")
 })
 
-setMethod("mapBias", signature(x = "ASEset"), function(x) {
+setMethod("mapBias", signature(x = "ASEset"), function(x,
+	return.class="list") {
     # assume alleleCount information is stored as element 1
-    mapBiasList <- list()
-    for (i in 1:nrow(x)) {
-        mat <- assays(x)[["mapBias"]][i, , ]
-        if (class(mat) == "numeric") {
-            dim(mat) <- c(1, 4)
-            rownames(mat) <- colnames(x)
-        }
-        colnames(mat) <- x@variants
-        
-        mapBiasList[[i]] <- mat
-    }
-    # add snp id
-    names(mapBiasList) <- rownames(x)
-    
-    
-    # return object
-    mapBiasList
+
+	if(return.class=="array"){
+		return(assays(x)[["mapBias"]])
+
+	}else if(return.class=="list"){
+		mapBiasList <- list()
+		for (i in 1:nrow(x)) {
+			mat <- assays(x)[["mapBias"]][i, , ]
+			if (class(mat) == "numeric") {
+				dim(mat) <- c(1, 4)
+				rownames(mat) <- colnames(x)
+			}
+			colnames(mat) <- x@variants
+			
+			mapBiasList[[i]] <- mat
+		}
+		# add snp id
+		names(mapBiasList) <- rownames(x)
+		
+		return(mapBiasList)
+	}
     
 })
 
@@ -339,7 +344,6 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*",
     
     m
     
-    
 })
 
 #' @rdname ASEset-class
@@ -356,8 +360,15 @@ setMethod("arank", signature(x = "ASEset"), function(x, return.type = "names",
 			ar <- t(apply(apply(alleleCounts(x,
 						strand=strand,return.class="array"),c(1,3),sum),
 					1, function(x){rank(x,ties.method="first")}))
-			return(matrix(x@variants[ar],ncol=4, byrow=FALSE,
-					  dimnames=list(dimnames(ar)[[1]],c(1,2,3,4))))
+			ar2 <- t(apply(ar,1,function(x){
+						   x <- sort(x,index.return=TRUE,decreasing=TRUE)$ix
+						   x
+					}))
+
+			mat <- matrix(x@variants[ar2],ncol=4, nrow=nrow(x), byrow=FALSE,
+					  dimnames=list(dimnames(ar)[[1]],c(1,2,3,4)))
+		
+			return(mat)
 		}else if (return.type == "rank") {
 			return(t(apply(apply(alleleCounts(x,
 						strand=strand,return.class="array"),c(1,3),sum),
@@ -385,39 +396,41 @@ setMethod("arank", signature(x = "ASEset"), function(x, return.type = "names",
 	}
 }) 
 
-#' @rdname ASEset-class
-setGeneric("table")
+#setGeneric("table")
 #setGeneric("table", function(x, strand = "*", sortBy="none", ...) {
 #    standardGeneric("table")
 #})
 
-setMethod("table", signature(... = "ASEset"), function(...) {
-
-	args <- list(...)
-	if (length(args) > 1)
-	  stop("Only one argument in '...' supported")
-	x <- args[[1L]]
-
-	#because the generis of table is rubbish we have to return a list for each strand
-	retList <- list()
-
-	for(strand in c("+","-","*")){
-		df <- data.frame(row.names=rownames(x))
-		df[,c("chromosome","position")] <- c(as.character(seqnames(x)),start(x))
-		df <- cbind(df,as.data.frame(arank(x, return.type="counts",
-					   return.class="matrix",strand=strand)))
-
-		#if only one sample add fraction to table()
-		if(ncol(x)==1){
-			df[,"fraction"] <- as.vector(fraction(x,strand=strand))
-		}
-
-		retList[[strand]] <- df
-
-	}
-	return(SimpleList(retList))
-
-})	
+# @rdname ASEset-class
+#setMethod("table", signature(... = "ASEset"), function(...) {
+#
+#	args <- list(...)
+#	if (length(args) > 1)
+#	  stop("Only one argument in '...' supported")
+#	x <- args[[1L]]
+#
+#	#because the generis of table is rubbish we have to return a list for each strand
+#	#retList <- list()
+#
+#	#for(strand in c("+","-","*")){
+#	#	df <- data.frame(row.names=rownames(x))
+#	#	df[,c("chromosome","position")] <- c(as.character(seqnames(x)),start(x))
+#	#	df <- cbind(df,as.data.frame(arank(x, return.type="counts",
+#	#				   return.class="matrix",strand=strand)))
+#
+#	#	#if only one sample add fraction to table()
+#	#	if(ncol(x)==1){
+#	#		df[,"fraction"] <- as.vector(fraction(x,strand=strand))
+#	#	}
+#
+#	#	retList[[strand]] <- df
+#
+#	}
+#	#return(SimpleList(retList))
+#
+#	df()
+#
+#})	
 
 #' @rdname ASEset-class
 setGeneric("frequency")
@@ -483,5 +496,27 @@ setMethod("genotype<-", signature(x = "ASEset"), function(x,value){
 
 	assays(x)[["genotype"]] <- value	
 	x
+})
+
+#' @rdname ASEset-class
+setGeneric("countsPerSnp", function(x, ...){
+    standardGeneric("countsPerSnp")
+})
+
+#could be renamed to countsAllAlleles
+setMethod("countsPerSnp", signature(x = "ASEset"), function(x, 
+	return.class = "matrix", return.type="mean", strand = "*") {
+
+	if(return.class=="matrix"){
+		return(apply(alleleCounts(x, strand=strand, return.class="array"), c(1,2), sum))
+	}else if(return.class=="vector"){
+		if(return.type=="all"){
+			return(apply(alleleCounts(x, strand=strand, return.class="array"), 1, sum))
+		}else if(return.type=="mean"){
+			return(apply(apply(alleleCounts(x, strand=strand, return.class="array"), c(1,2), sum), 1, mean))
+		}
+	}else{
+		stop("return.class has to be 'vec'")
+	}
 })
 

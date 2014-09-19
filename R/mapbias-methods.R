@@ -9,7 +9,7 @@
 #' @aliases refFraction,ASEset-method
 #' @docType methods
 #' @param x \code{ASEset} object
-#' @param strand strand option
+#' @param ... arguments to forward to internal functions
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords reference fraction
 #' @examples
@@ -17,29 +17,21 @@
 #' #load example data
 #' data(ASEset)
 #' a <- ASEset
-#'
-#' #this example data contains to few SNPs to actually 
-#' #measure the effect reliably, but as example it serves
-#' #the purpose.
-#'	
-#' #prepare ASEset
-#' genotype(a) <- inferGenotypes(a)
-#' a <- refAllele(a,
-#'		fasta=system.file('extdata/hg19.chr17.fa', 
-#'		package='AllelicImbalance'))	
-#'
 #' rf <- refFraction(a, strand="*")
 #' 
 #' @exportMethod refFraction
 NULL
 
 #' @rdname refFraction
-setGeneric("refFraction", function(x, strand="*" 
+setGeneric("refFraction", function(x, ... 
 	){
     standardGeneric("refFraction")
 })
 
-setMethod("refFraction", signature(x = "ASEset"), function(x, strand="*"){
+setMethod("refFraction", signature(x = "ASEset"),
+		function(x, strand="*",
+			threshold.count.sample=0
+	){
 	
 	#check for presence of genotype data
     if (!("genotype" %in% names(assays(x)))) {
@@ -56,19 +48,28 @@ setMethod("refFraction", signature(x = "ASEset"), function(x, strand="*"){
 	acounts[array(!hetFilt(x), dim=c(nrow(x), ncol(x), 4))] <- 0
 
 	#replace countmatrix in object x 
-	alleleCounts(x,strand=strand) <- acounts
+	x2 <-x
+	alleleCounts(x2,strand=strand) <- acounts
 
 	#calc frequency
-	fr <- frequency(x,strand=strand,return.class="array")
+	fr <- frequency(x2, strand=strand, return.class="array",
+			threshold.count.sample = threshold.count.sample)
 
-	#for loop in wait for a more ultimate solution
-	ret <- matrix(NA, ncol=ncol(x), nrow=nrow(x),
-			dimnames=list(rownames(x),colnames(x)))
-	for (i in 1:nrow(x)){
-		ret[i,] <- fr[i, , mcols(x)[i,"ref"] ]
-	}
+	#select only ref rows
+	ar <- 	array(matrix(x@variants, ncol=length(x@variants),
+			 nrow=nrow(x), byrow=TRUE)==mcols(x)[,"ref"]
+		 ,dim=c(nrow(x), length(x@variants), ncol=ncol(x)))
 	
-	ret
+	#rearrange to be able to transform back
+	fr2 <- aperm(fr, c(3,2,1))
+	ar2 <- aperm(ar, c(2,3,1))
+
+	#rearrange dims
+	refs <- fr2[ar2]
+		
+	matrix(refs,ncol=ncol(x),nrow=nrow(x), byrow=TRUE,dimnames=list(rownames(x),colnames(x)))
+
+
 })
 
 
@@ -90,11 +91,11 @@ setMethod("refFraction", signature(x = "ASEset"), function(x, strand="*"){
 #' @examples
 #' 
 #' #load example data
-#' data(ASEset)
+#' data(ASEset.sim)
 #'
-#' fasta <- system.file('extdata/hg19.chr17.fa', package='AllelicImbalance')
-#' refAllele(ASEset,fasta=fasta)
-#' a <- refAllele(ASEset,fasta=fasta) 
+#' fasta <- system.file('extdata/hg19.chr17.subset.fa', package='AllelicImbalance')
+#' refAllele(ASEset.sim,fasta=fasta)
+#' a <- refAllele(ASEset.sim,fasta=fasta) 
 #'
 #' @exportMethod refAllele
 NULL
