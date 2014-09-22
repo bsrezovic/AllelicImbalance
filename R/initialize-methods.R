@@ -288,6 +288,7 @@ ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus 
 #' @rdname initialize-ReferenceBias
 #' @aliases initialize-ReferenceBias RBias
 #' @param x \code{ASEset} 
+#' @param ... internal arguments
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords bias mapbias refBias
 #' @examples
@@ -303,20 +304,21 @@ NULL
 #' @export 
 #setMethod("ReferenceBias","ReferenceBias", function(
 RBias <- function(
-	x = "ASEset"
+	x = "ASEset",
+	...
 	){
 	#if non-stranded data	
 	if(all(c("countsPlus","countsMinus") %in% names(assays(x)))){
 		assay <- 
-			array(c(refFraction(x,strand="*"),
-				  refFraction(x,strand="+"),
-				  refFraction(x,strand="-")),
+			array(c(refFraction(x,strand="*",...),
+				  refFraction(x,strand="+",...),
+				  refFraction(x,strand="-",...)),
 				  dim=c(nrow(x),ncol(x),3),
 				  dimnames=list(rownames(x),colnames(x),c("*","+","-")))
 	}
 	else if(c("countsUnknown") %in% names(assays(x))){
 		assay <- 
-			array(c(refFraction(x,strand="*"),
+			array(c(refFraction(x,strand="*",...),
 				  matrix(NA, nrow=nrow(x),ncol=ncol(x)),
 				  matrix(NA, nrow=nrow(x),ncol=ncol(x))),
 				  dim=c(nrow(x),ncol(x),3),

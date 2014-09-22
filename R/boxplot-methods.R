@@ -34,9 +34,9 @@ setMethod("boxplot", signature(x = "ReferenceBias"), function(x, strand="*",
 
 	#add axis labels
 	if(labels.axis){
-		mtext("Nr. Of Heterozygots Used",side=3, padj=-3, cex=1.5, font=2)
-		mtext("Reference Allele Frequency", side=2,padj=-3, cex=1.5, font=2)
-		mtext("Samples",side=1,padj=3, cex=1.5, font=2)
+		mtext("Nr. Of Heterozygots Used",side=3, padj=-3, cex=1, font=2)
+		mtext("Reference Allele Frequency", side=2,padj=-3, cex=1, font=2)
+		mtext("Samples",side=1,padj=3, cex=1, font=2)
 	}
 
 	#add red line for 0.5

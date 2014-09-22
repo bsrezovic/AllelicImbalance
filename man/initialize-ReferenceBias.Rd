@@ -4,10 +4,12 @@
 \alias{initialize-ReferenceBias}
 \title{Initialize ReferenceBias}
 \usage{
-RBias(x = "ASEset")
+RBias(x = "ASEset", ...)
 }
 \arguments{
 \item{x}{\code{ASEset}}
+
+\item{...}{internal arguments}
 }
 \description{
 Functions to construct ReferenceBias objects

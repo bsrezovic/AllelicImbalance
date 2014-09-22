@@ -9,7 +9,10 @@
 \alias{alleleCounts<-,ASEset-method}
 \alias{arank}
 \alias{arank,ASEset-method}
+\alias{countsPerSample}
+\alias{countsPerSample,ASEset-method}
 \alias{countsPerSnp}
+\alias{countsPerSnp,ASEset-method}
 \alias{fraction}
 \alias{fraction,ASEset-method}
 \alias{frequency}
@@ -24,11 +27,19 @@
 \usage{
 alleleCounts(x, strand = "*", return.class = "list")
 
+\S4method{alleleCounts}{ASEset}(x, strand = "*", return.class = "list")
+
 alleleCounts(x, strand = "*") <- value
+
+\S4method{alleleCounts}{ASEset}(x, strand = "*") <- value
 
 mapBias(x, ...)
 
+\S4method{mapBias}{ASEset}(x, return.class = "list")
+
 fraction(x, strand = "*", verbose = FALSE)
+
+\S4method{fraction}{ASEset}(x, strand = "*", verbose = FALSE)
 
 arank(x, return.type = "names", return.class = "list", strand = "*", ...)
 
@@ -36,9 +47,21 @@ frequency(x, ...)
 
 genotype(x)
 
+\S4method{genotype}{ASEset}(x)
+
 genotype(x) <- value
 
+\S4method{genotype}{ASEset}(x) <- value
+
 countsPerSnp(x, ...)
+
+\S4method{countsPerSnp}{ASEset}(x, return.class = "matrix",
+  return.type = "mean", strand = "*")
+
+countsPerSample(x, ...)
+
+\S4method{countsPerSample}{ASEset}(x, return.class = "matrix",
+  return.type = "mean", strand = "*")
 }
 \arguments{
 \item{x}{ASEset object}

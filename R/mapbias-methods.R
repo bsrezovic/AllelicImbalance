@@ -142,5 +142,75 @@ setMethod("refAllele", signature(x = "ASEset"), function(x, fasta){
 	x
 })
 
+#' Generate default mapbias from genotype
+#' 
+#' Create mapbias array from genotype matrix requires genotype information
+#' 
+#' Default mapbias will be 0.5 for bi-allelic snps and 1 for
+#' homozygots. For genotypes with NA, 0.5 will be placed on all four alleles.
+#' Therefore tri-allelic can not be used atm. Genotype information has to be 
+#' placed in the genotype(x) assay.
+#' 
+#' @name defaultMapBias
+#' @rdname defaultMapBias
+#' @aliases defaultMapBias,ASEset-method
+#' @docType methods
+#' @param x \code{ASEset} object
+#' @param ... internal arguments
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords mapbias
+#' @examples
+#' 
+#' #load example data
+#' data(ASEset.sim)
+#'
+#' fasta <- system.file('extdata/hg19.chr17.subset.fa', package='AllelicImbalance')
+#' refAllele(ASEset.sim,fasta=fasta)
+#' a <- refAllele(ASEset.sim,fasta=fasta) 
+#'
+NULL
+
+#' @rdname defaultMapBias
+#' @export
+setGeneric("defaultMapBias", function(x,... ){
+    standardGeneric("defaultMapBias")
+})
+
+#' @rdname defaultMapBias
+#' @export
+setMethod("defaultMapBias", signature(x = "ASEset"), function(x){
+
+		if (!("genotype" %in% names(assays(x)))) {
+			stop(paste("genotype matrix is not present as assay in",
+					   " ASEset object, see '?inferGenotypes' "))
+		}
+
+		g <- genotype(x)
+		allele1 <- sub("/.*","",as.character(g))
+		allele2 <- sub(".*/","",as.character(g))
+
+		#set NA allele as "A"
+		allele1.nona <-  allele1
+		allele1.nona[is.na(allele1.nona)] <- "A"
+		allele2.nona <-  allele2
+		allele2.nona[is.na(allele2.nona)] <- "A"
+
+		ar <- array(0, dim=c(nrow(x),ncol(x),4),
+			dimnames=list(rownames(x),colnames(x),x@variants ))
+
+		ar[,,"A"][allele1.nona=="A"] <- ar[,,"A"][allele1.nona=="A"] + 0.5
+		ar[,,"C"][allele1.nona=="C"] <- ar[,,"C"][allele1.nona=="C"] + 0.5
+		ar[,,"T"][allele1.nona=="T"] <- ar[,,"T"][allele1.nona=="T"] + 0.5
+		ar[,,"G"][allele1.nona=="G"] <- ar[,,"G"][allele1.nona=="G"] + 0.5
+
+		ar[,,"A"][allele2.nona=="A"] <- ar[,,"A"][allele2.nona=="A"] + 0.5
+		ar[,,"C"][allele2.nona=="C"] <- ar[,,"C"][allele2.nona=="C"] + 0.5
+		ar[,,"T"][allele2.nona=="T"] <- ar[,,"T"][allele2.nona=="T"] + 0.5
+		ar[,,"G"][allele2.nona=="G"] <- ar[,,"G"][allele2.nona=="G"] + 0.5
+
+		assays(x)[["mapBias"]] <- ar
+		x
+})
+
 
 

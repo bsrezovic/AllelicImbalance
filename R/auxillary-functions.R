@@ -1197,32 +1197,32 @@ getDefaultMapBiasExpMean3D <- function(alleleCountList) {
 }
 
 
-
-extractReferenceAllele <- function(GR, path) {
-    # GR contains ranges of positions to be retrieved path contains the path to fasta
-    # reference used for alignment i.e. ('hg19.fa')
-    
-    # check if there exist an index Check to be written
-    
-    # remove chromosome name
-    if (!(grepl("chr", seqlevels(GR)))) {
-        seqLevels <- paste("chr", seqlevels(GR), sep = "")
-        seqlevels(GR) <- seqLevels
-    }
-    
-    fl <- FaFile(path)
-    
-    # open file
-    open(fl)
-    # scan fasta
-    res <- scanFa(fl, GR)
-    # clsoe file
-    close(fl)
-    res
-    
-}
-
-
+#
+#extractReferenceAllele <- function(GR, path) {
+#    # GR contains ranges of positions to be retrieved path contains the path to fasta
+#    # reference used for alignment i.e. ('hg19.fa')
+#    
+#    # check if there exist an index Check to be written
+#    
+#    # remove chromosome name
+#    if (!(grepl("chr", seqlevels(GR)))) {
+#        seqLevels <- paste("chr", seqlevels(GR), sep = "")
+#        seqlevels(GR) <- seqLevels
+#    }
+#    
+#    fl <- FaFile(path)
+#    
+#    # open file
+#    open(fl)
+#    # scan fasta
+#    res <- scanFa(fl, GR)
+#    # clsoe file
+#    close(fl)
+#    res
+#    
+#}
+#
+#
 
 #' Get Gene Area
 #' 
@@ -1518,14 +1518,12 @@ barplotLatticeFraction <- function(identifier, ...) {
     for (i in 1:length(a.f)) {
         values <- c(values, a.f[i], a.f2[i])
     }
-    alleles <- rep(a.r, length(a.f))
-    
-    # sample <- names(a.f)
     sample <- vector()
     for (i in 1:length(a.f)) {
         sample <- c(sample, rownames(afraction)[i], rownames(afraction)[i])
     }
-    df <- data.frame(values = values, sample = sample, alleles = alleles)
+    df <- data.frame(values = values, sample = sample, alleles = rep(a.r, length(a.f))
+)
     
     TFna <- is.na(df$values)
     df$values[TFna] <- 0  # 0.5 + 0.5 -> 1
@@ -1640,8 +1638,6 @@ barplotLatticeCounts <- function(identifier, ...) {
 		a.c <- acounts[[identifier]][, a.r, drop = FALSE]
 		
 		values <- as.vector(t(a.c))
-		alleles <- rep(colnames(a.c), nrow(a.c))
-		
 		sample <- vector()
 		for (i in 1:nrow(a.c)) {
 			sample <- c(sample, rownames(a.c)[i], rownames(a.c)[i])
@@ -1650,7 +1646,8 @@ barplotLatticeCounts <- function(identifier, ...) {
 		if(strand=="-" && e$strand=="both"){
 			values <- -values
 		}
-		df <- data.frame(values = values, sample = sample, alleles = alleles)
+		df <- data.frame(values = values, sample = sample, alleles = rep(colnames(a.c), nrow(a.c))
+)
 		
 		# to get right order in barchart
 		df$sample <- factor(df$sample, levels = unique(df$sample))
