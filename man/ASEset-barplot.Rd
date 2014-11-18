@@ -17,7 +17,8 @@ barplot(height, ...)
   cex.pValue = 0.7, cex.ylab = 0.7, cex.xlab = 0.7, cex.legend = 0.6,
   add = FALSE, lowerLeftCorner = c(0, 0), size = c(1, 1),
   addHorizontalLine = 0.5, add.frame = TRUE,
-  filter.pValue.fraction = 0.99, verbose = FALSE, ...)
+  filter.pValue.fraction = 0.99, legend.fill.size = 1,
+  legend.interspace = 1, verbose = FALSE, ...)
 }
 \arguments{
 \item{height}{An \code{ASEset} object}
@@ -87,6 +88,10 @@ fraction of 0.5 - 0.5}
 
 \item{filter.pValue.fraction}{\code{numeric} between 0 and 1 that filter
 away pValues where the main allele has this frequency.}
+
+\item{legend.fill.size}{size of the fill/boxes in the legend (default:NULL)}
+
+\item{legend.interspace}{set legend space between fills and text}
 
 \item{verbose}{Makes function more talkative}
 }

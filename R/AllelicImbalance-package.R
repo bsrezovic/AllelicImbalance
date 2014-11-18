@@ -83,6 +83,9 @@
 #' @importFrom Rsamtools FaFile
 #' @importFrom Rsamtools scanFa
 #' @importFrom Rsamtools scanFaIndex
+#' @importFrom Rsamtools applyPileups
+#' @importFrom Rsamtools ApplyPileupsParam
+#' @importFrom Rsamtools PileupFiles
 #' 
 #' @importClassesFrom GenomicAlignments GAlignments
 #' @importClassesFrom GenomicAlignments GAlignmentPairs
@@ -103,6 +106,8 @@
 #'
 #' @importFrom lattice barchart
 #' @importFrom lattice trellis.par.set
+#' @importFrom lattice panel.abline
+#' @importFrom lattice panel.barchart
 #'
 #' @importClassesFrom GenomicRanges GRangesList
 #' @importClassesFrom GenomicRanges GRanges
@@ -110,6 +115,7 @@
 #' @importClassesFrom Gviz AnnotationTrack
 #' @importClassesFrom Gviz DetailsAnnotationTrack
 #' @importClassesFrom Gviz GeneRegionTrack
+#' @importClassesFrom Gviz GenomeAxisTrack
 #' 
 #' @importClassesFrom GenomicFeatures TxDb
 #' @importClassesFrom AnnotationDbi AnnotationDb

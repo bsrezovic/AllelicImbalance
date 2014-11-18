@@ -8,7 +8,7 @@
 \usage{
 glocationplot(x, type = "fraction", strand = "*", BamGAL = NULL,
   GenomeAxisTrack = FALSE, trackNameDeAn = paste("deTrack", type),
-  TxDb = NULL, add = FALSE, verbose = FALSE, ...)
+  TxDb = NULL, sizes = NULL, add = FALSE, verbose = FALSE, ...)
 }
 \arguments{
 \item{x}{an ASEset object.}
@@ -26,9 +26,11 @@ plotted. See \code{getAlleleCounts} for more information of choice of strand.}
 
 \item{TxDb}{a TxDb object which provides annotation}
 
+\item{sizes}{vector with the sum 1. Describes the size of the tracks}
+
 \item{add}{add to existing plot}
 
-\item{verbose}{Makes function more talkative}
+\item{verbose}{if set to TRUE it makes function more talkative}
 
 \item{...}{arguments passed on to barplot function}
 }
@@ -42,6 +44,8 @@ information on plot type (see \code{\link{lbarplot}}), strand type (see
 \code{\link{getAlleleCounts}}), Annotation tracks are created from the Gviz
 packageh. It is obviously important to make sure that the genome build used
 is set correctly, e.g. 'hg19'.
+
+sizes has to be of the same length as the number of tracks used.
 }
 \examples{
 data(ASEset)

@@ -481,19 +481,56 @@ setMethod("frequency", signature(x = "ASEset"), function(x,
 
 #' @rdname ASEset-class
 #' @export 
-setGeneric("genotype", function(x){
+setGeneric("genotype", function(x, ...){
     standardGeneric("genotype")
 })
 
 #' @rdname ASEset-class
 #' @export 
-setMethod("genotype", signature(x = "ASEset"), function(x){
-	
+setMethod("genotype", signature(x = "ASEset"), function(x,
+			return.class="matrix"){
+
     if (!("genotype" %in% names(assays(x)))) {
 		stop(paste("genotype matrix is not present as assay in",
 				   " ASEset object, see '?inferGenotypes' "))
     }
-	assays(x)[["genotype"]]
+
+	if(return.class=="matrix"){
+		assays(x)[["genotype"]]
+	}else if(return.class=="array"){
+
+		ar <- array(NA,dim=c(nrow(x),ncol(x),length(x@variants)),
+					dimnames=list(rownames(x), colnames(x),1:length(x@variants)))
+
+		ar[,,1] <- vapply(
+					assays(x)[["genotype"]],
+					function(y){
+						substring(y,1,1) 
+					 }, character(1))
+				
+		ar[,,2] <- vapply(
+					assays(x)[["genotype"]],
+					function(y){
+						substring(y,3,3) 
+					 }, character(1))
+				
+
+		ar[,,3] <- vapply(
+					assays(x)[["genotype"]],
+					function(y){
+						substring(y,5,5) 
+					 }, character(1))
+
+		ar[,,4] <- vapply(
+					assays(x)[["genotype"]],
+					function(y){
+						substring(y,7,7) 
+					 }, character(1))
+
+		ar[ar==""] <- NA
+		ar
+	}else{ stop("return.class type doesnt exist")}
+
 })
 #' @rdname ASEset-class
 #' @export 

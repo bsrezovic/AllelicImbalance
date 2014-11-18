@@ -3,7 +3,7 @@
 \alias{getAlleleCounts}
 \title{snp count data}
 \usage{
-getAlleleCounts(BamList, GRvariants, strand = "*", return.type = "list",
+getAlleleCounts(BamList, GRvariants, strand = "*", return.class = "list",
   verbose = TRUE)
 }
 \arguments{
@@ -18,7 +18,7 @@ retrieve}
 retrieve counts from all reads, or only from reads marked as '+', '-' or '*'
 (unknown), respectively.}
 
-\item{return.type}{'list' or 'array'}
+\item{return.class}{'list' or 'array'}
 
 \item{verbose}{Setting \code{verbose=TRUE} makes function more talkative}
 }

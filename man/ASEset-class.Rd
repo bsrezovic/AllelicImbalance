@@ -45,9 +45,9 @@ arank(x, return.type = "names", return.class = "list", strand = "*", ...)
 
 frequency(x, ...)
 
-genotype(x)
+genotype(x, ...)
 
-\S4method{genotype}{ASEset}(x)
+\S4method{genotype}{ASEset}(x, return.class = "matrix")
 
 genotype(x) <- value
 

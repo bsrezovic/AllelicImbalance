@@ -39,7 +39,9 @@ NULL
 #' genome(x) <- 'hg19'
 #' seqlevels(r) <- seqlevels(x)
 #' 
-#' GR <- GRanges(seqnames=seqlevels(x),ranges=IRanges(start=min(start(x)),end=max(end(x))),strand='+', genome=genome(x))
+#' GR <- GRanges(seqnames=seqlevels(x),
+#'			ranges=IRanges(start=min(start(x)),end=max(end(x))),
+#'			strand='+', genome=genome(x))
 #' 
 #' deTrack <- ASEDAnnotationTrack(x, GR=GR, type='fraction',strand='+')
 #' covTracks <- CoverageDataTrack(x,BamList=r,strand='+') 
@@ -126,6 +128,10 @@ setMethod("ASEDAnnotationTrack", signature(x = "ASEset"), function(x, GR = rowDa
 		e$mainvec <- rep("",nrow(e$x))
 	}
 
+    if (!exists("cex.mainvec", envir = e, inherits = FALSE)) {
+		e$cex.mainvec <- 1
+	}
+
     if (!exists("ylab", envir = e, inherits = FALSE)) {
         e$ylab <- ""
     }
@@ -133,6 +139,10 @@ setMethod("ASEDAnnotationTrack", signature(x = "ASEset"), function(x, GR = rowDa
         e$xlab <- ""
     }
 		
+    if (!exists("middleLine", envir = e, inherits = FALSE)) {
+        e$middleLine <- TRUE
+    }
+
     ranges <- rowData(x)
     
     colnames(x) <- 1:ncol(x)
@@ -158,20 +168,19 @@ setMethod("ASEDAnnotationTrack", signature(x = "ASEset"), function(x, GR = rowDa
         
     }
 
-	print("erste")
-	print(strand)
-
     # plot the fraction
     deTrack <- AnnotationTrack(range = ranges, genome = genome(x), id = rownames(x), 
         name = trackName, stacking = "squish", fun = details, 
 		detailsFunArgs = c(ylab=e$ylab,
 						   xlab=e$xlab,
 						   deAnnoPlot = e$deAnnoPlot,
+						   cex.mainvec = e$cex.mainvec,
 						   mainvec=list(list(e$mainvec)),
 						   type=type, 
 						   x=x, 
 						   astrand=strand, 
-						   ids=list(list(rownames(x)))
+						   ids=list(list(rownames(x))),
+						   middleLine=e$middleLine
 						)
 		)
     deTrack

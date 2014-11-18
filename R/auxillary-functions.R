@@ -10,12 +10,11 @@ NULL
 #' either GRanges, GAlignments or GappedAlignmentpairs objects.
 #' 
 #' It is recommended to use the impBamGAL() which takes information of gaps
-#' into account. It is also possible to use the other variants as well, but
-#' then pre-filtering becomes important because gapped, intron-spanning reads
-#' will cause problems. This is because the GRanges objects can not handle if
-#' gaps are present and will then give a wrong result when calculating the
-#' allele (SNP) count table.
-#' 
+#' into account. If searchArea consists of overlapping ranges or ranges with 
+#' an inter-distance shorter than the read length some reads may be imported
+#' multiple times. To avoid this set option reduce=TRUE and if the searchArea
+#' symbolises SNPs, then set readLength to the length of reads in sequencing.
+#'
 #' If the sequence data is strand-specific you may want to set XStag=TRUE. The
 #' strand specific information will then be stored in the meta columns with
 #' column name 'XS'.
@@ -26,8 +25,11 @@ NULL
 #' @param UserDir The relative or full path of folder containing bam files.
 #' @param searchArea A \code{GenomicRanges object} that contains the regions of
 #' interest
-#' @param XStag Setting \code{XStag=TRUE} stores the strand specific
-#' information in the mcols slot 'XS'
+#' @param XStag Setting \code{XStag=TRUE}, if the XS-tag is present the strand specific
+#' information will be placed in the mcols slot 'XS'
+#' @param readLength length of sequence reads (default: 150)
+#' @param reduce booleon to hinder importing same read multiple times (see details)
+#' @param scanBamFlag set scanBamFlag using scanBamFlag()
 #' @param verbose Setting \code{verbose=TRUE} gives details of procedure during
 #' function run.
 #' @return \code{impBamGRL} returns a GRangesList object containing the RNA-seq
@@ -62,11 +64,24 @@ NULL
 
 
 #' @rdname import-bam
-impBamGRL <- function(UserDir, searchArea, verbose = TRUE) {
+impBamGRL <- function(UserDir, searchArea, readLength=150, reduce=FALSE, scanBamFlag=NULL, verbose = TRUE) {
     # Set parameters
-    which <- searchArea  #A GRanges, RangesList, RangedData, or missing object, from which a IRangesList instance will be constructed.
+    which <- searchArea  
+	
+	#to not risk import reads multiple times
+	if(reduce){
+		which <- reduce(which+readLength)
+	}
+
     what <- scanBamWhat()  #A character vector naming the fields to return. scanBamWhat() returns a vector of available fields. Fields are described on the scanBam help page.
-    flag <- scanBamFlag(isUnmappedQuery = FALSE)
+
+	if(is.null(scanBamFlag)){
+		flag <- scanBamFlag()
+	}else{
+		flag <- scanBamFlag
+	}
+
+
     param <- ScanBamParam(flag = flag, which = which, what = what)  #store ScanBamParam in param.
     
     # Point to correct directory and create a BamFileList object
@@ -156,11 +171,22 @@ impBamGRL <- function(UserDir, searchArea, verbose = TRUE) {
 }
 
 #' @rdname import-bam
-impBamGAL <- function(UserDir, searchArea, XStag = FALSE, verbose = TRUE) {
+impBamGAL <- function(UserDir, searchArea, readLength=150, reduce=FALSE, scanBamFlag=NULL, XStag = FALSE, verbose = TRUE) {
     # Set parameters
-    which <- searchArea  #A GRanges, RangesList, RangedData, or missing object, from which a IRangesList instance will be constructed.
+    which <- searchArea  
+
+	#to not risk import reads multiple times
+	if(reduce){
+		which <- reduce(which+readLength)
+	}
+
     what <- scanBamWhat()  #A character vector naming the fields to return. scanBamWhat() returns a vector of available fields. Fields are described on the scanBam help page.
-    flag <- scanBamFlag(isUnmappedQuery = FALSE)
+	if(is.null(scanBamFlag)){
+		flag <- scanBamFlag()
+	}else{
+		flag <- scanBamFlag
+	}
+
     
     if (XStag) {
         param <- ScanBamParam(flag = flag, which = which, what = what, tag = "XS")  #store ScanBamParam in param.
@@ -509,7 +535,7 @@ realCigarPositionsList <- function(RleCigarList) {
 #' '-', or '*'.  This argument determines if \code{getAlleleCounts} will
 #' retrieve counts from all reads, or only from reads marked as '+', '-' or '*'
 #' (unknown), respectively.
-#' @param return.type 'list' or 'array'
+#' @param return.class 'list' or 'array'
 #' @param verbose Setting \code{verbose=TRUE} makes function more talkative
 #' @return \code{getAlleleCounts} returns a list of several data.frame objects,
 #' each storing the count data for one SNP.
@@ -538,14 +564,16 @@ realCigarPositionsList <- function(RleCigarList) {
 #' 
 #' 
 #' @export getAlleleCounts
-getAlleleCounts <- function(BamList, GRvariants, strand = "*", return.type = "list", 
-    verbose = TRUE) {
+getAlleleCounts <- function(BamList, GRvariants, strand = "*",
+						return.class = "list", verbose = TRUE) { 
+    
     
     if (!class(BamList) %in% c("GAlignments", "GAlignmentsList")) {
         stop("BamList has to be of class GAlignments or GAlignmnetsList\n")
     }
-    # if just one element of, make list (which is a convenient way of handling this
-    # input type)
+    # if just one element of, make list (which is a convenient way of
+	# handling this input type)
+    # 
     if (class(BamList) == "GAlignments") {
         BamList <- GAlignmentsList(BamList)
     }
@@ -561,30 +589,39 @@ getAlleleCounts <- function(BamList, GRvariants, strand = "*", return.type = "li
         stop("strand parameter has to be either '+', '-' or '*' ")
     }
     
-    # if the user sent in the GRangesList for GRvariants, take out only the unique
-    # entries.
+    # if the user sent in the GRangesList for GRvariants,
+	# take out only the unique entries.
+    # 
     if (class(GRvariants) == "GRangesList") {
-        GRvariants <- unique(unlist(GRvariants, use.names = FALSE))  #merge BcfGRL to one unique set of Snps
+        GRvariants <- unique(unlist(GRvariants, use.names = FALSE)) 
     }
    
+	#if BamList is not list, make it a list
+	if(class(BamList)=="GAlignments"){
+		BamList <- GAlignmentsList(BamList)
+	}
+
 	#Drop seqlevels in BamList that are not in GRvariants
-	seqlevels(BamList,force=TRUE) <- seqlevels(GRvariants)
+	#seqlevels(BamList,force=TRUE) <- seqlevels(GRvariants)
+	seqinfo(GRvariants) <- merge(seqinfo(GRvariants), seqinfo(BamList))
+	seqlevels(GRvariants) <- seqlevelsInUse(GRvariants)
+
 
     # check that seqlevels are the same
-    if (!identical(seqlevels(BamList), seqlevels(GRvariants))) {
-        stop("!identical(seqlevels(BamList), seqlevels(GRvariants))\n")
-    }
-    
+   # if (!identical(seqlevels(BamList), seqlevels(GRvariants))) {
+   #     stop("!identical(seqlevels(BamList), seqlevels(GRvariants))\n")
+   # }
     
     # checking that GRvariants is ok
     if (class(GRvariants) != "GRanges") 
-        stop(paste("GRvariants must be of class GRanges, not", class(GRvariants)))
+        stop(paste("GRvariants must be of class GRanges, not",
+				   class(GRvariants)))
     if (length(GRvariants) == 0) 
-        stop("GRvariants was given as an empty GRanges object. There can be no Snps retrieved by getAlleleCount then")
+        stop("GRvariants was given as an empty GRanges object.",
+			 " There can be no Snps retrieved by getAlleleCount then")
     if (any(width(GRvariants) != 1)) 
-        stop("GRvariants can contain only entries of width=1, corresponding to SNPs.")
-    
-    
+        stop("GRvariants can contain only entries of width=1,",
+			 " corresponding to SNPs.")
     
     # checking that verbose is ok
     if (class(verbose) != "logical") 
@@ -592,16 +629,25 @@ getAlleleCounts <- function(BamList, GRvariants, strand = "*", return.type = "li
     if (length(verbose) != 1) 
         stop(paste("verbose must be of length 1, not", length(verbose)))
     
-    
     # make row-names
     if (sum(grepl("chr", seqnames(GRvariants))) > 0) {
-        snpNames <- paste(seqnames(GRvariants), "_", start(GRvariants), sep = "")
+        snpNames <- paste(seqnames(GRvariants),
+						  "_", start(GRvariants), sep = "")
     } else {
-        snpNames <- paste("chr", seqnames(GRvariants), "_", start(GRvariants), sep = "")
+        snpNames <- paste("chr", seqnames(GRvariants),
+						  "_", start(GRvariants), sep = "")
     }
     
+	# needs name, need a more general solution here
+	if(length(names(BamList)) == 0){
+		warning("no set names for list, new names will be sample1,2,3,etc")
+		names(BamList) <- paste("sample",1:length(BamList),sep="")
+	}
+
+	#empty array that handles only four nucleotides + one del columns
     dimnames = list(snpNames, names(BamList), c("A", "C", "G", "T"))
-    ar1 <- array(NA, c(length(GRvariants), length(BamList), 4), dimnames = dimnames)  #empty array that handles only four nucleotides + one del columns
+    ar1 <- array(NA, c(length(GRvariants), length(BamList), 4),
+				 dimnames = dimnames)  
     
     # use strand choice to only get reads from that strand
     if (!strand == "*") {
@@ -616,25 +662,33 @@ getAlleleCounts <- function(BamList, GRvariants, strand = "*", return.type = "li
             cat("sample ", sample, "\n")
         
         gal <- BamList[[j]]
+		my_IGPOI <- GRvariants
+		seqlevels(gal) <- seqlevels(my_IGPOI) 
+		qseq <- mcols(gal)$seq
         
-        nuclpiles <- pileLettersAt(mcols(gal)[, "seq"], seqnames(gal), start(gal), 
-            cigar(gal), GRvariants)
+#        nuclpiles <- pileLettersAt(mcols(gal)[, "seq"], seqnames(gal), start(gal), 
+#            cigar(gal), GRvariants)
+#
+		nuclpiles <- pileLettersAt(qseq, seqnames(gal), start(gal), cigar(gal),
+							                                 my_IGPOI)
         
         # fill array
         nstr <- strsplit(as.character(nuclpiles), "")
         for (k in 1:length(GRvariants)) {
             ar1[k, j, ] <- c(sum(nstr[[k]] %in% "A"), sum(nstr[[k]] %in% "C"), sum(nstr[[k]] %in% 
-                "G"), sum(nstr[[k]] %in% "T"))  #del will always be 0. Could have set it to NA, but then it makes problem further  down in the chain of functions...\t\t\t
+                "G"), sum(nstr[[k]] %in% "T"))  
         }
-        
         
     }
     
     # check return.type argument
-    if (return.type == "list") {
+    if (return.class == "list") {
         alleleCountList <- list()
         for (i in 1:nrow(ar1)) {
             mat <- ar1[i, , ]
+			if(class(mat)=="integer"){
+				mat <- t(as.matrix(mat))
+			}
             if (class(mat) == "numeric") {
                 mat <- t(mat)
                 colnames(mat) <- dimnames[[3]]
@@ -646,7 +700,7 @@ getAlleleCounts <- function(BamList, GRvariants, strand = "*", return.type = "li
         }
         names(alleleCountList) <- dimnames[[1]]
         alleleCountList
-    } else if (return.type == "array") {
+    } else if (return.class == "array") {
         ar1
     } else {
         cat("return.type unknown\n Nothing will be returned from function!")
@@ -1493,6 +1547,9 @@ barplotLatticeFraction <- function(identifier, ...) {
 	if(class(e$mainvec)=="list"){
 		e$mainvec <- unlist(e$mainvec)
 	}
+    if (!exists("cex.mainvec", envir = e, inherits = FALSE)) {
+		e$cex.mainvec <- 1
+	}
     if (!exists("main", envir = e, inherits = FALSE)) {
 		e$main <- e$mainvec[e$ids %in% identifier]
 	}
@@ -1506,6 +1563,9 @@ barplotLatticeFraction <- function(identifier, ...) {
     }
     if (!exists("xlab", envir = e, inherits = FALSE)) {
         e$xlab <- ""
+    }
+    if (!exists("middleLine", envir = e, inherits = FALSE)) {
+        e$middleLine <- TRUE 
     }
 	#acounts<-  alleleCounts(e$x, strand = strand)
 	arank<-  arank(e$x, strand = e$strand)
@@ -1522,8 +1582,8 @@ barplotLatticeFraction <- function(identifier, ...) {
     for (i in 1:length(a.f)) {
         sample <- c(sample, rownames(afraction)[i], rownames(afraction)[i])
     }
-    df <- data.frame(values = values, sample = sample, alleles = rep(a.r, length(a.f))
-)
+    df <- data.frame(values = values, sample = sample, alleles = rep(a.r, length(a.f)))
+
     
     TFna <- is.na(df$values)
     df$values[TFna] <- 0  # 0.5 + 0.5 -> 1
@@ -1542,39 +1602,52 @@ barplotLatticeFraction <- function(identifier, ...) {
     parset <- list()
     scales = list(rot = c(90, 0))
     
-    #if (!exists("amainVec", envir = e, inherits = FALSE)) {
-    #   e$amainVec <- rownames(x[identifier,])
-    #}
-	    if (e$deAnnoPlot) {
-        parset <- list(
-					   layout.widths = list(
-							left.padding = 0,
-							axis.left = 0,
-							ylab.axis.padding = 0, 
-							right.padding = 0, 
-							axis.right = 0
-							),
-					   layout.heights = list(
-							top.padding = 0.1,
-							between = 0.1,
-							xlab.top= 0.1,
-							axis.top = 0,
-							main=1.1,
-							main.key.padding=1,
-							axis.xlab.padding = 1, 
-							bottom.padding = 1, 
-							axis.bottom = 0.3
-							)
-					   )
-        
-        scales = list(y = list(at = NULL, labels = NULL), rot = c(90, 0))
-        
-    }
+	if (e$deAnnoPlot) {
+		parset <- list(
+				   layout.widths = list(
+						left.padding = 0,
+						axis.left = 0,
+						ylab.axis.padding = 0, 
+						right.padding = 0, 
+						axis.right = 0
+						),
+				   layout.heights = list(
+						top.padding = 0.1,
+						between = 0.1,
+						xlab.top= 0.1,
+						axis.top = 0,
+						main=1.1,
+						main.key.padding=1,
+						axis.xlab.padding = 1, 
+						bottom.padding = 1, 
+						axis.bottom = 0.3
+						)
+				   )
+	
+		scales = list(y = list(at = NULL, labels = NULL),
+					  x = list(labels = rep("",ncol(e$x)))
+					  )
+					  #, rot = c(90, 0))
+	}
     
-    b <- barchart(values ~ sample, group = alleles, data = df, col = my_cols, origin = 0, 
-        stack = TRUE, scales = scales, main = e$main, ylab = e$ylab, xlab = e$xlab, 
-        par.settings = parset)
-    
+	if(!e$middleLine) {
+		b <- barchart(values ~ sample, group = alleles, data = df, col = my_cols, origin = 0, 
+		    stack = TRUE, scales = scales, 
+			main = list(label=e$main, cex=e$cex.mainvec), 
+			ylab = e$ylab, xlab = e$xlab, 
+		    par.settings = parset)
+	}else if (e$middleLine) {
+		b <- barchart(values ~ sample, group = alleles, data = df, col = my_cols, origin = 0, 
+			stack = TRUE, scales = scales, 
+			main = list(label=e$main, cex=e$cex.mainvec), 
+			ylab = e$ylab, xlab = e$xlab, 
+			par.settings = parset, panel=function(x, y, ...) {
+				 panel.barchart(x, y, ...)
+				 panel.abline(h=0.5, lty=1)
+			}  )
+	}else {
+		stop("middleLine has to be TRUE or FALSE")
+	} 
     b
     
 }
@@ -1891,3 +1964,190 @@ implodeList <- function(x) {
     eval(parse(text = paste0("for(i in 1:length(", oname, ")){assign(names(", oname, 
         ")[i],", oname, "[[i]])}")), parent.frame())
 } 
+
+#' alleleCounts from bam file
+#' 
+#' count alleles before creating ASEse.
+#' 
+#' counts the alleles in a bam file based on GRanges positions. 
+#' 
+#' 
+#' @param gr GRanges that contains SNPs of interest
+#' @param pathToDir path to directory of bam files
+#' @param flag specify one flag to use as filter, default is no filtering. 
+#' allowed flags are 99, 147, 83 and 163
+#' @param scanBamFlag set a custom flag to use as filter
+#' @param return.class type of class for the returned object
+#' @param verbose makes funciton more talkative
+#' @author Jesper R. Gadin
+#' @keywords allelecount counting
+#' @examples
+#'
+#' data(GRvariants)
+#' gr <- GRvariants
+#'
+#' ##not run at the moment
+#' #pathToDir <- system.file('inst/extdata/ERP000101_subset', package='AllelicImbalance')
+#' #ar <- countAllelesFromBam(gr, pathToDir)
+#'  
+#' @export countAllelesFromBam
+countAllelesFromBam <- function(gr, pathToDir, flag=NULL, scanBamFlag=NULL, return.class="array", verbose=TRUE) {
+
+	bamDir <- normalizePath(pathToDir)
+	allFiles <- list.files(bamDir, full.names = TRUE)
+	bamFiles <- allFiles[grep(".bam$", allFiles)]
+	if (length(bamFiles) == 0) {
+		stop(paste("No bam files found in", bamDir))
+	}
+	if (!all(file.exists(paste(bamFiles, ".bai", sep = "")))) {
+		if (verbose) {
+			cat(paste("The bam files in UserDir are required to also have", ".bam.bai index files.", 
+				" Trying to run indexBam function on each", "\n"), )
+		}
+		indexBam(bamFiles)
+		if (!all(file.exists(paste(bamFiles, ".bai", sep = "")))) {
+			stop("The bam files in UserDir are required to also have", ".bam.bai index files.")
+		} else {
+			if (verbose) {
+				cat(paste("Succesfully indexed all bamFiles in UserDir", UserDir, 
+				  "\n"))
+			}
+		}
+	}
+	
+	#scanBamFlag
+	if(is.null(scanBamFlag) & is.null(flag)){
+		flag <- scanBamFlag()
+	}
+	if(!is.null(scanBamFlag) ){
+		if(length(scanBamFlag)==2){
+			flag <- scanBamFlag
+		}else{
+			stop("scanBamFlag has to be the return values from scanBamFlag()")
+		}
+	}
+	#flags can be 99 147 83 or 163
+	if(length(flag)==1 & is.null(scanBamFlag)){
+		if(! (flag%in%c(99,147,83,163))){
+			stop(paste("flag values can only be 99 147 83 or 163",
+					   "the input flag value was", flag,sep=" "))
+		}
+		
+		if(flag==99){
+
+			flag=scanBamFlag( isPaired = TRUE,
+					isProperPair = TRUE,
+					isFirstMateRead = TRUE,	
+					isMateMinusStrand = TRUE
+					)
+		}else if(flag==83){
+
+			flag=scanBamFlag(
+					isPaired = TRUE,
+					isProperPair = TRUE,
+					isFirstMateRead = TRUE,	
+					isMinusStrand = TRUE
+					)
+		}else if(flag==147){
+		
+			flag=scanBamFlag(
+					isPaired = TRUE,
+					isProperPair = TRUE,
+					isFirstMateRead = FALSE,	
+					isMinusStrand = TRUE
+					)
+		}else if(flag==163){
+		
+			flag=scanBamFlag(
+					isPaired = TRUE,
+					isProperPair = TRUE,
+					isFirstMateRead = FALSE,	
+					isMateMinusStrand = TRUE
+					)
+		}
+	}
+
+
+	if(verbose){
+		cat("sam flag used:",flag,"\n")
+	}
+	fls <- PileupFiles(bamFiles)
+	
+	countF <-
+		function(x){
+		x[["seq"]][-5,,1]
+
+	}                     
+
+	which <- gr
+	p1 <- ApplyPileupsParam(flag=flag,
+							which=which, 
+							minBaseQuality = 0L,
+							what="seq",
+							yieldBy = "position",
+							yieldAll=TRUE
+							)
+
+	res <- applyPileups(fls, countF, param=p1)
+
+	ar <- array(unlist(res), dim=c(4, length(fls), length(which)),
+				dimnames=list(c("A","C","G","T"), 
+							  names(fls), 
+							  names(which)))
+	ar <- aperm(ar,dim=c(3,2,1))
+	
+	ar
+}
+
+#' ASEset from bam file
+#' 
+#' count alleles and create an ASEset direct from bam file instead of reading into R first.
+#' 
+#' counts the alleles in a bam file based on GRanges positions. 
+#' 
+#' 
+#' @param gr GenomicRanges of SNPs to create ASEset for
+#' @param PE if paired end or not (default: TRUE)
+#' @param pathToDir Directory of bam files with index in same directory
+#' @param ... passed on to countAllelesFromBam function
+#' @param flagsMinusStrand flags that mark reads coming from minus strand
+#' @param flagsPlusStrand flags that mark reads coming from plus strand
+#' @author Jesper R. Gadin
+#' @keywords allelecount
+#' @examples
+#'
+#' data(GRvariants)
+#' gr <- GRvariants
+#'
+#' ##no execution at the moment
+#' #pathToDir <- system.file('inst/extdata/ERP000101_subset', package='AllelicImbalance')
+#' #a <- ASEsetFromBam(gr, pathToDir)
+#'  
+#' @export ASEsetFromBam
+
+ASEsetFromBam <- function(gr, pathToDir,PE=TRUE, flagsMinusStrand=c(83,163), flagsPlusStrand=c(99,147), ...) {
+
+	if(!PE){
+		stop("no support for SE atm")
+	}
+
+	if(PE==TRUE){
+		#minus strand
+		arm1 <- countAllelesFromBam(gr, pathToDir, flag=83)
+		arm2 <- countAllelesFromBam(gr, pathToDir, flag=163)
+		arm <- arm1 + arm2
+
+		#plus strand
+		arp1 <- countAllelesFromBam(gr, pathToDir, flag=99)
+		arp2 <- countAllelesFromBam(gr, pathToDir, flag=147)
+		arp <- arp1 + arp2
+	}
+	
+	#ASEsetFromArray
+	a <- ASEsetFromArray(rowData, countsPlus = arp, 
+		countsMinus = arm)
+	
+	a
+}
+
+

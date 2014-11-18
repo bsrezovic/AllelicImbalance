@@ -5,9 +5,11 @@
 \alias{import-bam}
 \title{Import Bam}
 \usage{
-impBamGRL(UserDir, searchArea, verbose = TRUE)
+impBamGRL(UserDir, searchArea, readLength = 150, reduce = FALSE,
+  scanBamFlag = NULL, verbose = TRUE)
 
-impBamGAL(UserDir, searchArea, XStag = FALSE, verbose = TRUE)
+impBamGAL(UserDir, searchArea, readLength = 150, reduce = FALSE,
+  scanBamFlag = NULL, XStag = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{UserDir}{The relative or full path of folder containing bam files.}
@@ -15,11 +17,17 @@ impBamGAL(UserDir, searchArea, XStag = FALSE, verbose = TRUE)
 \item{searchArea}{A \code{GenomicRanges object} that contains the regions of
 interest}
 
+\item{readLength}{length of sequence reads (default: 150)}
+
+\item{reduce}{booleon to hinder importing same read multiple times (see details)}
+
+\item{scanBamFlag}{set scanBamFlag using scanBamFlag()}
+
 \item{verbose}{Setting \code{verbose=TRUE} gives details of procedure during
 function run.}
 
-\item{XStag}{Setting \code{XStag=TRUE} stores the strand specific
-information in the mcols slot 'XS'}
+\item{XStag}{Setting \code{XStag=TRUE}, if the XS-tag is present the strand specific
+information will be placed in the mcols slot 'XS'}
 }
 \value{
 \code{impBamGRL} returns a GRangesList object containing the RNA-seq
@@ -39,11 +47,10 @@ These functions are wrappers to import bam files into R and store them into
 either GRanges, GAlignments or GappedAlignmentpairs objects.
 
 It is recommended to use the impBamGAL() which takes information of gaps
-into account. It is also possible to use the other variants as well, but
-then pre-filtering becomes important because gapped, intron-spanning reads
-will cause problems. This is because the GRanges objects can not handle if
-gaps are present and will then give a wrong result when calculating the
-allele (SNP) count table.
+into account. If searchArea consists of overlapping ranges or ranges with
+an inter-distance shorter than the read length some reads may be imported
+multiple times. To avoid this set option reduce=TRUE and if the searchArea
+symbolises SNPs, then set readLength to the length of reads in sequencing.
 
 If the sequence data is strand-specific you may want to set XStag=TRUE. The
 strand specific information will then be stored in the meta columns with
