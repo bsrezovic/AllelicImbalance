@@ -4,7 +4,7 @@
 \title{ASEset from bam file}
 \usage{
 ASEsetFromBam(gr, pathToDir, PE = TRUE, flagsMinusStrand = c(83, 163),
-  flagsPlusStrand = c(99, 147), ...)
+  flagsPlusStrand = c(99, 147), strandUnknown = FALSE, ...)
 }
 \arguments{
 \item{gr}{GenomicRanges of SNPs to create ASEset for}
@@ -16,6 +16,8 @@ ASEsetFromBam(gr, pathToDir, PE = TRUE, flagsMinusStrand = c(83, 163),
 \item{flagsMinusStrand}{flags that mark reads coming from minus strand}
 
 \item{flagsPlusStrand}{flags that mark reads coming from plus strand}
+
+\item{strandUnknown}{default: FALSE}
 
 \item{...}{passed on to countAllelesFromBam function}
 }

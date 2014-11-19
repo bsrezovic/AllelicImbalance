@@ -2109,6 +2109,7 @@ countAllelesFromBam <- function(gr, pathToDir, flag=NULL, scanBamFlag=NULL, retu
 #' @param gr GenomicRanges of SNPs to create ASEset for
 #' @param PE if paired end or not (default: TRUE)
 #' @param pathToDir Directory of bam files with index in same directory
+#' @param strandUnknown default: FALSE
 #' @param ... passed on to countAllelesFromBam function
 #' @param flagsMinusStrand flags that mark reads coming from minus strand
 #' @param flagsPlusStrand flags that mark reads coming from plus strand
@@ -2125,7 +2126,7 @@ countAllelesFromBam <- function(gr, pathToDir, flag=NULL, scanBamFlag=NULL, retu
 #'  
 #' @export ASEsetFromBam
 
-ASEsetFromBam <- function(gr, pathToDir,PE=TRUE, flagsMinusStrand=c(83,163), flagsPlusStrand=c(99,147), ...) {
+ASEsetFromBam <- function(gr, pathToDir,PE=TRUE, flagsMinusStrand=c(83,163), flagsPlusStrand=c(99,147), strandUnknown=FALSE, ...) {
 
 	if(!PE){
 		stop("no support for SE atm")
@@ -2144,9 +2145,13 @@ ASEsetFromBam <- function(gr, pathToDir,PE=TRUE, flagsMinusStrand=c(83,163), fla
 	}
 	
 	#ASEsetFromArray
-	a <- ASEsetFromArray(rowData, countsPlus = arp, 
-		countsMinus = arm)
-	
+	if(!strandUnknown){
+		a <- ASEsetFromArray(rowData, countsPlus = arp, 
+			countsMinus = arm)
+
+	}else{	
+		a <- ASEsetFromArray(rowData, countsUnknown = arp+arm) 
+	}
 	a
 }
 
