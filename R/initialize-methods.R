@@ -287,20 +287,20 @@ ASEsetFromArrays <- function(rowData, countsUnknown = NULL, countsPlus = NULL,
     countsMinus = NULL, colData = NULL, mapBiasExpMean = NULL, 
     verbose = FALSE, ...) {
     
-    if (verbose) {
-        cat("rowData\n")
-        cat(class(rowData))
-        cat("countsPlus\n")
-        cat(class(countsPlus))
-        cat("countsMinus\n")
-        cat(class(countsMinus))
-        cat("countsUnknown\n")
-        cat(class(countsUnknown))
-        cat("colData\n")
-        cat(class(colData))
-        cat("mapBiasExpMean\n")
-        cat(class(mapBiasExpMean))
-    }
+   # if (verbose) {
+   #     cat("rowData\n")
+   #     cat(class(rowData))
+   #     cat("countsPlus\n")
+   #     cat(class(countsPlus))
+   #     cat("countsMinus\n")
+   #     cat(class(countsMinus))
+   #     cat("countsUnknown\n")
+   #     cat(class(countsUnknown))
+   #     cat("colData\n")
+   #     cat(class(colData))
+   #     cat("mapBiasExpMean\n")
+   #     cat(class(mapBiasExpMean))
+   # }
     # check that at least one of the countList options are not null
     if (is.null(c(countsPlus, countsMinus, countsUnknown))) {
         stop("at least one of the countList options has to be specified")
@@ -336,8 +336,8 @@ ASEsetFromArrays <- function(rowData, countsUnknown = NULL, countsPlus = NULL,
     
     # choose a common countList by picking the first one, for dimension info
     countList <- get(countLists[1])
-    ind <- length(unlist(unique(lapply(countList, rownames))))
-    snps <- length(countList)
+    ind <- length(dimnames(countList)[[2]])
+    snps <- length(dimnames(countList)[[1]])
     
     # SimpleList init
     assays <- SimpleList()
@@ -364,27 +364,25 @@ ASEsetFromArrays <- function(rowData, countsUnknown = NULL, countsPlus = NULL,
 		#Calculate the non-stranded representative from the stranded data
         assays[["countsUnknown"]] <- countsPlus+countsMinus
 	}
-    
     # assign mapBiasExpMean
     if (is.null(mapBiasExpMean)) {
-        assays[["mapBias"]] <- getDefaultMapBiasExpMean3D(countList)
+        assays[["mapBias"]] <- getDefaultMapBiasExpMean3D(assays[["countsUnknown"]])
     } else {
         assays[["mapBias"]] <- mapBiasExpMean
     }
     
     if (is.null(colData)) {
-        colData <- DataFrame(row.names = unlist(unique(lapply(countList, rownames))))
+        colData <- DataFrame(row.names = dimnames(assays[["countsUnknown"]])[[2]])
     }
-    
+
     sset <- SummarizedExperiment(assays = assays, rowData = rowData, colData = colData, 
         ...)
     
-    rownames(sset) <- names(countList)
+    rownames(sset) <- rownames(countList)
     
     
     # use colnames in list matrices as variants
-    variants <- unlist(unique(lapply(countList, colnames)))
-    
+    variants <- dimnames(assays[["countsUnknown"]])[[3]]    
     ASEset <- function(sset, variants) {
         # create object
         new("ASEset", sset, variants = variants)

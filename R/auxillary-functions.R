@@ -1239,14 +1239,33 @@ getDefaultMapBiasExpMean <- function(alleleCountList) {
 }
 
 getDefaultMapBiasExpMean3D <- function(alleleCountList) {
-    
-    MapBiasExpMean <- getDefaultMapBiasExpMean(alleleCountList)
-    # make 3D array
-    MapBiasExpMean3D <- array(NA, c(length(alleleCountList), length(unlist(unique(lapply(alleleCountList, 
-        rownames)))), 4))  #empty array
-    for (i in 1:length(unlist(unique(lapply(alleleCountList, rownames))))) {
-        MapBiasExpMean3D[, i, ] <- MapBiasExpMean
-    }
+   
+	if(class(alleleCountList)=="list"){
+		MapBiasExpMean <- getDefaultMapBiasExpMean(alleleCountList)
+		# make 3D array
+		MapBiasExpMean3D <- array(NA, c(length(alleleCountList),
+										length(unlist(unique(lapply(alleleCountList, 
+			rownames)))), 4))  #empty array
+		for (i in 1:length(unlist(unique(lapply(alleleCountList, rownames))))) {
+			MapBiasExpMean3D[, i, ] <- MapBiasExpMean
+		}
+	}
+	if(class(alleleCountList)=="array"){
+		# make 3D array
+		MapBiasExpMean3D <- alleleCountList
+		mapbiasmat <- t(apply(apply(alleleCountList,c(1,3),sum),
+					1, function(x){rank(x,ties.method="first")}))						
+		mapbiasmat[mapbiasmat==1] <- 0.5
+		mapbiasmat[mapbiasmat==2] <- 0.5
+		mapbiasmat[mapbiasmat==3] <- 0
+		mapbiasmat[mapbiasmat==4] <- 0
+
+		MapBiasExpMean3D <- array(NA, dim=c(nrow(mapbiasmat),dim(alleleCountList)[2],4))
+		for (i in 1:dim(alleleCountList)[2]) {
+			MapBiasExpMean3D[, i, ] <- mapbiasmat
+		}
+
+	}
     MapBiasExpMean3D
 }
 
@@ -2146,11 +2165,11 @@ ASEsetFromBam <- function(gr, pathToDir,PE=TRUE, flagsMinusStrand=c(83,163), fla
 	
 	#ASEsetFromArray
 	if(!strandUnknown){
-		a <- ASEsetFromArray(rowData, countsPlus = arp, 
+		a <- ASEsetFromArrays(rowData, countsPlus = arp, 
 			countsMinus = arm)
 
 	}else{	
-		a <- ASEsetFromArray(rowData, countsUnknown = arp+arm) 
+		a <- ASEsetFromArrays(rowData, countsUnknown = arp+arm) 
 	}
 	a
 }
