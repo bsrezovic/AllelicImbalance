@@ -109,6 +109,8 @@
 #' @importFrom lattice panel.abline
 #' @importFrom lattice panel.barchart
 #'
+#' @importFrom seqinr write.fasta
+#'
 #' @importClassesFrom GenomicRanges GRangesList
 #' @importClassesFrom GenomicRanges GRanges
 #' @importClassesFrom Gviz DataTrack

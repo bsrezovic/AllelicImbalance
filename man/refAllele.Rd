@@ -23,7 +23,6 @@ The alleles will be placed in the rowData() meta column 'ref'
 data(ASEset.sim)
 
 fasta <- system.file('extdata/hg19.chr17.subset.fa', package='AllelicImbalance')
-refAllele(ASEset.sim,fasta=fasta)
 a <- refAllele(ASEset.sim,fasta=fasta)
 }
 \author{

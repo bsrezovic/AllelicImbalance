@@ -94,7 +94,6 @@ setMethod("refFraction", signature(x = "ASEset"),
 #' data(ASEset.sim)
 #'
 #' fasta <- system.file('extdata/hg19.chr17.subset.fa', package='AllelicImbalance')
-#' refAllele(ASEset.sim,fasta=fasta)
 #' a <- refAllele(ASEset.sim,fasta=fasta) 
 #'
 #' @exportMethod refAllele
