@@ -6,7 +6,7 @@
 \title{inference of SNPs of ASEset}
 \usage{
 inferAlleles(x, strand = "*", return.type = "all",
-  threshold.frequency = 0.2, threshold.count.sample = 5,
+  threshold.frequency = 0, threshold.count.sample = 1,
   inferOver = "eachSample", allow.NA = FALSE)
 }
 \arguments{

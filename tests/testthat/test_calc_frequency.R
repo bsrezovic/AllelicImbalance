@@ -8,7 +8,7 @@ test_that("frequency list from ASEset is calculated correctly", {
 	x <- ASEset[1:2,1:3]
 	
 	#test function
-	fr <- frequency(x, return.class="list", threshold.count.sample = 0)
+	fr <- frequency(x, return.class="list", threshold.count.sample = 1)
 
     # check 
     expect_that(names(fr), equals(rownames(x)))
@@ -29,7 +29,7 @@ test_that("frequency array from ASEset is calculated correctly", {
 	x <- ASEset[1:3,1:3]
 	
 	#test function
-	fr <- frequency(x, return.class="array", threshold.count.sample = 0)
+	fr <- frequency(x, return.class="array", threshold.count.sample = 1)
 
     # check 
     expect_that(dimnames(fr)[[1]], equals(rownames(x)))

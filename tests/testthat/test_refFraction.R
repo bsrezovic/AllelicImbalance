@@ -9,7 +9,10 @@ test_that(paste("calculate reference fraction from ASEset return.class='matrix'"
 
 
 	#make this when the new reference fasta file is in place
-	res <- refFraction(x,strand="*", threshold.count.sample=0) 
+	res <- refFraction(x,strand="*", threshold.count.sample=1, inferGenotypes=TRUE) 
+
+	#remove one dim
+	res <- res[,,1]
 
     expect_that(rownames(res), equals(rownames(x)))
     expect_that(colnames(res), equals(colnames(x)))

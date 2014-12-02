@@ -450,8 +450,15 @@ setGeneric("frequency")
 
 setMethod("frequency", signature(x = "ASEset"), function(x, 
 	return.class = "list", strand = "*",
-	threshold.count.sample = 15) {
+	threshold.count.sample = 1) {
 
+	#threshold.count.sample cannot be zero (further down f=1/0 woulf fail)
+
+	if(threshold.count.sample<1){
+		stop("threshold.count.sample needs to be >1")
+	}
+
+	# get counts
 	ar <- alleleCounts(x, strand=strand, return.class="array")
 	allele.count.tot <- apply(ar, c(1,2), sum)
 

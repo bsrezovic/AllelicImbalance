@@ -14,9 +14,14 @@
 #' Reference allele is the one present in the reference genome on the forward strand.
 #'
 #' min.delta.frequency and function.test will use the value in mapBias(x) as expected value. 
-#'
+#' 
 #' function.test will use the two most expressed alleles for testing. Make therefore sure there
 #' are no tri-allelic SNPs or somatic mutations among the SNPs in the ASEset. 
+#' 
+#' inferGenotype(), set TRUE it should be used with as much samples as possible. If you split up the
+#' samples and run detectAI() on each sample separately, please make sure you have inferred 
+#' the genotypes in before hand, alternatively used the genotypes detected by another variantCaller
+#' or chip-genotypes. Use ONLY biallelic genotypes.
 #'
 #' @name detectAI
 #' @rdname detectAI
@@ -27,14 +32,17 @@
 #' @param strand strand to infer from
 #' @param threshold.count.sample least amount of counts to try to infer allele
 #' @param threshold.frequency least fraction to classify (see details)
-#' @param return.type 'ref' ,'alt' or default: 'all'
 #' @param return.class class to return (atm only class 'logical')
 #' @param min.delta.frequency minimum of frequency difference from 0.5 (or mapbias adjusted value)
 #' @param max.pvalue pvalue over this number will be filtered out
 #' @param function.test At the moment the only available option is 'binomial.test'
+#' @param inferGenotype infer genotypes based on count data in ASEset object
+#' @param random.ref set the reference as random if you dont know. Affects interpretation of results.
+#' @param verbose makes function more talkative
+#' @param gc use garbage collection when possible to save space
 #' @param ... internal arguments 
 #' @author Jesper R. Gadin
-#' @keywords infer
+#' @keywords detection
 #' @examples
 #' 
 #' #load example data
@@ -53,43 +61,125 @@ setGeneric("detectAI", function(x, ...){
 #' @rdname detectAI
 #' @export
 setMethod("detectAI", signature(x = "ASEset"), function(x, 
-	return.class = "logical", return.type="all", strand = "*",
-	threshold.frequency=0.05, threshold.count.sample=5,
-	min.delta.frequency=0.05, max.pvalue=0.05,
-	function.test="binom.test") {
+	return.class = "DetectedAI", strand = "*",
+	threshold.frequency=0, threshold.count.sample=1,
+	min.delta.frequency=0, max.pvalue=0.05,
+	inferGenotype=FALSE,
+	random.ref=FALSE,
+	function.test="binom.test",
+	verbose=TRUE,
+	gc=FALSE) {
 
+	if(inferGenotype){
+		genotype(x) <- inferGenotypes(x,threshold.frequency = 0.05, return.allele.allowed ="bi")
+	}
+	#check for presence of genotype data
+    if (!("genotype" %in% names(assays(x)))) {
+		stop(paste("genotype matrix is not present as assay in",
+				   " ASEset object, see '?inferGenotypes' ",
+				   "or set 'inferGenotypes=TRUE'"))
+    }
+
+	if(!random.ref){
+		if(!("ref" %in% colnames(mcols(x)))){
+			stop("column name 'ref' in mcols(x) is required")
+		}
+	}else{
+		mcols(x)[,"ref"] <- randomRef(x)
+	}
+
+	#1) make refFreq array (third dim has length 1 and softest condition)
+	if(verbose){cat("calculating reference fractions\n")}
 	fr <- refFraction(x, strand=strand,
-			  threshold.count.sample=threshold.count.sample)
-	fr[fr < threshold.frequency] <- NaN
-	fr[fr > (1-threshold.frequency)] <- NaN
+			  threshold.count.sample= 1)[,,1]
 
-	#survive min delta freq
-	biasmatRef <- matrix(aperm(mapBias(x, return.class="array"),c(3,2,1))[aperm(array(matrix(
-		x@variants, ncol=length(x@variants),
-		 nrow=nrow(x), byrow=TRUE) == mcols(x)[,"ref"]
-	 ,dim=c(nrow(x), length(x@variants), ncol=ncol(x))),c(2,3,1))
-	],ncol=ncol(x),nrow=nrow(x), byrow=TRUE, dimnames=list(rownames(x),colnames(x)))
+	#2) make t.c.s array
+	if(verbose){cat("checking count thresholds\n")}
+	acounts <- alleleCounts(x, strand=strand, return.class="array")
+	acounts[array(!hetFilt(x), dim=c(nrow(x), ncol(x), 4))] <- 0
+	allele.count.tot <- apply(acounts, c(1,2), sum)
+	t.c.s  <- !array(allele.count.tot,dim=c(nrow(x),ncol(x),length(threshold.count.sample))) < 
+					aperm(array(threshold.count.sample,
+						dim=c(length(threshold.count.sample),nrow(x),ncol(x) )),
+					c(2,3,1))
+	dimnames(t.c.s) <- list(rownames(fr),colnames(fr),paste(threshold.count.sample))
+
+	if(gc){
+		if(verbose){cat("removing and garbage collect temporary variables\n")}
+		rm(acounts,allele.count.tot)
+		gc()
+	}
+
+	#3) make thr.req array (if TRUE it fullfills the condition)
+	if(verbose){cat("checking frequency thresholds\n")}
+	newDims <- length(threshold.frequency)
+	thr.fr.freq <- array(fr,dim=c(nrow(x),ncol(x),newDims))
+	thr.freq <- aperm(array(threshold.frequency, dim=c(newDims,nrow(x),ncol(x))),c(2,3,1))
+
+	thr.freq.ret <- !(thr.fr.freq < thr.freq | thr.fr.freq > (1-thr.freq))
+	dimnames(thr.freq.ret) <- list(rownames(fr),colnames(fr),paste(threshold.frequency))
+
+	if(gc){
+		if(verbose){cat("removing and garbage collect temporary variables\n")}
+		rm(newDims, thr.fr.freq, thr.freq)
+		gc()
+	}
+
+	#4) delta freq array 
+	if(verbose){cat("checking delta frequency thresholds\n")}
+	biasmatRef <- mapBiasRef(x)
 
 	fr2 <- fr
 	fr2[is.na(fr2)] <- biasmatRef[is.na(fr2)] 
 
+	#make fr2 and biasmatRef to array dim 3
+	newDims <- length(min.delta.frequency)
+
+	#to keep1 (fullfills cond min.delta.freq)
 	if(any(fr2<biasmatRef)){
 		fr3 <- fr2
 		fr3[fr2<biasmatRef] <- biasmatRef[fr2<biasmatRef] - fr[fr2<biasmatRef]
-		fr[fr3 < min.delta.frequency] <- NaN
+		#reset the NA again
+		fr3[is.na(fr)] <- NA
+		#make 3d array return object 
+		fr3 <- array(fr3,dim=c(nrow(x),ncol(x),newDims))
+		tf.keep1 <- !(fr3 < min.delta.frequency)
+	}else{
+		#set all FALSE (NAs will be kept )
+		tf.keep1 <- matrix(TRUE,ncol=ncol(fr),nrow=nrow(fr))
+		tf.keep1[is.na(fr)] <- NA
+		#make 3d array return object 
+		tf.keep1 <- array(tf.keep1,dim=c(nrow(x),ncol(x),newDims))
 	}
 
+	#to keep2 (fullfills cond min.delta.freq)
 	if(any(fr2>biasmatRef)){
 		fr3 <- fr2
 		fr3[fr2>biasmatRef] <- fr[fr2>biasmatRef] - biasmatRef[fr2>biasmatRef] 
-		fr[fr3 < min.delta.frequency] <- NaN
+		#reset the NA again
+		fr3[is.na(fr)] <- NA
+		#make 3d array return object 
+		fr3 <- array(fr3,dim=c(nrow(x),ncol(x),newDims))
+		tf.keep2 <- !(fr3 < min.delta.frequency)
+	}else{
+		#set all FALSE (NAs will be kept )
+		tf.keep2 <- matrix(TRUE,ncol=ncol(fr),nrow=nrow(fr))
+		tf.keep2[is.na(fr)] <- NA
+		#make 3d array return object 
+		tf.keep2 <- array(tf.keep2,dim=c(nrow(x),ncol(x),newDims))
+	}
+	
+	delta.freq <- tf.keep1 | tf.keep2
+	dimnames(delta.freq) <- list(rownames(fr),colnames(fr),paste(min.delta.frequency))
+
+	if(gc){
+		if(verbose){cat("removing and garbage collect temporary variables\n")}
+		rm(fr2,fr3,biasmatRef,tf.keep1,tf.keep2,newDims)
+		gc()
 	}
 
-	#select return type
-	if(return.type=="ref"){fr[fr<biasmatRef]<- NaN}
-	if(return.type=="alt"){fr[fr>biasmatRef]<- NaN}
-
-	#survive stat test max p-value
+	#5)  p-value array
+	if(verbose){cat("checking p-value thresholds\n")}
 	if(function.test=="binom.test" & !max.pvalue==1){
 		idx <- which(!is.na(fr))
 		arn <- arank(x,return.type="names",return.class="matrix") 
@@ -129,15 +219,41 @@ setMethod("detectAI", signature(x = "ASEset"), function(x,
 		pv <- fr	
 		pv[idx] <- ml
 
+		#make pv array
+		pv <- array(pv,dim=c(nrow(fr), ncol(fr),length(max.pvalue)),
+					dimnames=list(rownames(fr),colnames(fr),paste(max.pvalue)))
+
+		#filter
+		newDims <- length(max.pvalue)
+		pv.thr <- aperm(array(max.pvalue, dim=c(newDims,nrow(x),ncol(x))), c(2,3,1))
+		pv.thr.ret <- pv < pv.thr
+	
+		if(gc){
+			if(verbose){cat("removing and garbage collect temporary variables\n")}
+			rm(idx,arn,ac,mat2,mat1,allele1,allele2,biasmat1,biasAllele1,ml,pv,newDims,pv.thr)
+			gc()
+		}
+
 	}else{stop("function.test must be binom.test")}
 
-	#set non p-value survivors to na
-	fr[!(pv<max.pvalue)] <- NaN
+	if(return.class=="DetectedAI"){
 
-	if(return.class=="logical"){
-		matrix(!is.na(fr),ncol=ncol(x),nrow=nrow(x), dimnames=list(rownames(x),colnames(x)))
-	}else if(return.class=="matrix"){
-		stop("return.class matrix as option is not available atm")
+		#make DetectedAI object
+		if(verbose){cat("creating DetectedAI object\n")}
+		DetectedAIFromArray(
+			x, 
+			strand=strand,
+			reference.frequency=fr,
+			threshold.frequency=thr.freq.ret,
+			threshold.count.sample=t.c.s,
+			threshold.delta.frequency=delta.freq,
+			threshold.pvalue=pv.thr.ret
+		)
+
+	}else if(return.class=="list"){
+		stop("return.class list as option is not available atm")
+	}else{
+		stop(paste("return.class",return.class,"as option is not available"))
 	}
 
 })

@@ -9,7 +9,7 @@ test_that("correct inference of genotypes from ASEset return.class='matrix'", {
 		
 	res <- inferGenotypes(x,strand="*", return.class = "matrix",
 		threshold.frequency = 0.05,
-		threshold.count.sample = 0
+		threshold.count.sample = 1
 	)
 
     expect_that(rownames(res), equals(rownames(x)))

@@ -2241,7 +2241,7 @@ makeMaskedFasta <- function(fastaIn, fastaOut, posToReplace, splitOnSeqlevels=TR
 		if(verbose){cat("replaced", length(toReplace),"instances with N\n")}
 
 		#write new file
-		library("seqinr")
+		#library("seqinr")
 		outfile <- paste(fastaOut,chr,".fa",sep="")
 
 		write.fasta(as.character(seq),names=chr, file.out=outfile, nbchar=80)	

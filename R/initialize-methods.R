@@ -449,16 +449,106 @@ RBias <- function(
 	new("ReferenceBias", sset, strands = c("*","+","-"))
 }
 
+#' Initialize DetectedAI
+#' 
+#' Functions to construct DetectedAI objects
+#' 
+#' produces a class container for reference bias calculations
+#' 
+#' @name initialize-DetectedAI
+#' @rdname initialize-DetectedAI
+#' @aliases initialize-DetectedAI 
+#' @param x \code{ASEset} 
+#' @param strand set strand to detectAI over "+","-","*"
+#' @param reference.frequency frequencies of reference alleles based allele counts
+#' @param threshold.frequency logical array for frequency thresholds
+#' @param threshold.count.sample logical array for per sample allele count thresholds
+#' @param threshold.delta.frequency logical array for delta frequency thresholds.
+#' Similar to fold-change, but is the difference in frequency from equal expression.
+#' @param threshold.pvalue logical array for pvalue thresholds (max 1, min 0)
+#' @param ... internal arguments
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords bias mapbias refBias
+#' @examples
+#'
+#' data(ASEset)
+#' a <- ASEset
+#' dai <- detectAI(a)
+#' 
+NULL
 
-##' @rdname initialize-ReferenceBias
-#refBias <- function(x){
-#
-#		if(!class(x)=="ASEset"){
-#			stop("x must be of class ASEset")
-#		}
-#
-#        # create object
-#        
-#}
-#
+#' @rdname initialize-DetectedAI
+#' @export 
+#setMethod("DetectedAI","DetectedAI", function(
+DetectedAIFromArray <- function(
+	x = "ASEset",
+	strand = "*",
+	reference.frequency=NULL,
+	threshold.frequency=NULL,
+	threshold.count.sample=NULL,
+	threshold.delta.frequency=NULL,
+	threshold.pvalue=NULL,
+	...){
+
+	sset <- SummarizedExperiment(
+				assays = SimpleList(
+					reference.frequency=reference.frequency,
+					threshold.frequency=threshold.frequency,
+					threshold.count.sample=threshold.count.sample,
+					threshold.delta.frequency=threshold.delta.frequency,
+					threshold.pvalue=threshold.pvalue
+					), 
+				rowData = rowData(x), 
+				colData = colData(x)
+			) 
+
+	rownames(sset) <- rownames(x)
+
+	#valid
+	#validObject(.Object)
+
+	#Return object
+	new("DetectedAI", sset, strand = strand)
+}
+
+#' Initialize GlobalAnalysis
+#' 
+#' Functions to construct GlobalAnalysis objects
+#' 
+#' produces a class container for a global analysis
+#' 
+#' @name initialize-GlobalAnalysis
+#' @rdname initialize-GlobalAnalysis
+#' @aliases initialize-GlobalAnalysis gba
+#' @param x \code{ASEset} 
+#' @param ... internal arguments
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords global
+#' @examples
+#'
+#' data(ASEset)
+#' a <- ASEset
+#' gba <- gba(a)
+#' 
+NULL
+
+
+#' @rdname initialize-GlobalAnalysis
+#' @export 
+#setMethod("ReferenceBias","ReferenceBias", function(
+gba <- function(
+	x = "ASEset",
+	...
+	){
+	object <- new("GlobalAnalysis", data = list())
+
+		if(!class(x)=="ASEset"){
+			stop("x must be of class ASEset")
+		}
+
+	
+	#Return object
+	object
+}
+
 

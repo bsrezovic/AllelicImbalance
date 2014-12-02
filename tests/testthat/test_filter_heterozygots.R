@@ -6,7 +6,7 @@ test_that(paste("filter heterozygots from ASEset"), {
 	#prepare testdata
 	data(ASEset)	
 	x <- ASEset
-	genotype(x) <- inferGenotypes(x)
+	genotype(x) <- inferGenotypes(x,threshold.frequency = 0.05)
 
 	res <- hetFilt(x)
 

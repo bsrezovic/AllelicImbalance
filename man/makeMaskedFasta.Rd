@@ -22,9 +22,9 @@ Replaces all selected positions in a fasta file with the character N
 }
 \examples{
 data(ASEset.sim)
-
+gr <- rowData(ASEset.sim)
 fastaIn <- system.file('extdata/hg19.chr17.subset.fa', package='AllelicImbalance')
-makeMaskedFasta(fastaIn=fastaIn, fastaOut="fastaOut",posToReplace=ASEset.sim)
+makeMaskedFasta(fastaIn=fastaIn, fastaOut="fastaOut",posToReplace=gr)
 }
 \author{
 Jesper R. Gadin

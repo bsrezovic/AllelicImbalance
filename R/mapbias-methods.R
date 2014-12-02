@@ -30,7 +30,9 @@ setGeneric("refFraction", function(x, ...
 
 setMethod("refFraction", signature(x = "ASEset"),
 		function(x, strand="*",
-			threshold.count.sample=0
+			threshold.count.sample=1,
+			random.ref=FALSE,
+			...
 	){
 	
 	#check for presence of genotype data
@@ -39,8 +41,12 @@ setMethod("refFraction", signature(x = "ASEset"),
 				   " ASEset object, see '?inferGenotypes' "))
     }
 	#check for presence of reference allele
-	if(!("ref" %in% colnames(mcols(x)))){
-		stop("column name 'ref' in mcols(x) is required")
+	if(!random.ref){
+		if(!("ref" %in% colnames(mcols(x)))){
+			stop("column name 'ref' in mcols(x) is required")
+		}
+	}else{
+		mcols(x)[,"ref"] <- randomRef(x, inferGenotypes=TRUE)
 	}
 
 	#set all snp samples elements not heterozygote to zero
@@ -51,9 +57,11 @@ setMethod("refFraction", signature(x = "ASEset"),
 	x2 <-x
 	alleleCounts(x2,strand=strand) <- acounts
 
-	#calc frequency
+	#calc frequency threshold.count.sample vector will be used further down.
+	#not using it here is because we dont want to calculate this many times.
+	#because it is heavy and not needed to calculate more than one time.
 	fr <- frequency(x2, strand=strand, return.class="array",
-			threshold.count.sample = threshold.count.sample)
+			threshold.count.sample = 1)
 
 	#select only ref rows
 	ar <- 	array(matrix(x@variants, ncol=length(x@variants),
@@ -64,11 +72,28 @@ setMethod("refFraction", signature(x = "ASEset"),
 	fr2 <- aperm(fr, c(3,2,1))
 	ar2 <- aperm(ar, c(2,3,1))
 
-	#rearrange dims
-	refs <- fr2[ar2]
-		
-	matrix(refs,ncol=ncol(x),nrow=nrow(x), byrow=TRUE,dimnames=list(rownames(x),colnames(x)))
 
+	#subset ref allele frequencies
+	refs <- fr2[ar2]
+
+	#prepare allele.count.tot to test against the threshold.count.sample
+	allele.count.tot <- apply(acounts, c(1,2), sum)
+
+	ar.tot  <- array(allele.count.tot,dim=c(nrow(x),ncol(x),length(threshold.count.sample))) < 
+					aperm(array(threshold.count.sample,
+						dim=c(length(threshold.count.sample),nrow(x),ncol(x) )), 
+						c(2,3,1))
+	ar.ref <- aperm(array(refs, dim=c(ncol(x),nrow(x),length(threshold.count.sample)),
+						  dimnames=list(colnames(x),rownames(x),paste(threshold.count.sample))),
+					c(2,1,3))
+
+	#set hte ones not passing threshold to NA
+	ar.ref[ar.tot] <- NA
+
+	#}
+		
+	#return object
+	ar.ref
 
 })
 
@@ -211,5 +236,120 @@ setMethod("defaultMapBias", signature(x = "ASEset"), function(x){
 		x
 })
 
+#' Random ref allele from genotype
+#' 
+#' Create a vector of random reference alleles
+#' 
+#' Randomly shuffles which of the two alleles for each genotype that is 
+#' indicated as reference allele.
+#' 
+#' @name randomRef
+#' @rdname randomRef
+#' @aliases randomRef,ASEset-method
+#' @docType methods
+#' @param x \code{ASEset} object
+#' @param ... internal arguments
+#' @param inferGenotypes infer genotypes from count matrix
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords mapbias
+#' @examples
+#' 
+#' #load example data
+#' data(ASEset.sim)
+#' a <- ASEset.sim
+#'
+#' mcols(a)[["ref"]] <- randomRef(a, inferGenotypes=TRUE) 
+#'
+NULL
+
+#' @rdname randomRef
+#' @export
+setGeneric("randomRef", function(x,... ){
+    standardGeneric("randomRef")
+})
+
+#' @rdname randomRef
+#' @export
+setMethod("randomRef", signature(x = "ASEset"), function(x, inferGenotypes=FALSE){
+
+		if (!inferGenotypes){
+			if (!("genotype" %in% names(assays(x)))) {
+				stop(paste("genotype matrix is not present as assay in",
+						   " ASEset object, see '?inferGenotypes' "))
+			}
+		}else{
+			genotype(x) <- inferGenotypes(x)
+		}
+
+		g <- genotype(x)
+		allele1 <- sub("/.*","",as.character(g))
+		allele2 <- sub(".*/","",as.character(g))
+
+		mat1 <- matrix(allele1, nrow=nrow(x),ncol=ncol(x),byrow=FALSE)
+		mat2 <- matrix(allele2, nrow=nrow(x),ncol=ncol(x),byrow=FALSE)
+
+		mat <- matrix(c(mat1,mat2),nrow=nrow(x))
+
+		alleles <- apply(mat, 1, 
+					 function(x){names(sort(table(x), decreasing=TRUE))[c(1,2)]})
+
+		apply(alleles, 2, sample, size=1)
+
+})
+
+#' mapBias for reference allele 
+#' 
+#' Create a matrix of bias for the reference allele
+#' 
+#' select the expected frequency for the reference allele
+#' 
+#' @name mapBiasRef
+#' @rdname mapBiasRef
+#' @aliases mapBiasRef,ASEset-method
+#' @docType methods
+#' @param x \code{ASEset} object
+#' @param ... internal arguments
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords mapbias
+#' @examples
+#' 
+#' #load example data
+#' data(ASEset)
+#' a <- ASEset
+#'
+#' mat <- mapBiasRef(a) 
+#'
+NULL
+
+#' @rdname mapBiasRef
+#' @export
+setGeneric("mapBiasRef", function(x,... ){
+    standardGeneric("mapBiasRef")
+})
+
+#' @rdname mapBiasRef
+#' @export
+setMethod("mapBiasRef", signature(x = "ASEset"), function(x){
+
+	#check presence of mapBias array
+    if (!("mapBias" %in% names(assays(x)))) {
+		stop("column name 'ref' in mcols(x) is required")
+		stop(paste("genotype matrix is not present as assay in",
+				   " ASEset object, see '?inferGenotypes' ",
+				  )) 
+	}
+
+	#check presence of reference allele
+	if(!("ref" %in% colnames(mcols(x)))){
+		stop("column name 'ref' in mcols(x) is required")
+	}
+
+	matrix(aperm(mapBias(x, return.class="array"),c(3,2,1))[aperm(array(matrix(
+		x@variants, ncol=length(x@variants),
+		 nrow=nrow(x), byrow=TRUE) == mcols(x)[,"ref"]
+	 ,dim=c(nrow(x), length(x@variants), ncol=ncol(x))),c(2,3,1))
+	],ncol=ncol(x),nrow=nrow(x), byrow=TRUE, dimnames=list(rownames(x),colnames(x)))
+
+})
 
 

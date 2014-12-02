@@ -7,10 +7,11 @@
 \usage{
 detectAI(x, ...)
 
-\S4method{detectAI}{ASEset}(x, return.class = "logical",
-  return.type = "all", strand = "*", threshold.frequency = 0.05,
-  threshold.count.sample = 5, min.delta.frequency = 0.05,
-  max.pvalue = 0.05, function.test = "binom.test")
+\S4method{detectAI}{ASEset}(x, return.class = "DetectedAI", strand = "*",
+  threshold.frequency = 0, threshold.count.sample = 1,
+  min.delta.frequency = 0, max.pvalue = 0.05, inferGenotype = FALSE,
+  random.ref = FALSE, function.test = "binom.test", verbose = TRUE,
+  gc = FALSE)
 }
 \arguments{
 \item{x}{ASEset}
@@ -18,8 +19,6 @@ detectAI(x, ...)
 \item{...}{internal arguments}
 
 \item{return.class}{class to return (atm only class 'logical')}
-
-\item{return.type}{'ref' ,'alt' or default: 'all'}
 
 \item{strand}{strand to infer from}
 
@@ -31,7 +30,15 @@ detectAI(x, ...)
 
 \item{max.pvalue}{pvalue over this number will be filtered out}
 
+\item{inferGenotype}{infer genotypes based on count data in ASEset object}
+
+\item{random.ref}{set the reference as random if you dont know. Affects interpretation of results.}
+
 \item{function.test}{At the moment the only available option is 'binomial.test'}
+
+\item{verbose}{makes function more talkative}
+
+\item{gc}{use garbage collection when possible to save space}
 }
 \description{
 detection of AllelicImbalance
@@ -52,6 +59,11 @@ min.delta.frequency and function.test will use the value in mapBias(x) as expect
 
 function.test will use the two most expressed alleles for testing. Make therefore sure there
 are no tri-allelic SNPs or somatic mutations among the SNPs in the ASEset.
+
+inferGenotype(), set TRUE it should be used with as much samples as possible. If you split up the
+samples and run detectAI() on each sample separately, please make sure you have inferred
+the genotypes in before hand, alternatively used the genotypes detected by another variantCaller
+or chip-genotypes. Use ONLY biallelic genotypes.
 }
 \examples{
 #load example data
@@ -63,5 +75,5 @@ dai <- detectAI(a)
 \author{
 Jesper R. Gadin
 }
-\keyword{infer}
+\keyword{detection}
 
