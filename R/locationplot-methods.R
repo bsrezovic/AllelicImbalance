@@ -50,7 +50,7 @@ NULL
 #' 
 #' #SNPs are plotted in the order in which they are found. 
 #' #This can be sorted according to location as follows:
-#' locationplot(ASEset[order(start(rowData(ASEset))),])
+#' locationplot(ASEset[order(start(rowRanges(ASEset))),])
 #' 
 #' #for ASEsets with fewer SNPs the 'count' type plot is
 #' # useful for detailed visualization.
@@ -71,10 +71,10 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
     cex.ylab = 0.6, cex.legend = 0.5, OrgDb = NULL, TxDb = NULL, verbose = TRUE, 
     ...) {
     # check basic chromosome and region requirement
-    if (!length(unique(seqnames(rowData(x)))) == 1) {
+    if (!length(unique(seqnames(rowRanges(x)))) == 1) {
         stop("this plot only allows one chromosome")
     }
-    if ((max(end(rowData(x))) - min(start(rowData(x)))) > 2e+05) {
+    if ((max(end(rowRanges(x))) - min(start(rowRanges(x)))) > 2e+05) {
         stop("this plot only allows a 200kb region")
     }
     
@@ -151,9 +151,9 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
         if (verbose) 
             message("extracting genes from OrgDb annotation")
         if (is.null(TxDb)) {
-            genesInRegion <- getGenesFromAnnotation(OrgDb, rowData(x), verbose = verbose)
+            genesInRegion <- getGenesFromAnnotation(OrgDb, rowRanges(x), verbose = verbose)
         } else {
-            genesInRegion <- getGenesFromAnnotation(OrgDb, rowData(x), getUCSC = TRUE, 
+            genesInRegion <- getGenesFromAnnotation(OrgDb, rowRanges(x), getUCSC = TRUE, 
                 verbose = verbose)  #if TxDb is also given, then make sure to get the UCSC ids
             
         }
@@ -161,7 +161,7 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
     if (!is.null(TxDb)) {
         if (verbose) 
             message("extracting exons from TxDb annotation")
-        exonsInRegion <- getExonsFromAnnotation(TxDb, rowData(x), verbose = verbose)
+        exonsInRegion <- getExonsFromAnnotation(TxDb, rowRanges(x), verbose = verbose)
     }
     # if user gave both TxDb and OrgDb we can cross-reference and get gene names as
     # well as UCSC-IDs
@@ -264,9 +264,9 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
     
     
     # begin calculations
-    chromosome <- unique(as.character(seqnames(rowData(x))))
+    chromosome <- unique(as.character(seqnames(rowRanges(x))))
     
-    xlim <- range(min(start(rowData(x))), max(end(rowData(x))))
+    xlim <- range(min(start(rowRanges(x))), max(end(rowRanges(x))))
     
     # increase xlim borders by 10%
     xlim[2] <- xlim[2] + (xlim[2] - xlim[1]) * 0.1
@@ -296,7 +296,7 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
     for (i in 1:nrow(x)) {
         
         # retrieve genomic position
-        genomicPos <- start(rowData(x[i]))
+        genomicPos <- start(rowRanges(x[i]))
         # calculate on-plot position and barplot size (for evenly spaced barplots)
         sizeHere <- c((xlim[2] - xlim[1])/nrow(x), 1)
         lowerLeftCorner <- c(xlim[1] + (i - 1) * sizeHere[1], 0)

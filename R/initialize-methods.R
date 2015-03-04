@@ -439,7 +439,7 @@ RBias <- function(
 				  dimnames=list(rownames(x),colnames(x),c("*","+","-")))
 	}
 
-	sset <- SummarizedExperiment(assays = SimpleList(referenceFrequency=assay), rowData = rowData(x), colData = colData(x)) 
+	sset <- SummarizedExperiment(assays = SimpleList(referenceFrequency=assay), rowData = rowRanges(x), colData = colData(x)) 
 	rownames(sset) <- rownames(x)
 
 	#valid
@@ -498,7 +498,7 @@ DetectedAIFromArray <- function(
 					threshold.delta.frequency=threshold.delta.frequency,
 					threshold.pvalue=threshold.pvalue
 					), 
-				rowData = rowData(x), 
+				rowData = rowRanges(x), 
 				colData = colData(x)
 			) 
 

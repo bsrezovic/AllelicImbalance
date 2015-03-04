@@ -66,7 +66,7 @@ NULL
 #'   TxDb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 #' 
 #'   #use for example BcfFiles as the source for SNPs of interest
-#'   GR <- rowData(ASEset)
+#'   GR <- rowRanges(ASEset)
 #'   #get annotation
 #'   g <- getGenesFromAnnotation(OrgDb,GR)
 #'   e <- getExonsFromAnnotation(TxDb,GR)

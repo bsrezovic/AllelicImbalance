@@ -76,13 +76,13 @@ NULL
 # setGeneric('plotTracks')
 
 #' @rdname ASEset-gviztrack
-setGeneric("ASEDAnnotationTrack", function(x, GR = rowData(x), type = "fraction", 
+setGeneric("ASEDAnnotationTrack", function(x, GR = rowRanges(x), type = "fraction", 
     strand = "*", trackName = paste("deTrack", type), verbose = TRUE, 
     ...) {
     standardGeneric("ASEDAnnotationTrack")
 })
 
-setMethod("ASEDAnnotationTrack", signature(x = "ASEset"), function(x, GR = rowData(x), 
+setMethod("ASEDAnnotationTrack", signature(x = "ASEset"), function(x, GR = rowRanges(x), 
     type = "fraction", strand = "*",  trackName = paste("deTrack", 
         type), verbose = TRUE, ...) {
     
@@ -143,7 +143,7 @@ setMethod("ASEDAnnotationTrack", signature(x = "ASEset"), function(x, GR = rowDa
         e$middleLine <- TRUE
     }
 
-    ranges <- rowData(x)
+    ranges <- rowRanges(x)
     
     colnames(x) <- 1:ncol(x)
     
@@ -187,11 +187,11 @@ setMethod("ASEDAnnotationTrack", signature(x = "ASEset"), function(x, GR = rowDa
 })
 
 #' @rdname ASEset-gviztrack
-setGeneric("CoverageDataTrack", function(x, GR = rowData(x), BamList = NULL, strand = NULL, 
+setGeneric("CoverageDataTrack", function(x, GR = rowRanges(x), BamList = NULL, strand = NULL, 
     start = NULL, end = NULL, trackNameVec = NULL, meanCoverage=FALSE, verbose = TRUE, ...) {
     standardGeneric("CoverageDataTrack")
 })
-setMethod("CoverageDataTrack", signature(x = "ASEset"), function(x, GR = rowData(x), 
+setMethod("CoverageDataTrack", signature(x = "ASEset"), function(x, GR = rowRanges(x), 
 	 BamList = NULL, strand = "*", start = NULL, end = NULL, trackNameVec = NULL,
 	 meanCoverage=FALSE, verbose = TRUE, ...) {
     

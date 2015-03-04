@@ -102,7 +102,7 @@ setMethod("refFraction", signature(x = "ASEset"),
 #' 
 #' Extract the allele based on SNP location from the reference fasta file
 #' 
-#' The alleles will be placed in the rowData() meta column 'ref'
+#' The alleles will be placed in the rowRanges() meta column 'ref'
 #' 
 #' 
 #' @name refAllele 
@@ -159,7 +159,7 @@ setMethod("refAllele", signature(x = "ASEset"), function(x, fasta){
 		stop("seqlevels in object x are not in fasta index file")
 	}
 	
-	ref <- scanFa(fl, param=rowData(x))
+	ref <- scanFa(fl, param=rowRanges(x))
 	close(fl)
 	
 	mcols(x)[["ref"]] <- as.vector(ref)

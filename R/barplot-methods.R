@@ -404,14 +404,14 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     # make annotation dataframes
     if ((!is.null(OrgDb) | !is.null(TxDb)) & (strand == "+" |  
         strand == "*" | strand == "both")) {
-        annDfPlus <- getAnnotationDataFrame(rowData(x), strand = "+", annotationType = annotationType, 
+        annDfPlus <- getAnnotationDataFrame(rowRanges(x), strand = "+", annotationType = annotationType, 
             OrgDb = OrgDb, TxDb = TxDb, verbose = verbose)
     } else {
         annDfPlus <- NULL
     }
     if ((!is.null(OrgDb) | !is.null(TxDb)) & (strand == "-" |  
         strand == "*" | strand == "both")) {
-        annDfMinus <- getAnnotationDataFrame(rowData(x), strand = "-", annotationType = annotationType, 
+        annDfMinus <- getAnnotationDataFrame(rowRanges(x), strand = "-", annotationType = annotationType, 
             OrgDb = OrgDb, TxDb = TxDb, verbose = verbose)
     } else {
         annDfMinus <- NULL
