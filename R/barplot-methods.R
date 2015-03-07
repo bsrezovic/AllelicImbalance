@@ -57,6 +57,7 @@
 #' away pValues where the main allele has this frequency.
 #' @param legend.fill.size size of the fill/boxes in the legend (default:NULL)
 #' @param verbose Makes function more talkative
+#' @param top.allele.criteria 'maxcount', 'ref' or 'phase'
 #' @param ... for simpler generics when extending function
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @seealso \itemize{ \item The \code{\link{ASEset}} class which the barplot
@@ -83,7 +84,8 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     xlab = TRUE, legend.colnames = "", las.ylab = 1, las.xlab = 2, cex.main = 1, 
     cex.pValue = 0.7, cex.ylab = 0.7, cex.xlab = 0.7, cex.legend = 0.6, add = FALSE, 
     lowerLeftCorner = c(0, 0), size = c(1, 1), addHorizontalLine = 0.5, add.frame = TRUE, 
-    filter.pValue.fraction = 0.99, legend.fill.size=1,legend.interspace=1, verbose = FALSE, ...) {
+    filter.pValue.fraction = 0.99, legend.fill.size=1,legend.interspace=1, verbose = FALSE, 
+	top.allele.criteria="maxcount", ...) {
     
     # catch useful graphical parameters that can be used to later add onto plot. This
     # list will be retireved by using 'glst <- barplot(x)'
@@ -1097,6 +1099,136 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                 #}
             }
         }
+    #} else if (type == "fraction") {
+    #    # a plot type that shows the allelic imbalance, irrespective of absolute read
+    #    # counts at each Snp.  this produce plots that are more easily overviewed than
+    #    # those from 'plot_reads_by_allele', but of course omits some detail information
+    #    # from these plots. Intended to use for a medium number of snps and samples
+    #    
+    #    if (strand == "both") {
+    #        stop("strand must be '+', '-' or '*' for type='fraction' ")
+    #    }
+    #    
+    #    for (i in 1:length(snps)) {
+    #        # getting revelant data
+    #        snp <- snps[i]
+    #        fgColHere <- fgCol
+    #        tmp <- alleleCounts(x, strand)[[snp]][samples, , drop = FALSE]
+    #        
+	#		#df <- fractionPlotDf(e$x, identifier, strand=e$strand, top.allele.criteria=e$top.allele.criteria)
+    #        # check for zeroRows
+    #        if ((ncol(tmp) * nrow(tmp)) == sum(tmp == 0)) {
+    #            zeroRows <- TRUE
+    #        } else {
+    #            zeroRows <- FALSE
+    #        }
+    #        
+    #        # calculating major and minor allele, warn if the two remaining alleles have too
+    #        # many counts
+    #        if (nrow(tmp) > 1) {
+    #            countsByAllele <- apply(tmp, 2, sum, na.rm = TRUE)
+    #        } else {
+    #            countsByAllele <- tmp[1, ]
+    #        }
+    #        
+    #        if (!zeroRows) {
+    #            
+    #            majorAllele <- colnames(tmp)[order(countsByAllele, decreasing = TRUE)][1]
+    #            minorAllele <- colnames(tmp)[order(countsByAllele, decreasing = TRUE)][2]
+    #            majorAndMinorFraction <- sum(countsByAllele[c(majorAllele, minorAllele)])/sum(countsByAllele)
+    #            if (verbose & majorAndMinorFraction < 0.9) {
+    #              message(paste("Snp", snp, "was possible tri-allelic, but only two most frequent alleles were plotted. Counts:"))
+    #              message(paste(paste(names(countsByAllele), countsByAllele, sep = "="), 
+    #                collapse = ", "))
+    #            }
+    #            
+    #            fraction <- tmp[, majorAllele]/(tmp[, minorAllele] + tmp[, majorAllele])
+    #        } else {
+    #            fraction <- tmp[, 1]/(tmp[, 1] + tmp[, 2])
+    #        }
+    #        
+    #        # setting no-count samples to colour grey90 and fraction 0
+    #        fgColHere[is.nan(fraction)] <- "grey90"
+    #        fraction[is.nan(fraction)] <- 0
+    #        
+    #        # if add=FALSE then make a new device
+    #        if (!add) {
+    #            plot.default(NULL, xlim = c(0, 1), ylim = c(0, 1), ylab = "", xlab = "", 
+    #              xaxt = "n", yaxt = "n")
+    #        }
+    #        
+    #        # ylim is always (0,1) and usergiven ylims are reset to this with a warning (in
+    #        # start checkups).
+    #        ylim <- c(0, 1)
+    #        
+    #        # find the centers of rectangles
+    #        xPoints <- seq(lowerLeftCorner[1], lowerLeftCorner[1] + size[1], length.out = length(fraction) + 
+    #            2)[2:(length(fraction) + 1)]
+    #        widthsOfRectangles <- rep(size[1]/(length(fraction) + 1), length(fraction))
+    #        
+    #        # normalize fraction-values to a range of c(0,size[2])
+    #        heightsOfRectangles <- ((fraction - ylim[1])/(ylim[2] - ylim[1])) * size[2]
+    #        # find the Y-coordinate center points for rectangles
+    #        yPoints <- lowerLeftCorner[2] + heightsOfRectangles/2
+    #        
+    #        # if bgCol is given, start by painting background
+    #        if (!is.null(bgCol)) {
+    #            yPointsBg <- rep(lowerLeftCorner[2] + size[2]/2, length(xPoints))
+    #            rectanglesBg <- matrix(ncol = 2, c(widthsOfRectangles, rep(size[2], 
+    #              length(widthsOfRectangles))))
+    #            symbols(x = xPoints, y = yPointsBg, bg = bgCol, rectangles = rectanglesBg, 
+    #              add = TRUE, inches = FALSE)
+    #        }
+    #        
+    #        symbols(x = xPoints, y = yPoints, bg = fgColHere, rectangles = matrix(ncol = 2, 
+    #            c(widthsOfRectangles, heightsOfRectangles)), add = TRUE, inches = FALSE)
+    #        
+    #        # add a frame to the plot
+    #        if (add.frame) {
+    #            symbols(x = lowerLeftCorner[1] + size[1]/2, y = lowerLeftCorner[2] + 
+    #              size[2]/2, rectangles = matrix(ncol = 2, c(size[1], size[2])), 
+    #              add = TRUE, inches = FALSE)
+    #        }
+    #        
+    #        # add a tick markers (easier for fraction-plots because they are restricted to
+    #        # 0-100%
+    #        marks <- c(0.25, 0.5, 0.75)
+    #        names(marks) <- c("25%", "50%", "75%")
+    #        for (markName in names(marks)) {
+    #            mark <- marks[markName]
+    #            yBase <- lowerLeftCorner[2] + ((mark - ylim[1])/(ylim[2] - ylim[1])) * 
+    #              size[2]
+    #            xBase <- xPoints[1] - widthsOfRectangles[1]/2
+    #            lines(x = c(xBase - size[1] * 0.01, xBase + size[1] * 0.01), y = c(yBase, 
+    #              yBase))
+    #            text(x = xBase - size[1] * 0.015, y = yBase, label = markName, adj = 1, 
+    #              cex = 0.7)
+    #        }
+    #        
+    #        # writing the name of each Snp on top of the plot(within frame)
+    #        text(x = 0.5, y = 1.02, label = snp, xpd = TRUE)
+    #        
+    #        # add horizontal line at 0.5
+    #        if (!is.null(addHorizontalLine)) {
+    #            lines(x = c(lowerLeftCorner[1], lowerLeftCorner[1] + size[1]), y = c(lowerLeftCorner[2] + 
+    #              size[2] * addHorizontalLine, lowerLeftCorner[2] + size[2] * addHorizontalLine))
+    #            
+    #            mapBiasHere <- mapBias(x)[[snp]]
+    #            if (!all(mapBiasHere %in% c(0.5, 0)) & !zeroRows) {
+    #              # Only activate if anything is different from 0.5 or 0
+    #              
+    #              for (j in 1:length(fraction)) {
+    #                biasfraction <- mapBiasHere[j, majorAllele]/(mapBiasHere[j, majorAllele] + 
+    #                  mapBiasHere[j, minorAllele])
+    #                yPoint <- lowerLeftCorner[2] + ((biasfraction - ylim[1])/(ylim[2] - 
+    #                  ylim[1])) * size[2]
+    #                lines(x = c(xPoints[j] - widthsOfRectangles[j]/2, xPoints[j] + 
+    #                  widthsOfRectangles[j]/2), y = c(yPoint, yPoint), lty = 2)
+    #              }
+    #            }
+    #        }
+    #    }
+    #}
     } else if (type == "fraction") {
         # a plot type that shows the allelic imbalance, irrespective of absolute read
         # counts at each Snp.  this produce plots that are more easily overviewed than
@@ -1111,44 +1243,20 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
             # getting revelant data
             snp <- snps[i]
             fgColHere <- fgCol
-            tmp <- alleleCounts(x, strand)[[snp]][samples, , drop = FALSE]
+            #tmp <- alleleCounts(x, strand)[[snp]][samples, , drop = FALSE]
             
+			df <- fractionPlotDf(x, snp, strand=strand, top.allele.criteria=top.allele.criteria)
             # check for zeroRows
-            if ((ncol(tmp) * nrow(tmp)) == sum(tmp == 0)) {
+            if (sum(df$na=="no")==0) {
                 zeroRows <- TRUE
             } else {
                 zeroRows <- FALSE
             }
             
-            
-            # calculating major and minor allele, warn if the two remaining alleles have too
-            # many counts
-            if (nrow(tmp) > 1) {
-                countsByAllele <- apply(tmp, 2, sum, na.rm = TRUE)
-            } else {
-                countsByAllele <- tmp[1, ]
-            }
-            
-            if (!zeroRows) {
-                
-                majorAllele <- colnames(tmp)[order(countsByAllele, decreasing = TRUE)][1]
-                minorAllele <- colnames(tmp)[order(countsByAllele, decreasing = TRUE)][2]
-                majorAndMinorFraction <- sum(countsByAllele[c(majorAllele, minorAllele)])/sum(countsByAllele)
-                if (verbose & majorAndMinorFraction < 0.9) {
-                  message(paste("Snp", snp, "was possible tri-allelic, but only two most frequent alleles were plotted. Counts:"))
-                  message(paste(paste(names(countsByAllele), countsByAllele, sep = "="), 
-                    collapse = ", "))
-                }
-                
-                fraction <- tmp[, majorAllele]/(tmp[, minorAllele] + tmp[, majorAllele])
-            } else {
-                fraction <- tmp[, 1]/(tmp[, 1] + tmp[, 2])
-            }
-            
             # setting no-count samples to colour grey90 and fraction 0
-            fgColHere[is.nan(fraction)] <- "grey90"
-            fraction[is.nan(fraction)] <- 0
-            
+            #fgColHere[df$na[seq(1,nrow(df),by=2)+1]=="yes"] <- "grey90"
+            bgCol[df$na[seq(1,nrow(df),by=2)+1]=="yes"] <- "grey90"
+            #fraction[is.nan(fraction)] <- 0
             
             # if add=FALSE then make a new device
             if (!add) {
@@ -1161,12 +1269,12 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
             ylim <- c(0, 1)
             
             # find the centers of rectangles
-            xPoints <- seq(lowerLeftCorner[1], lowerLeftCorner[1] + size[1], length.out = length(fraction) + 
-                2)[2:(length(fraction) + 1)]
-            widthsOfRectangles <- rep(size[1]/(length(fraction) + 1), length(fraction))
+            xPoints <- seq(lowerLeftCorner[1], lowerLeftCorner[1] + size[1], length.out = nrow(df)/2 + 
+                2)[2:(nrow(df)/2 + 1)]
+            widthsOfRectangles <- rep(size[1]/(nrow(df)/2 + 1), nrow(df)/2)
             
             # normalize fraction-values to a range of c(0,size[2])
-            heightsOfRectangles <- ((fraction - ylim[1])/(ylim[2] - ylim[1])) * size[2]
+            heightsOfRectangles <- ((df$values[seq(1,nrow(df),by=2)] - ylim[1])/(ylim[2] - ylim[1])) * size[2]
             # find the Y-coordinate center points for rectangles
             yPoints <- lowerLeftCorner[2] + heightsOfRectangles/2
             
@@ -1213,18 +1321,18 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                   size[2] * addHorizontalLine, lowerLeftCorner[2] + size[2] * addHorizontalLine))
                 
                 mapBiasHere <- mapBias(x)[[snp]]
-                if (!all(mapBiasHere %in% c(0.5, 0)) & !zeroRows) {
-                  # Only activate if anything is different from 0.5 or 0
-                  
-                  for (j in 1:length(fraction)) {
-                    biasfraction <- mapBiasHere[j, majorAllele]/(mapBiasHere[j, majorAllele] + 
-                      mapBiasHere[j, minorAllele])
-                    yPoint <- lowerLeftCorner[2] + ((biasfraction - ylim[1])/(ylim[2] - 
-                      ylim[1])) * size[2]
-                    lines(x = c(xPoints[j] - widthsOfRectangles[j]/2, xPoints[j] + 
-                      widthsOfRectangles[j]/2), y = c(yPoint, yPoint), lty = 2)
-                  }
-                }
+                #if (!all(mapBiasHere %in% c(0.5, 0)) & !zeroRows) {
+                #  # Only activate if anything is different from 0.5 or 0
+                #  
+                #  for (j in 1:length(fraction)) { #fraction doesnt exist (check df$values instead)
+                #    biasfraction <- mapBiasHere[j, majorAllele]/(mapBiasHere[j, majorAllele] + 
+                #      mapBiasHere[j, minorAllele])
+                #    yPoint <- lowerLeftCorner[2] + ((biasfraction - ylim[1])/(ylim[2] - 
+                #      ylim[1])) * size[2]
+                #    lines(x = c(xPoints[j] - widthsOfRectangles[j]/2, xPoints[j] + 
+                #      widthsOfRectangles[j]/2), y = c(yPoint, yPoint), lty = 2)
+                #  }
+                #}
             }
         }
     }
@@ -1269,7 +1377,7 @@ setGeneric("lbarplot", function(x, type = "count", strand = "*",
 })
 
 setMethod("lbarplot", signature(x = "ASEset"), function(x, type = "count", strand = "*", 
-    verbose = FALSE, ...) {
+    usePhase=FALSE, verbose = FALSE, ...) {
 
     if (length(list(...)) == 0) {
         e <- new.env(hash = TRUE)
@@ -1297,6 +1405,9 @@ setMethod("lbarplot", signature(x = "ASEset"), function(x, type = "count", stran
     if (!exists("deAnnoPlot", envir = e, inherits = FALSE)) {
         e$deAnnoPlot <- FALSE
     }
+    if (!exists("top.allele.criteria", envir = e, inherits = FALSE)) {
+        e$top.allele.criteria <- "maxcount"
+    }
 
 	for (i in 1:nrow(x)) {
 		name <- rownames(x)[i]
@@ -1311,7 +1422,8 @@ setMethod("lbarplot", signature(x = "ASEset"), function(x, type = "count", stran
 				mainvec=e$mainvec,
 				middleLine=e$middleLine,
 				deAnnoPlot=e$deAnnoPlot,
-				cex.mainvec=e$cex.mainvec)
+				cex.mainvec=e$cex.mainvec,
+				top.allele.criteria=e$top.allele.criteria)
 		} else if (type == "count") {
 			b <- barplotLatticeCounts(
 				identifier = name, 

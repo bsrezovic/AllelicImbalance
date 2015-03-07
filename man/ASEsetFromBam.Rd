@@ -39,5 +39,5 @@ gr <- GRvariants
 \author{
 Jesper R. Gadin
 }
-\keyword{allelecount}
+\keyword{ASEset}
 

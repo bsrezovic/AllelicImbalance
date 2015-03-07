@@ -25,14 +25,22 @@ NULL
 #' the RNA-seq experiment under analysis has in fact been created so that
 #' correct strand information was obtained. The most functions will by default 
 #' have their strand argument set to '*'.
+#'
+#' The phase information is stored by the convention of 
+#' 'maternal chromosome|paternal chromosome', with 0 as reference allele and 1 
+#' as alternative allele. '|' when the phase is known and '/' when the phase is
+#' unknown. Internally the information will be stored as an three dimensional 
+#' array, dim 1 for SNPs, dim 2 for Samples and dim 3 which is fixed and stores 
+#' maternal chromosome, paternal chromosome and phased (1 equals TRUE).
+#'
 #' 
 #' @name ASEset-class
 #' @rdname ASEset-class
 #' @aliases ASEset-class ASEset alleleCounts mapBias fraction arank 
-#' frequency genotype genotype<- alleleCounts,ASEset-method mapBias,ASEset-method
+#' frequency genotype genotype<- phase phase<- alleleCounts,ASEset-method mapBias,ASEset-method
 #' fraction,ASEset-method arank,ASEset-method 
 #' frequency,ASEset-method genotype,ASEset-method genotype<-,ASEset-method
-#' alleleCounts<- alleleCounts<-,ASEset-method
+#' alleleCounts<- alleleCounts<-,ASEset-method phase,ASEset-method phase<-,ASEset-method
 #' 
 #' @docType class
 #' @param x ASEset object
@@ -40,7 +48,8 @@ NULL
 #' @param verbose makes function more talkative
 #' @param return.type return 'names', rank or 'counts'
 #' @param return.class return 'list' or 'array'
-#' @param value value as replacement
+#' @param top.allele.criteria 'maxcount', 'ref' or 'phase'
+#' @param value replacement variable
 #' @param ... additional arguments
 #' @return An object of class ASEset containing location information and allele
 #' counts for a number of SNPs measured in a number of samples on various
@@ -88,6 +97,8 @@ NULL
 #' are in the 1st dimension, samples in the 2nd dimension and variants in the
 #' 3rd dimension.} \item{verbose}{Makes function more talkative}
 #' \item{...}{arguments passed on to SummarizedExperiment constructor} }
+#'
+#'
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @seealso \itemize{ \item The
 #' \code{\link[GenomicRanges]{SummarizedExperiment}} for ranges operations.  }
@@ -124,11 +135,19 @@ NULL
 #' #make ASEset 
 #' a <- ASEsetFromCountList(rowData, countListPlus=countListPlus, 
 #' colData=colData)
+#'
+#'
+#' #example phase matrix (simple form)
+#' p1 <- matrix(sample(c(1,0),replace=TRUE, size=nrow(a)*ncol(a)),nrow=nrow(a), ncol(a))
+#' p2 <- matrix(sample(c(1,0),replace=TRUE, size=nrow(a)*ncol(a)),nrow=nrow(a), ncol(a))
+#' p <- matrix(paste(p1,sample(c("|","|","/"), size=nrow(a)*ncol(a), replace=TRUE), p2, sep=""),
+#' 	nrow=nrow(a), ncol(a))
 #' 
+#' phase(a) <- p
 #'
 #' @exportClass ASEset
 #' @exportMethod alleleCounts alleleCounts<- mapBias fraction arank
-#' frequency genotype genotype<-
+#' frequency genotype genotype<- phase phase<-
 #' 
 #' @export 
 
@@ -286,76 +305,91 @@ setMethod("mapBias", signature(x = "ASEset"), function(x,
 
 #' @rdname ASEset-class
 #' @export 
-setGeneric("fraction", function(x, strand = "*", verbose = FALSE) {
+setGeneric("fraction", function(x, ...) {
     standardGeneric("fraction")
 })
 
 #' @rdname ASEset-class
 #' @export 
 setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*", 
-    verbose = FALSE) {
+    top.allele.criteria="maxcount", verbose = FALSE) {
     
     if (!sum(strand %in% c("+", "-", "*")) > 0) {
         stop("strand parameter has to be either '+', '-', '*' ")
     }
     
-    if (strand == "+") {
-        el <- "countsPlus"
-    } else if (strand == "-") {
-        el <- "countsMinus"
-    } else if (strand == "*") {
-        el <- "countsUnknown"
-    } else {
-        stop("unknown strand option")
-    }
-    
-    # check if strand option is present as assay
-    if (!(el %in% names(assays(x)))) {
-        stop(paste("strand", strand, " is not present as assay in ASEset object"))
-    }
-    
-    fractionList <- list()
-    
-    for (i in 1:nrow(x)) {
-        # getting revelant data
-        tmp <- alleleCounts(x, strand)[[i]]
-        
-        # calculating major and minor allele, warn if the two remaining alleles have too
-        # many counts
-        if (nrow(tmp) > 1) {
-            countsByAllele <- apply(tmp, 2, sum, na.rm = TRUE)
-        } else {
-            countsByAllele <- tmp
-        }
-        majorAllele <- colnames(tmp)[order(countsByAllele, decreasing = TRUE)][1]
-        minorAllele <- colnames(tmp)[order(countsByAllele, decreasing = TRUE)][2]
-        majorAndMinorFraction <- sum(countsByAllele[c(majorAllele, minorAllele)])/sum(countsByAllele)
-        if (verbose & majorAndMinorFraction < 0.9) {
-            cat(paste("Snp", "was possible tri-allelic, but only two most",
-					  "frequent alleles were plotted. Counts:"), 
-					"\n")
-            cat(paste(paste(names(countsByAllele), countsByAllele, sep = "="), collapse = ", "), 
-                "\n")
-        }
-        
-        # calculating percentage and ylim and setting no-count samples to colour grey90
-        fraction <- tmp[, majorAllele]/(tmp[, majorAllele] + tmp[, minorAllele])
-        # fraction[is.nan(fraction)]<-1
-        fractionList[[i]] <- fraction
-        
-        if (i%%300 == 0) {
-            cat(paste("processed ", i, " snps\n", sep = ""))
-        }
-    }
-    
-    names(fractionList) <- rownames(x)
-    
-    # return object fractionList
-    m <- as.matrix(as.data.frame(fractionList))
-    rownames(m) <- colnames(x)
-    
-    m
-    
+	#core function
+	fr <- frequency(x, strand=strand, return.class="array")
+
+	#check and use top.allele.criteria=="phase"
+	if(top.allele.criteria=="phase"){
+		if(!"phase" %in% names(assays(x))){
+			stop("the phase slot has not been initialized")
+		}
+		if(is.null(assays(x)[["phase"]])){
+			stop("the phase slot cannot be empty if 'top.allele.criteria=\"phase\"'")
+		}
+
+		#select only ref rows
+		ar <- array(matrix(x@variants, ncol=length(x@variants),
+				 nrow=nrow(x), byrow=TRUE)==mcols(x)[,"ref"]
+			 ,dim=c(nrow(x), length(x@variants), ncol=ncol(x)))
+		
+		#rearrange to be able to transform back
+		fr2 <- aperm(fr, c(3,2,1))
+		ar2 <- aperm(ar, c(2,3,1))
+
+		#subset ref allele frequencies and make matrix
+		ret <- matrix(fr2[ar2], ncol=nrow(x), nrow=ncol(x))
+		
+		#check mat in phase
+		mat <- phase(x,return.class="array")[,,1]
+		ret[t(mat)==1] <- 1 - ret[t(mat)==1]
+
+		#reverse values in mat that are not ref (0)
+
+
+	}else if(top.allele.criteria=="ref"){
+		#check and use top.allele.criteria=="ref"
+		if(!"ref" %in% names(mcols(x))){
+			stop("the ref mcol has not been initialized")
+		}
+
+		#select only ref rows
+		ar <- array(matrix(x@variants, ncol=length(x@variants),
+				 nrow=nrow(x), byrow=TRUE)==mcols(x)[,"ref"]
+			 ,dim=c(nrow(x), length(x@variants), ncol=ncol(x)))
+		
+		#rearrange to be able to transform back
+		fr2 <- aperm(fr, c(3,2,1))
+		ar2 <- aperm(ar, c(2,3,1))
+
+		#subset ref allele frequencies and make matrix
+		ret <- matrix(fr2[ar2], ncol=nrow(x), nrow=ncol(x))
+
+	}else if(top.allele.criteria=="maxcount"){
+		#use output from rank as maxcount
+		#arank <- arank(x, strand = strand, return.class="matrix")
+
+		#select only 1st rank 
+		ar <- array(matrix(x@variants, ncol=length(x@variants),
+				 nrow=nrow(x), byrow=TRUE)==arank(x, strand = strand, return.class="matrix")[,1]
+			 ,dim=c(nrow(x), length(x@variants), ncol=ncol(x)))
+		
+		#rearrange to be able to transform back
+		fr2 <- aperm(fr, c(3,2,1))
+		ar2 <- aperm(ar, c(2,3,1))
+
+		#subset ref allele frequencies and make matrix
+		ret <- matrix(fr2[ar2], ncol=nrow(x), nrow=ncol(x))
+
+	}
+
+    # return object matrix
+	rownames(ret) <- colnames(x)
+	colnames(ret) <- rownames(x)
+    ret
+
 })
 
 #' @rdname ASEset-class
@@ -609,5 +643,53 @@ setMethod("countsPerSample", signature(x = "ASEset"), function(x,
 	}else{
 		stop("return.class has to be 'vector' or 'matrix'")
 	}
+})
+
+#' @rdname ASEset-class
+#' @export 
+setGeneric("phase", function(x, ...){
+    standardGeneric("phase")
+})
+
+#' @rdname ASEset-class
+#' @export 
+#could be renamed to countsAllAlleles
+setMethod("phase", signature(x = "ASEset"), function(x, 
+	return.class = "matrix" ) {
+
+	if(return.class=="matrix"){
+		mat <- phaseArray2Matrix(assays(x)[["phase"]])
+		colnames(mat) <- colnames(x)
+		rownames(mat) <- rownames(x)
+		mat
+	}else if(return.class=="array"){
+		assays(x)[["phase"]] 
+	}
+})
+
+#' @rdname ASEset-class
+#' @export 
+setGeneric("phase<-", function(x, value){
+    standardGeneric("phase<-")
+})
+
+#' @rdname ASEset-class
+#' @export 
+#could be renamed to countsAllAlleles
+setMethod("phase<-", signature(x = "ASEset"), function(x,value) {
+
+	if(class(value)=="matrix") {
+
+		if(!identical(dim(x),dim(value))){
+			stop("dimension of value does not correspond to the values of object ASEset")	
+		}
+	
+		assays(x)[["phase"]] <- phaseMatrix2Array(value)
+
+	}else if(class(value)=="array"){
+		assays(x)[["phase"]] <- value
+	}
+	
+	x
 })
 

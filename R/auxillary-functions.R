@@ -1407,13 +1407,6 @@ getAreaFromGeneNames <- function(genesymbols, OrgDb, leftFlank = 0, rightFlank =
 }
 
 
-
-
-
-
-
-
-
 #' Get rsIDs from locations of SNP
 #' 
 #' Given a GRanges object of SNPs and a SNPlocs annotation, this function
@@ -1586,39 +1579,18 @@ barplotLatticeFraction <- function(identifier, ...) {
     if (!exists("middleLine", envir = e, inherits = FALSE)) {
         e$middleLine <- TRUE 
     }
-	#acounts<-  alleleCounts(e$x, strand = strand)
-	arank<-  arank(e$x, strand = e$strand)
-	afraction<-  fraction(e$x, strand = e$strand)
-    # prepare data to be plotted
-    a.r <- arank[[identifier]][1:2]
-    a.f <- afraction[, identifier]
-    a.f2 <- 1 - a.f
-    values <- vector()
-    for (i in 1:length(a.f)) {
-        values <- c(values, a.f[i], a.f2[i])
+    if (!exists("top.allele.criteria", envir = e, inherits = FALSE)) {
+        e$top.allele.criteria <- "maxcount"
     }
-    sample <- vector()
-    for (i in 1:length(a.f)) {
-        sample <- c(sample, rownames(afraction)[i], rownames(afraction)[i])
-    }
-    df <- data.frame(values = values, sample = sample, alleles = rep(a.r, length(a.f)))
 
-    
-    TFna <- is.na(df$values)
-    df$values[TFna] <- 0  # 0.5 + 0.5 -> 1
-    na <- rep("no", length(values))
-    na[TFna] <- "yes"
-    df <- cbind(df, na)
-    
-    df$sample <- factor(df$sample, levels = unique(df$sample))
-    # df$sample <- factor(df$sample,levels=rownames(df))
-    
+	df <- fractionPlotDf(e$x, identifier, strand=e$strand, top.allele.criteria=e$top.allele.criteria)
     
     # Grah params
     my_cols <- c("green", "red")
     
     # set default values
-    parset <- list()
+    parset <- list(superpose.polygon=list(col=my_cols))
+
     scales = list(rot = c(90, 0))
     
 	if (e$deAnnoPlot) {
@@ -1640,7 +1612,8 @@ barplotLatticeFraction <- function(identifier, ...) {
 						axis.xlab.padding = 1, 
 						bottom.padding = 1, 
 						axis.bottom = 0.3
-						)
+						),
+				   superpose.polygon=list(col=my_cols)
 				   )
 	
 		scales = list(y = list(at = NULL, labels = NULL),
@@ -1648,15 +1621,20 @@ barplotLatticeFraction <- function(identifier, ...) {
 					  )
 					  #, rot = c(90, 0))
 	}
+	if(e$top.allele.criteria=="phase"){
+		df$groups <- df$phase
+	}else{
+		df$groups <- df$alleles
+	}
     
 	if(!e$middleLine) {
-		b <- barchart(values ~ sample, group = alleles, data = df, col = my_cols, origin = 0, 
+		b <- barchart(values ~ sample, group = groups, data = df, origin = 0, 
 		    stack = TRUE, scales = scales, 
 			main = list(label=e$main, cex=e$cex.mainvec), 
 			ylab = e$ylab, xlab = e$xlab, 
 		    par.settings = parset)
 	}else if (e$middleLine) {
-		b <- barchart(values ~ sample, group = alleles, data = df, col = my_cols, origin = 0, 
+		b <- barchart(values ~ sample, group = groups, data = df, origin = 0, 
 			stack = TRUE, scales = scales, 
 			main = list(label=e$main, cex=e$cex.mainvec), 
 			ylab = e$ylab, xlab = e$xlab, 
@@ -2133,7 +2111,7 @@ countAllelesFromBam <- function(gr, pathToDir, flag=NULL, scanBamFlag=NULL, retu
 #' @param flagsMinusStrand flags that mark reads coming from minus strand
 #' @param flagsPlusStrand flags that mark reads coming from plus strand
 #' @author Jesper R. Gadin
-#' @keywords allelecount
+#' @keywords ASEset
 #' @examples
 #'
 #' data(GRvariants)
@@ -2185,7 +2163,7 @@ ASEsetFromBam <- function(gr, pathToDir,PE=TRUE, flagsMinusStrand=c(83,163), fla
 #' @param splitOnSeqlevels write on file for each seqlevel to save memory
 #' @param verbose makes function more talkative
 #' @author Jesper R. Gadin
-#' @keywords allelecount
+#' @keywords masked fasta reference
 #' @examples
 #'
 #' data(ASEset.sim)
@@ -2252,5 +2230,32 @@ makeMaskedFasta <- function(fastaIn, fastaOut, posToReplace, splitOnSeqlevels=TR
 	close(fl)
 	if(verbose){cat("all chromosomes written to file\n")}
 }
+
+
+
+#' global analysis wrapper
+#' 
+#' A wrapper to make a global analysis based on paths for BAM, VCF and GFF files
+#' 
+#' @param pathBam path to bam file
+#' @param pathVcf path to vcf file
+#' @param pathGFF path to gff file
+#' @param verbose makes function more talkative
+#' @author Jesper R. Gadin
+#' @keywords global wrapper
+#' @examples
+#'
+#' #empty as function doesn't exist
+#' 
+#' @export 
+gba <- function(pathBam,pathVcf,pathGFF=NULL, verbose){
+
+	#summarize counts
+	
+	#detectAI
+
+	
+}
+
 
 

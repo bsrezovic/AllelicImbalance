@@ -8,7 +8,10 @@
 DetectedAIFromArray(x = "ASEset", strand = "*",
   reference.frequency = NULL, threshold.frequency = NULL,
   threshold.count.sample = NULL, threshold.delta.frequency = NULL,
-  threshold.pvalue = NULL, ...)
+  threshold.pvalue = NULL, threshold.frequency.names = NULL,
+  threshold.count.sample.names = NULL,
+  threshold.delta.frequency.names = NULL, threshold.pvalue.names = NULL,
+  ...)
 }
 \arguments{
 \item{x}{\code{ASEset}}
@@ -21,10 +24,17 @@ DetectedAIFromArray(x = "ASEset", strand = "*",
 
 \item{threshold.count.sample}{logical array for per sample allele count thresholds}
 
-\item{threshold.delta.frequency}{logical array for delta frequency thresholds.
-Similar to fold-change, but is the difference in frequency from equal expression.}
+\item{threshold.delta.frequency}{logical array for delta frequency thresholds.}
 
 \item{threshold.pvalue}{logical array for pvalue thresholds (max 1, min 0)}
+
+\item{threshold.frequency.names}{character vector}
+
+\item{threshold.count.sample.names}{character vector}
+
+\item{threshold.delta.frequency.names}{character vector}
+
+\item{threshold.pvalue.names}{character vector}
 
 \item{...}{internal arguments}
 }

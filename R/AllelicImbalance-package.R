@@ -104,9 +104,11 @@
 #' 
 #'
 #' @importFrom lattice barchart
+#' @importFrom lattice xyplot
 #' @importFrom lattice trellis.par.set
 #' @importFrom lattice panel.abline
 #' @importFrom lattice panel.barchart
+# @importFrom gridExtra grid.arrange
 #'
 #' @importFrom seqinr write.fasta
 #'

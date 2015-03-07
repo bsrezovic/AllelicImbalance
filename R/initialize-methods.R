@@ -32,6 +32,7 @@ NULL
 #' @param countsMinus An array containing the countinformation
 #' @param countsUnknown An array containing the countinformation
 #' @param colData A \code{DataFrame} object containing sample specific data
+#' @param phase A \code{matrix} or an \code{array} containing phase information. 
 #' @param mapBiasExpMean A 3D \code{array} where the SNPs are in the 1st
 #' dimension, samples in the 2nd dimension and variants in the 3rd dimension.
 #' @param verbose Makes function more talkative
@@ -95,7 +96,7 @@ NULL
 #' @rdname initialize-ASEset
 #' @export 
 ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus = NULL, 
-    countListMinus = NULL, colData = NULL, mapBiasExpMean = NULL, 
+    countListMinus = NULL, colData = NULL, mapBiasExpMean = NULL, phase = NULL,
     verbose = FALSE, ...) {
     
     if (verbose) {
@@ -112,6 +113,7 @@ ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus 
         cat("mapBiasExpMean\n")
         cat(class(mapBiasExpMean))
     }
+
     # check that at least one of the countList options are not null
     if (is.null(c(countListPlus, countListMinus, countListUnknown))) {
         stop("at least one of the countList options has to be specified")
@@ -132,8 +134,8 @@ ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus 
     l <- unlist(lapply(countLists, function(x) {
         lapply(get(x), ncol)
     }))
-    m <- matrix(unlist(l), ncol = length(l))
-    if (sum(!(m == m[1])) > 0) {
+    mat <- matrix(unlist(l), ncol = length(l))
+    if (sum(!(mat == mat[1])) > 0) {
         stop("one or more list contains more or less columns than the others")
     }
     
@@ -141,8 +143,8 @@ ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus 
     l <- unlist(lapply(countLists, function(x) {
         lapply(get(x), nrow)
     }))
-    m <- matrix(unlist(l), ncol = length(l))
-    if (sum(!(m == m[1])) > 0) {
+    mat <- matrix(unlist(l), ncol = length(l))
+    if (sum(!(mat == mat[1])) > 0) {
         stop("one or more list contains more or less rows than the others")
     }
     
@@ -154,12 +156,12 @@ ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus 
         countListName <- countLists[i]
         countList <- get(countListName)
         l <- lapply(countList, colnames)
-        m <- matrix(unlist(l), ncol = length(l))
-        if (sum(!(m == m[, 1])) > 0) {
+        mat2 <- matrix(unlist(l), ncol = length(l))
+        if (sum(!(mat2 == mat2[, 1])) > 0) {
             stop(paste("the names or order of names are not the same in all data frames in list", 
                 countListName))
         }
-        cMatrix[, i] <- m[, 1]
+        cMatrix[, i] <- mat2[, 1]
     }
     if (sum(!(cMatrix == cMatrix[, 1])) > 0) {
         stop(paste("the names or order of names are not the same between all data frame lists"))
@@ -173,12 +175,12 @@ ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus 
         countListName <- countLists[i]
         countList <- get(countListName)
         l <- lapply(countList, rownames)
-        m <- matrix(unlist(l), ncol = length(l))
-        if (sum(!(m == m[, 1])) > 0) {
+        mat2 <- matrix(unlist(l), ncol = length(l))
+        if (sum(!(mat2 == mat2[, 1])) > 0) {
             stop(paste("the names or order of names are not the same in all data frames in list", 
                 countListName))
         }
-        cMatrix[, i] <- m[, 1]
+        cMatrix[, i] <- mat2[, 1]
     }
     if (sum(!(cMatrix == cMatrix[, 1])) > 0) {
         stop(paste("the names or order of names are not the same between all data frame lists"))
@@ -193,20 +195,20 @@ ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus 
             stop("mapBiasExpMean has to have three dimensions")
         }
         
-        for (i in 1:(dim(m)[2])) {
-            # check that no snp and sample exceeds sum 1 frequency
-            if (!sum(!apply(m[, i, ], 1, sum) == 1) == 0) {
-                stop(paste("for each snp and sample the sum of allele frequencies must sum to one,\n\t\t\t\tfor sample element", 
-                  i, "and snp nr", paste(which(!apply(m[, i, ], 1, sum) == 1), collapse = " "), 
-                  "this was not fullfilled"))
-            }
-            # check for tri-allelic cases, which we dont allow as mapping biases.
-            if (!sum(!(apply((m[, i, ] > 0), 1, sum) == 2)) == 0) {
-                stop(paste("tri-allelic SNPs have not been implemented yet. Please write an email if this is of interest.\n \n\t\t\t\tTri-allelic case was found for sample nr", 
-                  i, "and snp nr", paste(which(!apply((m[, i, ] > 0), 1, sum) == 
-                    2), collapse = " ")))
-            }
-        }
+        #for (i in 1:(dim(m)[2])) {
+        #    # check that no snp and sample exceeds sum 1 frequency
+        #    if (!sum(!apply(m[, i, ], 1, sum) == 1) == 0) {
+        #        stop(paste("for each snp and sample the sum of allele frequencies must sum to one,\n\t\t\t\tfor sample element", 
+        #          i, "and snp nr", paste(which(!apply(m[, i, ], 1, sum) == 1), collapse = " "), 
+        #          "this was not fullfilled"))
+        #    }
+        #    # check for tri-allelic cases, which we dont allow as mapping biases.
+        #    if (!sum(!(apply((m[, i, ] > 0), 1, sum) == 2)) == 0) {
+        #        stop(paste("tri-allelic SNPs have not been implemented yet. Please write an email if this is of interest.\n \n\t\t\t\tTri-allelic case was found for sample nr", 
+        #          i, "and snp nr", paste(which(!apply((m[, i, ] > 0), 1, sum) == 
+        #            2), collapse = " ")))
+        #    }
+        #}
     }
     
     
@@ -259,6 +261,11 @@ ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus 
         assays[["mapBias"]] <- mapBiasExpMean
     }
     
+    # assign phase if user provides it
+    if (is.null(phase)) {
+        assays[["phase"]] <- defaultPhase(snps,ind)
+    }
+
     if (is.null(colData)) {
         colData <- DataFrame(row.names = unlist(unique(lapply(countList, rownames))))
     }
@@ -284,7 +291,7 @@ ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus 
 #' @rdname initialize-ASEset
 #' @export 
 ASEsetFromArrays <- function(rowData, countsUnknown = NULL, countsPlus = NULL, 
-    countsMinus = NULL, colData = NULL, mapBiasExpMean = NULL, 
+    countsMinus = NULL, colData = NULL, mapBiasExpMean = NULL, phase = NULL,
     verbose = FALSE, ...) {
     
    # if (verbose) {
@@ -318,20 +325,20 @@ ASEsetFromArrays <- function(rowData, countsUnknown = NULL, countsPlus = NULL,
             stop("mapBiasExpMean has to have three dimensions")
         }
         
-        for (i in 1:(dim(m)[2])) {
-            # check that no snp and sample exceeds sum 1 frequency
-            if (!sum(!apply(m[, i, ], 1, sum) == 1) == 0) {
-                stop(paste("for each snp and sample the sum of allele frequencies must sum to one,\n\t\t\t\tfor sample element", 
-                  i, "and snp nr", paste(which(!apply(m[, i, ], 1, sum) == 1), collapse = " "), 
-                  "this was not fullfilled"))
-            }
-            # check for tri-allelic cases, which we dont allow as mapping biases.
-            if (!sum(!(apply((m[, i, ] > 0), 1, sum) == 2)) == 0) {
-                stop(paste("tri-allelic SNPs have not been implemented yet. Please write an email if this is of interest.\n \n\t\t\t\tTri-allelic case was found for sample nr", 
-                  i, "and snp nr", paste(which(!apply((m[, i, ] > 0), 1, sum) == 
-                    2), collapse = " ")))
-            }
-        }
+        #for (i in 1:(dim(m)[2])) {
+        #    # check that no snp and sample exceeds sum 1 frequency
+        #    if (!sum(!apply(m[, i, ], 1, sum) == 1) == 0) {
+        #        stop(paste("for each snp and sample the sum of allele frequencies must sum to one,\n\t\t\t\tfor sample element", 
+        #          i, "and snp nr", paste(which(!apply(m[, i, ], 1, sum) == 1), collapse = " "), 
+        #          "this was not fullfilled"))
+        #    }
+        #    # check for tri-allelic cases, which we dont allow as mapping biases.
+        #    if (!sum(!(apply((m[, i, ] > 0), 1, sum) == 2)) == 0) {
+        #        stop(paste("tri-allelic SNPs have not been implemented yet. Please write an email if this is of interest.\n \n\t\t\t\tTri-allelic case was found for sample nr", 
+        #          i, "and snp nr", paste(which(!apply((m[, i, ] > 0), 1, sum) == 
+        #            2), collapse = " ")))
+        #    }
+        #}
     }
     
     # choose a common countList by picking the first one, for dimension info
@@ -371,6 +378,11 @@ ASEsetFromArrays <- function(rowData, countsUnknown = NULL, countsPlus = NULL,
         assays[["mapBias"]] <- mapBiasExpMean
     }
     
+    # assign phase if user provides it
+    if (is.null(phase)) {
+        assays[["phase"]] <- defaultPhase(snps,ind)
+    }
+
     if (is.null(colData)) {
         colData <- DataFrame(row.names = dimnames(assays[["countsUnknown"]])[[2]])
     }
@@ -464,8 +476,11 @@ RBias <- function(
 #' @param threshold.frequency logical array for frequency thresholds
 #' @param threshold.count.sample logical array for per sample allele count thresholds
 #' @param threshold.delta.frequency logical array for delta frequency thresholds.
-#' Similar to fold-change, but is the difference in frequency from equal expression.
 #' @param threshold.pvalue logical array for pvalue thresholds (max 1, min 0)
+#' @param threshold.frequency.names character vector
+#' @param threshold.count.sample.names character vector
+#' @param threshold.delta.frequency.names character vector
+#' @param threshold.pvalue.names character vector
 #' @param ... internal arguments
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords bias mapbias refBias
@@ -488,6 +503,13 @@ DetectedAIFromArray <- function(
 	threshold.count.sample=NULL,
 	threshold.delta.frequency=NULL,
 	threshold.pvalue=NULL,
+
+	#reference.frequency.names=NULL,
+	threshold.frequency.names=NULL,
+	threshold.count.sample.names=NULL,
+	threshold.delta.frequency.names=NULL,
+	threshold.pvalue.names=NULL,
+
 	...){
 
 	sset <- SummarizedExperiment(
@@ -508,8 +530,16 @@ DetectedAIFromArray <- function(
 	#validObject(.Object)
 
 	#Return object
-	new("DetectedAI", sset, strand = strand)
+	new("DetectedAI", sset,
+		strand = strand,
+		#reference.frequency.names=reference.frequency.names,
+		threshold.frequency.names=threshold.frequency.names,
+		threshold.count.sample.names=threshold.count.sample.names,
+		threshold.delta.frequency.names=threshold.delta.frequency.names,
+		threshold.pvalue.names=threshold.pvalue.names
+	)
 }
+
 
 #' Initialize GlobalAnalysis
 #' 
@@ -519,7 +549,7 @@ DetectedAIFromArray <- function(
 #' 
 #' @name initialize-GlobalAnalysis
 #' @rdname initialize-GlobalAnalysis
-#' @aliases initialize-GlobalAnalysis gba
+#' @aliases initialize-GlobalAnalysis
 #' @param x \code{ASEset} 
 #' @param ... internal arguments
 #' @author Jesper R. Gadin, Lasse Folkersen
@@ -528,7 +558,7 @@ DetectedAIFromArray <- function(
 #'
 #' data(ASEset)
 #' a <- ASEset
-#' gba <- gba(a)
+#' # gba <- gba(a)
 #' 
 NULL
 
@@ -536,7 +566,7 @@ NULL
 #' @rdname initialize-GlobalAnalysis
 #' @export 
 #setMethod("ReferenceBias","ReferenceBias", function(
-gba <- function(
+GAnalysis <- function(
 	x = "ASEset",
 	...
 	){

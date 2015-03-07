@@ -6,7 +6,7 @@ NULL
 #' Object that holds results from a global AI analysis including reference bias
 #' estimations and AI detection.
 #'
-#' The GlobalAnalysis-class contains summaries needed to create an AI-report
+#' The GlobalAnalysis-class contains summaries and "pre-configured and pre-calculated lattice plots" needed to create an AI-report
 #'
 #' @name GlobalAnalysis-class
 #' @rdname GlobalAnalysis-class

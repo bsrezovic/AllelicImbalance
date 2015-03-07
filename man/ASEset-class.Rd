@@ -24,6 +24,10 @@
 \alias{genotype<-,ASEset-method}
 \alias{mapBias}
 \alias{mapBias,ASEset-method}
+\alias{phase}
+\alias{phase,ASEset-method}
+\alias{phase<-}
+\alias{phase<-,ASEset-method}
 \title{ASEset objects}
 \usage{
 alleleCounts(x, strand = "*", return.class = "list")
@@ -38,9 +42,10 @@ mapBias(x, ...)
 
 \S4method{mapBias}{ASEset}(x, return.class = "list")
 
-fraction(x, strand = "*", verbose = FALSE)
+fraction(x, ...)
 
-\S4method{fraction}{ASEset}(x, strand = "*", verbose = FALSE)
+\S4method{fraction}{ASEset}(x, strand = "*",
+  top.allele.criteria = "maxcount", verbose = FALSE)
 
 arank(x, return.type = "names", return.class = "list", strand = "*", ...)
 
@@ -63,6 +68,14 @@ countsPerSample(x, ...)
 
 \S4method{countsPerSample}{ASEset}(x, return.class = "matrix",
   return.type = "mean", strand = "*")
+
+phase(x, ...)
+
+\S4method{phase}{ASEset}(x, return.class = "matrix")
+
+phase(x) <- value
+
+\S4method{phase}{ASEset}(x) <- value
 }
 \arguments{
 \item{x}{ASEset object}
@@ -71,9 +84,11 @@ countsPerSample(x, ...)
 
 \item{return.class}{return 'list' or 'array'}
 
-\item{value}{value as replacement}
+\item{value}{replacement variable}
 
 \item{...}{additional arguments}
+
+\item{top.allele.criteria}{'maxcount', 'ref' or 'phase'}
 
 \item{verbose}{makes function more talkative}
 
@@ -109,6 +124,13 @@ and minus stranded data. When using this, it is essential to make sure that
 the RNA-seq experiment under analysis has in fact been created so that
 correct strand information was obtained. The most functions will by default
 have their strand argument set to '*'.
+
+The phase information is stored by the convention of
+'maternal chromosome|paternal chromosome', with 0 as reference allele and 1
+as alternative allele. '|' when the phase is known and '/' when the phase is
+unknown. Internally the information will be stored as an three dimensional
+array, dim 1 for SNPs, dim 2 for Samples and dim 3 which is fixed and stores
+maternal chromosome, paternal chromosome and phased (1 equals TRUE).
 }
 \section{Table}{
  table(...)
@@ -189,6 +211,15 @@ colData <- DataFrame(Treatment=c('ChIP', 'Input','Input','ChIP'),
 #make ASEset
 a <- ASEsetFromCountList(rowData, countListPlus=countListPlus,
 colData=colData)
+
+
+#example phase matrix (simple form)
+p1 <- matrix(sample(c(1,0),replace=TRUE, size=nrow(a)*ncol(a)),nrow=nrow(a), ncol(a))
+p2 <- matrix(sample(c(1,0),replace=TRUE, size=nrow(a)*ncol(a)),nrow=nrow(a), ncol(a))
+p <- matrix(paste(p1,sample(c("|","|","/"), size=nrow(a)*ncol(a), replace=TRUE), p2, sep=""),
+	nrow=nrow(a), ncol(a))
+
+phase(a) <- p
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

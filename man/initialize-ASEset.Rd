@@ -8,11 +8,11 @@
 \usage{
 ASEsetFromCountList(rowData, countListUnknown = NULL, countListPlus = NULL,
   countListMinus = NULL, colData = NULL, mapBiasExpMean = NULL,
-  verbose = FALSE, ...)
+  phase = NULL, verbose = FALSE, ...)
 
 ASEsetFromArrays(rowData, countsUnknown = NULL, countsPlus = NULL,
   countsMinus = NULL, colData = NULL, mapBiasExpMean = NULL,
-  verbose = FALSE, ...)
+  phase = NULL, verbose = FALSE, ...)
 }
 \arguments{
 \item{rowData}{A \code{GenomicRanges object} that contains the variants of
@@ -31,6 +31,8 @@ counts as columns and sample counts as rows}
 
 \item{mapBiasExpMean}{A 3D \code{array} where the SNPs are in the 1st
 dimension, samples in the 2nd dimension and variants in the 3rd dimension.}
+
+\item{phase}{A \code{matrix} or an \code{array} containing phase information.}
 
 \item{verbose}{Makes function more talkative}
 

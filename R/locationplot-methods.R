@@ -69,7 +69,8 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
     strand = "*", yaxis = TRUE, xaxis = FALSE, xlab = FALSE, ylab = TRUE, 
     legend.colnames = "", size = c(0.8, 1), main = NULL, pValue = FALSE, cex.main = 0.7, 
     cex.ylab = 0.6, cex.legend = 0.5, OrgDb = NULL, TxDb = NULL, verbose = TRUE, 
-    ...) {
+    top.allele.criteria="maxcount", ...) {
+
     # check basic chromosome and region requirement
     if (!length(unique(seqnames(rowRanges(x)))) == 1) {
         stop("this plot only allows one chromosome")
@@ -307,7 +308,7 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
             size = sizeHere, addHorizontalLine = 0.5, add = TRUE, pValue = pValue, 
             cex.ylab = cex.ylab, legend.colnames = legend.colnames, yaxis = yaxis, 
             xaxis = xaxis, ylab = ylab, xlab = xlab, main = main, cex.main = cex.main, 
-            cex.legend = cex.legend, ...)
+            cex.legend = cex.legend, top.allele.criteria=top.allele.criteria, ...)
         
         # create lines indicating at which genomic position the Snp is found
         lines(x = rep(lowerLeftCorner[1] + size[1]/2, 2), y = c(0, -0.1), col = "dodgerblue")
@@ -335,6 +336,7 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
         }
     }
 })
+
 
 #' glocationplot ASEset objects
 #' 
@@ -450,6 +452,9 @@ setMethod("glocationplot", signature(x = "ASEset"), function(x, type = "fraction
     if (!exists("middleLine", envir = e, inherits = FALSE)) {
         e$middleLine <- TRUE
     }
+    if (!exists("top.allele.criteria", envir = e, inherits = FALSE)) {
+        e$top.allele.criteria <- "maxcount"
+    }
 
     # make deTrack 
     if (verbose) {
@@ -461,7 +466,7 @@ setMethod("glocationplot", signature(x = "ASEset"), function(x, type = "fraction
 								   cex.mainvec=e$cex.mainvec,
 								   ylab=e$ylab,
 								   xlab=e$xlab,
-								   middleLine=e$middleLine
+								   top.allele.criteria=e$top.allele.criteria
 								   )
     lst <- list(deTrack)
    
@@ -493,7 +498,7 @@ setMethod("glocationplot", signature(x = "ASEset"), function(x, type = "fraction
 		}
 		txTrack <- GeneRegionTrack(TxDb, 
 			start=start(GR), end=end(GR), 
-			chr=seqlevels(GR)
+			chromosome=seqlevels(GR)
 		)	   
 
         lst[[length(lst) + 1]] <- txTrack

@@ -143,6 +143,10 @@ setMethod("ASEDAnnotationTrack", signature(x = "ASEset"), function(x, GR = rowRa
         e$middleLine <- TRUE
     }
 
+    if (!exists("top.allele.criteria", envir = e, inherits = FALSE)) {
+        e$top.allele.criteria <- "maxcount"
+    }
+
     ranges <- rowRanges(x)
     
     colnames(x) <- 1:ncol(x)
@@ -180,7 +184,8 @@ setMethod("ASEDAnnotationTrack", signature(x = "ASEset"), function(x, GR = rowRa
 						   x=x, 
 						   astrand=strand, 
 						   ids=list(list(rownames(x))),
-						   middleLine=e$middleLine
+						   middleLine=e$middleLine,
+						   top.allele.criteria=e$top.allele.criteria
 						)
 		)
     deTrack

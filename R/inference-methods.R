@@ -242,3 +242,48 @@ setMethod("inferGenotypes", signature(x = "ASEset"), function(x, strand="*", ret
 	ret
 })
 
+#' inferAltAllele
+#' 
+#' inference of the alternate allele based on count data
+#' 
+#' The inference essentially ranks all alleles and the most expressed allele not 
+#' declared as reference will be inferred as the alternative allele. At the moment only inference of 
+#' bi-allelic alternative alleles are available.
+#'
+#' @name inferAltAllele
+#' @rdname inferAltAllele
+#' @aliases inferAltAllele,ASEset-method
+#' @docType methods
+#' @param x \code{matrix} see examples 
+#' @param return.class class of returned object
+#' @param ... arguments to forward to internal functions
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords phase
+#' @examples
+#' 
+#' 
+#' #load data
+#' data(ASEset)
+#' 
+#' inferAltAllele(ASEset)
+#' 
+#' @exportMethod inferAltAllele
+NULL
+
+
+setGeneric("inferAltAllele", function(x, strand="*", return.class="vec"
+	){ standardGeneric("inferAltAllele")})
+					   
+setMethod("inferAltAllele", signature(x = "ASEset"), function(x, strand="*", return.class="vec"
+	){ 
+
+	#to be able to infer alternative allele, we need to know the reference allele
+	ref <- mcols(x)[,"ref"]
+	ar <- arank(x, return.class="matrix")[,c(1,2)]
+	tf <- ar == matrix(ref, nrow=nrow(x), ncol=2)
+	
+	ar[!tf]
+
+})
+
+

@@ -13,7 +13,7 @@
 #' AI when alternative allele is more expressed or 'all' for both 'ref' and 'alt' alleles.
 #' Reference allele is the one present in the reference genome on the forward strand.
 #'
-#' min.delta.frequency and function.test will use the value in mapBias(x) as expected value. 
+#' threshold.delta.frequency and function.test will use the value in mapBias(x) as expected value. 
 #' 
 #' function.test will use the two most expressed alleles for testing. Make therefore sure there
 #' are no tri-allelic SNPs or somatic mutations among the SNPs in the ASEset. 
@@ -33,8 +33,9 @@
 #' @param threshold.count.sample least amount of counts to try to infer allele
 #' @param threshold.frequency least fraction to classify (see details)
 #' @param return.class class to return (atm only class 'logical')
-#' @param min.delta.frequency minimum of frequency difference from 0.5 (or mapbias adjusted value)
-#' @param max.pvalue pvalue over this number will be filtered out
+#' @param threshold.delta.frequency minimum of frequency difference 
+#' from 0.5 (or mapbias adjusted value)
+#' @param threshold.pvalue pvalue over this number will be filtered out
 #' @param function.test At the moment the only available option is 'binomial.test'
 #' @param inferGenotype infer genotypes based on count data in ASEset object
 #' @param random.ref set the reference as random if you dont know. Affects interpretation of results.
@@ -63,7 +64,7 @@ setGeneric("detectAI", function(x, ...){
 setMethod("detectAI", signature(x = "ASEset"), function(x, 
 	return.class = "DetectedAI", strand = "*",
 	threshold.frequency=0, threshold.count.sample=1,
-	min.delta.frequency=0, max.pvalue=0.05,
+	threshold.delta.frequency=0, threshold.pvalue=0.05,
 	inferGenotype=FALSE,
 	random.ref=FALSE,
 	function.test="binom.test",
@@ -133,21 +134,24 @@ setMethod("detectAI", signature(x = "ASEset"), function(x,
 	fr2[is.na(fr2)] <- biasmatRef[is.na(fr2)] 
 
 	#make fr2 and biasmatRef to array dim 3
-	newDims <- length(min.delta.frequency)
+	newDims <- length(threshold.delta.frequency)
+
+	t.d.f <- aperm(array(threshold.delta.frequency, dim=c(newDims,ncol(x),nrow(x))),dim=c(3,2,1))
 
 	#to keep1 (fullfills cond min.delta.freq)
 	if(any(fr2<biasmatRef)){
 		fr3 <- fr2
 		fr3[fr2<biasmatRef] <- biasmatRef[fr2<biasmatRef] - fr[fr2<biasmatRef]
+		fr3[fr2<=biasmatRef] <- 1	
 		#reset the NA again
-		fr3[is.na(fr)] <- NA
+		#fr3[is.na(fr)] <- NA
 		#make 3d array return object 
 		fr3 <- array(fr3,dim=c(nrow(x),ncol(x),newDims))
-		tf.keep1 <- !(fr3 < min.delta.frequency)
+		tf.keep1 <- !(fr3 < t.d.f)
 	}else{
 		#set all FALSE (NAs will be kept )
-		tf.keep1 <- matrix(TRUE,ncol=ncol(fr),nrow=nrow(fr))
-		tf.keep1[is.na(fr)] <- NA
+		tf.keep1 <- matrix(FALSE,ncol=ncol(fr),nrow=nrow(fr))
+		#tf.keep1[is.na(fr)] <- NA
 		#make 3d array return object 
 		tf.keep1 <- array(tf.keep1,dim=c(nrow(x),ncol(x),newDims))
 	}
@@ -155,22 +159,24 @@ setMethod("detectAI", signature(x = "ASEset"), function(x,
 	#to keep2 (fullfills cond min.delta.freq)
 	if(any(fr2>biasmatRef)){
 		fr3 <- fr2
+		#fr3[fr2>biasmatRef] <- fr[fr2>biasmatRef] - biasmatRef[fr2>biasmatRef] 
 		fr3[fr2>biasmatRef] <- fr[fr2>biasmatRef] - biasmatRef[fr2>biasmatRef] 
-		#reset the NA again
-		fr3[is.na(fr)] <- NA
+		fr3[fr2<=biasmatRef] <- 1	
+		#fr3[is.na(fr)] <- NA
 		#make 3d array return object 
 		fr3 <- array(fr3,dim=c(nrow(x),ncol(x),newDims))
-		tf.keep2 <- !(fr3 < min.delta.frequency)
+		tf.keep2 <- !(fr3 < t.d.f)
 	}else{
 		#set all FALSE (NAs will be kept )
 		tf.keep2 <- matrix(TRUE,ncol=ncol(fr),nrow=nrow(fr))
-		tf.keep2[is.na(fr)] <- NA
+		#tf.keep2[is.na(fr)] <- NA
 		#make 3d array return object 
 		tf.keep2 <- array(tf.keep2,dim=c(nrow(x),ncol(x),newDims))
 	}
 	
 	delta.freq <- tf.keep1 | tf.keep2
-	dimnames(delta.freq) <- list(rownames(fr),colnames(fr),paste(min.delta.frequency))
+	dimnames(delta.freq) <- list(rownames(fr),colnames(fr),1:length(threshold.delta.frequency))
+	delta.freq[is.na(fr)] <- NA
 
 	if(gc){
 		if(verbose){cat("removing and garbage collect temporary variables\n")}
@@ -180,7 +186,7 @@ setMethod("detectAI", signature(x = "ASEset"), function(x,
 
 	#5)  p-value array
 	if(verbose){cat("checking p-value thresholds\n")}
-	if(function.test=="binom.test" & !max.pvalue==1){
+	if(function.test=="binom.test"){
 		idx <- which(!is.na(fr))
 		arn <- arank(x,return.type="names",return.class="matrix") 
 		ac <- alleleCounts(x, strand=strand, return.class="array")
@@ -220,12 +226,12 @@ setMethod("detectAI", signature(x = "ASEset"), function(x,
 		pv[idx] <- ml
 
 		#make pv array
-		pv <- array(pv,dim=c(nrow(fr), ncol(fr),length(max.pvalue)),
-					dimnames=list(rownames(fr),colnames(fr),paste(max.pvalue)))
+		pv <- array(pv,dim=c(nrow(fr), ncol(fr),length(threshold.pvalue)),
+					dimnames=list(rownames(fr),colnames(fr),paste(threshold.pvalue)))
 
 		#filter
-		newDims <- length(max.pvalue)
-		pv.thr <- aperm(array(max.pvalue, dim=c(newDims,nrow(x),ncol(x))), c(2,3,1))
+		newDims <- length(threshold.pvalue)
+		pv.thr <- aperm(array(threshold.pvalue, dim=c(newDims,nrow(x),ncol(x))), c(2,3,1))
 		pv.thr.ret <- pv < pv.thr
 	
 		if(gc){
@@ -247,7 +253,14 @@ setMethod("detectAI", signature(x = "ASEset"), function(x,
 			threshold.frequency=thr.freq.ret,
 			threshold.count.sample=t.c.s,
 			threshold.delta.frequency=delta.freq,
-			threshold.pvalue=pv.thr.ret
+			threshold.pvalue=pv.thr.ret,
+
+			#reference.frequency.names=reference.frequency,
+			threshold.frequency.names=paste(threshold.frequency),
+			threshold.count.sample.names=paste(threshold.count.sample),
+			threshold.delta.frequency.names=paste(threshold.delta.frequency),
+			threshold.pvalue.names=paste(threshold.pvalue)
+
 		)
 
 	}else if(return.class=="list"){

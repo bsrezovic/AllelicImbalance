@@ -35,7 +35,13 @@ NULL
 #' @exportClass DetectedAI
 setClass("DetectedAI", contains = "SummarizedExperiment",
 	representation(
-		strand = "character"))
+		strand = "character",
+		threshold.count.sample.names="character",
+		threshold.frequency.names="character",
+		threshold.delta.frequency.names="character",
+		threshold.pvalue.names="character"
+	)
+)
 
 #' @rdname DetectedAI-class
 #' @export 

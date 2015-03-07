@@ -10,9 +10,9 @@ detectAI(x, ...)
 
 \S4method{detectAI}{ASEset}(x, return.class = "DetectedAI", strand = "*",
   threshold.frequency = 0, threshold.count.sample = 1,
-  min.delta.frequency = 0, max.pvalue = 0.05, inferGenotype = FALSE,
-  random.ref = FALSE, function.test = "binom.test", verbose = TRUE,
-  gc = FALSE)
+  threshold.delta.frequency = 0, threshold.pvalue = 0.05,
+  inferGenotype = FALSE, random.ref = FALSE, function.test = "binom.test",
+  verbose = TRUE, gc = FALSE)
 }
 \arguments{
 \item{x}{ASEset}
@@ -27,9 +27,10 @@ detectAI(x, ...)
 
 \item{threshold.count.sample}{least amount of counts to try to infer allele}
 
-\item{min.delta.frequency}{minimum of frequency difference from 0.5 (or mapbias adjusted value)}
+\item{threshold.delta.frequency}{minimum of frequency difference
+from 0.5 (or mapbias adjusted value)}
 
-\item{max.pvalue}{pvalue over this number will be filtered out}
+\item{threshold.pvalue}{pvalue over this number will be filtered out}
 
 \item{inferGenotype}{infer genotypes based on count data in ASEset object}
 
@@ -56,7 +57,7 @@ return.type 'ref' return only AI when reference allele is more expressed. 'alt' 
 AI when alternative allele is more expressed or 'all' for both 'ref' and 'alt' alleles.
 Reference allele is the one present in the reference genome on the forward strand.
 
-min.delta.frequency and function.test will use the value in mapBias(x) as expected value.
+threshold.delta.frequency and function.test will use the value in mapBias(x) as expected value.
 
 function.test will use the two most expressed alleles for testing. Make therefore sure there
 are no tri-allelic SNPs or somatic mutations among the SNPs in the ASEset.
