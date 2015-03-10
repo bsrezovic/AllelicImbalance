@@ -18,7 +18,7 @@ Depends:
     R (>= 3.1.0),
     grid,
     GenomicRanges,
-    GenomicAlignments,
+    GenomicAlignments
 Imports:
     methods,
     BiocGenerics,
