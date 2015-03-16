@@ -68,11 +68,11 @@ a.simple <- ASEsetFromCountList(heterozygotePositions, countList)
 a.simple
 ```
 
-## Building an ASEset object using Bcf files
+## Building an ASEset object using Bcf or Vcf files
 If more than a few genes and a few samples are analyzed we recommend
 that a SNP-call is instead made using the samtools mpileup function (see
 links section). The scanForHeterozygotes function is merely a simple 
-SNP-caller and it is not as computationally optimized as mpileup. In this bash
+SNP-caller and it is not as computationally optimized as e.g. mpileup. In this bash
 code we download reference sequence for chromosome 17 and show how to generate
 mpileup calls on one of the HapMap samples that were described above.
 
@@ -81,6 +81,29 @@ wget ftp://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/chr17.fa.gz
 samtools mpileup -uf hg19.fa ERR009135.bam | bcftools view -bvcg - > ERR009135.bcf
 ```
 
+### Vcf-version
+Simply use bcftools to get back to the vcf format
+
+```
+bcftools view > ERR009135.vcf
+```
+
+Use the readVcf function from the VariantAnnotation package
+
+```{r echo = TRUE, eval = TRUE, warning = FALSE}
+pathToVcf <- paste(pathToFiles,"/ERP000101.vcf",sep="")
+VCF <- readVcf(pathToVcf,"hg19") 
+gr <- granges(VCF) 
+
+#only use bi-allelic positions
+gr.filt <- gr[width(mcols(gr)[,"REF"]) == 1 | 
+				unlist(lapply(mcols(gr)[,"ALT"],width))==1]
+
+countList <- getAlleleCounts(reads, gr.filt, verbose=FALSE) 
+a.vcf <- ASEsetFromCountList(rowData = gr, countList)
+```
+
+### Bcf-version
 Samtools mpileup generates by default a Vcf file which contains SNP and short INDEL 
 positions. Piping the output to bcftools we get its binary equivalent (Bcf), which 
 takes less space and can be queried more effective. With the Bcf files the process 
@@ -184,8 +207,8 @@ p <- matrix(paste(p1,sample(c("|","|","/"), size=rows*cols, replace=TRUE), p2, s
 phase(a.simple) <- p 
 
 #use the phase information from the Vcf file
-pathToVcf <- "somePath"
-#p <- phaseFromVcf(pathToVcf)
+pathToVcf <- system.file("extdata/ERP000101_subset/ERP000101.vcf", package = "AllelicImbalance")
+p <- readGT(path, nucleotides=FALSE, param=ScanVcfParam(), row.names=TRUE)
 phase(a.simple) <- p 
 ```
 
@@ -193,7 +216,6 @@ phase(a.simple) <- p
 ## Statistical analysis of an ASEset object
 One of the simplest statistical test for use in allelic imbalance analysis is
 the chi-square test. This test assumes that the uncertainty of ASE is represented by a normal distribution around an expected mean (i.e 0.5 for equal expression). A significant result suggests an ASE event. Every strand is tested independently. 
-
 
 ```{r echo=TRUE, eval=TRUE}
 #use a subset for tests
