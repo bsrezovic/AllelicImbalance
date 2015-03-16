@@ -20,7 +20,8 @@ barplot(height, ...)
   addHorizontalLine = 0.5, add.frame = TRUE,
   filter.pValue.fraction = 0.99, legend.fill.size = 1,
   legend.interspace = 1, verbose = FALSE,
-  top.allele.criteria = "maxcount", ...)
+  top.allele.criteria = "maxcount", cex.annotation = 0.7,
+  ypos.annotation = 0, annotation.interspace = 1, ...)
 }
 \arguments{
 \item{height}{An \code{ASEset} object}
@@ -98,6 +99,12 @@ away pValues where the main allele has this frequency.}
 \item{verbose}{Makes function more talkative}
 
 \item{top.allele.criteria}{'maxcount', 'ref' or 'phase'}
+
+\item{cex.annotation}{size of annotation text}
+
+\item{ypos.annotation}{relative ypos for annotation text}
+
+\item{annotation.interspace}{space between annotation text}
 }
 \description{
 Generates barplots for ASEset objects. Two levels of plotting detail are

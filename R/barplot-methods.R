@@ -45,6 +45,9 @@
 #' @param cex.ylab set ylab label size
 #' @param cex.xlab set xlab label size
 #' @param cex.legend set legend label size
+#' @param cex.annotation size of annotation text
+#' @param ypos.annotation relative ypos for annotation text
+#' @param annotation.interspace space between annotation text
 #' @param legend.interspace set legend space between fills and text
 #' @param add \code{boolean} indicates if a new device should be started
 #' @param lowerLeftCorner integer that is only useful when \code{add}=TRUE
@@ -84,16 +87,15 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     xlab = TRUE, legend.colnames = "", las.ylab = 1, las.xlab = 2, cex.main = 1, 
     cex.pValue = 0.7, cex.ylab = 0.7, cex.xlab = 0.7, cex.legend = 0.6, add = FALSE, 
     lowerLeftCorner = c(0, 0), size = c(1, 1), addHorizontalLine = 0.5, add.frame = TRUE, 
-    filter.pValue.fraction = 0.99, legend.fill.size=1,legend.interspace=1, verbose = FALSE, 
-	top.allele.criteria="maxcount", ...) {
+    filter.pValue.fraction = 0.99,  legend.fill.size=1, legend.interspace=1, verbose = FALSE, 
+	top.allele.criteria="maxcount", cex.annotation=0.7, ypos.annotation=0, annotation.interspace=1,
+	...) {
     
     # catch useful graphical parameters that can be used to later add onto plot. This
     # list will be retireved by using 'glst <- barplot(x)'
     graphParamList <- list()
     
-    
     x <- height
-    
     
     # check type
     okPlotTypes <- c("fraction", "count")
@@ -592,7 +594,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                 
                 if (is.null(main)) {
                   text(x = lowerLeftCorner[1] + size[1] * 0.5, y = lowerLeftCorner[2] + 
-                    size[2] * 1.05, labels = paste("Variant ", snp), cex = cex.main, 
+                    size[2] * 1.05, labels = paste(snp), cex = cex.main, 
                     adj = 0.5, xpd = TRUE)
                 } else {
                   text(x = lowerLeftCorner[1] + size[1] * 0.5, y = lowerLeftCorner[2] + 
@@ -624,57 +626,9 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                 }
                 
                 if (!is.null(OrgDb) | !is.null(TxDb)) {
-                  
-                  # placed on left side
-                  if (strand == "+" | strand == "*" ) {
-                    df <- annDfPlus
-                    
-                    yPosTmp <- lowerLeftCorner[2] + 1.03
-                    text <- paste("Plus-strand")
-                    text(x = lowerLeftCorner[1] + 0.01, y = yPosTmp, labels = text, 
-                      cex = 0.85, adj = 0, xpd = TRUE)
-                    yPosTmp <- yPosTmp - 0.03
-                    
-                    for (j in 1:length(colnames(df))) {
-                      text <- paste(colnames(df)[j], df[i, j], sep = ": ")
-                      text(x = lowerLeftCorner[1] + 0.01, y = yPosTmp, labels = text, 
-                        cex = 0.8, adj = 0, xpd = TRUE)
-                      yPosTmp <- yPosTmp - 0.02
-                    }
-                  }
-                  # placed on left side
-                  if (strand == "-" & (!strand == "*" )) {
-                    df <- annDfMinus
-                    
-                    yPosTmp <- lowerLeftCorner[2] + 1.03
-                    text <- paste("Minus-strand")
-                    text(x = lowerLeftCorner[1] + 0.01, y = yPosTmp, labels = text, 
-                      cex = 0.85, adj = 0, xpd = TRUE)
-                    yPosTmp <- yPosTmp - 0.03
-                    for (j in 1:length(colnames(df))) {
-                      text <- paste(colnames(df)[j], df[i, j], sep = ": ")
-                      text(x = lowerLeftCorner[1] + 0.01, y = yPosTmp, labels = text, 
-                        cex = 0.8, adj = 0, xpd = TRUE)
-                      yPosTmp <- yPosTmp - 0.02
-                    }
-                  }
-                  # placed on right side
-                  if (strand == "*" ) {
-                    df <- annDfMinus
-                    
-                    yPosTmp <- lowerLeftCorner[2] + 1.03
-                    text <- paste("Minus-strand")
-                    text(x = lowerLeftCorner[1] + 1, y = yPosTmp, labels = text, 
-                      cex = 0.85, adj = 0.95, xpd = TRUE)
-                    yPosTmp <- yPosTmp - 0.03
-                    
-                    for (j in 1:length(colnames(df))) {
-                      text <- paste(df[i, j], colnames(df)[j], sep = " :")
-                      text(x = lowerLeftCorner[1] + 1, y = yPosTmp, labels = text, 
-                        cex = 0.8, adj = 0.95, xpd = TRUE)
-                      yPosTmp <- yPosTmp - 0.02
-                    }
-                  }
+					annotationBarplot(strand,i, lowerLeftCorner, annDfPlus, annDfMinus,
+									  cex=cex.annotation, ypos=ypos.annotation,
+									  interspace=annotation.interspace)
                 }
                 
                 if (legend) {
@@ -953,7 +907,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                 }
                 if (is.null(main)) {
                   text(x = lowerLeftCorner[1] + size[1] * 0.5, y = lowerLeftCorner[2] + 
-                    size[2] * 1.05, labels = paste("Variant ", snp), cex = cex.main, 
+                    size[2] * 1.05, labels = paste(snp), cex = cex.main, 
                     adj = 0.5, xpd = TRUE)
                 } else {
                   text(x = lowerLeftCorner[1] + size[1] * 0.5, y = lowerLeftCorner[2] + 
@@ -1005,30 +959,33 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                 
                 if (!is.null(OrgDb) | !is.null(TxDb)) {
                   
-                  # check which columns to extract
-                  dfType <- c("symbol", "exon_id", "tx_id", "cds_id")
-                  TFann <- (dfType %in% colnames(annDfPlus)) | (dfType %in% colnames(annDfMinus))
-                  
-                  # plus strand (over)
-                  df <- annDfPlus[, TFann, drop = FALSE]
-                  yPosTmp <- lowerLeftCorner[2] + 1.01
-                  for (j in 1:length(colnames(df))) {
-                    text <- paste(colnames(df)[j], df[i, j], sep = ": ")
-                    text(x = lowerLeftCorner[1] + 0.01, y = yPosTmp, labels = text, 
-                      cex = 0.7, adj = 0)
-                    yPosTmp <- yPosTmp - 0.02
-                  }
-                  
-                  # minus strand (under)
-                  df <- annDfMinus[, TFann, drop = FALSE]
-                  
-                  yPosTmp <- lowerLeftCorner[2] - 0.01
-                  for (j in 1:length(colnames(df))) {
-                    text <- paste(colnames(df)[j], df[i, j], sep = ": ")
-                    text(x = lowerLeftCorner[1] + 0.01, y = yPosTmp, labels = text, 
-                      cex = 0.7, adj = 0)
-                    yPosTmp <- yPosTmp + 0.02
-                  }
+					annotationBarplot(strand,i, lowerLeftCorner, annDfPlus, annDfMinus,
+									  cex=cex.annotation, ypos=ypos.annotation,
+									  interspace=annotation.interspace)
+#                  # check which columns to extract
+#                  dfType <- c("symbol", "exon_id", "tx_id", "cds_id")
+#                  TFann <- (dfType %in% colnames(annDfPlus)) | (dfType %in% colnames(annDfMinus))
+#                  
+#                  # plus strand (over)
+#                  df <- annDfPlus[, TFann, drop = FALSE]
+#                  yPosTmp <- lowerLeftCorner[2] + 1.01
+#                  for (j in 1:length(colnames(df))) {
+#                    text <- paste(colnames(df)[j], df[i, j], sep = ": ")
+#                    text(x = lowerLeftCorner[1] + 0.01, y = yPosTmp, labels = text, 
+#                      cex = 0.7, adj = 0)
+#                    yPosTmp <- yPosTmp - 0.02
+#                  }
+#                  
+#                  # minus strand (under)
+#                  df <- annDfMinus[, TFann, drop = FALSE]
+#                  
+#                  yPosTmp <- lowerLeftCorner[2] - 0.01
+#                  for (j in 1:length(colnames(df))) {
+#                    text <- paste(colnames(df)[j], df[i, j], sep = ": ")
+#                    text(x = lowerLeftCorner[1] + 0.01, y = yPosTmp, labels = text, 
+#                      cex = 0.7, adj = 0)
+#                    yPosTmp <- yPosTmp + 0.02
+#                  }
                 }
                 
                 if (legend) {
@@ -1313,7 +1270,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
             }
             
             # writing the name of each Snp on top of the plot(within frame)
-            text(x = 0.5, y = 1.02, label = snp, xpd = TRUE)
+            text(x = 0.5, y = 1.02, label = snp, xpd = TRUE, cex = cex.main)
             
             # add horizontal line at 0.5
             if (!is.null(addHorizontalLine)) {

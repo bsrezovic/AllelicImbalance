@@ -1,7 +1,7 @@
 Package: AllelicImbalance
 Type: Package
 Title: Investigates allele specific expression
-Version: 1.5.6
+Version: 1.5.7
 Date: 2014-12-02
 Author: Jesper R Gadin, Lasse Folkersen
 Maintainer: Jesper R Gadin <j.r.gadin@gmail.com>
@@ -9,12 +9,13 @@ Description: Provides a framework for allelic specific expression
     investigation using RNA-seq data
 License: GPL-3
 URL: https://github.com/pappewaio/AllelicImbalance
-Suggests:
+Suggests: 
     testthat,
     org.Hs.eg.db,
     TxDb.Hsapiens.UCSC.hg19.knownGene,
-    SNPlocs.Hsapiens.dbSNP.20120608
-Depends:
+    SNPlocs.Hsapiens.dbSNP.20120608,
+    knitr
+Depends: 
     R (>= 3.1.0),
     grid,
     GenomicRanges,
@@ -34,3 +35,4 @@ Imports:
     GenomeInfoDb
 LazyData: TRUE
 biocViews: Genetics, Infrastructure, Sequencing
+VignetteBuilder: knitr
