@@ -36,7 +36,9 @@
 #' @param yaxis wheter the y-axis is to be displayed or not
 #' @param xaxis wheter the x-axis is to be displayed or not
 #' @param ylab showing labels for the tic marks
+#' @param ylab.text ylab text
 #' @param xlab showing labels for the tic marks
+#' @param xlab.text xlab text
 #' @param legend.colnames gives colnames to the legend matrix
 #' @param las.ylab orientation of ylab text
 #' @param las.xlab orientation of xlab text
@@ -81,9 +83,10 @@ setGeneric("barplot")
 
 #' @rdname ASEset-barplot
 setMethod("barplot", signature(height = "ASEset"), function(height, type = "count", 
-    sampleColour = NULL, legend = TRUE, pValue = TRUE, strand = "*", testValue = NULL, 
+    sampleColour.top = NULL, sampleColour.bot = NULL, legend = TRUE, pValue = TRUE, strand = "*", testValue = NULL, 
     testValue2 = NULL, OrgDb = NULL, TxDb = NULL, annotationType = c("gene", "exon", 
-        "transcript"), main = NULL, ylim = NULL, yaxis = TRUE, xaxis = FALSE, ylab = TRUE, 
+        "transcript"), main = NULL, ylim = NULL, yaxis = TRUE, xaxis = FALSE, ylab = TRUE,
+											 ylab.text="reads", xlab.text="samples",
     xlab = TRUE, legend.colnames = "", las.ylab = 1, las.xlab = 2, cex.main = 1, 
     cex.pValue = 0.7, cex.ylab = 0.7, cex.xlab = 0.7, cex.legend = 0.6, add = FALSE, 
     lowerLeftCorner = c(0, 0), size = c(1, 1), addHorizontalLine = 0.5, add.frame = TRUE, 
@@ -226,27 +229,33 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     
     
     # check sampleColour
-    if (is.null(sampleColour)) {
-        sampleColour <- rep("dodgerblue", length(samples))
-    } else {
-        if (class(sampleColour) != "character") 
-            stop(paste("if given, sampleColour should be of class character, not", 
-                class(sampleColour)))
-        if (length(sampleColour) == 1) {
-            sampleColour <- rep(sampleColour, length(samples))
-        } else {
-            if (length(sampleColour) != length(samples)) 
-                stop(paste("if given, sampleColour should be of length 1 or length", 
-                  length(samples), "(corresponding to the number of samples)"))
-        }
-        hexadecimals <- sampleColour[grep("^#[0-9A-F]{6}", sampleColour)]
-        missing <- sampleColour[!(sampleColour %in% colors() | sampleColour %in% 
-            hexadecimals)]
-        if (length(missing) > 0) {
-            stop(paste("The following", length(unique(missing)), "colour(s) from sampleColour were not recognised:", 
-                paste(sort(unique(missing)), collapse = ", ")))
-        }
-    }
+    if (is.null(sampleColour.top)) {
+        sampleColour.top <- rep("darkolivegreen4", length(samples))
+	}
+    if (is.null(sampleColour.bot)) {
+        sampleColour.bot <- rep("brown2", length(samples))
+	}
+#    if (is.null(sampleColour)) {
+#        sampleColour <- rep("dodgerblue", length(samples))
+#    } else {
+#        if (class(sampleColour) != "character") 
+#            stop(paste("if given, sampleColour should be of class character, not", 
+#                class(sampleColour)))
+#        if (length(sampleColour) == 1) {
+#            sampleColour <- rep(sampleColour, length(samples))
+#        } else {
+#            if (length(sampleColour) != length(samples)) 
+#                stop(paste("if given, sampleColour should be of length 1 or length", 
+#                  length(samples), "(corresponding to the number of samples)"))
+#        }
+#        hexadecimals <- sampleColour[grep("^#[0-9A-F]{6}", sampleColour)]
+#        missing <- sampleColour[!(sampleColour %in% colors() | sampleColour %in% 
+#            hexadecimals)]
+#        if (length(missing) > 0) {
+#            stop(paste("The following", length(unique(missing)), "colour(s) from sampleColour were not recognised:", 
+#                paste(sort(unique(missing)), collapse = ", ")))
+#        }
+#    }
     
     # check OrgDb
     if (!is.null(OrgDb)) {
@@ -425,18 +434,20 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     # saturation a little compared to the foreground color except for very
     # low-saturated fg's which are made more saturated, and very dark fg's which are
     # made lighter
-    hsvColoursBg <- hsvColoursFg <- rgb2hsv(col2rgb(sampleColour))
-    veryLowSaturation <- hsvColoursFg["s", ] < 0.3
-    veryDark <- hsvColoursFg["v", ] < 0.2
-    remaining <- !veryLowSaturation & !veryDark
-    hsvColoursBg["s", veryLowSaturation] <- hsvColoursFg["s", veryLowSaturation] + 
-        0.3
-    hsvColoursBg["v", veryDark] <- hsvColoursFg["v", veryDark] + 0.2
-    hsvColoursBg["s", remaining] <- hsvColoursFg["s", remaining] - 0.3
-    fgCol <- hsv(hsvColoursFg["h", ], hsvColoursFg["s", ], hsvColoursFg["v", ])
-    bgCol <- hsv(hsvColoursBg["h", ], hsvColoursBg["s", ], hsvColoursBg["v", ])
-    
-    
+    #hsvColoursBg <- hsvColoursFg <- rgb2hsv(col2rgb(sampleColour))
+    #veryLowSaturation <- hsvColoursFg["s", ] < 0.3
+    #veryDark <- hsvColoursFg["v", ] < 0.2
+    #remaining <- !veryLowSaturation & !veryDark
+    #hsvColoursBg["s", veryLowSaturation] <- hsvColoursFg["s", veryLowSaturation] + 
+    #    0.3
+    #hsvColoursBg["v", veryDark] <- hsvColoursFg["v", veryDark] + 0.2
+    #hsvColoursBg["s", remaining] <- hsvColoursFg["s", remaining] - 0.4
+    #fgCol <- hsv(hsvColoursFg["h", ], hsvColoursFg["s", ], hsvColoursFg["v", ])
+    #bgCol <- hsv(hsvColoursBg["h", ], hsvColoursBg["s", ], hsvColoursBg["v", ])
+
+    fgCol <- hsv(rgb2hsv(col2rgb(sampleColour.bot))["h",])
+    bgCol <- hsv(rgb2hsv(col2rgb(sampleColour.top))["h",])
+
     if (type == "count") {
         # the intention of this is to be able to create barplots which show both the
         # amount of counts and the distribution between alleles this is the least
@@ -658,6 +669,11 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
 
                   
                 }
+
+
+		#set y and x labs
+		title(ylab=ylab.text, xlab=xlab.text)
+
             }
             
         } else if (strand == "both") {
@@ -962,30 +978,6 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
 					annotationBarplot(strand,i, lowerLeftCorner, annDfPlus, annDfMinus,
 									  cex=cex.annotation, ypos=ypos.annotation,
 									  interspace=annotation.interspace)
-#                  # check which columns to extract
-#                  dfType <- c("symbol", "exon_id", "tx_id", "cds_id")
-#                  TFann <- (dfType %in% colnames(annDfPlus)) | (dfType %in% colnames(annDfMinus))
-#                  
-#                  # plus strand (over)
-#                  df <- annDfPlus[, TFann, drop = FALSE]
-#                  yPosTmp <- lowerLeftCorner[2] + 1.01
-#                  for (j in 1:length(colnames(df))) {
-#                    text <- paste(colnames(df)[j], df[i, j], sep = ": ")
-#                    text(x = lowerLeftCorner[1] + 0.01, y = yPosTmp, labels = text, 
-#                      cex = 0.7, adj = 0)
-#                    yPosTmp <- yPosTmp - 0.02
-#                  }
-#                  
-#                  # minus strand (under)
-#                  df <- annDfMinus[, TFann, drop = FALSE]
-#                  
-#                  yPosTmp <- lowerLeftCorner[2] - 0.01
-#                  for (j in 1:length(colnames(df))) {
-#                    text <- paste(colnames(df)[j], df[i, j], sep = ": ")
-#                    text(x = lowerLeftCorner[1] + 0.01, y = yPosTmp, labels = text, 
-#                      cex = 0.7, adj = 0)
-#                    yPosTmp <- yPosTmp + 0.02
-#                  }
                 }
                 
                 if (legend) {
@@ -1002,190 +994,11 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
 						   ylegendPos=1, xlegendPos=0.96, cex=cex.legend)
                     }
                   }
-                 # # minus strand
-                 # TFz <- rownames(under) == "X"
-                 # if (!sum(!TFz) == 0) {
-                 #   textUnder <- paste(rownames(under)[!TFz], -apply(under, 1, sum)[!TFz])
-                 #   
-				 #   #remove the total count for that nucleotide
-				 #   textUnder <- unlist(lapply(strsplit(textUnder," "),function(x){x[1]}))
-
-				 #   #user option for changing the legend.size
-				 #   if(!is.null(legend.fill.size)){
-				 #   	size <- legend.fill.size
-				 #   }else{
-				 #   	size <- size
-				 #   }
-
-                 #   if (sum(!TFz) == 2) {
-                 #     symbols(x = lowerLeftCorner[1] + size[1] * seq(0.96, (0.96 - 
-                 #       (0.02 * (length(unique(fgCol)) - 1))), length = length(unique(fgCol))), 
-                 #       y = (lowerLeftCorner[2] + size[2] * 0.03) * rep(1, length(unique(fgCol))), 
-                 #       bg = unique(fgCol), squares = rep(c(size[1] * 0.012), length(unique(fgCol))), 
-                 #       add = TRUE, inches = FALSE)
-                 #     symbols(x = lowerLeftCorner[1] + size[1] * seq(0.96, (0.96 - 
-                 #       (0.02 * (length(unique(bgCol)) - 1))), length = length(unique(bgCol))), 
-                 #       y = (lowerLeftCorner[2] + size[2] * 0.01) * rep(1, length(unique(bgCol))), 
-                 #       bg = unique(bgCol), squares = rep(c(size[1] * 0.012), length(unique(bgCol))), 
-                 #       add = TRUE, inches = FALSE)
-                 #     text(x = c(lowerLeftCorner[1] + (size[1] * c(0.98, 0.98))), 
-                 #       y = lowerLeftCorner[2] + size[2] * c(0.03, 0.01), textUnder, 
-                 #       srt = 0, cex = cex.legend, adj = c(0, 0.5), xpd = TRUE)
-                 #   } else if (sum(!TFz[1]) == 1) {
-                 #     symbols(x = lowerLeftCorner[1] + size[1] * seq(0.96, (0.96 - 
-                 #       (0.02 * (length(unique(fgCol)) - 1))), length = length(unique(fgCol))), 
-                 #       y = (lowerLeftCorner[2] + size[2] * 0.01) * rep(1, length(unique(fgCol))), 
-                 #       bg = unique(fgCol), squares = rep(c(size[1] * 0.012), length(unique(fgCol))), 
-                 #       add = TRUE, inches = FALSE)
-                 #     text(x = c(lowerLeftCorner[1] + (size[1] * c(0.98))), y = lowerLeftCorner[2] + 
-                 #       size[2] * c(0.01), textUnder, srt = 0, cex = cex.legend, 
-                 #       adj = c(0, 0.5), xpd = TRUE)
-                 #     
-                 #   } else if (sum(!TFz[2]) == 1) {
-                 #     symbols(x = lowerLeftCorner[1] + size[1] * seq(0.96, (0.96 - 
-                 #       (0.02 * (length(unique(bgCol)) - 1))), length = length(unique(bgCol))), 
-                 #       y = (lowerLeftCorner[2] + size[2] * 0.01) * rep(1, length(unique(bgCol))), 
-                 #       bg = unique(bgCol), squares = rep(c(size[1] * 0.012), length(unique(bgCol))), 
-                 #       add = TRUE, inches = FALSE)
-                 #     text(x = c(lowerLeftCorner[1] + (size[1] * c(0.98, 0.98))), 
-                 #       y = lowerLeftCorner[2] + size[2] * c(0.01), textUnder, srt = 0, 
-                 #       cex = cex.legend, adj = c(0, 0.5), xpd = TRUE)
-                 #   }
-                 #   
-                 # }
-                #}
             }
+
+			#set y and x labs
+			title(ylab=ylab.text, xlab=xlab.text)
         }
-    #} else if (type == "fraction") {
-    #    # a plot type that shows the allelic imbalance, irrespective of absolute read
-    #    # counts at each Snp.  this produce plots that are more easily overviewed than
-    #    # those from 'plot_reads_by_allele', but of course omits some detail information
-    #    # from these plots. Intended to use for a medium number of snps and samples
-    #    
-    #    if (strand == "both") {
-    #        stop("strand must be '+', '-' or '*' for type='fraction' ")
-    #    }
-    #    
-    #    for (i in 1:length(snps)) {
-    #        # getting revelant data
-    #        snp <- snps[i]
-    #        fgColHere <- fgCol
-    #        tmp <- alleleCounts(x, strand)[[snp]][samples, , drop = FALSE]
-    #        
-	#		#df <- fractionPlotDf(e$x, identifier, strand=e$strand, top.allele.criteria=e$top.allele.criteria)
-    #        # check for zeroRows
-    #        if ((ncol(tmp) * nrow(tmp)) == sum(tmp == 0)) {
-    #            zeroRows <- TRUE
-    #        } else {
-    #            zeroRows <- FALSE
-    #        }
-    #        
-    #        # calculating major and minor allele, warn if the two remaining alleles have too
-    #        # many counts
-    #        if (nrow(tmp) > 1) {
-    #            countsByAllele <- apply(tmp, 2, sum, na.rm = TRUE)
-    #        } else {
-    #            countsByAllele <- tmp[1, ]
-    #        }
-    #        
-    #        if (!zeroRows) {
-    #            
-    #            majorAllele <- colnames(tmp)[order(countsByAllele, decreasing = TRUE)][1]
-    #            minorAllele <- colnames(tmp)[order(countsByAllele, decreasing = TRUE)][2]
-    #            majorAndMinorFraction <- sum(countsByAllele[c(majorAllele, minorAllele)])/sum(countsByAllele)
-    #            if (verbose & majorAndMinorFraction < 0.9) {
-    #              message(paste("Snp", snp, "was possible tri-allelic, but only two most frequent alleles were plotted. Counts:"))
-    #              message(paste(paste(names(countsByAllele), countsByAllele, sep = "="), 
-    #                collapse = ", "))
-    #            }
-    #            
-    #            fraction <- tmp[, majorAllele]/(tmp[, minorAllele] + tmp[, majorAllele])
-    #        } else {
-    #            fraction <- tmp[, 1]/(tmp[, 1] + tmp[, 2])
-    #        }
-    #        
-    #        # setting no-count samples to colour grey90 and fraction 0
-    #        fgColHere[is.nan(fraction)] <- "grey90"
-    #        fraction[is.nan(fraction)] <- 0
-    #        
-    #        # if add=FALSE then make a new device
-    #        if (!add) {
-    #            plot.default(NULL, xlim = c(0, 1), ylim = c(0, 1), ylab = "", xlab = "", 
-    #              xaxt = "n", yaxt = "n")
-    #        }
-    #        
-    #        # ylim is always (0,1) and usergiven ylims are reset to this with a warning (in
-    #        # start checkups).
-    #        ylim <- c(0, 1)
-    #        
-    #        # find the centers of rectangles
-    #        xPoints <- seq(lowerLeftCorner[1], lowerLeftCorner[1] + size[1], length.out = length(fraction) + 
-    #            2)[2:(length(fraction) + 1)]
-    #        widthsOfRectangles <- rep(size[1]/(length(fraction) + 1), length(fraction))
-    #        
-    #        # normalize fraction-values to a range of c(0,size[2])
-    #        heightsOfRectangles <- ((fraction - ylim[1])/(ylim[2] - ylim[1])) * size[2]
-    #        # find the Y-coordinate center points for rectangles
-    #        yPoints <- lowerLeftCorner[2] + heightsOfRectangles/2
-    #        
-    #        # if bgCol is given, start by painting background
-    #        if (!is.null(bgCol)) {
-    #            yPointsBg <- rep(lowerLeftCorner[2] + size[2]/2, length(xPoints))
-    #            rectanglesBg <- matrix(ncol = 2, c(widthsOfRectangles, rep(size[2], 
-    #              length(widthsOfRectangles))))
-    #            symbols(x = xPoints, y = yPointsBg, bg = bgCol, rectangles = rectanglesBg, 
-    #              add = TRUE, inches = FALSE)
-    #        }
-    #        
-    #        symbols(x = xPoints, y = yPoints, bg = fgColHere, rectangles = matrix(ncol = 2, 
-    #            c(widthsOfRectangles, heightsOfRectangles)), add = TRUE, inches = FALSE)
-    #        
-    #        # add a frame to the plot
-    #        if (add.frame) {
-    #            symbols(x = lowerLeftCorner[1] + size[1]/2, y = lowerLeftCorner[2] + 
-    #              size[2]/2, rectangles = matrix(ncol = 2, c(size[1], size[2])), 
-    #              add = TRUE, inches = FALSE)
-    #        }
-    #        
-    #        # add a tick markers (easier for fraction-plots because they are restricted to
-    #        # 0-100%
-    #        marks <- c(0.25, 0.5, 0.75)
-    #        names(marks) <- c("25%", "50%", "75%")
-    #        for (markName in names(marks)) {
-    #            mark <- marks[markName]
-    #            yBase <- lowerLeftCorner[2] + ((mark - ylim[1])/(ylim[2] - ylim[1])) * 
-    #              size[2]
-    #            xBase <- xPoints[1] - widthsOfRectangles[1]/2
-    #            lines(x = c(xBase - size[1] * 0.01, xBase + size[1] * 0.01), y = c(yBase, 
-    #              yBase))
-    #            text(x = xBase - size[1] * 0.015, y = yBase, label = markName, adj = 1, 
-    #              cex = 0.7)
-    #        }
-    #        
-    #        # writing the name of each Snp on top of the plot(within frame)
-    #        text(x = 0.5, y = 1.02, label = snp, xpd = TRUE)
-    #        
-    #        # add horizontal line at 0.5
-    #        if (!is.null(addHorizontalLine)) {
-    #            lines(x = c(lowerLeftCorner[1], lowerLeftCorner[1] + size[1]), y = c(lowerLeftCorner[2] + 
-    #              size[2] * addHorizontalLine, lowerLeftCorner[2] + size[2] * addHorizontalLine))
-    #            
-    #            mapBiasHere <- mapBias(x)[[snp]]
-    #            if (!all(mapBiasHere %in% c(0.5, 0)) & !zeroRows) {
-    #              # Only activate if anything is different from 0.5 or 0
-    #              
-    #              for (j in 1:length(fraction)) {
-    #                biasfraction <- mapBiasHere[j, majorAllele]/(mapBiasHere[j, majorAllele] + 
-    #                  mapBiasHere[j, minorAllele])
-    #                yPoint <- lowerLeftCorner[2] + ((biasfraction - ylim[1])/(ylim[2] - 
-    #                  ylim[1])) * size[2]
-    #                lines(x = c(xPoints[j] - widthsOfRectangles[j]/2, xPoints[j] + 
-    #                  widthsOfRectangles[j]/2), y = c(yPoint, yPoint), lty = 2)
-    #              }
-    #            }
-    #        }
-    #    }
-    #}
     } else if (type == "fraction") {
         # a plot type that shows the allelic imbalance, irrespective of absolute read
         # counts at each Snp.  this produce plots that are more easily overviewed than
@@ -1291,7 +1104,10 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                 #  }
                 #}
             }
+			#set y and x labs
+			title(ylab=ylab.text, xlab=xlab.text)
         }
+
     }
     # return graphical paramlist (does not work for fraction type yet)
     invisible(graphParamList)
@@ -1351,10 +1167,10 @@ setMethod("lbarplot", signature(x = "ASEset"), function(x, type = "count", stran
 		e$cex.mainvec <- 1
 	}
     if (!exists("ylab", envir = e, inherits = FALSE)) {
-        e$ylab <- ""
+        e$ylab <- "reads"
     }
     if (!exists("xlab", envir = e, inherits = FALSE)) {
-        e$xlab <- ""
+        e$xlab <- "samples"
     }
     if (!exists("middleLine", envir = e, inherits = FALSE)) {
         e$middleLine <- TRUE
@@ -1395,5 +1211,48 @@ setMethod("lbarplot", signature(x = "ASEset"), function(x, type = "count", stran
 		}
 	}
     b
+}) 
+
+#' topalleleexample ASEset objects
+#' 
+#' used as a visual example to the top allele criteria
+#' 
+#' shows what is top and what is down
+#' 
+#' @name ASEset-topalleleexample
+#' @aliases ASEset-topalleleexample topalleleexample topalleleexample,ASEset-method
+#' @docType methods
+#' @param x "missing", and so no argument is given
+#' @author Jesper R. Gadin
+#' @keywords topallele
+#' @examples
+#' 
+#' data(ASEset)
+#' topalleleexample(ASEset[1])
+#' 
+#' @export topalleleexample
+
+setGeneric("topalleleexample", function(x) {standardGeneric("topalleleexample")})
+    
+setMethod("topalleleexample", signature(x = "missing"), function() {
+
+	df <- data.frame(value=c(0.5,0.5,0.5,0.5),sample=c("sample1","sample1","sample2","sample2"), group=c("grp1","grp2","grp1","grp2"))
+	df <- df[1:2,]
+
+	barchart(
+		value~sample,data=df,
+		groups=group,
+		ylim=c(0,1), cex=0.8, ylab="fraction",
+		xlab="samples",
+		horizontal=F, stack=T, 
+		col=c("ivory","ivory"),
+		panel=function(x,y,...){
+			panel.barchart(x,y,...)
+			panel.text(x, 0.75, labels=c("top"), cex=2, font=2)
+			panel.text(x, 0.25, labels=c("bottom"),cex=2, font=2)
+			panel.abline=0.5
+			}
+	) 
+
 }) 
 

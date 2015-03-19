@@ -111,6 +111,7 @@
 #' @importFrom lattice xyplot
 #' @importFrom lattice trellis.par.set
 #' @importFrom lattice panel.abline
+#' @importFrom lattice panel.text
 #' @importFrom lattice panel.barchart
 # @importFrom gridExtra grid.arrange
 #'
@@ -123,6 +124,9 @@
 #' @importClassesFrom Gviz DetailsAnnotationTrack
 #' @importClassesFrom Gviz GeneRegionTrack
 #' @importClassesFrom Gviz GenomeAxisTrack
+#'
+#' @importFrom Gviz plotTracks
+#' @export plotTracks
 #' 
 #' @importClassesFrom GenomicFeatures TxDb
 #' @importClassesFrom AnnotationDbi AnnotationDb
