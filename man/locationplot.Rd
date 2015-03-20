@@ -7,14 +7,19 @@
 \alias{locationplot,ASEset-method}
 \title{locationplot ASEset objects}
 \usage{
-locationplot(x, type = "fraction", strand = "*", yaxis = TRUE,
-  xaxis = FALSE, xlab = FALSE, ylab = TRUE, legend.colnames = "",
-  size = 0.9, main = NULL, pValue = FALSE, cex.main = 0.7,
-  cex.ylab = 0.6, cex.legend = 0.6, OrgDb = NULL, TxDb = NULL,
-  verbose = TRUE, ...)
+locationplot(x, ...)
+
+\S4method{locationplot}{ASEset}(x, type = "fraction", strand = "*",
+  yaxis = TRUE, xaxis = FALSE, xlab = FALSE, ylab = TRUE,
+  xlab.text = "", ylab.text = "", legend.colnames = "", size = c(0.8,
+  1), main = NULL, pValue = FALSE, cex.main = 0.7, cex.ylab = 0.6,
+  cex.legend = 0.5, OrgDb = NULL, TxDb = NULL, verbose = TRUE,
+  top.fraction.criteria = "maxcount", ...)
 }
 \arguments{
 \item{x}{an ASEset object.}
+
+\item{...}{arguments passed on to barplot function}
 
 \item{type}{'fraction' or 'count'}
 
@@ -29,6 +34,10 @@ strand.}
 \item{xlab}{showing labels for the tic marks}
 
 \item{ylab}{showing labels for the tic marks}
+
+\item{xlab.text}{xlab text}
+
+\item{ylab.text}{ylab text}
 
 \item{legend.colnames}{gives colnames to the legend matrix}
 
@@ -52,7 +61,7 @@ together with argument TxDb this will only be used to extract genesymbols.}
 \item{verbose}{Setting \code{verbose=TRUE} gives details of procedure during
 function run}
 
-\item{...}{arguments passed on to barplot function}
+\item{top.fraction.criteria}{'maxcount', 'ref' or 'phase'}
 }
 \description{
 plotting ASE effects over a specific genomic region

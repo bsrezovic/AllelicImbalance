@@ -45,7 +45,7 @@ mapBias(x, ...)
 fraction(x, ...)
 
 \S4method{fraction}{ASEset}(x, strand = "*",
-  top.allele.criteria = "maxcount", verbose = FALSE)
+  top.fraction.criteria = "maxcount", verbose = FALSE)
 
 arank(x, return.type = "names", return.class = "list", strand = "*", ...)
 
@@ -88,7 +88,7 @@ phase(x) <- value
 
 \item{...}{additional arguments}
 
-\item{top.allele.criteria}{'maxcount', 'ref' or 'phase'}
+\item{top.fraction.criteria}{'maxcount', 'ref' or 'phase'}
 
 \item{verbose}{makes function more talkative}
 

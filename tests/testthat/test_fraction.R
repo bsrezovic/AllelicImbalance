@@ -39,7 +39,7 @@ test_that(paste("test fraction usePhase=TRUE"), {
 	phase(a) <- pha
 	
 	#check 
-	res <- fraction(a, top.allele.criteria="phase")
+	res <- fraction(a, top.fraction.criteria="phase")
 
 	#check 
     expect_that(colnames(res), equals(rownames(a)))

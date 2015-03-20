@@ -1586,11 +1586,11 @@ barplotLatticeFraction <- function(identifier, ...) {
     if (!exists("middleLine", envir = e, inherits = FALSE)) {
         e$middleLine <- TRUE 
     }
-    if (!exists("top.allele.criteria", envir = e, inherits = FALSE)) {
-        e$top.allele.criteria <- "maxcount"
+    if (!exists("top.fraction.criteria", envir = e, inherits = FALSE)) {
+        e$top.fraction.criteria <- "maxcount"
     }
 
-	df <- fractionPlotDf(e$x, identifier, strand=e$strand, top.allele.criteria=e$top.allele.criteria)
+	df <- fractionPlotDf(e$x, identifier, strand=e$strand, top.fraction.criteria=e$top.fraction.criteria)
     
     # Grah params
     my_cols <- c("green", "red")
@@ -1628,7 +1628,7 @@ barplotLatticeFraction <- function(identifier, ...) {
 					  )
 					  #, rot = c(90, 0))
 	}
-	if(e$top.allele.criteria=="phase"){
+	if(e$top.fraction.criteria=="phase"){
 		df$groups <- df$phase
 	}else{
 		df$groups <- df$alleles

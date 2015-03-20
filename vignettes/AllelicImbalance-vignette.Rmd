@@ -197,7 +197,7 @@ For some functionality phase information is necessary. Phasing can be obtained f
 
 ```{r echo=TRUE, eval=TRUE}
 #manually add the phase information
-#example phase matrix 
+#create an example phase matrix 
 set.seed(1)
 rows <-nrow(a.simple)
 cols <- ncol(a.simple)
@@ -219,7 +219,7 @@ p.subset <- p[, colnames(p) %in% colnames(a.subset)]
 p.ordered <- p.subset[ , match(colnames(a.subset), colnames(p.subset))]
 ```
 
-##Adding reference and alternative allele information
+## Adding reference and alternative allele information
 The reference and alternative alleles are stored in the meta-columns
 and can be accessed and set through the mcols() function. All functions
 that require reference or alternative allele will check
@@ -239,7 +239,7 @@ alt <- inferAltAllele(a.simple)
 mcols(a.simple)[,"alt"] <- alt
 ```
 
-#Tests
+# Tests
 ## Statistical analysis of an ASEset object
 One of the simplest statistical test for use in allelic imbalance analysis is
 the chi-square test. This test assumes that the uncertainty of ASE is represented by a normal distribution around an expected mean (i.e 0.5 for equal expression). A significant result suggests an ASE event. Every strand is tested independently. 
@@ -253,7 +253,7 @@ binom.test(a2,"+")
 chisq.test(a2,"-")
 ```
 
-# Standard Graphics
+# Base graphics
 ## Plotting of an ASEset object
 The barplot function for ASEset objects
 plots the read count of each allele in each sample. This is useful for getting a very
@@ -288,9 +288,13 @@ different highligts such as illustrated here below for gender. This could also
 be used to highlight based on genotype of proximal non-coding SNPs if available.
 
 ```{r echo=TRUE, eval=TRUE}
-sampleColour<-rep("palevioletred",ncol(a.simple))
-sampleColour[colData(a.simple)[,"Gender"]%in%"male"] <- "blue"
-barplot(a.simple[1], type="fraction", sampleColour=sampleColour, cex.main = 0.7)
+#top colour
+sampleColour.top <-rep("palevioletred",ncol(a.simple))
+sampleColour.top[colData(a.simple)[,"Gender"]%in%"male"] <- "darkgreen"
+#bottom colour
+sampleColour.bot <- rep("blue",ncol(a.simple))
+sampleColour.bot[colData(a.simple)[,"Gender"]%in%"male"] <- "seashell2"
+barplot(a.simple[1], type="fraction", sampleColour.top=sampleColour.top, sampleColour.bot=sampleColour.bot, cex.main = 0.7)
 ```
 
 ## Plot with annotation
@@ -322,34 +326,34 @@ OrgDb and TxDb.
 ```{r echo=TRUE, eval=TRUE, message=FALSE}
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 #using count type
-locationplot(a.stranded, strand="-", type="count", cex.main=0.7, cex.legend=0.4)
+locationplot(a.stranded, type="count", cex.main=0.7, cex.legend=0.4)
 #use annotation
 a.stranded.sorted <- sort(a.stranded, decreasing=FALSE)
-locationplot(a.stranded.sorted, strand="-", OrgDb=org.Hs.eg.db,TxDb=TxDb.Hsapiens.UCSC.hg19.knownGene)
+locationplot(a.stranded.sorted, OrgDb=org.Hs.eg.db, TxDb=TxDb.Hsapiens.UCSC.hg19.knownGene)
 ```
 
-#Grid Graphics
+# Grid graphics
 To make use of the extra graphical flexibility that comes with grid graphics, 
 the AllelicImbalance package has now functions that can be integrated in that
-environment, visit this [link](https://www.stat.auckland.ac.nz/~paul/grid/grid.html) for more information. Another good reason for grid graphics is the Gviz package, which
-uses tracks to visualize genomic regions in a smart way. Below are examples
-for the bar- and locationplot versions using the grid, having an extra "g" as prefix in the function name.  
+environment. One particular reason to use grid graphics is the Gviz package, which
+uses tracks to visualize genomic regions in a smart way. The AllelicImbalance package
+has now grid based barplots and functionality to create Gviz tracks. Observe the extra "g" prefix for the bar- and locationplot versions using the grid, see examples below.  
 
-##lbarplot
+## gbarplot
 The standard barplot function offers a lot 
 
 ```{r echo=TRUE, eval=TRUE, message=FALSE}
 #access example ASEset data
 data(ASEset)
 
-#lbarplots with type "count" 
-lbarplot(ASEset, type="count")
+#gbarplots with type "count" 
+gbarplot(ASEset, type="count")
 
-# lbarplots with type "fraction" 
-lbarplot(ASEset, type="fraction")
+# gbarplots with type "fraction" 
+gbarplot(ASEset, type="fraction")
 ```
 
-##glocationplot
+## glocationplot
 The "g" in glocationplot comes from "Gviz barplot". It is a wrapper to quickly 
 get an overview of ASE in a region.
 
@@ -369,7 +373,7 @@ if the tracks are constructed separately.
 
 ```{r echo=TRUE, eval=TRUE, message=FALSE}
 #subset ASEset and reads
-x <- ASEset[1:2]
+x <- ASEset[,1:2]
 r <- reads[1:2]
 seqlevels(r, force=TRUE) <- seqlevels(x)
 
@@ -395,11 +399,11 @@ data(ASEset)
 
 #using reference allele information
 mcols(ASEset)[,"alt"] <- inferAltAllele(ASEset)
-barplot(ASEset[1], type="fraction", strand="+", xlab.text="", top.allele.criteria="ref")
+barplot(ASEset[1], type="fraction", strand="+", xlab.text="", top.fraction.criteria="ref")
 
 #using phase information
 phase(ASEset) <- phase.mat 
-barplot(ASEset[1], type="fraction", strand="+", xlab.text="", top.allele.criteria="phase")
+barplot(ASEset[1], type="fraction", strand="+", xlab.text="", top.fraction.criteria="phase")
 ```
 
 # Summary functions
@@ -436,11 +440,14 @@ Samtools
 Samtools pileup
 [link](http://samtools.sourceforge.net/mpileup.shtml)
 
+Grid graphics
+[link](https://www.stat.auckland.ac.nz/~paul/grid/grid.html)
 
-> "Who is is the master if nature provides the techniques to study itself"
 
 
 # Session Info
 ```{r echo=TRUE, eval=TRUE}
 sessionInfo()
 ```
+
+> "Who is is the master if nature provides the techniques to study itself"

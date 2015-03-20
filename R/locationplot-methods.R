@@ -14,6 +14,7 @@ NULL
 #' used is the same as used in aligning the RNA-seq data.
 #' 
 #' @name ASEset-locationplot
+#' @rdname locationplot
 #' @aliases ASEset-locationplot locationplot locationplot,ASEset-method
 #' @docType methods
 #' @param x an ASEset object.
@@ -25,6 +26,8 @@ NULL
 #' @param xaxis wheter the x-axis is to be displayed or not
 #' @param ylab showing labels for the tic marks
 #' @param xlab showing labels for the tic marks
+#' @param ylab.text ylab text
+#' @param xlab.text xlab text
 #' @param legend.colnames gives colnames to the legend matrix
 #' @param size will give extra space in the margins of the inner plots
 #' @param main text to use as main label
@@ -32,6 +35,7 @@ NULL
 #' @param cex.main set main label size
 #' @param cex.ylab set ylab label size
 #' @param cex.legend set legend label size
+#' @param top.fraction.criteria 'maxcount', 'ref' or 'phase'
 #' @param OrgDb an OrgDb object from which to plot a gene map. If given
 #' together with argument TxDb this will only be used to extract genesymbols.
 #' @param TxDb a TxDb object from which to plot an exon map.
@@ -56,20 +60,19 @@ NULL
 #' # useful for detailed visualization.
 #' locationplot(ASEset,type='count',strand='*')
 #' 
-#' @exportMethod locationplot
-
-setGeneric("locationplot", function(x, type = "fraction", strand = "*", 
-    yaxis = TRUE, xaxis = FALSE, xlab = FALSE, ylab = TRUE, legend.colnames = "", 
-    size = 0.9, main = NULL, pValue = FALSE, cex.main = 0.7, cex.ylab = 0.6, cex.legend = 0.6, 
-    OrgDb = NULL, TxDb = NULL, verbose = TRUE, ...) {
+#' @rdname locationplot
+#' @export
+setGeneric("locationplot", function(x, ...) {
     standardGeneric("locationplot")
 })
 
+#' @rdname locationplot
+#' @export
 setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction", 
     strand = "*", yaxis = TRUE, xaxis = FALSE, xlab = FALSE, ylab = TRUE, 
-    legend.colnames = "", size = c(0.8, 1), main = NULL, pValue = FALSE, cex.main = 0.7, 
+    xlab.text="", ylab.text="", legend.colnames = "", size = c(0.8, 1), main = NULL, pValue = FALSE, cex.main = 0.7, 
     cex.ylab = 0.6, cex.legend = 0.5, OrgDb = NULL, TxDb = NULL, verbose = TRUE, 
-    top.allele.criteria="maxcount", ...) {
+    top.fraction.criteria="maxcount", ...) {
 
     # check basic chromosome and region requirement
     if (!length(unique(seqnames(rowRanges(x)))) == 1) {
@@ -308,7 +311,8 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
             size = sizeHere, addHorizontalLine = 0.5, add = TRUE, pValue = pValue, 
             cex.ylab = cex.ylab, legend.colnames = legend.colnames, yaxis = yaxis, 
             xaxis = xaxis, ylab = ylab, xlab = xlab, main = main, cex.main = cex.main, 
-            cex.legend = cex.legend, top.allele.criteria=top.allele.criteria, ...)
+            cex.legend = cex.legend, top.fraction.criteria=top.fraction.criteria,
+			ylab.text=ylab.text, xlab.text=xlab.text, ...)
         
         # create lines indicating at which genomic position the Snp is found
         lines(x = rep(lowerLeftCorner[1] + size[1]/2, 2), y = c(0, -0.1), col = "dodgerblue")
@@ -344,7 +348,7 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
 #' 
 #' The glocationplot methods visualises the distribution of ASE over a larger
 #' region on one chromosome. It takes and ASEset object as well as additional
-#' information on plot type (see \code{\link{lbarplot}}), strand type (see
+#' information on plot type (see \code{\link{gbarplot}}), strand type (see
 #' \code{\link{getAlleleCounts}}), Annotation tracks are created from the Gviz
 #' packageh. It is obviously important to make sure that the genome build used
 #' is set correctly, e.g. 'hg19'.
@@ -452,8 +456,8 @@ setMethod("glocationplot", signature(x = "ASEset"), function(x, type = "fraction
     if (!exists("middleLine", envir = e, inherits = FALSE)) {
         e$middleLine <- TRUE
     }
-    if (!exists("top.allele.criteria", envir = e, inherits = FALSE)) {
-        e$top.allele.criteria <- "maxcount"
+    if (!exists("top.fraction.criteria", envir = e, inherits = FALSE)) {
+        e$top.fraction.criteria <- "maxcount"
     }
 
     # make deTrack 
@@ -466,7 +470,7 @@ setMethod("glocationplot", signature(x = "ASEset"), function(x, type = "fraction
 								   cex.mainvec=e$cex.mainvec,
 								   ylab=e$ylab,
 								   xlab=e$xlab,
-								   top.allele.criteria=e$top.allele.criteria
+								   top.fraction.criteria=e$top.fraction.criteria
 								   )
     lst <- list(deTrack)
    

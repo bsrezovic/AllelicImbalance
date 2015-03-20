@@ -6,10 +6,11 @@
 \alias{fractionPlotDf,ASEset-method}
 \title{Plot Dataframe}
 \usage{
-fractionPlotDf(x, snp, strand = "*", top.allele.criteria = "maxcount", ...)
+fractionPlotDf(x, snp, strand = "*", top.fraction.criteria = "maxcount",
+  ...)
 
 \S4method{fractionPlotDf}{ASEset}(x, snp, strand = "*",
-  top.allele.criteria = "maxcount", ...)
+  top.fraction.criteria = "maxcount", ...)
 }
 \arguments{
 \item{x}{ASEset}
@@ -18,7 +19,7 @@ fractionPlotDf(x, snp, strand = "*", top.allele.criteria = "maxcount", ...)
 
 \item{strand}{'+', '-' or '*'}
 
-\item{top.allele.criteria}{'maxcount', 'ref' or 'phase'}
+\item{top.fraction.criteria}{'maxcount', 'ref' or 'phase'}
 
 \item{...}{arguments to forward to internal functions}
 }
@@ -28,12 +29,12 @@ Summarizes information to ease creating plots
 \details{
 Main purpose is to reduce the amount of overall code and ease maintenance.
 
-top.allele.criteria can take three options, maxcount, ref and phase. The top
+top.fraction.criteria can take three options, maxcount, ref and phase. The top
 allele will be every second row in the data frame, with start from row 2.
 The maxcount argument will put the allele with most reads on top of the
 bivariate fraction. Similarly the ref argument will put always the reference
 allele on top. The phase arguments puts the maternal phase always on top.
-The top.allele.criteria for the ref or phase arguments requires that both ref
+The top.fraction.criteria for the ref or phase arguments requires that both ref
 and alt is set in mcols(ASEset).
 }
 \examples{

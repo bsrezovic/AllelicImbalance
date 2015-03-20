@@ -112,12 +112,12 @@ setMethod("phaseArray2Matrix", signature(x = "array"),
 #' 
 #' Main purpose is to reduce the amount of overall code and ease maintenance. 
 #'
-#' top.allele.criteria can take three options, maxcount, ref and phase. The top
+#' top.fraction.criteria can take three options, maxcount, ref and phase. The top
 #' allele will be every second row in the data frame, with start from row 2. 
 #' The maxcount argument will put the allele with most reads on top of the 
 #' bivariate fraction. Similarly the ref argument will put always the reference
 #' allele on top. The phase arguments puts the maternal phase always on top.
-#' The top.allele.criteria for the ref or phase arguments requires that both ref
+#' The top.fraction.criteria for the ref or phase arguments requires that both ref
 #' and alt is set in mcols(ASEset).
 #' 
 #'
@@ -128,7 +128,7 @@ setMethod("phaseArray2Matrix", signature(x = "array"),
 #' @param x ASEset
 #' @param snp rownames identifier for ASEset or row number
 #' @param strand '+', '-' or '*'
-#' @param top.allele.criteria 'maxcount', 'ref' or 'phase'
+#' @param top.fraction.criteria 'maxcount', 'ref' or 'phase'
 #' @param ... arguments to forward to internal functions
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords phase plotDf
@@ -144,7 +144,7 @@ NULL
 
 #' @rdname fractionPlotDf
 #' @export
-setGeneric("fractionPlotDf", function(x, snp,  strand="*", top.allele.criteria="maxcount", ... 
+setGeneric("fractionPlotDf", function(x, snp,  strand="*", top.fraction.criteria="maxcount", ... 
 	){
     standardGeneric("fractionPlotDf")
 })
@@ -152,10 +152,10 @@ setGeneric("fractionPlotDf", function(x, snp,  strand="*", top.allele.criteria="
 #' @rdname fractionPlotDf
 #' @export
 setMethod("fractionPlotDf", signature(x = "ASEset"),
-		function(x, snp,  strand="*", top.allele.criteria="maxcount", ...
+		function(x, snp,  strand="*", top.fraction.criteria="maxcount", ...
 	){
 
-	##top.allele.criteria
+	##top.fraction.criteria
 	# maxcount
 	# ref
 	# phase
@@ -170,7 +170,7 @@ setMethod("fractionPlotDf", signature(x = "ASEset"),
 		snprow <- snp
 	}
 
-	afraction <- fraction(x[snprow], strand = strand, top.allele.criteria=top.allele.criteria)
+	afraction <- fraction(x[snprow], strand = strand, top.fraction.criteria=top.fraction.criteria)
 
 	values <- as.vector(t(matrix(as.numeric(afraction), ncol=2, nrow=ncol(x))))
 	#values[seq(1,ncol(x)*2,by=2)+1] <- 1 - values[seq(1,ncol(x)*2,by=2)+1]
@@ -179,7 +179,7 @@ setMethod("fractionPlotDf", signature(x = "ASEset"),
 	values[seq(1,ncol(x)*2,by=2)] <- 1 - values[seq(1,ncol(x)*2,by=2)]
 	samples <- as.vector(t(matrix(rownames(afraction), ncol=2, nrow=ncol(x))))
 
-	if(top.allele.criteria=="phase"){
+	if(top.fraction.criteria=="phase"){
 
 		if(!sum(c("ref", "alt") %in% names(mcols(x))) == 2 ){
 			stop("ref and alt has to be set in mcols to use phase option")
@@ -193,7 +193,7 @@ setMethod("fractionPlotDf", signature(x = "ASEset"),
 		alleles <- as.vector(t(mat2))
 		phase <- rep(c("paternal","maternal"), ncol(x))
 
-	}else if(top.allele.criteria=="ref"){
+	}else if(top.fraction.criteria=="ref"){
 		
 		if(!sum(c("ref", "alt") %in% names(mcols(x))) == 2 ){
 			stop("ref and alt has to be set in mcols to use phase option")
@@ -201,7 +201,7 @@ setMethod("fractionPlotDf", signature(x = "ASEset"),
 
 		alleles <- as.vector(t(matrix(c(rep(mcols(x[snprow])[,"alt"],ncol(x)),rep(mcols(x[snprow])[,"ref"], ncol(x))), ncol=2, nrow=ncol(x))))
 		
-	}else if(top.allele.criteria=="maxcount"){
+	}else if(top.fraction.criteria=="maxcount"){
 
 		#arank(x[snprow],return.class="matrix")[c(1,2)]
 		alleles <- as.vector(t(matrix(arank(x[snprow], strand=strand, return.class="matrix")[c(2,1)], ncol=2, nrow=ncol(x), byrow=TRUE)))
@@ -219,7 +219,7 @@ setMethod("fractionPlotDf", signature(x = "ASEset"),
     df$alleles <- factor(df$alleles, levels = unique(df$alleles),ordered = TRUE)
 
 	#if phase option add phase information to df
-	if(top.allele.criteria=="phase"){
+	if(top.fraction.criteria=="phase"){
 		df$phase <- phase
 		df$phase <- factor(df$phase, levels = unique(df$phase),ordered = TRUE)
 	}
@@ -303,6 +303,9 @@ setMethod("defaultPhase", signature("numeric"),
 #' 	nrow=nrow(a), ncol(a))
 #' 
 #' phase(a) <- p
+#' 
+#' #add alternative allele information
+#' mcols(a)[["alt"]] <- inferAltAllele(a)
 #'
 #' # in this example every snp is on its own exon
 #' txGR <- granges(a)
@@ -332,7 +335,7 @@ setMethod("regionSummary", signature("ASEset"),
 		hits <- findOverlaps(x,gr)
 		x <- x[queryHits(hits),]
 
-		fr <- fraction(x, strand=strand, top.allele.criteria="phase")
+		fr <- fraction(x, strand=strand, top.fraction.criteria="phase")
 
 		#need information of which are heterozygotes and homozygotes
 		if(is.null(genotype(x))){

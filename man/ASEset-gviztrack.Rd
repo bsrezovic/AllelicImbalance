@@ -12,6 +12,10 @@
 ASEDAnnotationTrack(x, GR = rowRanges(x), type = "fraction", strand = "*",
   trackName = paste("deTrack", type), verbose = TRUE, ...)
 
+\S4method{ASEDAnnotationTrack}{ASEset}(x, GR = rowRanges(x),
+  type = "fraction", strand = "*", trackName = paste("deTrack", type),
+  verbose = TRUE, ...)
+
 CoverageDataTrack(x, GR = rowRanges(x), BamList = NULL, strand = NULL,
   start = NULL, end = NULL, trackNameVec = NULL, meanCoverage = FALSE,
   verbose = TRUE, ...)

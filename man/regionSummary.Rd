@@ -39,6 +39,9 @@ p <- matrix(paste(p1,sample(c("|","|","/"), size=nrow(a)*ncol(a), replace=TRUE),
 
 phase(a) <- p
 
+#add alternative allele information
+mcols(a)[["alt"]] <- inferAltAllele(a)
+
 # in this example every snp is on its own exon
 txGR <- granges(a)
 t <- regionSummary(a, txGR)

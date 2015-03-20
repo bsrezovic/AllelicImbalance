@@ -48,7 +48,7 @@ NULL
 #' @param verbose makes function more talkative
 #' @param return.type return 'names', rank or 'counts'
 #' @param return.class return 'list' or 'array'
-#' @param top.allele.criteria 'maxcount', 'ref' or 'phase'
+#' @param top.fraction.criteria 'maxcount', 'ref' or 'phase'
 #' @param value replacement variable
 #' @param ... additional arguments
 #' @return An object of class ASEset containing location information and allele
@@ -312,7 +312,7 @@ setGeneric("fraction", function(x, ...) {
 #' @rdname ASEset-class
 #' @export 
 setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*", 
-    top.allele.criteria="maxcount", verbose = FALSE) {
+    top.fraction.criteria="maxcount", verbose = FALSE) {
     
     if (!sum(strand %in% c("+", "-", "*")) > 0) {
         stop("strand parameter has to be either '+', '-', '*' ")
@@ -321,13 +321,13 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*",
 	#core function
 	fr <- frequency(x, strand=strand, return.class="array")
 
-	#check and use top.allele.criteria=="phase"
-	if(top.allele.criteria=="phase"){
+	#check and use top.fraction.criteria=="phase"
+	if(top.fraction.criteria=="phase"){
 		if(!"phase" %in% names(assays(x))){
 			stop("the phase slot has not been initialized")
 		}
 		if(is.null(assays(x)[["phase"]])){
-			stop("the phase slot cannot be empty if 'top.allele.criteria=\"phase\"'")
+			stop("the phase slot cannot be empty if 'top.fraction.criteria=\"phase\"'")
 		}
 
 		#select only ref rows
@@ -349,8 +349,8 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*",
 		#reverse values in mat that are not ref (0)
 
 
-	}else if(top.allele.criteria=="ref"){
-		#check and use top.allele.criteria=="ref"
+	}else if(top.fraction.criteria=="ref"){
+		#check and use top.fraction.criteria=="ref"
 		if(!"ref" %in% names(mcols(x))){
 			stop("the ref mcol has not been initialized")
 		}
@@ -367,7 +367,7 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*",
 		#subset ref allele frequencies and make matrix
 		ret <- matrix(fr2[ar2], ncol=nrow(x), nrow=ncol(x))
 
-	}else if(top.allele.criteria=="maxcount"){
+	}else if(top.fraction.criteria=="maxcount"){
 		#use output from rank as maxcount
 		#arank <- arank(x, strand = strand, return.class="matrix")
 
