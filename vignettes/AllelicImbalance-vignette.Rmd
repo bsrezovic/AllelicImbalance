@@ -14,7 +14,7 @@ vignette: >
 BiocStyle::markdown()
 ```
 #Introduction
-This AllelicImbalance package contains functions for investigating
+This `r Biocpkg("AllelicImbalance")` package contains functions for investigating
 allelic imbalance effects in RNA-seq data. Maternal and paternal
 alleles could be expected to show identical transcription rate, resulting in a
 50%-50% mix of maternal and paternal mRNA in a sample. However, this turns out
@@ -32,7 +32,7 @@ library(AllelicImbalance)
 ```
 
 # ASEset
-The ASEset object is the central class of objects in the AllelicImbalance package. The ASEset object has the SummarizedExperiment as parent class, and all functions you can apply on this class you can also apply on an ASEset.
+The ASEset object is the central class of objects in the AllelicImbalance package. The ASEset object has the SummarizedExperiment from the `r Biocpkg("GenomicRanges")` package as parent class, and all functions you can apply on this class you can also apply on an ASEset.
 
 ## Simple example of building an ASEset object
 In this section we will walk through the various ways an ASEset
@@ -77,18 +77,28 @@ code we download reference sequence for chromosome 17 and show how to generate
 mpileup calls on one of the HapMap samples that were described above.
 
 ```
+#download the reference chromosome in fasta format
 wget ftp://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/chr17.fa.gz
+
+#Vcf format
+samtools mpileup -uf hg19.fa ERR009135.bam > ERR009135.vcf
+
+#Bcf format
 samtools mpileup -uf hg19.fa ERR009135.bam | bcftools view -bvcg - > ERR009135.bcf
 ```
 
-### Vcf-version
-Simply use bcftools to get back to the vcf format
+Samtools mpileup generates by default a Vcf file which contains SNP and short INDEL 
+positions. Piping the output to bcftools we get its binary equivalent (Bcf), which 
+takes less space and can be queried more effective. 
 
-```
-bcftools view > ERR009135.vcf
-```
-
-Use the readVcf function from the VariantAnnotation package
+The Vcf file is a text file that stores information about positions in the genome.
+Except the location of the position the information could be for example genotype,
+phase, reference and alternative alleles for a collection of samples. More detailed
+information can be found following this [link](http://samtools.github.io/hts-specs/VCFv4.1.pdf).
+ 
+In the `r Biocpkg("VariantAnnotation")` package there is a lot of useful tools to handle
+ Vcf files. The readVcf function reads Vcf data into R, which can be subset to only ranges by granges to
+get a GRanges object that is the object type required by the getAlleleCounts function. 
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE}
 pathToVcf <- paste(pathToFiles,"/ERP000101.vcf",sep="")
@@ -103,13 +113,9 @@ countList <- getAlleleCounts(reads, gr.filt, verbose=FALSE)
 a.vcf <- ASEsetFromCountList(rowData = gr, countList)
 ```
 
-### Bcf-version
-Samtools mpileup generates by default a Vcf file which contains SNP and short INDEL 
-positions. Piping the output to bcftools we get its binary equivalent (Bcf), which 
-takes less space and can be queried more effective. With the Bcf files the process 
-of generating an ASEset object starts with a call to the impBcfGR 
-function instead. This function will import the Bcf file containing all SNP calls 
-that were generated with the samtools mpileup function.
+With the Bcf files the process of generating an ASEset object starts with a call to the impBcfGR 
+function instead. This function will import the Bcf file containing all SNP calls that were 
+generated with the samtools mpileup function.
 
 ```{r echo = TRUE, eval = TRUE}
 BcfGR <- impBcfGR(pathToFiles,searchArea,verbose=FALSE)
@@ -193,11 +199,12 @@ colData(a.simple) <- pdata
 ```
 
 ## Adding phase information
-For some functionality phase information is necessary. Phasing can be obtained from many external sources e.g. samtools. The phase information is often present in VCF-files. And the lines below show how to access that information and transfer it to an ASEset. The ASEset follows the VCF-conventions on how to describe the phase, i.e. each patients phase will be described by the established notation of the form "1|0","1|1" or "1/0". There the left number is the description of the maternal allele and the right number is the description of the paternal allele. If it is 0 the allele is the same as the reference allele, and if it is 1 it is the alternative allele. For "|" the phase is known and for "/" the phase is not known. Note, that in the AllelicImbalance package only bi-allelic expression is allowed.
+For some functionality phase information is necessary. Phasing can be obtained from many external sources e.g. samtools. The phase information is often present in VCF-files. The lines below show how to access that information and transfer it to an ASEset. The ASEset follows the VCF-conventions on how to describe the phase, i.e. each patients phase will be described by the established notation of the form "1|0","1|1" or "1/0". There the left number is the description of the maternal allele and the right number is the description of the paternal allele. If it is 0 the allele is the same as the reference allele, and if it is 1 it is the alternative allele. For "|" the phase is known and for "/" the phase is not known. Note, that in the AllelicImbalance package only bi-allelic expression is allowed.
+
+The phase can be manually added by constructing an own matrix, or transforming the data into a matrix from an external source. The most convenient way of importing phase information is probably by reading it from a Vcf file, which is commonly used to store phase information. The readGT function from the `r Biocpkg("VariantAnnotation")` package will return a matrix ready to just attach to an ASEset object.
 
 ```{r echo=TRUE, eval=TRUE}
-#manually add the phase information
-#create an example phase matrix 
+#construct an example phase matrix 
 set.seed(1)
 rows <-nrow(a.simple)
 cols <- ncol(a.simple)
@@ -220,10 +227,11 @@ p.ordered <- p.subset[ , match(colnames(a.subset), colnames(p.subset))]
 ```
 
 ## Adding reference and alternative allele information
-The reference and alternative alleles are stored in the meta-columns
-and can be accessed and set through the mcols() function. All functions
-that require reference or alternative allele will check
-in the meta-columns "ref" or "alt" for that information.
+Having the information of reference and alternative allele is important to investigate any 
+presence of mapping bias. It is also important to be able to use phasing information. The 
+reference and alternative alleles are stored in the meta-columns and can be accessed and
+ set through the mcols() function. All functions that require reference or alternative 
+allele will visit the meta-columns "ref" or "alt" to extract that information.
 
 ```{r echo=TRUE, eval=TRUE}
 #from simulated data
@@ -237,6 +245,52 @@ a.ref <- refAllele(ASEset.sim,fasta=fasta)
 #infer and set alternative allele
 alt <- inferAltAllele(a.simple)
 mcols(a.simple)[,"alt"] <- alt
+```
+
+Using reference allele information when measuring the impact of mapping bias globally, can be
+ done by measuring the average reference allele fraction from a representative set of SNPs. Below 
+the simulated example uses 1000 SNPs to assess any presence of mapping bias. Any deviations of
+0.5 suggests a bias favouring one or the other allele. The most likely is to get a value higher 
+than 0.5 and is probably due to mapping bias. To make sure that it is mapping bias i.e. the
+ reference allele actually has mapped more often, the value has to be compared to values generated 
+from a permuted data set. The permutation is easiest achieved by using the randomRef function which
+should randomly assign the reference allele based on genotypes and generate a value close to 0.5. 
+
+```{r echo=TRUE, eval=TRUE}
+#make an example countList including a global sample of SNPs
+set.seed(1)
+countListUnknown <- list()
+samples <- paste(rep("sample",10),1:10,sep="")
+snps <- 1000
+for(snp in 1:snps){
+	count<-matrix(0, nrow=length(samples), ncol=4, dimnames=list(samples, c('A','T','G','C')))
+	alleles <- sample(1:4, 2)
+	for(sample in 1:length(samples)){
+		count[sample, alleles] <- as.integer(rnorm(2,mean=50,sd=10))
+	}
+	countListUnknown[[snp]] <- count
+}
+
+#make example rowData for the corresponding information
+gr <- GRanges(
+	seqnames = Rle(sample(paste("chr",1:22,sep=""),snps, replace=TRUE)),
+	ranges = IRanges(1:snps, width = 1, names= paste("snp",1:snps,sep="")),
+	strand="*"
+)
+
+#make ASEset
+a <- ASEsetFromCountList(gr, countListUnknown=countListUnknown)
+
+#set a random allele as reference
+genotype(a) <- inferGenotypes(a)
+mcols(a)[["ref"]] <- randomRef(a)
+
+#get the fraction of the reference allele
+refFrac <- refFraction(a)
+
+#check mean
+mean(refFrac)
+
 ```
 
 # Tests
@@ -267,7 +321,7 @@ one allele the chi-square test returns NA. This is why there is no P-value above
 ```{r echo=TRUE, eval=TRUE}
 barplot(a.stranded[1], strand="+", xlab.text="", legend.interspace=2)
 
-#set own computed p-values
+#use another source of p-values
 btp <- binom.test(a.stranded[1],"+")
 barplot(a.stranded[1], strand="+", testValue=btp, xlab.text="", legend.interspace=2)
 ```
@@ -283,7 +337,7 @@ barplot(a.simple[1], type="fraction", cex.main = 0.7)
 ```
 
 A typical question would be to ask why certain heterozygote samples have allele
-specific expression. The argument sampleColour argument allows for
+specific expression. The arguments sampleColour.top and sampleColour.bot allows for
 different highligts such as illustrated here below for gender. This could also
 be used to highlight based on genotype of proximal non-coding SNPs if available.
 
@@ -332,20 +386,43 @@ a.stranded.sorted <- sort(a.stranded, decreasing=FALSE)
 locationplot(a.stranded.sorted, OrgDb=org.Hs.eg.db, TxDb=TxDb.Hsapiens.UCSC.hg19.knownGene)
 ```
 
+##Top allele criteria
+The barplot with type='function' can be visualized according to three different allele sorting criteria. The default behaviour is just to shown the allele with highest overall abundance in the upper half of the plot. This works well for most single SNP investigations. For more complex situations, however, it can be essential to keep track of phase information. This is done either through the reference allele sorting function, or even better, through consistently showing the maternal allele on top. When phase is know, this is essential to compare effect-directions of different coding SNPs
+
+```{r echo=TRUE, eval=TRUE, message=FALSE}
+
+#load data
+data(ASEset)
+
+#using reference and alternative allele information
+mcols(ASEset)[,"alt"] <- inferAltAllele(ASEset)
+barplot(ASEset[1], type="fraction", strand="+", xlab.text="", top.fraction.criteria="ref")
+
+#using phase information
+phase(ASEset) <- phase.mat 
+barplot(ASEset[1], type="fraction", strand="+", xlab.text="", top.fraction.criteria="phase")
+```
+
 # Grid graphics
 To make use of the extra graphical flexibility that comes with grid graphics, 
 the AllelicImbalance package has now functions that can be integrated in that
-environment. One particular reason to use grid graphics is the Gviz package, which
-uses tracks to visualize genomic regions in a smart way. The AllelicImbalance package
-has now grid based barplots and functionality to create Gviz tracks. Observe the extra "g" prefix for the bar- and locationplot versions using the grid, see examples below.  
+environment. The low level grid functions are located in the `r CRANpkg("grid package")`, but
+higher level functions based on grid can be found in popular packages such as 
+e.g. `r CRANpkg("lattice")`, `r CRANpkg("ggplot2")`. The benefits using grid graphics is a better control over different 
+graphical regions and coordinate systems, how to construct and redirect graphical output,
+such as lines, points, etc and their appearance.    
+
+One particular reason for the AllelicImbalance to use grid graphics is the `r Biocpkg("Gviz")` package, which
+uses grids functionality to construct tracks to visualize genomic regions in a smart way. The 
+AllelicImbalance package has now grid based barplots and functionality to create Gviz tracks. 
+Observe the extra "g" prefix for the bar- and locationplot versions using the grid, see examples below.  
 
 ## gbarplot
-The standard barplot function offers a lot 
+The standard barplot functions for ASEset objects have at the moment much more parameters that can be set by the user
+than the gbarplot. Base graphics also produce graphs faster than the grid environment. What favors the gbarplot
+is instead the possiblity to integrate into the Gviz package and other grid based environments.
 
 ```{r echo=TRUE, eval=TRUE, message=FALSE}
-#access example ASEset data
-data(ASEset)
-
 #gbarplots with type "count" 
 gbarplot(ASEset, type="count")
 
@@ -354,8 +431,11 @@ gbarplot(ASEset, type="fraction")
 ```
 
 ## glocationplot
-The "g" in glocationplot comes from "Gviz barplot". It is a wrapper to quickly 
-get an overview of ASE in a region.
+The glocationplot is a wrapper to quickly get an overview of ASE in a region. The overview offers
+the possibility to view consistency of SNP fractions over consecutive exons which is important to assess
+the reliability of the measured SNPs. In the best case all fractions deviates from e.g. 0.3 for every SNP 
+in the same gene for an individual. To be able to inspect that the direction is right, it is possible to 
+use the top.fraction.criteria and use phase information as explained earlier.
 
 ```{r echo=TRUE, eval=TRUE, message=FALSE}
 #remember to set the genome
@@ -367,9 +447,16 @@ glocationplot(ASEset,strand='+')
 glocationplot(ASEset[,1:5], type="count")
 ```
 
-##Custom locationplots
-More flexibility and functionality from the Gviz package is accessed 
-if the tracks are constructed separately.
+##Custom location plots
+More flexibility and functionality from the Gviz package is accessed if the tracks are constructed separately. 
+This is ueful to evalute AI in respect to for example read coverage or transcript annotation. An inconsistency of AI could
+potentially be explained by an uneven coverage over the exons, or lack of coverage. Below is an example
+using two samples from the ASEset and the corresponding reads. Ensuring and setting the seqlevels equal is a security 
+measure, for the internal overlap calculations that otherwise might throw a warning. The GR object is defining the
+region that we want to plot. The ASEDAnnotationTrack will create a track based on the gbarplots and the CoverageDataTrack
+a track based on read coverage. The different tracks are then collected in a list with the first element appearing at the
+top in the final plotting by the plotTracks function. The sizes vector defines the vertical space assigned to each track.
+To use transcript annotation more detailed information can be found in the Gviz [vignette](http://bioconductor.org/packages/release/bioc/vignettes/Gviz/inst/doc/Gviz.pdf)
 
 ```{r echo=TRUE, eval=TRUE, message=FALSE}
 #subset ASEset and reads
@@ -387,23 +474,6 @@ lst <- c(deTrack,covTracks)
 sizes <- c(0.5,rep(0.5/length(covTracks),length(covTracks)))
 
 plotTracks(lst, from=min(start(x)), to=max(end(x)), sizes=sizes, col.line = NULL, showId = FALSE, main = 'main', cex.main = 1, title.width = 1, type = 'histogram')
-```
-
-##Top allele criteria
-The barplot with type='function' can be visualized according to three different allele sorting criteria. The default behaviour is just to shown the allele with highest overall abundance in the upper half of the plot. This works well for most single SNP investigations. For more complex situations, however, it can be essential to keep track of phase information. This is done either through the reference allele sorting function, or even better, through consistently showing the maternal allele on top. When phase is know, this is essential to compare effect-directions of different coding SNPs
-
-```{r echo=TRUE, eval=TRUE, message=FALSE}
-
-#load data
-data(ASEset)
-
-#using reference allele information
-mcols(ASEset)[,"alt"] <- inferAltAllele(ASEset)
-barplot(ASEset[1], type="fraction", strand="+", xlab.text="", top.fraction.criteria="ref")
-
-#using phase information
-phase(ASEset) <- phase.mat 
-barplot(ASEset[1], type="fraction", strand="+", xlab.text="", top.fraction.criteria="phase")
 ```
 
 # Summary functions

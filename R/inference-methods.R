@@ -168,12 +168,12 @@ setMethod("inferAlleles", signature(x = "ASEset"), function(x,strand="*",return.
 #' @exportMethod inferGenotypes
 
 setGeneric("inferGenotypes", function(x, strand="*", return.class="matrix",
-	return.allele.allowed = c("bi","tri","quad"),
+	return.allele.allowed = "bi",
 	threshold.frequency = 0, threshold.count.sample = 1
 	){ standardGeneric("inferGenotypes")})
 					   
 setMethod("inferGenotypes", signature(x = "ASEset"), function(x, strand="*", return.class="matrix",
-	return.allele.allowed = c("bi","tri","quad"),
+	return.allele.allowed = "bi",
 	threshold.frequency = 0, threshold.count.sample = 1
 	){ 
 	rn <- arank(x, strand=strand,return.type="names", return.class="matrix")			
