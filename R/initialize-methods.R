@@ -20,7 +20,7 @@ NULL
 #' @name initialize-ASEset
 #' @rdname initialize-ASEset
 #' @aliases initialize-ASEset ASEsetFromCountList
-#' @param rowData A \code{GenomicRanges object} that contains the variants of
+#' @param rowRanges A \code{GenomicRanges object} that contains the variants of
 #' interest
 #' @param countListPlus A \code{list} where each entry is a matrix with allele
 #' counts as columns and sample counts as rows
@@ -76,8 +76,8 @@ NULL
 #' }
 #' 
 #' 
-#' #make example rowData
-#' rowData <- GRanges(
+#' #make example rowRanges
+#' rowRanges <- GRanges(
 #' seqnames = Rle(c('chr1', 'chr2', 'chr1', 'chr3', 'chr1')),
 #'          ranges = IRanges(1:5, width = 1, names = head(letters,5)),
 #'          snp = paste('snp',1:5,sep='')
@@ -87,7 +87,7 @@ NULL
 #'  row.names=c('ind1','ind2','ind3','ind4'))
 #' 
 #' #make ASEset 
-#' a <- ASEsetFromCountList(rowData, countListPlus=countListPlus, 
+#' a <- ASEsetFromCountList(rowRanges, countListPlus=countListPlus, 
 #' countListMinus=countListMinus, colData=colData)
 #' 
 NULL
@@ -95,13 +95,13 @@ NULL
 
 #' @rdname initialize-ASEset
 #' @export 
-ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus = NULL, 
+ASEsetFromCountList <- function(rowRanges, countListUnknown = NULL, countListPlus = NULL, 
     countListMinus = NULL, colData = NULL, mapBiasExpMean = NULL, phase = NULL,
     verbose = FALSE, ...) {
     
     if (verbose) {
-        cat("rowData\n")
-        cat(class(rowData))
+        cat("rowRanges\n")
+        cat(class(rowRanges))
         cat("countListPlus\n")
         cat(class(countListPlus))
         cat("countListMinus\n")
@@ -270,7 +270,7 @@ ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus 
         colData <- DataFrame(row.names = unlist(unique(lapply(countList, rownames))))
     }
     
-    sset <- SummarizedExperiment(assays = assays, rowData = rowData, colData = colData, 
+    sset <- SummarizedExperiment(assays = assays, rowRanges = rowRanges, colData = colData, 
         ...)
     
     rownames(sset) <- names(countList)
@@ -290,13 +290,13 @@ ASEsetFromCountList <- function(rowData, countListUnknown = NULL, countListPlus 
 
 #' @rdname initialize-ASEset
 #' @export 
-ASEsetFromArrays <- function(rowData, countsUnknown = NULL, countsPlus = NULL, 
+ASEsetFromArrays <- function(rowRanges, countsUnknown = NULL, countsPlus = NULL, 
     countsMinus = NULL, colData = NULL, mapBiasExpMean = NULL, phase = NULL,
     verbose = FALSE, ...) {
     
    # if (verbose) {
-   #     cat("rowData\n")
-   #     cat(class(rowData))
+   #     cat("rowRanges\n")
+   #     cat(class(rowRanges))
    #     cat("countsPlus\n")
    #     cat(class(countsPlus))
    #     cat("countsMinus\n")
@@ -387,7 +387,7 @@ ASEsetFromArrays <- function(rowData, countsUnknown = NULL, countsPlus = NULL,
         colData <- DataFrame(row.names = dimnames(assays[["countsUnknown"]])[[2]])
     }
 
-    sset <- SummarizedExperiment(assays = assays, rowData = rowData, colData = colData, 
+    sset <- SummarizedExperiment(assays = assays, rowRanges = rowRanges, colData = colData, 
         ...)
     
     rownames(sset) <- rownames(countList)
@@ -451,7 +451,7 @@ RBias <- function(
 				  dimnames=list(rownames(x),colnames(x),c("*","+","-")))
 	}
 
-	sset <- SummarizedExperiment(assays = SimpleList(referenceFrequency=assay), rowData = rowRanges(x), colData = colData(x)) 
+	sset <- SummarizedExperiment(assays = SimpleList(referenceFrequency=assay), rowRanges = rowRanges(x), colData = colData(x)) 
 	rownames(sset) <- rownames(x)
 
 	#valid
@@ -520,7 +520,7 @@ DetectedAIFromArray <- function(
 					threshold.delta.frequency=threshold.delta.frequency,
 					threshold.pvalue=threshold.pvalue
 					), 
-				rowData = rowRanges(x), 
+				rowRanges = rowRanges(x), 
 				colData = colData(x)
 			) 
 

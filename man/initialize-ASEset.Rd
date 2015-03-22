@@ -6,16 +6,16 @@
 \alias{initialize-ASEset}
 \title{Initialize ASEset}
 \usage{
-ASEsetFromCountList(rowData, countListUnknown = NULL, countListPlus = NULL,
+ASEsetFromCountList(rowRanges, countListUnknown = NULL, countListPlus = NULL,
   countListMinus = NULL, colData = NULL, mapBiasExpMean = NULL,
   phase = NULL, verbose = FALSE, ...)
 
-ASEsetFromArrays(rowData, countsUnknown = NULL, countsPlus = NULL,
+ASEsetFromArrays(rowRanges, countsUnknown = NULL, countsPlus = NULL,
   countsMinus = NULL, colData = NULL, mapBiasExpMean = NULL,
   phase = NULL, verbose = FALSE, ...)
 }
 \arguments{
-\item{rowData}{A \code{GenomicRanges object} that contains the variants of
+\item{rowRanges}{A \code{GenomicRanges object} that contains the variants of
 interest}
 
 \item{countListUnknown}{A \code{list} where each entry is a matrix with
@@ -96,8 +96,8 @@ countListMinus[[snp]] <- count
 }
 
 
-#make example rowData
-rowData <- GRanges(
+#make example rowRanges
+rowRanges <- GRanges(
 seqnames = Rle(c('chr1', 'chr2', 'chr1', 'chr3', 'chr1')),
          ranges = IRanges(1:5, width = 1, names = head(letters,5)),
          snp = paste('snp',1:5,sep='')
@@ -107,7 +107,7 @@ colData <- DataFrame(Treatment=c('ChIP', 'Input','Input','ChIP'),
  row.names=c('ind1','ind2','ind3','ind4'))
 
 #make ASEset
-a <- ASEsetFromCountList(rowData, countListPlus=countListPlus,
+a <- ASEsetFromCountList(rowRanges, countListPlus=countListPlus,
 countListMinus=countListMinus, colData=colData)
 }
 \author{

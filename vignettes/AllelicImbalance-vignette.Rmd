@@ -110,7 +110,7 @@ gr.filt <- gr[width(mcols(gr)[,"REF"]) == 1 |
 				unlist(lapply(mcols(gr)[,"ALT"],width))==1]
 
 countList <- getAlleleCounts(reads, gr.filt, verbose=FALSE) 
-a.vcf <- ASEsetFromCountList(rowData = gr, countList)
+a.vcf <- ASEsetFromCountList(rowRanges = gr, countList)
 ```
 
 With the Bcf files the process of generating an ASEset object starts with a call to the impBcfGR 
@@ -271,7 +271,7 @@ for(snp in 1:snps){
 	countListUnknown[[snp]] <- count
 }
 
-#make example rowData for the corresponding information
+#make example rowRanges for the corresponding information
 gr <- GRanges(
 	seqnames = Rle(sample(paste("chr",1:22,sep=""),snps, replace=TRUE)),
 	ranges = IRanges(1:snps, width = 1, names= paste("snp",1:snps,sep="")),

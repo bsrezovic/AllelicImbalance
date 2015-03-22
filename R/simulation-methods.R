@@ -38,7 +38,7 @@
 #	require(Rsamtools)
 #
 #	#no junctions(if junctions we need txdb)
-#	searchArea.ref <- rowData(x) + read.length-1
+#	searchArea.ref <- rowRanges(x) + read.length-1
 #
 #	#make FaFile
 #	fl <- FaFile("hg19.fa")
@@ -52,7 +52,7 @@
 #
 #	#open,scan,close file
 #	open(fl)
-#	ref <- scanFa(fl,param=rowData(x))
+#	ref <- scanFa(fl,param=rowRanges(x))
 #	seq <- scanFa(fl,param=searchArea.ref)
 #	close(fl)
 #	
@@ -63,7 +63,7 @@
 #		#for each snp find all neighbouring snps to that one (all within read size)
 #		#and which of these are different from the ref genome?
 #		for(i in 1:nrow(x)){
-#			hits <- findOverlaps(rowData(x)[i]+read.length, rowData(x))				
+#			hits <- findOverlaps(rowRanges(x)[i]+read.length, rowRanges(x))				
 #			#here we need the functionality to store the genotype information for each 
 #		       	#snp. So while doing that, I might already plan to include all genotypes and their ranges in a slot that. It would be some kind of transposed colData table. In the end the genotypes for RNA-seqenced allele we can store in an assay	
 #			(x)

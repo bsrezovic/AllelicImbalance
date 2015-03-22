@@ -161,13 +161,13 @@ return NA.
 }
 
 \section{Constructor}{
- ASEsetFromCountList(rowData, countListNonStranded =
+ ASEsetFromCountList(rowRanges, countListNonStranded =
 NULL, countListPlus = NULL, countListMinus = NULL, countListUnknown = NULL,
 colData = NULL, mapBiasExpMean = array(),verbose=FALSE ...)
 
 \describe{
 
-Arguments: \item{rowData}{A \code{GenomicRanges object} that contains the
+Arguments: \item{rowRanges}{A \code{GenomicRanges object} that contains the
 variants of interest} \item{countListNonStranded}{A \code{list} where each
 entry is a matrix with allele counts as columns and sample counts as rows}
 \item{countListPlus}{A \code{list} where each entry is a matrix with allele
@@ -197,8 +197,8 @@ count[,allele]<-as.integer(rnorm(4,mean=50,sd=10))
   countListPlus[[snp]] <- count
 }
 
-#make example rowData
-rowData <- GRanges(
+#make example rowRanges
+rowRanges <- GRanges(
   seqnames = Rle(c('chr1', 'chr2', 'chr1', 'chr3', 'chr1')),
   ranges = IRanges(1:5, width = 1, names = head(letters,5)),
   snp = paste('snp',1:5,sep='')
@@ -209,7 +209,7 @@ colData <- DataFrame(Treatment=c('ChIP', 'Input','Input','ChIP'),
  row.names=c('ind1','ind2','ind3','ind4'))
 
 #make ASEset
-a <- ASEsetFromCountList(rowData, countListPlus=countListPlus,
+a <- ASEsetFromCountList(rowRanges, countListPlus=countListPlus,
 colData=colData)
 
 

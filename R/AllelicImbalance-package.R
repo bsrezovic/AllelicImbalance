@@ -55,7 +55,6 @@
 #' @importFrom GenomicRanges unlist
 #' @importFrom GenomicRanges reduce
 #' @importFrom GenomicRanges findOverlaps
-#' @importFrom GenomicRanges rowData
 #' @importFrom GenomicRanges rowRanges
 #' @importFrom GenomicRanges colData
 #' @importFrom GenomicRanges SummarizedExperiment
