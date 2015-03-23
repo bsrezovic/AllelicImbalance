@@ -25,10 +25,11 @@ NULL
 #' @param UserDir The relative or full path of folder containing bam files.
 #' @param searchArea A \code{GenomicRanges object} that contains the regions of
 #' interest
-#' @param XStag Setting \code{XStag=TRUE}, if the XS-tag is present the strand specific
-#' information will be placed in the mcols slot 'XS'
+#' @param XStag Setting \code{XStag=TRUE}, if the XS-tag is present the strand 
+#' specific information will be placed in the mcols slot 'XS'
 #' @param readLength length of sequence reads (default: 150)
-#' @param reduce booleon to hinder importing same read multiple times (see details)
+#' @param reduce booleon to hinder importing same read multiple times
+#' (see the details section)
 #' @param scanBamFlag set scanBamFlag using scanBamFlag()
 #' @param verbose Setting \code{verbose=TRUE} gives details of procedure during
 #' function run.
@@ -54,7 +55,8 @@ NULL
 #' searchArea <- GRanges(seqnames=c('17'), ranges=IRanges(79478301,79478361))
 #' 
 #' #Relative or full path  
-#' pathToFiles <- system.file('extdata/ERP000101_subset', package='AllelicImbalance')
+#' pathToFiles <- system.file('extdata/ERP000101_subset', 
+#'									package='AllelicImbalance')
 #' 
 #' reads <- impBamGAL(pathToFiles,searchArea,verbose=FALSE)
 #' 
@@ -64,7 +66,8 @@ NULL
 
 
 #' @rdname import-bam
-impBamGRL <- function(UserDir, searchArea, readLength=150, reduce=FALSE, scanBamFlag=NULL, verbose = TRUE) {
+impBamGRL <- function(UserDir, searchArea, readLength=150, reduce=FALSE, 
+						scanBamFlag=NULL, verbose = TRUE) {
     # Set parameters
     which <- searchArea  
 	
@@ -72,8 +75,9 @@ impBamGRL <- function(UserDir, searchArea, readLength=150, reduce=FALSE, scanBam
 	if(reduce){
 		which <- reduce(which+readLength)
 	}
-
-    what <- scanBamWhat()  #A character vector naming the fields to return. scanBamWhat() returns a vector of available fields. Fields are described on the scanBam help page.
+	#A character vector naming the fields to return. scanBamWhat() returns a 
+	#vector of available fields. Fields are described on the scanBam help page.
+    what <- scanBamWhat()  
 
 	if(is.null(scanBamFlag)){
 		flag <- scanBamFlag()
@@ -81,8 +85,8 @@ impBamGRL <- function(UserDir, searchArea, readLength=150, reduce=FALSE, scanBam
 		flag <- scanBamFlag
 	}
 
-
-    param <- ScanBamParam(flag = flag, which = which, what = what)  #store ScanBamParam in param.
+	#store ScanBamParam in param.
+    param <- ScanBamParam(flag = flag, which = which, what = what)  
     
     # Point to correct directory and create a BamFileList object
     bamDir <- normalizePath(UserDir)
@@ -93,15 +97,18 @@ impBamGRL <- function(UserDir, searchArea, readLength=150, reduce=FALSE, scanBam
     }
     if (!all(file.exists(paste(bamFiles, ".bai", sep = "")))) {
         if (verbose) {
-            cat(paste("The bam files in UserDir are required to also have", ".bam.bai index files.", 
+            cat(paste("The bam files in UserDir are required to also have",
+				".bam.bai index files.", 
                 " Trying to run indexBam function on each", "\n"), )
         }
         indexBam(bamFiles)
         if (!all(file.exists(paste(bamFiles, ".bai", sep = "")))) {
-            stop("The bam files in UserDir are required to also have", ".bam.bai index files.")
+            stop("The bam files in UserDir are required to also have", 
+				 ".bam.bai index files.")
         } else {
             if (verbose) {
-                cat(paste("Succesfully indexed all bamFiles in UserDir", UserDir, 
+                cat(paste("Succesfully indexed all bamFiles in UserDir", 
+				UserDir, 
                   "\n"))
             }
         }
@@ -114,20 +121,25 @@ impBamGRL <- function(UserDir, searchArea, readLength=150, reduce=FALSE, scanBam
     checkSeqNameExists <- function(bamHeader, requestedSeqNames) {
         as.character(requestedSeqNames) %in% names(bamHeader[["targets"]])
     }
-    if (!all(unlist(lapply(header, checkSeqNameExists, seqnames(searchArea))))) {
-        # not all searchArea requested seq-names found in bam files. Create nice error
+    if (!all(unlist(lapply(header, checkSeqNameExists, seqnames(searchArea))))){
+        # not all searchArea requested seq-names found in bam files. 
         # report and stop
-        seqNotFoundErrors <- lapply(header, checkSeqNameExists, seqnames(searchArea))
+        seqNotFoundErrors <- lapply(header, checkSeqNameExists, 
+									seqnames(searchArea))
         seqNotFounds <- vector()
         for (sampleName in names(seqNotFoundErrors)) {
-            seqNotFounds <- c(seqNotFounds, as.character(seqnames(searchArea)[!seqNotFoundErrors[[sampleName]]]))
+            seqNotFounds <- c(seqNotFounds,
+							  as.character(seqnames(
+								searchArea)[!seqNotFoundErrors[[sampleName]]]))
         }
-        stop(paste("The following seq name(s) not found in the bam files:", paste(sort(unique(seqNotFounds)), 
-            collapse = ", ")))
+
+        stop(paste("The following seq name(s) not found in the bam files:", 
+		   paste(sort(unique(seqNotFounds)), 
+           collapse = ", ")))
     }
     
-    # Loop through, open scanBam, store in GRList and then close each object in the
-    # BamFileList object.
+    # Loop through, open scanBam, store in GRList and then close each object in
+    # the BamFileList object.
     i <- 1
     BamGRL <- GRangesList()
     for (bamName in names(bamFilesList)) {
@@ -135,27 +147,38 @@ impBamGRL <- function(UserDir, searchArea, readLength=150, reduce=FALSE, scanBam
         bf <- bamFilesList[[bamName]]
         open(bf)
         if (verbose) {
-            cat(paste("Reading bam file", i, "with filename", basename(bamName)), 
-                "\n")
+            cat(paste("Reading bam file", i, "with filename", basename(bamName))
+				, "\n")
         }
         bam <- scanBam(bf, param = param)
         # Description
         for (rangeName in names(bam)) {
             
             # if NA values your in trouble. That means the read didnt map
-            ranges <- IRanges(start = bam[[rangeName]][["pos"]], width = cigarWidthAlongReferenceSpace(bam[[rangeName]][["cigar"]]))
-            GRangeBam <- GRanges(seqnames = as.character(bam[[rangeName]][["rname"]]), 
-                ranges = ranges, strand = bam[[rangeName]][["strand"]], names = bam[[rangeName]][["qname"]], 
-                flag = bam[[rangeName]][["flag"]], cigar = bam[[rangeName]][["cigar"]], 
-                mapq = bam[[rangeName]][["mapq"]], mpos = bam[[rangeName]][["mpos"]], 
-                isize = bam[[rangeName]][["isize"]], seq = bam[[rangeName]][["seq"]], 
-                qual = bam[[rangeName]][["qual"]])
-            # This way of merging the different chromosomes to the same GRangeObject is maybe
-            # not the best way. Later try to store them in a separate list, and then unlist
-            # before importing to GrangeBam Store GRangeBam in BamGRL (which is the GRange
-            # List object)
+            ranges <- 
+				IRanges(
+					start = bam[[rangeName]][["pos"]], 
+					width = cigarWidthAlongReferenceSpace(
+								bam[[rangeName]][["cigar"]]))
+            GRangeBam <- 
+				GRanges(seqnames = as.character(bam[[rangeName]][["rname"]]), 
+						ranges = ranges, 
+						strand = bam[[rangeName]][["strand"]], 
+						names = bam[[rangeName]][["qname"]], 
+						flag = bam[[rangeName]][["flag"]],
+						cigar = bam[[rangeName]][["cigar"]], 
+						mapq = bam[[rangeName]][["mapq"]],
+						mpos = bam[[rangeName]][["mpos"]], 
+						isize = bam[[rangeName]][["isize"]],
+						seq = bam[[rangeName]][["seq"]], 
+						qual = bam[[rangeName]][["qual"]])
+            # This way of merging the different chromosomes to the same 
+            # GRangeObject is maybe not the best way. Later try to store them in
+            #  a separate list, and then unlist before importing to GrangeBam 
+            # Store GRangeBam in BamGRL (which is the GRange List object)
             if (basename(bamName) %in% names(BamGRL)) {
-                BamGRL[[basename(bamName)]] <- c(BamGRL[[basename(bamName)]], GRangeBam)
+                BamGRL[[basename(bamName)]] <- 
+					c(BamGRL[[basename(bamName)]], GRangeBam)
             } else {
                 BamGRL[[basename(bamName)]] <- GRangeBam
             }
@@ -1018,7 +1041,7 @@ getAlleleCounts <- function(BamList, GRvariants, strand = "*",
 # counts
 
 
-#' scanForHeterozygotes
+#' scanForHeterozygotes.old
 #' 
 #' Identifies the positions of SNPs found in BamGR reads.
 #' 
@@ -1040,7 +1063,7 @@ getAlleleCounts <- function(BamList, GRvariants, strand = "*",
 #' sample. This is useful if sequencing errors are suspected to be common.
 #' @param maxReads max number of reads of one list-element allowed
 #' @param verbose logical indicating if process information should be displayed
-#' @return \code{scanForHeterozygotes} returns a GRanges object with the SNPs
+#' @return \code{scanForHeterozygotes.old} returns a GRanges object with the SNPs
 #' for the BamList object that was used as input.
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @seealso \itemize{ \item The \code{\link{getAlleleCounts}} which is a
@@ -1049,10 +1072,10 @@ getAlleleCounts <- function(BamList, GRvariants, strand = "*",
 #' @examples
 #' 
 #' data(reads)
-#' s <- scanForHeterozygotes(reads,verbose=FALSE)
+#' s <- scanForHeterozygotes.old(reads,verbose=FALSE)
 #' 
-#' @export scanForHeterozygotes
-scanForHeterozygotes <- function(BamList, minimumReadsAtPos = 20, maximumMajorAlleleFrequency = 0.9, 
+#' @export scanForHeterozygotes.old
+scanForHeterozygotes.old <- function(BamList, minimumReadsAtPos = 20, maximumMajorAlleleFrequency = 0.9, 
     minimumBiAllelicFrequency = 0.9, maxReads = 15000, verbose = TRUE) {
     
     # if just one element of, make list (which is a convenient way of handling this

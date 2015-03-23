@@ -32,12 +32,12 @@
 #' 
 #' @exportMethod inferAlleles
 
-setGeneric("inferAlleles", function(x,strand="*",return.type="all",
+setGeneric("inferAlleles", function(x,strand="*",return.type="bi",
 	threshold.frequency=0, threshold.count.sample=1,
 	inferOver="eachSample", allow.NA=FALSE
 	){standardGeneric("inferAlleles")
 })
-setMethod("inferAlleles", signature(x = "ASEset"), function(x,strand="*",return.type="all",
+setMethod("inferAlleles", signature(x = "ASEset"), function(x,strand="*",return.type="bi",
 	threshold.frequency=0, threshold.count.sample=1,
 	inferOver="eachSample", allow.NA=FALSE
 	){

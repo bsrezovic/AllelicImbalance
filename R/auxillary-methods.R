@@ -420,5 +420,192 @@ setMethod("regionSummary", signature("ASEset"),
 				)
 })
 
+#' scanForHeterozygotes
+#' 
+#' Identifies the positions of SNPs found in BamGR reads.
+#' 
+#' This function scans all reads stored in a \code{GAlignmentsList} for
+#' possible heterozygote positions. The user can balance the sensitivity of the
+#' search by modifying the minimumReadsAtPos, maximumMajorAlleleFrequency and
+#' minimumBiAllelicFrequency arguments.
+#' 
+#' @param BamList A \code{GAlignmentsList object}
+#' @param minimumReadsAtPos minimum number of reads required to call a SNP at a
+#' given position
+#' @param maximumMajorAlleleFrequency maximum frequency allowed for the most
+#' common allele. Setting this parameter lower will minimise the SNP calls
+#' resulting from technical read errors, at the cost of missing loci with
+#' potential strong ASE
+#' @param minimumMinorAlleleFrequency minimum frequency allowed for the second most
+#' common allele. Setting this parameter higher will minimise the SNP calls
+#' resulting from technical read errors, at the cost of missing loci with
+#' potential strong ASE
+#' @param minimumBiAllelicFrequency minimum frequency allowed for the first and
+#' second most common allele. Setting a Lower value for this parameter will
+#' minimise the identification of loci with three or more alleles in one
+#' sample. This is useful if sequencing errors are suspected to be common.
+#' @param verbose logical indicating if process information should be displayed
+#' @return \code{scanForHeterozygotes} returns a GRanges object with the SNPs
+#' for the BamList object that was used as input.
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @seealso \itemize{ \item The \code{\link{getAlleleCounts}} which is a
+#' function that count the number of reads overlapping a site.  }
+#' @keywords scan SNP heterozygote
+#' @examples
+#' 
+#' data(reads)
+#' s <- scanForHeterozygotes(reads,verbose=FALSE)
+#' 
+#' @export scanForHeterozygotes
+scanForHeterozygotes <- function(BamList, minimumReadsAtPos = 20,
+	maximumMajorAlleleFrequency = 0.90, minimumMinorAlleleFrequency = 0.1, 
+    minimumBiAllelicFrequency = 0.9, verbose = TRUE) {
+    
+    # if just one element of, make list (which is a convenient way of handling this
+    # input type)
+    if (class(BamList) == "GAlignments") {
+        BamList <- GAlignmentsList(BamList)
+    }
+    if (class(BamList) == "GRanges") {
+        BamList <- GRangesList(BamList)
+    }
+    
+    if (class(minimumReadsAtPos) != "numeric") 
+        stop(paste("minimumReadsAtPos must be of class numeric, not", class(minimumReadsAtPos)))
+    if (length(minimumReadsAtPos) != 1) 
+        stop(paste("minimumReadsAtPos must be of length 1, not", length(minimumReadsAtPos)))
+    if (class(maximumMajorAlleleFrequency) != "numeric") 
+        stop(paste("maximumMajorAlleleFrequency must be of class numeric, not", class(maximumMajorAlleleFrequency)))
+    if (length(maximumMajorAlleleFrequency) != 1) 
+        stop(paste("maximumMajorAlleleFrequency must be of length 1, not", length(maximumMajorAlleleFrequency)))
+    if (maximumMajorAlleleFrequency < 0 | maximumMajorAlleleFrequency > 1) 
+        stop("maximumMajorAlleleFrequency must be between 0 and 1")
+    if (class(minimumBiAllelicFrequency) != "numeric") 
+        stop(paste("minimumBiAllelicFrequency must be of class numeric, not", class(minimumBiAllelicFrequency)))
+    if (length(minimumBiAllelicFrequency) != 1) 
+        stop(paste("minimumBiAllelicFrequency must be of length 1, not", length(minimumBiAllelicFrequency)))
+    if (minimumBiAllelicFrequency < 0 | maximumMajorAlleleFrequency > 1) 
+        stop("minimumBiAllelicFrequency must be between 0 and 1")
+    if (class(verbose) != "logical") 
+        stop(paste("verbose must be of class logical, not", class(verbose)))
+    if (length(verbose) != 1) 
+        stop(paste("verbose must be of length 1, not", length(verbose)))
+    
+    # checking that BamList format is ok (has to be done quite carefully for the
+    # list-class gappedAlignments
+    if (class(BamList) == "GRangesList") 
+        stop("The use of GRangesList is not recommended. Use BamImpGAList or BamImpGAPList")
+    if (class(BamList) != "GAlignmentsList") 
+        stop("The class of the BamList has to be a GAlignmentsList")
+    
+    # checks specific for GAlignments
+    if (unique(unlist(lapply(BamList, class))) == "GAlignments") {
+        if (!all(unlist(lapply(BamList, function(x) {
+            all(c("cigar", "qwidth") %in% colnames(mcols(x)))
+        })))) {
+            stop("BamList given as GAlignmentsLists of GAlignments objects must contain mcols named qwidth and cigar")
+        }
+    }
+    
+    
+    RangedData <- GRanges()
+    chromosomeLevels <- unique(unlist(lapply(BamList, function(x) {
+        levels(droplevels(runValue(seqnames(x))))
+    })))
+    
+	#create pos to extract
+	x <- BamList
+	x <- GAlignmentsList(lapply(x,function(y){
+			strand(y)<- "*"
+			y	
+	}))
+	x <- reduce(granges(unlist(x)))
+	pos <- unlist(mapply(width(x), start(x), FUN = function(y, z){z:(z+y-1)}))
+	chrnames <- unlist(mapply(as.character(seqnames(x)),width(x), FUN=rep))
+	#strand.vec <- unlist(mapply(as.character(strand(x)),width(x), FUN=rep))
+	my_IGPOI <- GRanges(seqnames=chrnames, ranges=IRanges(start=pos, width=1), 
+						strand="*")
+
+	#empty array that handles only four nucleotides + one del columns
+	dimnames = list(paste("pos",1:length(my_IGPOI), sep=""), names(BamList), c("A", "C", "G", "T"))
+	ar <- array(NA, c(length(my_IGPOI), length(BamList), 4),
+				 dimnames = dimnames)  
+
+			
+	for (i in 1:length(BamList)) {
+		if (verbose) 
+			cat(paste("Investigating sample", i), "out of", length(BamList), 
+			  "\n")
+		
+		# extract samples
+		gal <- BamList[[i]]
+		
+		if (!(length(gal) == 0)) {
+                
+			seqlevels(gal) <- seqlevels(my_IGPOI) 
+			qseq <- mcols(gal)$seq
+
+			nuclpiles <- pileLettersAt(qseq, seqnames(gal), start(gal), cigar(gal),
+																 my_IGPOI)
+			# fill array
+			nstr <- strsplit(as.character(nuclpiles), "")
+			for (k in 1:length(my_IGPOI)) {
+				ar[k, i, ] <- c(sum(nstr[[k]] %in% "A"), sum(nstr[[k]] %in% "C"), sum(nstr[[k]] %in% 
+					"G"), sum(nstr[[k]] %in% "T"))  
+			}
+		}
+	}	
+
+	#mat <- apply(ar, c(1,3),sum, na.rm=TRUE)
+	allele.count.tot <- apply(ar, c(1,2), sum)
+	tf <- allele.count.tot  < minimumReadsAtPos
+	allele.count.tot[tf] <- NA
+
+
+	#make frequency array
+	ar2 <- ar * array(as.vector(1/allele.count.tot),dim=dim(ar))
+	ar2[is.na(ar2)] <- 0
+
+	#rank alleles
+	rank <- t(apply(apply(ar,c(1,3),sum, na.rm=TRUE),
+					1, function(x){rank(x,ties.method="first")}))
+
+	ar.rank1 <- array(rank==4, dim=c(nrow(ar2), dim(ar2)[3], ncol=ncol(ar2)))
+	ar.rank2 <- array(rank==3, dim=c(nrow(ar2), dim(ar2)[3], ncol=ncol(ar2)))
+
+	#rearrange to be able to subset
+	ar.rank1 <- aperm(ar.rank1, c(1,3,2))
+	ar.rank2 <- aperm(ar.rank2, c(1,3,2))
+
+	#rearrange to be able to transform back
+	ar3 <- aperm(ar2, c(3,2,1))
+	ar.rank1b <- aperm(ar.rank1, c(3,2,1))
+	ar.rank2b <- aperm(ar.rank2, c(3,2,1))
+
+	#subset ref allele frequencies
+	maj.al.fr <- aperm(array(ar3[ar.rank1b],dim=dim(ar2)[2:1], 
+					   dimnames=dimnames(ar2)[2:1]),c(2,1))
+					   
+	min.al.fr <- aperm(array(ar3[ar.rank2b],dim=dim(ar2)[2:1], 
+					   dimnames=dimnames(ar2)[2:1]),c(2,1))
+
+	#check conditions
+	tf1 <- apply(!min.al.fr <= minimumMinorAlleleFrequency,1,any)
+	tf2 <- apply(!maj.al.fr >= maximumMajorAlleleFrequency,1,any)
+	tf3 <- apply(((min.al.fr + maj.al.fr) >= minimumBiAllelicFrequency),1,any)
+
+	toBeReturned <- my_IGPOI[tf1&tf2&tf3]
+    
+    #add an SNP name based on position
+    if (!(length(toBeReturned) == 0)) {
+        names(toBeReturned) <- paste("chr", seqnames(toBeReturned), "_", start(toBeReturned), 
+            sep = "")
+        
+    }
+
+    return(toBeReturned)
+}
+
+
 
 

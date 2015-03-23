@@ -235,7 +235,7 @@ allele will visit the meta-columns "ref" or "alt" to extract that information.
 
 ```{r echo=TRUE, eval=TRUE}
 #from simulated data
-mcols(a.simple)[,"ref"] <- c("T","C","G")
+mcols(a.simple)[,"ref"] <- c("G","T","C")
 
 #from reference genome
 data(ASEset.sim)

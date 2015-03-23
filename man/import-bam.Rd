@@ -20,15 +20,16 @@ interest}
 
 \item{readLength}{length of sequence reads (default: 150)}
 
-\item{reduce}{booleon to hinder importing same read multiple times (see details)}
+\item{reduce}{booleon to hinder importing same read multiple times
+(see the details section)}
 
 \item{scanBamFlag}{set scanBamFlag using scanBamFlag()}
 
 \item{verbose}{Setting \code{verbose=TRUE} gives details of procedure during
 function run.}
 
-\item{XStag}{Setting \code{XStag=TRUE}, if the XS-tag is present the strand specific
-information will be placed in the mcols slot 'XS'}
+\item{XStag}{Setting \code{XStag=TRUE}, if the XS-tag is present the strand
+specific information will be placed in the mcols slot 'XS'}
 }
 \value{
 \code{impBamGRL} returns a GRangesList object containing the RNA-seq
@@ -69,7 +70,8 @@ for identifying heterozygote coding SNPs.
 searchArea <- GRanges(seqnames=c('17'), ranges=IRanges(79478301,79478361))
 
 #Relative or full path
-pathToFiles <- system.file('extdata/ERP000101_subset', package='AllelicImbalance')
+pathToFiles <- system.file('extdata/ERP000101_subset',
+									package='AllelicImbalance')
 
 reads <- impBamGAL(pathToFiles,searchArea,verbose=FALSE)
 }
