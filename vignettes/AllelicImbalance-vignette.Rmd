@@ -92,7 +92,7 @@ positions. Piping the output to bcftools we get its binary equivalent (Bcf), whi
 takes less space and can be queried more effective. 
 
 The Vcf file is a text file that stores information about positions in the genome.
-Except the location of the position the information could be for example genotype,
+In addition to the location, stored informationn could for example be genotype,
 phase, reference and alternative alleles for a collection of samples. More detailed
 information can be found following this [link](http://samtools.github.io/hts-specs/VCFv4.1.pdf).
  
@@ -201,7 +201,7 @@ colData(a.simple) <- pdata
 ## Adding phase information
 For some functionality phase information is necessary. Phasing can be obtained from many external sources e.g. samtools. The phase information is often present in VCF-files. The lines below show how to access that information and transfer it to an ASEset. The ASEset follows the VCF-conventions on how to describe the phase, i.e. each patients phase will be described by the established notation of the form "1|0","1|1" or "1/0". There the left number is the description of the maternal allele and the right number is the description of the paternal allele. If it is 0 the allele is the same as the reference allele, and if it is 1 it is the alternative allele. For "|" the phase is known and for "/" the phase is not known. Note, that in the AllelicImbalance package only bi-allelic expression is allowed.
 
-The phase can be manually added by constructing an own matrix, or transforming the data into a matrix from an external source. The most convenient way of importing phase information is probably by reading it from a Vcf file, which is commonly used to store phase information. The readGT function from the `r Biocpkg("VariantAnnotation")` package will return a matrix ready to just attach to an ASEset object.
+The phase can be manually added by constructing a user-generated matrix, or transforming the data into a matrix from an external source. The most convenient way of importing phase information is probably by reading it from a Vcf file, which is commonly used to store phase information. The readGT function from the `r Biocpkg("VariantAnnotation")` package will return a matrix ready to just attach to an ASEset object.
 
 ```{r echo=TRUE, eval=TRUE}
 #construct an example phase matrix 
@@ -248,13 +248,7 @@ mcols(a.simple)[,"alt"] <- alt
 ```
 
 Using reference allele information when measuring the impact of mapping bias globally, can be
- done by measuring the average reference allele fraction from a representative set of SNPs. Below 
-the simulated example uses 1000 SNPs to assess any presence of mapping bias. Any deviations of
-0.5 suggests a bias favouring one or the other allele. The most likely is to get a value higher 
-than 0.5 and is probably due to mapping bias. To make sure that it is mapping bias i.e. the
- reference allele actually has mapped more often, the value has to be compared to values generated 
-from a permuted data set. The permutation is easiest achieved by using the randomRef function which
-should randomly assign the reference allele based on genotypes and generate a value close to 0.5. 
+ done by measuring the average reference allele fraction from a representative set of SNPs. Below the simulated example uses 1000 SNPs to assess any presence of mapping bias. Any deviations from 0.5 suggests a bias favouring one or the other allele. The most likely outcome is a value higher than 0.5 and is probably due to mapping bias, i.e., the reference allele actually has mapped more often than the alternative allele.
 
 ```{r echo=TRUE, eval=TRUE}
 #make an example countList including a global sample of SNPs
@@ -293,6 +287,9 @@ mean(refFrac)
 
 ```
 
+The reference fraction mean ```mean(refFrac)``` is in this case very close to 0.5, and suggests that the mapbias globally is low if present. In this example we randomly assigned the reference genome to one of the two most expressed allele by the randomRef function, so it should not be any reference allele bias (mapbias).
+
+
 # Tests
 ## Statistical analysis of an ASEset object
 One of the simplest statistical test for use in allelic imbalance analysis is
@@ -300,7 +297,7 @@ the chi-square test. This test assumes that the uncertainty of ASE is represente
 
 ```{r echo=TRUE, eval=TRUE}
 #use a subset for tests
-a2 <- a.stranded[,5:10]
+a2 <- a.stranded[,5:8]
 #binomial test
 binom.test(a2,"+")
 #chi-square test
@@ -348,7 +345,8 @@ sampleColour.top[colData(a.simple)[,"Gender"]%in%"male"] <- "darkgreen"
 #bottom colour
 sampleColour.bot <- rep("blue",ncol(a.simple))
 sampleColour.bot[colData(a.simple)[,"Gender"]%in%"male"] <- "seashell2"
-barplot(a.simple[1], type="fraction", sampleColour.top=sampleColour.top, sampleColour.bot=sampleColour.bot, cex.main = 0.7)
+barplot(a.simple[1], type="fraction", sampleColour.top=sampleColour.top,
+	 sampleColour.bot=sampleColour.bot, cex.main = 0.7)
 ```
 
 ## Plot with annotation
@@ -405,7 +403,7 @@ barplot(ASEset[1], type="fraction", strand="+", xlab.text="", top.fraction.crite
 
 # Grid graphics
 To make use of the extra graphical flexibility that comes with grid graphics, 
-the AllelicImbalance package has now functions that can be integrated in that
+the AllelicImbalance package has now functions that can be integrated in the grid
 environment. The low level grid functions are located in the `r CRANpkg("grid package")`, but
 higher level functions based on grid can be found in popular packages such as 
 e.g. `r CRANpkg("lattice")`, `r CRANpkg("ggplot2")`. The benefits using grid graphics is a better control over different 
@@ -414,12 +412,12 @@ such as lines, points, etc and their appearance.
 
 One particular reason for the AllelicImbalance to use grid graphics is the `r Biocpkg("Gviz")` package, which
 uses grids functionality to construct tracks to visualize genomic regions in a smart way. The 
-AllelicImbalance package has now grid based barplots and functionality to create Gviz tracks. 
+AllelicImbalance package has grid based barplots and functionality to create Gviz tracks. 
 Observe the extra "g" prefix for the bar- and locationplot versions using the grid, see examples below.  
 
 ## gbarplot
 The standard barplot functions for ASEset objects have at the moment much more parameters that can be set by the user
-than the gbarplot. Base graphics also produce graphs faster than the grid environment. What favors the gbarplot
+than the gbarplot. Base graphics also produce graphs faster than the grid environment. The advantage of the gbarplot
 is instead the possiblity to integrate into the Gviz package and other grid based environments.
 
 ```{r echo=TRUE, eval=TRUE, message=FALSE}
@@ -480,12 +478,11 @@ plotTracks(lst, from=min(start(x)), to=max(end(x)), sizes=sizes, col.line = NULL
 The regionSummary function can be used to investigate if there is a consistent imbalance in the same direction over a region (e.g. a transcript). 
 
 ```{r echo=TRUE, eval=TRUE, message=FALSE}
-# in this example every snp is on its own exon
+# in this example every snp is on separate exons
 txGR <- granges(ASEset)
 rs <- regionSummary(ASEset, txGR)
 head(rs)
 ```
-
 
 # Conclusion
 In conclusion we hope that you will find this package useful in the
