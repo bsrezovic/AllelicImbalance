@@ -163,7 +163,7 @@ return NA.
 \section{Constructor}{
  ASEsetFromCountList(rowRanges, countListNonStranded =
 NULL, countListPlus = NULL, countListMinus = NULL, countListUnknown = NULL,
-colData = NULL, mapBiasExpMean = array(),verbose=FALSE ...)
+colData = NULL, mapBiasExpMean = array(), verbose=FALSE, ...)
 
 \describe{
 

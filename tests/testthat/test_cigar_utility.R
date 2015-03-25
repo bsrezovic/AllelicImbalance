@@ -11,7 +11,7 @@ test_that("positions including deletions are calculated correctly ", {
     CIGARS <- c("3M1D6M", "3M1D1M1D5M", "3M1D1M1D5M")
     # run function
     cl <- cigarToRleList(CIGARS)
-    funPOS <- mapply(realCigarPosition, cl, refPOS)
+    funPOS <- mapply(realCigarPosition.old, cl, refPOS)
     
     # check if equals
     expect_that(funPOS, equals(readPOS))
@@ -29,7 +29,7 @@ test_that("positions including insertions are calculated correctly ", {
     
     # run function
     cl <- cigarToRleList(CIGARS)
-    funPOS <- mapply(realCigarPosition, cl, refPOS)
+    funPOS <- mapply(realCigarPosition.old, cl, refPOS)
     
     # check if equals
     expect_that(funPOS, equals(readPOS))
@@ -48,7 +48,7 @@ test_that("positions including introns are calculated correctly ", {
     
     # run function
     cl <- cigarToRleList(CIGARS)
-    funPOS <- mapply(realCigarPosition, cl, refPOS)
+    funPOS <- mapply(realCigarPosition.old, cl, refPOS)
     
     # check if equals
     expect_that(funPOS, equals(readPOS))

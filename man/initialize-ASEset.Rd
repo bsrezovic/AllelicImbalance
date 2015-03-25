@@ -6,9 +6,9 @@
 \alias{initialize-ASEset}
 \title{Initialize ASEset}
 \usage{
-ASEsetFromCountList(rowRanges, countListUnknown = NULL, countListPlus = NULL,
-  countListMinus = NULL, colData = NULL, mapBiasExpMean = NULL,
-  phase = NULL, verbose = FALSE, ...)
+ASEsetFromCountList(rowRanges, countListUnknown = NULL,
+  countListPlus = NULL, countListMinus = NULL, colData = NULL,
+  mapBiasExpMean = NULL, phase = NULL, verbose = FALSE, ...)
 
 ASEsetFromArrays(rowRanges, countsUnknown = NULL, countsPlus = NULL,
   countsMinus = NULL, colData = NULL, mapBiasExpMean = NULL,
