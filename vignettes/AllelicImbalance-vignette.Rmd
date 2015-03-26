@@ -235,16 +235,17 @@ allele will visit the meta-columns "ref" or "alt" to extract that information.
 
 ```{r echo=TRUE, eval=TRUE}
 #from simulated data
-mcols(a.simple)[,"ref"] <- c("G","T","C")
+ref(a.simple) <- c("G","T","C")
+
+#infer and set alternative allele
+alt <- inferAltAllele(a.simple)
+alt(a.simple) <- alt
 
 #from reference genome
 data(ASEset.sim)
 fasta <- system.file('extdata/hg19.chr17.subset.fa', package='AllelicImbalance')
-a.ref <- refAllele(ASEset.sim,fasta=fasta) 
-
-#infer and set alternative allele
-alt <- inferAltAllele(a.simple)
-mcols(a.simple)[,"alt"] <- alt
+ref <- refAllele(ASEset.sim,fasta=fasta) 
+ref(ASEset.sim) <- ref
 ```
 
 Using reference allele information when measuring the impact of mapping bias globally, can be
@@ -277,7 +278,7 @@ a <- ASEsetFromCountList(gr, countListUnknown=countListUnknown)
 
 #set a random allele as reference
 genotype(a) <- inferGenotypes(a)
-mcols(a)[["ref"]] <- randomRef(a)
+ref(a) <- randomRef(a)
 
 #get the fraction of the reference allele
 refFrac <- refFraction(a)
@@ -393,7 +394,7 @@ The barplot with type='function' can be visualized according to three different 
 data(ASEset)
 
 #using reference and alternative allele information
-mcols(ASEset)[,"alt"] <- inferAltAllele(ASEset)
+alt(ASEset) <- inferAltAllele(ASEset)
 barplot(ASEset[1], type="fraction", strand="+", xlab.text="", top.fraction.criteria="ref")
 
 #using phase information

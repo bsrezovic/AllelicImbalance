@@ -23,8 +23,8 @@ NULL
 #' @examples
 #'
 #' data(ASEset)
-#' a <- ASEset
-#' gba <- gba(a)
+#' #a <- ASEset
+#' #gba <- gba(a)
 #' 
 #' #report(gba)
 #' #write.tables(gba)

@@ -198,3 +198,297 @@ annotationBarplot <- function(strand,snp, lowerLeftCorner, annDfPlus, annDfMinus
 	}
 }
 
+#' lattice barplot inner functions for ASEset objects
+#' 
+#' Generates lattice barplots for ASEset objects. Two levels of plotting detail
+#' are provided: a detailed barplot of read counts by allele useful for fewer
+#' samples and SNPs, and a less detailed barplot of the fraction of imbalance,
+#' useful for more samples and SNPs.
+#' 
+#' \code{filter.pValue.fraction} is intended to remove p-value annotation with
+#' very large difference in frequency, which could just be a sequencing
+#' mistake. This is to avoid p-values like 1e-235 or similar.
+#' 
+#' \code{sampleColour}User specified colours, either given as named colours
+#' ('red', 'blue', etc) or as hexadecimal code. Can be either length 1 for all
+#' samples, or else of a length corresponding to the number of samples for
+#' individual colouring.
+#' 
+#' @name barplot-lattice-support
+#' @rdname barplot-lattice-support
+#' @aliases barplot-lattice-support barplotLatticeCounts barplotLatticeFraction
+#' @param identifier, the single snp name to plot
+#' @param ... used to pass on variables
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @seealso \itemize{ \item The \code{\link{ASEset}} class which the barplot
+#' function can be called up on.  }
+#' @keywords barplot
+#' @examples
+#' 
+#' a <- ASEset
+#' name <- rownames(a)[1]
+#' 
+#' barplotLatticeFraction(identifier=name, x=a, astrand="+") 
+#' barplotLatticeCounts(identifier=name,  x=a, astrand="+") 
+#' 
+#' @export barplotLatticeFraction
+#' @export barplotLatticeCounts
+#' 
+NULL
+
+#' @rdname barplot-lattice-support
+barplotLatticeFraction <- function(identifier, ...) {
+
+    if (length(list(...)) == 0) {
+        e <- new.env(hash = TRUE)
+    } else {
+        e <- list2env(list(...))
+    }
+
+	e$ids <- unlist(e$ids)
+	e$strand <- e$astrand
+
+    if (!exists("mainvec", envir = e, inherits = FALSE)) {
+		e$mainvec <- rep("",nrow(e$x))
+	}
+	if(class(e$mainvec)=="list"){
+		e$mainvec <- unlist(e$mainvec)
+	}
+    if (!exists("cex.mainvec", envir = e, inherits = FALSE)) {
+		e$cex.mainvec <- 1
+	}
+    if (!exists("main", envir = e, inherits = FALSE)) {
+		e$main <- e$mainvec[e$ids %in% identifier]
+	}
+
+    if (!exists("deAnnoPlot", envir = e, inherits = FALSE)) {
+        e$deAnnoPlot <- FALSE
+    }
+    
+    if (!exists("ylab", envir = e, inherits = FALSE)) {
+        e$ylab <- ""
+    }
+    if (!exists("xlab", envir = e, inherits = FALSE)) {
+        e$xlab <- ""
+    }
+    if (!exists("middleLine", envir = e, inherits = FALSE)) {
+        e$middleLine <- TRUE 
+    }
+    if (!exists("top.fraction.criteria", envir = e, inherits = FALSE)) {
+        e$top.fraction.criteria <- "maxcount"
+    }
+
+	df <- fractionPlotDf(e$x, identifier, strand=e$strand, top.fraction.criteria=e$top.fraction.criteria)
+    
+    # Grah params
+    my_cols <- c("green", "red")
+    
+    # set default values
+    parset <- list(superpose.polygon=list(col=my_cols))
+
+    scales = list(rot = c(90, 0))
+    
+	if (e$deAnnoPlot) {
+		parset <- list(
+				   layout.widths = list(
+						left.padding = 0,
+						axis.left = 0,
+						ylab.axis.padding = 0, 
+						right.padding = 0, 
+						axis.right = 0
+						),
+				   layout.heights = list(
+						top.padding = 0.1,
+						between = 0.1,
+						xlab.top= 0.1,
+						axis.top = 0,
+						main=1.1,
+						main.key.padding=1,
+						axis.xlab.padding = 1, 
+						bottom.padding = 1, 
+						axis.bottom = 0.3
+						),
+				   superpose.polygon=list(col=my_cols)
+				   )
+	
+		scales = list(y = list(at = NULL, labels = NULL),
+					  x = list(labels = rep("",ncol(e$x)))
+					  )
+					  #, rot = c(90, 0))
+	}
+	if(e$top.fraction.criteria=="phase"){
+		df$groups <- df$phase
+	}else{
+		df$groups <- df$alleles
+	}
+    
+	if(!e$middleLine) {
+		b <- barchart(values ~ sample, group = groups, data = df, origin = 0, 
+		    stack = TRUE, scales = scales, 
+			main = list(label=e$main, cex=e$cex.mainvec), 
+			ylab = e$ylab, xlab = e$xlab, 
+		    par.settings = parset)
+	}else if (e$middleLine) {
+		b <- barchart(values ~ sample, group = groups, data = df, origin = 0, 
+			stack = TRUE, scales = scales, 
+			main = list(label=e$main, cex=e$cex.mainvec), 
+			ylab = e$ylab, xlab = e$xlab, 
+			par.settings = parset, panel=function(x, y, ...) {
+				 panel.barchart(x, y, ...)
+				 panel.abline(h=0.5, lty=1)
+			}  )
+	}else {
+		stop("middleLine has to be TRUE or FALSE")
+	} 
+    b
+    
+}
+
+#' @rdname barplot-lattice-support
+barplotLatticeCounts <- function(identifier, ...) {
+   
+    if (length(list(...)) == 0) {
+        e <- new.env(hash = TRUE)
+    } else {
+        e <- list2env(list(...))
+    }
+	
+	#use requested strand instead of Gviz ranges strand
+	e$strand <- e$astrand
+	e$ids <- unlist(e$ids)
+    #e$auto.key <- list(points = FALSE, rectangles = TRUE, space = "top", size = 2, 
+	#			cex = 0.8)
+
+
+    if (!exists("mainvec", envir = e, inherits = FALSE)) {
+		e$mainvec <- rep("",nrow(e$x))
+	}
+	if(class(e$mainvec)=="list"){
+		e$mainvec <- unlist(e$mainvec)
+	}
+    if (!exists("main", envir = e, inherits = FALSE)) {
+		e$main <- e$mainvec[e$ids %in% identifier]
+		#print(identifier)
+		#print(e$ids)
+		#print(e$main)
+		#print(e$mainvec[which(e$ids %in% identifier)])
+		#print(e$mainvec)
+		#print(which(e$ids %in% identifier))
+	}
+
+    if (!exists("deAnnoPlot", envir = e, inherits = FALSE)) {
+        e$deAnnoPlot <- FALSE
+    }
+    
+    if (!exists("ylab", envir = e, inherits = FALSE)) {
+        e$ylab <- ""
+    }
+    if (!exists("xlab", envir = e, inherits = FALSE)) {
+        e$xlab <- ""
+    }
+
+	### Grah params set default values
+	parset <- list()
+	scales = list(rot = c(90, 0))
+		
+	makePlotDf <- function(strand){
+		acounts<-  alleleCounts(e$x, strand = strand)
+		arank<-  arank(e$x, strand = "*")
+		#afraction<-  fraction(e$x, strand = strand)
+		#amainVec<-  e$amainVec
+
+		# prepare data to be plotted
+		#a.m <- amainVec[identifier]
+		a.r <- arank[[identifier]][1:2]
+		a.c <- acounts[[identifier]][, a.r, drop = FALSE]
+		
+		values <- as.vector(t(a.c))
+		sample <- vector()
+		for (i in 1:nrow(a.c)) {
+			sample <- c(sample, rownames(a.c)[i], rownames(a.c)[i])
+		}
+
+		if(strand=="-" && e$strand=="both"){
+			values <- -values
+		}
+		df <- data.frame(values = values, sample = sample, alleles = rep(colnames(a.c), nrow(a.c))
+)
+		
+		# to get right order in barchart
+		df$sample <- factor(df$sample, levels = unique(df$sample))
+	
+		df
+	}
+
+	if(e$strand %in% c("+","-","*")){
+
+		df <- makePlotDf(strand=e$strand)
+
+		if (e$deAnnoPlot) {
+			e$auto.key <- FALSE
+			parset <- list(
+					   layout.widths = list(
+							left.padding = 0,
+							axis.left = 0,
+							ylab.axis.padding = 0, 
+							right.padding = 0, 
+							axis.right = 0
+							),
+					   layout.heights = list(
+							top.padding = 0.1,
+							between = 0.1,
+							xlab.top= 0.1,
+							axis.top = 0,
+							main=1.1,
+							main.key.padding=1,
+							axis.xlab.padding = 1, 
+							bottom.padding = 1, 
+							axis.bottom = 0.3
+							)
+					   )
+			scales = list(y = list(at = NULL, labels = NULL), rot = c(90, 0), auto.key = e$auto.key)
+		}
+
+		b <- barchart(values ~ sample, horiz = FALSE, origin = 0, group = alleles, data = df, 
+			stack = FALSE, scales = scales, ylab = e$ylab, xlab = e$xlab, 
+			box.ratio = 2, abbreviate = TRUE, par.settings = parset, main = e$main )
+
+	}else if(e$strand=="both"){
+		
+		df <- rbind(makePlotDf(strand="+"),makePlotDf(strand="-"))	
+
+		if (e$deAnnoPlot) {
+			e$auto.key <- FALSE
+			parset <- list(
+					   layout.widths = list(
+							left.padding = 0,
+							axis.left = 0,
+							ylab.axis.padding = 0, 
+							right.padding = 0, 
+							axis.right = 0
+							),
+					   layout.heights = list(
+							top.padding = 0.1,
+							between = 0.1,
+							xlab.top= 0.1,
+							axis.top = 0,
+							main=1.1,
+							main.key.padding=1,
+							axis.xlab.padding = 1, 
+							bottom.padding = 1, 
+							axis.bottom = 0.3
+							)
+					   )
+			scales = list(y = list(at = NULL, labels = NULL), rot = c(90, 0), auto.key = e$auto.key)
+		}
+		
+		b <- barchart(values ~ sample, horiz = FALSE, origin = 0, group = alleles, data = df, 
+			stack = FALSE, scales = scales, ylab = e$ylab, xlab = e$xlab, 
+			box.ratio = 2, abbreviate = TRUE, par.settings = parset, main = e$main)
+	}else {
+		stop("strand must be + - * or both")
+	}
+    b
+}
+
+

@@ -8,6 +8,10 @@
 \alias{alleleCounts,ASEset-method}
 \alias{alleleCounts<-}
 \alias{alleleCounts<-,ASEset-method}
+\alias{alt}
+\alias{alt,ASEset-method}
+\alias{alt<-}
+\alias{alt<-,ASEset,ANY-method}
 \alias{arank}
 \alias{arank,ASEset-method}
 \alias{countsPerSample}
@@ -28,6 +32,10 @@
 \alias{phase,ASEset-method}
 \alias{phase<-}
 \alias{phase<-,ASEset-method}
+\alias{ref}
+\alias{ref,ASEset-method}
+\alias{ref<-}
+\alias{ref<-,ASEset,ANY-method}
 \title{ASEset objects}
 \usage{
 alleleCounts(x, strand = "*", return.class = "list")
@@ -76,6 +84,22 @@ phase(x, ...)
 phase(x) <- value
 
 \S4method{phase}{ASEset}(x) <- value
+
+ref(x)
+
+\S4method{ref}{ASEset}(x)
+
+ref(x) <- value
+
+\S4method{ref}{ASEset,ANY}(x) <- value
+
+alt(x)
+
+\S4method{alt}{ASEset}(x)
+
+alt(x) <- value
+
+\S4method{alt}{ASEset,ANY}(x) <- value
 }
 \arguments{
 \item{x}{ASEset object}

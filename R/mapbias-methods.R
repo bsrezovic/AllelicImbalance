@@ -162,8 +162,9 @@ setMethod("refAllele", signature(x = "ASEset"), function(x, fasta){
 	ref <- scanFa(fl, param=rowRanges(x))
 	close(fl)
 	
-	mcols(x)[["ref"]] <- as.vector(ref)
-	x
+	#mcols(x)[["ref"]] <- as.vector(ref)
+	#x
+	as.vector(ref)
 })
 
 #' Generate default mapbias from genotype

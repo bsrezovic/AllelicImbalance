@@ -2,6 +2,14 @@
 # Deprecated functions
 #######################
 
+#was deprecated 2015-03-26
+implodeList <- function()
+{
+	    .Deprecated("implodeList.old",msg="no longer serving any purpose in the AllelicImbalance package and is deprecated")
+}
+
+
+
 #was deprecated 2015-03-25
 realCigarPositions <- function()
 {
@@ -509,3 +517,25 @@ scanForHeterozygotes.old <- function(BamList, minimumReadsAtPos = 20, maximumMaj
 }
 
 
+#' implode list of arguments into environment
+#' 
+#' apply on list of variables to be put in the local environment
+#' 
+#' help the propagation of e.g. graphical paramters 
+#' 
+#' @rdname implodeList-old
+#' @param x list of variables
+#' @author Jesper R. Gadin
+#' @keywords implode
+#' @examples
+#' 
+#' lst <- list(hungry='yes', thirsty='no')
+#' implodeList.old(lst)
+#' #the check ls()
+#'  ls()
+#' @export implodeList.old
+implodeList.old <- function(x) {
+    oname <- deparse(substitute(x))
+    eval(parse(text = paste0("for(i in 1:length(", oname, ")){assign(names(", oname, 
+        ")[i],", oname, "[[i]])}")), parent.frame())
+} 

@@ -693,3 +693,73 @@ setMethod("phase<-", signature(x = "ASEset"), function(x,value) {
 	x
 })
 
+#' @rdname ASEset-class
+#' @importFrom VariantAnnotation ref
+#' @export 
+setGeneric("ref",package="VariantAnnotaton")
+
+#' @rdname ASEset-class
+#' @export 
+#could be renamed to countsAllAlleles
+setMethod("ref", signature(x = "ASEset"), function(x) {
+
+		mcols(x)[["ref"]]
+	
+})
+
+#' @rdname ASEset-class
+#' @importFrom VariantAnnotation ref<-
+#' @export 
+setGeneric("ref<-",package="VariantAnnotaton")
+
+#' @rdname ASEset-class
+#' @export 
+#could be renamed to countsAllAlleles
+setMethod("ref<-", signature(x = "ASEset"), function(x, value) {
+
+	if(class(value)=="character") {
+
+		mcols(x)[["ref"]] <- value
+	}else{
+
+		stop("wrong class")
+	}
+	
+	x
+})
+
+#' @rdname ASEset-class
+#' @importFrom VariantAnnotation alt
+#' @export 
+setGeneric("alt",package="VariantAnnotaton")
+
+#' @rdname ASEset-class
+#' @export 
+#could be renamed to countsAllAlleles
+setMethod("alt", signature(x = "ASEset"), function(x) {
+
+		mcols(x)[["alt"]]
+	
+})
+
+#' @rdname ASEset-class
+#' @importFrom VariantAnnotation alt<-
+#' @export 
+setGeneric("alt<-",package="VariantAnnotaton")
+
+#' @rdname ASEset-class
+#' @export 
+#could be renamed to countsAllAlleles
+setMethod("alt<-", signature(x = "ASEset"), function(x, value) {
+
+	if(class(value)=="character") {
+
+		mcols(x)[["alt"]] <- value
+	}else{
+
+		stop("wrong class")
+	}
+	
+	x
+})
+

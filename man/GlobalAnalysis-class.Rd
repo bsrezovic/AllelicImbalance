@@ -25,8 +25,8 @@ The GlobalAnalysis-class contains summaries and "pre-configured and pre-calculat
 }
 \examples{
 data(ASEset)
-a <- ASEset
-gba <- gba(a)
+#a <- ASEset
+#gba <- gba(a)
 
 #report(gba)
 #write.tables(gba)
