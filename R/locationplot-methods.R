@@ -312,7 +312,7 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
             cex.ylab = cex.ylab, legend.colnames = legend.colnames, yaxis = yaxis, 
             xaxis = xaxis, ylab = ylab, xlab = xlab, main = main, cex.main = cex.main, 
             cex.legend = cex.legend, top.fraction.criteria=top.fraction.criteria,
-			ylab.text=ylab.text, xlab.text=xlab.text, ...)
+			ylab.text=ylab.text, xlab.text=xlab.text)#, ...)
         
         # create lines indicating at which genomic position the Snp is found
         lines(x = rep(lowerLeftCorner[1] + size[1]/2, 2), y = c(0, -0.1), col = "dodgerblue")
@@ -333,7 +333,8 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
             decorateWithExons(x, exonsInRegion, xlim = xlim, ylim = c(-0.5, -0.3), 
                 chromosome)
         }
-    } else if (!is.null(OrgDb)) {
+	}
+    if (!is.null(OrgDb)) {
         if (!length(genesInRegion) == 0) {
             decorateWithGenes(x, genesInRegion, xlim = xlim, ylim = c(-0.5, -0.3), 
                 chromosome)

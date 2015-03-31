@@ -626,22 +626,16 @@ setMethod("scanForHeterozygotes", signature(BamList = "GAlignmentsList"),
 
 #' Import Bam
 #' 
-#' Imports a specified genomic region from a bam file using a GenomicRanges
+#' Imports a specified genomic region from a bam file using a GRanges
 #' object as search area.
 #' 
-#' These functions are wrappers to import bam files into R and store them into
-#' either GRanges, GAlignments or GappedAlignmentpairs objects.
-#' 
-#' It is recommended to use the impBamGAL() which takes information of gaps
-#' into account. It is also possible to use the other variants as well, but
-#' then pre-filtering becomes important because gapped, intron-spanning reads
-#' will cause problems. This is because the GRanges objects can not handle if
-#' gaps are present and will then give a wrong result when calculating the
-#' allele (SNP) count table.
-#' 
 #' If the sequence data is strand-specific you may want to set XStag=TRUE. The
-#' strand specific information will then be stored in the meta columns with
-#' column name 'XS'.
+#' strand specific information has then to be stored in the meta columns with
+#' column name 'XS'. If the aligner did not set the XS-tag and the data is strand-
+#' specific it is still be possible to infer the strand from the bit flags after importing
+#' the reads to R. Depending on the strand-specific protocol different combinations of the 
+#' flags will have to be used. For illumina fr-secondstrand, 83 and 163 are minus strand 
+#' reads and 99 and 147 are plus strand reads.
 #' 
 #' @name import-bam
 #' @rdname import-bam
@@ -650,18 +644,12 @@ setMethod("scanForHeterozygotes", signature(BamList = "GAlignmentsList"),
 #' @param UserDir The relative or full path of folder containing bam files.
 #' @param searchArea A \code{GenomicRanges object} that contains the regions of
 #' interest
+#' @param files use character vector to specify one or more files to import. The
+#' default imports all bam files from the directory.
 #' @param XStag Setting \code{XStag=TRUE} stores the strand specific
 #' information in the mcols slot 'XS'
-#' @param verbose Setting \code{verbose=TRUE} gives details of procedure during
-#' function run.
+#' @param verbose makes the function more talkative.
 #' @param ... arguments to pass on
-#' @return \code{impBamGRL} returns a GRangesList object containing the RNA-seq
-#' reads in the region defined by the \code{searchArea} argument.
-#' \code{impBamGAL} returns a list with GAlignments objects containing the
-#' RNA-seq reads in the region defined by the \code{searchArea} argument.
-#' \code{funImpBamGAPL} returns a list with GappedAlignmentPairs object
-#' containing the RNA-seq reads in the region defined by the \code{searchArea}
-#' argument.
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords bam import
 #' @examples
@@ -672,7 +660,11 @@ setMethod("scanForHeterozygotes", signature(BamList = "GAlignmentsList"),
 #' #Relative or full path  
 #' pathToFiles <- system.file('extdata/ERP000101_subset', package='AllelicImbalance')
 #' 
+#' #all files in directory
 #' reads <- impBamGAL(pathToFiles,searchArea,verbose=FALSE)
+#' #specified files in directory
+#' reads <- impBamGAL(pathToFiles,searchArea,
+#'				files=c("ERR009160.bam", "ERR009167.bam"),verbose=FALSE)
 #' 
 NULL
 
@@ -685,7 +677,10 @@ setGeneric("impBamGAL", function(UserDir, ...){
 #' @rdname import-bam
 #' @export
 setMethod("impBamGAL", signature(UserDir = "character"), 
-	function(UserDir, searchArea, XStag = FALSE, verbose = TRUE, ...) {
+	function(UserDir, searchArea, files = NULL, XStag = FALSE, verbose = TRUE, ...) {
+
+	UserDir <- sub("/$", "", UserDir)
+
     # Set parameters
     which <- searchArea  #A GRanges, RangesList, RangedData, or missing object, from which a IRangesList instance will be constructed.
     what <- scanBamWhat()  #A character vector naming the fields to return. scanBamWhat() returns a vector of available fields. Fields are described on the scanBam help page.
@@ -698,8 +693,14 @@ setMethod("impBamGAL", signature(UserDir = "character"),
     }
     # Point to correct directory and create a BamFileList object
     bamDir <- normalizePath(UserDir)  #Point to the directory containing your Bam files and its respective bam.bai files.
-    allFiles <- list.files(bamDir, full.names = TRUE)  #list files in a folder.
-    bamFiles <- allFiles[grep(".bam$", allFiles)]  #list only the files ending in .bam .
+
+	if(is.null(files)){
+		allFiles <- list.files(bamDir, full.names = TRUE)  #list files in a folder.
+		bamFiles <- allFiles[grep(".bam$", allFiles)]  #list only the files ending in .bam .
+	}else{
+		bamFiles <- paste(bamDir, "/", files ,sep="")
+	}
+
     if (length(bamFiles) == 0) 
         stop(paste("No bam files found in", bamDir))
     if (!all(file.exists(paste(bamFiles, ".bai", sep = "")))) {
@@ -814,6 +815,9 @@ setGeneric("impBcfGRL", function(UserDir, ...
 #' @export
 setMethod("impBcfGRL", signature(UserDir = "character"),
 	function(UserDir, searchArea = NULL, verbose = TRUE, ...) {
+
+
+	UserDir <- sub("/$", "", UserDir)
     
     # Set parameters
     if (is.null(searchArea)) {

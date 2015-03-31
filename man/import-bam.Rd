@@ -9,8 +9,8 @@
 \usage{
 impBamGAL(UserDir, ...)
 
-\S4method{impBamGAL}{character}(UserDir, searchArea, XStag = FALSE,
-  verbose = TRUE, ...)
+\S4method{impBamGAL}{character}(UserDir, searchArea, files = NULL,
+  XStag = FALSE, verbose = TRUE, ...)
 }
 \arguments{
 \item{UserDir}{The relative or full path of folder containing bam files.}
@@ -20,39 +20,26 @@ impBamGAL(UserDir, ...)
 \item{searchArea}{A \code{GenomicRanges object} that contains the regions of
 interest}
 
+\item{files}{use character vector to specify one or more files to import. The
+default imports all bam files from the directory.}
+
 \item{XStag}{Setting \code{XStag=TRUE} stores the strand specific
 information in the mcols slot 'XS'}
 
-\item{verbose}{Setting \code{verbose=TRUE} gives details of procedure during
-function run.}
-}
-\value{
-\code{impBamGRL} returns a GRangesList object containing the RNA-seq
-reads in the region defined by the \code{searchArea} argument.
-\code{impBamGAL} returns a list with GAlignments objects containing the
-RNA-seq reads in the region defined by the \code{searchArea} argument.
-\code{funImpBamGAPL} returns a list with GappedAlignmentPairs object
-containing the RNA-seq reads in the region defined by the \code{searchArea}
-argument.
+\item{verbose}{makes the function more talkative.}
 }
 \description{
-Imports a specified genomic region from a bam file using a GenomicRanges
+Imports a specified genomic region from a bam file using a GRanges
 object as search area.
 }
 \details{
-These functions are wrappers to import bam files into R and store them into
-either GRanges, GAlignments or GappedAlignmentpairs objects.
-
-It is recommended to use the impBamGAL() which takes information of gaps
-into account. It is also possible to use the other variants as well, but
-then pre-filtering becomes important because gapped, intron-spanning reads
-will cause problems. This is because the GRanges objects can not handle if
-gaps are present and will then give a wrong result when calculating the
-allele (SNP) count table.
-
 If the sequence data is strand-specific you may want to set XStag=TRUE. The
-strand specific information will then be stored in the meta columns with
-column name 'XS'.
+strand specific information has then to be stored in the meta columns with
+column name 'XS'. If the aligner did not set the XS-tag and the data is strand-
+specific it is still be possible to infer the strand from the bit flags after importing
+the reads to R. Depending on the strand-specific protocol different combinations of the
+flags will have to be used. For illumina fr-secondstrand, 83 and 163 are minus strand
+reads and 99 and 147 are plus strand reads.
 }
 \examples{
 #Declare searchArea
@@ -61,7 +48,11 @@ searchArea <- GRanges(seqnames=c('17'), ranges=IRanges(79478301,79478361))
 #Relative or full path
 pathToFiles <- system.file('extdata/ERP000101_subset', package='AllelicImbalance')
 
+#all files in directory
 reads <- impBamGAL(pathToFiles,searchArea,verbose=FALSE)
+#specified files in directory
+reads <- impBamGAL(pathToFiles,searchArea,
+				files=c("ERR009160.bam", "ERR009167.bam"),verbose=FALSE)
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen
