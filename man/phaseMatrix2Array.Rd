@@ -8,12 +8,14 @@
 \usage{
 phaseMatrix2Array(x, ...)
 
-\S4method{phaseMatrix2Array}{matrix}(x, ...)
+\S4method{phaseMatrix2Array}{matrix}(x, dimnames = NULL, ...)
 }
 \arguments{
 \item{x}{matrix see examples}
 
 \item{...}{arguments to forward to internal functions}
+
+\item{dimnames}{list with dimnames}
 }
 \description{
 used to convert the phase from the visually friendly matrix to array.

@@ -17,7 +17,7 @@ test_that(paste("test store and access of phase"), {
 	phase(x) <- p
 
 	#store array
-	phase(x) <- phaseMatrix2Array(p)
+	phase(x) <- phaseMatrix2Array(p, dimnames=dimnames(x))
 
 	#access matrix
 	res <- phase(x)

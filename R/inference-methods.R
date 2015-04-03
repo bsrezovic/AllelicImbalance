@@ -277,6 +277,11 @@ setGeneric("inferAltAllele", function(x, strand="*", return.class="vec"
 setMethod("inferAltAllele", signature(x = "ASEset"), function(x, strand="*", return.class="vec"
 	){ 
 
+	#check if ref exists
+	if(!"ref" %in% colnames(mcols(x))){
+		stop("there is no metadata column for mcols() with the name 'ref'")
+	}
+
 	#to be able to infer alternative allele, we need to know the reference allele
 	ref <- mcols(x)[,"ref"]
 	ar <- arank(x, return.class="matrix")[,c(1,2)]

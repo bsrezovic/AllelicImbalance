@@ -684,7 +684,7 @@ setMethod("phase<-", signature(x = "ASEset"), function(x,value) {
 			stop("dimension of value does not correspond to the values of object ASEset")	
 		}
 	
-		assays(x)[["phase"]] <- phaseMatrix2Array(value)
+		assays(x)[["phase"]] <- phaseMatrix2Array(value,dimnames=dimnames(x))
 
 	}else if(class(value)=="array"){
 		assays(x)[["phase"]] <- value

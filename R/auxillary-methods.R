@@ -12,6 +12,7 @@ NULL
 #' @aliases phaseMatrix2Array,matrix-method
 #' @docType methods
 #' @param x matrix see examples 
+#' @param dimnames list with dimnames
 #' @param ... arguments to forward to internal functions
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords phase
@@ -41,7 +42,7 @@ setGeneric("phaseMatrix2Array", function(x, ...
 #' @rdname phaseMatrix2Array
 #' @export
 setMethod("phaseMatrix2Array", signature(x = "matrix"),
-		function(x, ...
+		function(x, dimnames=NULL, ...
 	){
 
 		psplit <- strsplit(x, split="")
@@ -50,8 +51,9 @@ setMethod("phaseMatrix2Array", signature(x = "matrix"),
 		pat <- as.integer(upsplit[seq(3, length(upsplit), by=3)])
 		phased <- as.integer(upsplit[seq.int(from=2, to=length(upsplit), by=3)]=="|")
 	
-		array(c(mat,pat,phased), dim=c(nrow(x), ncol(x), 3))
-
+		array(c(mat, pat, phased), dim=c(nrow(x), ncol(x), 3),
+			  dimnames = dimnames)
+		
 })
 
 #' phaseArray2Matrix
@@ -104,8 +106,8 @@ setMethod("phaseArray2Matrix", signature(x = "array"),
 		phased[phased==1] <- "|"
 		phased[phased==0] <- "/"
 
-		matrix(paste(x[,,1], phased, x[,,2], sep=""),
-			nrow=nrow(x), ncol(x))
+		matrix(paste(x[,,1], phased, x[,,2], sep=""), nrow=nrow(x), ncol(x),
+			   dimnames = dimnames(x)[1:2])
 	
 })
 
@@ -1957,4 +1959,53 @@ function(pathBam,pathVcf,pathGFF=NULL, verbose){
 	
 })
 
-
+##' DNAStringSet2character
+##' 
+##' forces e.g. simplelist of variants to an atomic character vector
+##' 
+##' @name DNAStringSet2character
+##' @rdname DNAStringSet2character
+##' @aliases DNAStringSet2character
+##' DNAStringSet2character,DNAStringSet-method 
+##' @docType methods
+##' @param x DNAStringSet
+##' @param verbose makes function more talkative
+##' @param ... arguments to pass on
+##' @author Jesper R. Gadin
+##' @keywords global wrapper
+##' @examples
+##'
+##' #empty as function doesn't exist
+##' 
+#NULL
+#
+##' @rdname gba
+##' @export
+#setGeneric("DNAStringSet2character", function(x, ... 
+#	){
+#    standardGeneric("DNAStringSet2character")
+#})
+#
+##' @rdname gba
+##' @export
+#setMethod("DNAStringSet2character", signature(x = "character"),
+#function(x, verbose){
+#	
+#	if(any(width(x)>1)){
+#		stop("One or more variants are not bi-allelic SNPs")
+#	}
+#	as.character(x)
+#	
+#})
+#
+#
+#isSnp <- function(x) {
+#	refSnp <- nchar(ref(x)) == 1L
+#	a <- alt(x)
+#	altSnp <- elementLengths(a) == 1L
+#	ai <- unlist(a[altSnp]) # all length 1, so unlisting is 1:1 map
+#	altSnp[altSnp] <- nchar(ai) == 1L & (ai %in% c("A", "C", "G", "T"))
+#	refSnp & altSnp
+#}
+#
+#
