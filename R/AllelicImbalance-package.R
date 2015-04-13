@@ -44,7 +44,6 @@
 #' @importFrom IRanges unlist
 #' @importFrom IRanges which
 #' @importFrom IRanges resize
-#' @importFrom IRanges IntervalTree
 #' 
 # @importFrom S4Vectors DataFrame
 # @importFrom S4Vectors SimpleList
