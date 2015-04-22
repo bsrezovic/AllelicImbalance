@@ -145,6 +145,22 @@ NULL
 #' 
 #' phase(a) <- p
 #'
+#'
+#' #generate ASEset from array
+#' snps <- 999
+#' samples <-5
+#' ar <-array(rep(unlist(lapply(1:snps,
+#' 			function(x){(sample(c(TRUE,FALSE,TRUE,FALSE), size = 4))})), samples), 
+#' 			dim=c(4,snps,samples))
+#' ar2 <- array(sample(50:300, 4*snps*samples,replace=TRUE), dim=c(4,snps,samples))
+#' ar2[ar] <- 0
+#' ar2 <- aperm(ar2, c(2, 3, 1))
+#' dimnames(ar2) <- list(paste("snp",1:snps,sep=""),paste("sample",1:samples,sep=""),
+#'							c("A","C","G","T"))
+#' gr <- GRanges(seqnames=c("chr2"), ranges=IRanges(start=1:dim(ar2)[1], width=1), strand="*")
+#' a <- ASEsetFromArrays(gr, countsUnknown=ar2)
+#' 
+#'
 #' @exportClass ASEset
 #' @exportMethod alleleCounts alleleCounts<- mapBias fraction arank
 #' frequency genotype genotype<- phase phase<-
@@ -165,67 +181,107 @@ setGeneric("alleleCounts", function(x, strand = "*", return.class="list") {
 setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*",
 	return.class="list") {
 
-    if (!sum(strand %in% c("+", "-", "*")) > 0) {
-        stop("strand parameter has to be either '+', '-', '*' ")
+	#check that strand parameter is correct set
+    if (!sum(strand %in% c("+", "-", "*", "both")) > 0) {
+        stop("strand parameter has to be either '+', '-', '*' or 'both' ")
     }
-    
+
+	#check if the assays are present
+	if(strand=="+" ){
+		if(!"countsPlus" %in% names(assays(x))){
+			stop(paste("strand",strand,"is not present in ASEset object",sep=""))
+		}
+	}
+	if(strand=="-" ){
+		if(!"countsMinus" %in% names(assays(x))){
+			stop(paste("strand",strand,"is not present in ASEset object",sep=""))
+		}
+	}
+	if(strand=="*" ){
+		if(!("countsMinus" %in% names(assays(x)) | "countsPlus" %in% names(assays(x)))){
+			stop(paste("for strand '*' at least one of '+' or '-' is required to be",
+					   " present in ASEset object",sep=""))
+		}
+	}
+	if(strand=="both" ){
+		if(!"countsMinus" %in% names(assays(x)) & "countsPlus" %in% names(assays(x))){
+			stop(paste("for strand 'both' both '+' and '-' is required to be",
+					   " present in the ASEset object",sep=""))
+		}
+	}
+
+	#access the correct assays
     if (strand == "+") {
-        el <- "countsPlus"
+        ar <- assays(x)[["countsPlus"]]
     } else if (strand == "-") {
-        el <- "countsMinus"
+        ar <- assays(x)[["countsMinus"]]
     } else if (strand == "*") {
-        el <- "countsUnknown"
+
+		if(!("countsMinus" %in% names(assays(x)))){
+			ar <- assays(x)[["countsPlus"]]
+		}else if(!("countsPlus" %in% names(assays(x)))){
+			ar <- assays(x)[["countsMinus"]]
+		}else{
+			ar <- assays(x)[["countsMinus"]] + assays(x)[["countsPlus"]]
+		}
+    } else if (strand == "both") {
+        ar <- array(c(assays(x)[["countsPlus"]], assays(x)[["countsMinus"]]), dim=c(dim(assays(x)[["countsPlus"]]), 2))
     } else {
         stop("not existing strand option")
     }
     
-    # check if strand option is present as assay
-    if (!(el %in% names(assays(x)))) {
-		stop(paste("neither '+' '-' or '*'strand is present as assay in",
-				   " ASEset object"))
-    }
     
 	if(return.class=="array"){
-		if(el=="combine"){
-			ar <- assays(x)[["countsPlus"]] + assays(x)[["countsMinus"]]
-		}else{
-			ar <- assays(x)[[el]]
-		}
-		#add variant names (preferably this could take place during 
-		# initialization of the ASEset object)
 		dimnames(ar)[[3]]<- x@variants
+		if (strand == "both") {
+			dimnames(ar)[[4]]<- c("+","-")
+		}
 		ar
+
 	}else if(return.class=="list"){
 
-		if(el=="combine"){
-			ar <- assays(x)[["countsPlus"]] + assays(x)[["countsMinus"]]
+		
+		if(strand=="both"){
+			strands <- 2
+			alleleCountList2 <- list()	
 		}else{
-			ar <- assays(x)[[el]]
+			strands <- 1
 		}
+		for( j in 1:strands){
 
-		alleleCountList <- list()
+			alleleCountList <- list()
+		
+			for (i in 1:nrow(ar)) {
+				if(strand=="both"){
+					mat <- ar[i, , ,j]
+				}else{
+					mat <- ar[i, , ]
+				}
+				if (class(mat) == "integer") {
+					mat <- t(as.matrix(mat))
+				}
+				if (class(mat) == "numeric") {
+					mat <- t(mat)
+				}
+				colnames(mat) <- x@variants
+				rownames(mat) <- colnames(x)
 
-		for (i in 1:nrow(ar)) {
-			mat <- ar[i, , ]
-
-			if (class(mat) == "integer") {
-				mat <- t(as.matrix(mat))
+				alleleCountList[[i]] <- mat
 			}
-			if (class(mat) == "numeric") {
-				mat <- t(mat)
-			}
-			colnames(mat) <- x@variants
-			rownames(mat) <- colnames(x)
+			# add snp id
+			names(alleleCountList) <- rownames(x)
 
-			alleleCountList[[i]] <- mat
+			if(strand=="both"){
+				alleleCountList2[[j]] <- alleleCountList
+			}
 		}
-
-		# add snp id
-		names(alleleCountList) <- rownames(x)
 		
-		# return object
-		alleleCountList
-		
+		if(strand=="both"){
+			names(alleleCountList2) <- c("+","-")
+			alleleCountList2
+		}else{	
+			alleleCountList
+		}	
 	}else{
 		stop("return.class has to be 'list' or 'array'")
 	}
@@ -603,7 +659,6 @@ setGeneric("countsPerSnp", function(x, ...){
 
 #' @rdname ASEset-class
 #' @export 
-#could be renamed to countsAllAlleles
 setMethod("countsPerSnp", signature(x = "ASEset"), function(x, 
 	return.class = "matrix", return.type="mean", strand = "*") {
 
@@ -628,7 +683,6 @@ setGeneric("countsPerSample", function(x, ...){
 
 #' @rdname ASEset-class
 #' @export 
-#could be renamed to countsAllAlleles
 setMethod("countsPerSample", signature(x = "ASEset"), function(x, 
 	return.class = "matrix", return.type="mean", strand = "*") {
 
@@ -653,7 +707,6 @@ setGeneric("phase", function(x, ...){
 
 #' @rdname ASEset-class
 #' @export 
-#could be renamed to countsAllAlleles
 setMethod("phase", signature(x = "ASEset"), function(x, 
 	return.class = "matrix" ) {
 
@@ -675,7 +728,6 @@ setGeneric("phase<-", function(x, value){
 
 #' @rdname ASEset-class
 #' @export 
-#could be renamed to countsAllAlleles
 setMethod("phase<-", signature(x = "ASEset"), function(x,value) {
 
 	if(class(value)=="matrix") {
@@ -694,13 +746,32 @@ setMethod("phase<-", signature(x = "ASEset"), function(x,value) {
 })
 
 #' @rdname ASEset-class
+#' @export 
+setGeneric("mapBias<-", function(x, value){
+    standardGeneric("mapBias<-")
+})
+
+#' @rdname ASEset-class
+#' @export 
+setMethod("mapBias<-", signature(x = "ASEset"), function(x,value) {
+
+	if(class(value)=="array") {
+		assays(x)[["mapBias"]] <- value
+	}else {
+		stop("class has to be array")
+	}
+	x
+})
+
+
+
+#' @rdname ASEset-class
 #' @importFrom VariantAnnotation ref
 #' @export 
 setGeneric("ref",package="VariantAnnotaton")
 
 #' @rdname ASEset-class
 #' @export 
-#could be renamed to countsAllAlleles
 setMethod("ref", signature(x = "ASEset"), function(x) {
 
 		mcols(x)[["ref"]]
@@ -714,7 +785,6 @@ setGeneric("ref<-",package="VariantAnnotaton")
 
 #' @rdname ASEset-class
 #' @export 
-#could be renamed to countsAllAlleles
 setMethod("ref<-", signature(x = "ASEset"), function(x, value) {
 
 	if(class(value)=="character") {
@@ -735,7 +805,6 @@ setGeneric("alt",package="VariantAnnotaton")
 
 #' @rdname ASEset-class
 #' @export 
-#could be renamed to countsAllAlleles
 setMethod("alt", signature(x = "ASEset"), function(x) {
 
 		mcols(x)[["alt"]]
@@ -763,3 +832,93 @@ setMethod("alt<-", signature(x = "ASEset"), function(x, value) {
 	x
 })
 
+#' @rdname ASEset-class
+#' @export 
+setGeneric("aquals", function(x, ...){
+    standardGeneric("aquals")
+})
+
+#' @rdname ASEset-class
+#' @export 
+setMethod("aquals", signature(x = "ASEset"), function(x) {
+		assays(x)[["aquals"]]
+})
+
+#' @rdname ASEset-class
+#' @export 
+setGeneric("aquals<-", function(x, value){
+    standardGeneric("aquals<-")
+})
+
+#' @rdname ASEset-class
+#' @export 
+setMethod("aquals<-", signature(x = "ASEset"), function(x,value) {
+
+	if(class(value)=="array") {
+
+		if(!identical(dim(x),dim(value)[1:2])){
+			stop("dimension of value does not correspond to the values of object ASEset")	
+		}
+	
+		assays(x)[["aquals"]] <- value
+
+	}
+	x
+})
+
+
+#' @rdname ASEset-class
+#' @export 
+setGeneric("maternalAllele", function(x, ...){
+    standardGeneric("maternalAllele")
+})
+
+#' @rdname ASEset-class
+#' @export 
+setMethod("maternalAllele", signature(x = "ASEset"), 
+		function(x) {
+
+		mat <- phase(x,return.class="array")[,,1]
+		ref <- mcols(x)[["ref"]]
+		alt <- mcols(x)[["alt"]]
+	
+		apply(t(mat),1,function(y, ref, alt){
+			
+			vec <- rep(NA,length(y))
+			if(any(y == 1)){
+				vec[y == 1] <- alt[y == 1]
+			}
+			if(any(y == 0)){
+				vec[y == 0] <- ref[y == 0]
+			}
+			vec
+		}, ref=ref, alt=alt)
+})
+
+#' @rdname ASEset-class
+#' @export 
+setGeneric("paternalAllele", function(x, ...){
+    standardGeneric("paternalAllele")
+})
+
+#' @rdname ASEset-class
+#' @export 
+setMethod("paternalAllele", signature(x = "ASEset"), 
+		function(x) {
+
+		mat <- phase(x,return.class="array")[,,2]
+		ref <- mcols(x)[["ref"]]
+		alt <- mcols(x)[["alt"]]
+	
+		apply(t(mat),1,function(y, ref, alt){
+			
+			vec <- rep(NA,length(y))
+			if(any(y == 1)){
+				vec[y == 1] <- alt[y == 1]
+			}
+			if(any(y == 0)){
+				vec[y == 0] <- ref[y == 0]
+			}
+			vec
+		}, ref=ref, alt=alt)
+})

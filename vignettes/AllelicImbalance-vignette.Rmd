@@ -1,6 +1,6 @@
 ---
 title: "AllelicImbalance Vignette"
-author: "Jesper R. Gådin and Lasse Folkersen"
+author: "Jesper R. Gadin and Lasse Folkersen"
 date: "`r Sys.Date()`"
 output:
   BiocStyle::pdf_document:
@@ -296,6 +296,9 @@ One of the simplest statistical test for use in allelic imbalance analysis is
 the chi-square test. This test assumes that the uncertainty of ASE is represented by a normal distribution around an expected mean (i.e 0.5 for equal expression). A significant result suggests an ASE event. Every strand is tested independently. 
 
 ```{r echo=TRUE, eval=TRUE}
+#set ref allele
+ref(a.stranded) <- c("G","T","C")
+
 #use a subset for tests
 a2 <- a.stranded[,5:8]
 #binomial test

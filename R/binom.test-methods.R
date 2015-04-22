@@ -33,52 +33,112 @@ NULL
 #'  @export 
 setMethod("binom.test", signature(x = "ASEset", n = "ANY"), function(x, n = "*") {
     
+	if(!("genotype" %in% names(assays(x)))){
+		genotype(x) <- inferGenotypes(x)
+	}
+
     strand <- n
+
+	fr <- refFraction(x, strand=strand,
+			  threshold.count.sample= 1)[,,1]
     
     # checks
     if (!sum(strand %in% c("+", "-", "*")) > 0) {
         stop("strand parameter n has to be either '+', '-' or '*' ")
     }
+	idx <- which(!is.na(fr))
+	arn <- arank(x,return.type="names",return.class="matrix") 
+	ac <- alleleCounts(x, strand=strand, return.class="array")
+
+	mat1 <- matrix(aperm(ac,c(3,2,1))[aperm(array(matrix(x@variants, ncol=length(x@variants),
+		 nrow=nrow(x), byrow=TRUE)==arn[,1]
+	 ,dim=c(nrow(x), length(x@variants), ncol=ncol(x))),c(2,3,1))
+	],ncol=ncol(x),nrow=nrow(x), byrow=TRUE, dimnames=list(rownames(x),colnames(x)))
+
+	mat2 <- matrix(aperm(ac,c(3,2,1))[aperm(array(matrix(x@variants, ncol=length(x@variants),
+		 nrow=nrow(x), byrow=TRUE)==arn[,2]
+	 ,dim=c(nrow(x), length(x@variants), ncol=ncol(x))),c(2,3,1))
+	],ncol=ncol(x),nrow=nrow(x), byrow=TRUE, dimnames=list(rownames(x),colnames(x)))
+
+
+	allele1 <- mat1[idx] 
+	allele2 <- mat2[idx]
+
+	#test the two most expressed alleles
+	biasmat1 <- matrix(aperm(mapBias(x, return.class="array"),c(3,2,1))[aperm(array(matrix(
+		x@variants, ncol=length(x@variants),
+		 nrow=nrow(x), byrow=TRUE)==arn[,1]
+	 ,dim=c(nrow(x), length(x@variants), ncol=ncol(x))),c(2,3,1))
+	],ncol=ncol(x),nrow=nrow(x), byrow=TRUE, dimnames=list(rownames(x),colnames(x)))
+
+
+	biasAllele1 <- biasmat1[idx] 
+	
+	#maybe put a check here later that bias1 and bias2 sum to 1
+
+	ml <- mapply(allele1,allele2,biasAllele1,FUN=function(x,y,z){
+		binom.test(c(x,y), p = z)[[3]]
+	})
+
+	#cerate matrix in same size as fr	
+	pv <- fr	
+	pv[idx] <- ml
+
+	t(pv)
     
-    
-    biasWarning <- vector()
-    pLst <- list()
-    
-    # use this strand to get dimension information
-    if (strand == "both") {
-        tmpStrand <- "+"
-    } else {
-        tmpStrand <- strand
-    }
-    
-    for (i in 1:length(alleleCounts(x, strand = tmpStrand))) {
-        bias <- mapBias(x)[[i, drop = FALSE]]
-        
-        df <- alleleCounts(x, tmpStrand)[[i]]
-        returnVec <- rep(NA, nrow(df))
-        for (j in 1:nrow(df)) {
-            so <- sort(df[j, ], decreasing = TRUE)
-            if (so[2] != 0) {
-                # place bias in same order as so
-                bi <- bias[, names(so)[1:2]]
-                
-                # check that bi[1] and bi[2] adds up to 100% or force 0.5-0.5 and give warning
-                if (bi[1] + bi[2] != 1) {
-                  bi[1] <- bi[2] <- 0.5
-                  warning("Found disrepancy between mapping bias information and mapBiasExpMean and the allele count. Coerced to expectation of 0.5 to 0.5 ratio")
-                }
-                expCounts <- c(sum(so) * bi[1], sum(so) * bi[2])
-                returnVec[j] <- binom.test(as.numeric(c(so[1], so[2])), p = as.numeric(bi[1]/(bi[1] + 
-                  bi[2])))[[3]]
-            } else {
-                returnVec[j] <- NA
-            }  # if it's mono-allelic
-        }  #end for-loop
-        pLst[[names(alleleCounts(x, strand = tmpStrand)[i])]] <- returnVec
-    }
-    if (length(biasWarning) > 0) {
-        warning(paste(length(biasWarning), "SNPs had disrepancy between their two highest read count alleles and the\n\n\t\t\t\t\t\t\t\t\ttwo alleles indicated in mapBiasExpMean. They were coerced to a standard and expected alignment \n\t\t\t\t\t\t\t\t\tbias of 0.5 to 0.5, but could be checked further as this indicates non-standard allele distributions:\n", 
-            paste(biasWarning[1:(min(c(length(biasWarning), 20)))], collapse = ", ")))
-    }
-    return(as.matrix(as.data.frame(pLst)))
 }) 
+
+##' @rdname binom.test
+##'  @export 
+#setMethod("binom.test", signature(x = "ASEset", n = "ANY"), function(x, n = "*") {
+#    
+#    strand <- n
+#    
+#    # checks
+#    if (!sum(strand %in% c("+", "-", "*")) > 0) {
+#        stop("strand parameter n has to be either '+', '-' or '*' ")
+#    }
+#    
+#    
+#    biasWarning <- vector()
+#    pLst <- list()
+#    
+#    # use this strand to get dimension information
+#    if (strand == "both") {
+#        tmpStrand <- "+"
+#    } else {
+#        tmpStrand <- strand
+#    }
+#    
+#    for (i in 1:length(alleleCounts(x, strand = tmpStrand))) {
+#        bias <- mapBias(x)[[i, drop = FALSE]]
+#        
+#        df <- alleleCounts(x, tmpStrand)[[i]]
+#        returnVec <- rep(NA, nrow(df))
+#        for (j in 1:nrow(df)) {
+#            so <- sort(df[j, ], decreasing = TRUE)
+#            if (so[2] != 0) {
+#                # place bias in same order as so
+#                bi <- bias[, names(so)[1:2]]
+#                
+#                # check that bi[1] and bi[2] adds up to 100% or force 0.5-0.5 and give warning
+#                if (bi[1] + bi[2] != 1) {
+#                  bi[1] <- bi[2] <- 0.5
+#                  warning("Found disrepancy between mapping bias information and mapBiasExpMean and the allele count. Coerced to expectation of 0.5 to 0.5 ratio")
+#                }
+#                expCounts <- c(sum(so) * bi[1], sum(so) * bi[2])
+#                returnVec[j] <- binom.test(as.numeric(c(so[1], so[2])), p = as.numeric(bi[1]/(bi[1] + 
+#                  bi[2])))[[3]]
+#            } else {
+#                returnVec[j] <- NA
+#            }  # if it's mono-allelic
+#        }  #end for-loop
+#        pLst[[names(alleleCounts(x, strand = tmpStrand)[i])]] <- returnVec
+#    }
+#    if (length(biasWarning) > 0) {
+#        warning(paste(length(biasWarning), "SNPs had disrepancy between their two highest read count alleles and the\n\n\t\t\t\t\t\t\t\t\ttwo alleles indicated in mapBiasExpMean. They were coerced to a standard and expected alignment \n\t\t\t\t\t\t\t\t\tbias of 0.5 to 0.5, but could be checked further as this indicates non-standard allele distributions:\n", 
+#            paste(biasWarning[1:(min(c(length(biasWarning), 20)))], collapse = ", ")))
+#    }
+#    return(as.matrix(as.data.frame(pLst)))
+#}) 
+

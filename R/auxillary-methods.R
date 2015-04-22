@@ -284,15 +284,26 @@ setMethod("defaultPhase", signature("numeric"),
 #' Gives a summary of AI-consistency for a transcript
 #'
 #' From a given set of e.g. transcripts exon ranges the function will return
-#' a summary for the sum of all exons. Phase information is required.
+#' a summary for the sum of all exons. Phase information, reference and alternative
+#' allele is required.
+#'
+#' A limitation comes to the strand-specificness. At the moment it is not possible
+#' to call over more than one strand type using the strands in region. This will be
+#' improved before going to release.
 #'
 #' @name regionSummary
 #' @rdname regionSummary
 #' @aliases regionSummary,numeric-method
 #' @docType methods
 #' @param x ASEset object
+#' @param region to summmarize over, the object can be a GRanges, GRangesList or 
+#' list containing a GRangesList in the root
 #' @param strand can be "+", "-" or "*"
-#' @param gr GenomicRanges object to summmarize over
+#' @param threshold.pvalue used in filter when to count AI as significant
+#' @param return.class "array" or "list".
+#' @param return.meta logical if to return a list with additional metadata
+#' @param drop logical that for TRUE drops the third dimentsion if there is only
+#' one element.
 #' @param ... arguments to forward to internal functions
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords summary
@@ -312,10 +323,19 @@ setMethod("defaultPhase", signature("numeric"),
 #' #add alternative allele information
 #' mcols(a)[["alt"]] <- inferAltAllele(a)
 #'
-#' # in this example every snp is on its own exon
-#' txGR <- granges(a)
-#' t <- regionSummary(a, txGR)
+#' # in this example all snps in the ASEset defines the region
+#' region <- granges(a)
+#' t <- regionSummary(a, region)
 #'
+#' # in this example two overlapping subsets of snps in the ASEset defines the region
+#' region <- split(granges(a)[c(1,2,2,3)],c(1,1,2,2))
+#' t <- regionSummary(a, region)
+#'
+#' # use a multilevel list as input (output will keep the list dimensions)
+#' region <- split(granges(a)[c(1,2,2,3)],c(1,1,2,2))
+#' names(region) <- c("introns", "exons")
+#' region <- list(g1=list(tx1=region, tx2=region), g2=list(tx1=region, tx2=region, tx3=region))
+#' t <- regionSummary(a, region)
 NULL
 
 #' @rdname regionSummary
@@ -328,7 +348,8 @@ setGeneric("regionSummary", function(x, ... ){
 #' @rdname regionSummary
 #' @export
 setMethod("regionSummary", signature("ASEset"),
-		function(x, gr, strand="*", ...
+		function(x, region, strand="*", threshold.pvalue=0.05, 
+				 return.class="list", return.meta=TRUE, drop=TRUE, ...
 	){
 
 		#needs alternative allele
@@ -336,40 +357,58 @@ setMethod("regionSummary", signature("ASEset"),
 			stop("function needs mcols(x)[['alt']] to be set")				
 		}
 
-		#make overlap and subset based on gr
-		hits <- findOverlaps(x,gr)
-		x <- x[queryHits(hits),]
-
-		fr <- fraction(x, strand=strand, top.fraction.criteria="phase")
-
 		#need information of which are heterozygotes and homozygotes
 		if(is.null(genotype(x))){
 			genotype(x) <- inferGenotypes(x, return.allele.allowed="bi")
 		}
-		fr.het.filt <- hetFilt(x)
-		fr.f <- fr
-		fr.f[!t(fr.het.filt)] <- NaN
 
-		maternalAllele <- function(x){
-		
-			mat <- phase(x,return.class="array")[,,1]
-			ref <- mcols(x)[["ref"]]
-			alt <- mcols(x)[["alt"]]
-		
-			apply(t(mat),1,function(y){
-				
-				vec <- rep(NA,length(y))
-				if(any(y == 1)){
-					vec[y == 1] <- ref[y == 1]
-				}
-				if(any(y == 0)){
-					vec[y == 0] <- alt[y == 0]
-				}
-				vec
-			})
-			
+		populate.list <- FALSE
+
+		#check class of region
+		if(class(region)=="GRanges"){
+			idx <- rep(1,length(region))
+			ar.dim3 <- 1
+			ar.dim3.names <- "nameless"
+		}else if(class(region)=="GRangesList")	{
+			idx <- togroup(PartitioningByWidth(elementLengths(region)))
+			ar.dim3 <- length(region)
+			ar.dim3.names <- names(region)
+		}else if(class(region)=="list") {
+			idx.mat <- multiUnlist.index(region)	
+			idx.mat.names <- multiUnlist.index.names(region)	
+			rownames(idx.mat) <- paste("lvl", (nrow(idx.mat)+1):2, sep="")
+			rownames(idx.mat.names) <- paste("lvl", (nrow(idx.mat.names)+1):2, sep="")
+			region <- multiUnlist(region)		
+			populate.list <- TRUE
+
+			idx <- togroup(PartitioningByWidth(elementLengths(region)))
+			ar.dim3 <- length(region)
+			ar.dim3.names <- 1:ar.dim3
 		}
 
+		#make overlap and subset based on gr
+		hits <- findOverlaps(x, region)
+		x <- x[queryHits(hits)[sort(subjectHits(hits), index.return=TRUE)$ix], ]
+
+		if(return.meta){
+			#return granges for each bin
+			gr <- unlist(reduce(region, min.gapwidth=100000000))
+		}
+
+		fr.f <- fraction(x, strand=strand, top.fraction.criteria="phase")
+		fr.het.filt <- hetFilt(x)
+
+		#filter on p-value if threshold <1
+		if(threshold.pvalue >= 1){
+			fr.f[!t(fr.het.filt)] <- NA
+		}else if(threshold.pvalue < 1 & threshold.pvalue > 0){
+			pv <- binom.test(x,strand)
+			fr.f[!(pv < threshold.pvalue) | !t(fr.het.filt)] <- NA
+		}else{
+			stop("threshold.pvalue must be a value > 0")
+		}
+
+		#maternal allele
 		mallele <- maternalAllele(x)
 		mbias <- mapBias(x, return.class="array")
 
@@ -384,46 +423,73 @@ setMethod("regionSummary", signature("ASEset"),
 			mbias.values[i,] <- it.mbias[tf]
 		}
 
-		tf <- fr.f > t(mbias.values)
-		tf2 <- fr.f < t(mbias.values)
-		fr.up.filt <- tf
-		fr.down.filt <- tf2
+		fr.up.filt <- fr.f > t(mbias.values)
+		fr.down.filt <- fr.f < t(mbias.values)
 
-		pv <- binom.test(x,strand)
-
-		p.up.filt <- pv
-		p.up.filt[!tf] <- NA
-		p.down.filt <- pv
-		p.down.filt[!tf2] <- NA
-
-		ai.down <- apply(tf2,1,sum, na.rm=TRUE)
-		ai.up <- apply(tf,1,sum, na.rm=TRUE)
-
+		mode(fr.up.filt) <- "integer"
+		mode(fr.down.filt) <- "integer"
+		
+		#calc data
+		ai.down <- t(rowsum(t(fr.down.filt),idx, na.rm=TRUE))
+		ai.up <- t(rowsum(t(fr.up.filt),idx, na.rm=TRUE))
 		fr.d <- abs(fr.f - t(mbias.values))
+		hets <- t(tapply(fr.het.filt, list(idx[row(fr.het.filt)], col(fr.het.filt)), sum, na.rm=TRUE))
+		homs <- t(tapply(!fr.het.filt, list(idx[row(!fr.het.filt)], col(!fr.het.filt)), sum, na.rm=TRUE))
+		mean.fr <- t(tapply(t(fr.f), list(idx[row(t(fr.f))], col(t(fr.f))), mean, na.rm=TRUE))
+		sd.fr <- t(tapply(t(fr.f), list(idx[row(t(fr.f))], col(t(fr.f))), sd, na.rm=TRUE))
+		mean.delta <- t(tapply(t(fr.d), list(idx[row(t(fr.d))], col(t(fr.d))), mean, na.rm=TRUE))
+		sd.delta <- t(tapply(t(fr.d), list(idx[row(t(fr.d))], col(t(fr.d))), sd, na.rm=TRUE))
 
-		hets <- apply(t(fr.het.filt),1,sum)
-		homs <- apply(t(!fr.het.filt),1,sum)
+		#make array
+		ar <- aperm(array(c(hets, homs, mean.fr, sd.fr, mean.delta, sd.delta, ai.up, ai.down),
+			  dim=c(ncol(x),ar.dim3,8),
+			  dimnames=list(
+						colnames(x),
+						ar.dim3.names,
+						c("hets",
+						  "homs",
+						  "mean.fr",
+						  "sd.fr",
+						  "mean.delta",
+						  "sd.delta",
+						  "ai.up",
+						  "ai.down")
+						 )
+		), c(1,3,2))
 
-		mean.fr <- apply(fr.f, 1, mean, na.rm=TRUE)
-		sd.fr <- apply(fr.f, 1, sd, na.rm=TRUE)
-		mean.delta <- apply(fr.d, 1, mean, na.rm=TRUE)
-		sd.delta <- apply(fr.d, 1, sd, na.rm=TRUE)
+		if(return.class=="array"){
+			if(dim(ar)[3]==1 & drop){
+				ar[,,1]
+			}else{
+				#check if index should be returned (recommended when wrapping GRangesList in lists )
+				if(return.meta){
+					if(populate.list){
+						list(x=ar,ix=idx.mat,ixn=idx.mat.names, gr=gr)
+					}else{
+						list(x=ar, gr=gr, idx.names=ar.dim3.names)
+					}
+				}else{
+					ar
+				}
+			}
+		}else if(return.class=="list"){
+			if(populate.list){
+				lst <- region.list.populate(ar, idx.mat[-nrow(idx.mat),], idx.mat.names[-nrow(idx.mat.names),])
+				lst
+			}else{
 
-		#dir.up <- apply(fr.f,1,function(x){sum(mean(x, na.rm=TRUE)>0.5)})
-		#dir.down <- apply(fr.f,1,function(x){sum(mean(x, na.rm=TRUE)<0.5)})
+				lst <- lapply(seq(dim(ar)[3]), function(x) ar[ , , x])
+				names(lst) <- ar.dim3.names
 
-		#return data frame
-		data.frame(
-				het=hets,
-				hom=homs,
-				mean.fr=mean.fr,
-				sd.fr=sd.fr,
-				mean.delta=mean.delta,
-				sd.delta=sd.delta,
-				ai.up=ai.up,
-				ai.down=ai.down
-				)
+				if(length(lst)==1 & drop){
+					lst[[1]]
+				}else{
+					lst
+				}
+			}
+		}
 })
+
 
 #' scanForHeterozygotes
 #' 
@@ -915,7 +981,7 @@ setMethod("impBcfGR", signature(UserDir = "character"),
 #' 
 #' @name getAlleleCounts
 #' @rdname getAlleleCounts
-#' @aliases BamList getAlleleCounts getAlleleCounts,GAlignmentsList-method
+#' @aliases getAlleleCounts getAlleleCounts,GAlignmentsList-method
 #' @docType methods
 #' @param BamList A \code{GAlignmentsList object} or \code{GRangesList object}
 #' containing data imported from a bam file
@@ -1190,8 +1256,7 @@ function(alleleCountList) {
 		for (i in 1:length(unlist(unique(lapply(alleleCountList, rownames))))) {
 			MapBiasExpMean3D[, i, ] <- MapBiasExpMean
 		}
-	}
-	if(class(alleleCountList)=="array"){
+	}else if(class(alleleCountList)=="array"){
 		# make 3D array
 		MapBiasExpMean3D <- alleleCountList
 		mapbiasmat <- t(apply(apply(alleleCountList,c(1,3),sum),
@@ -1201,10 +1266,7 @@ function(alleleCountList) {
 		mapbiasmat[mapbiasmat==3] <- 0
 		mapbiasmat[mapbiasmat==4] <- 0
 
-		MapBiasExpMean3D <- array(NA, dim=c(nrow(mapbiasmat),dim(alleleCountList)[2],4))
-		for (i in 1:dim(alleleCountList)[2]) {
-			MapBiasExpMean3D[, i, ] <- mapbiasmat
-		}
+		MapBiasExpMean3D <- aperm(array(mapbiasmat, dim=dim(alleleCountList)[c(1,3,2)]),c(1,3,2))
 
 	}
     MapBiasExpMean3D
@@ -1959,6 +2021,483 @@ function(pathBam,pathVcf,pathGFF=NULL, verbose){
 	
 })
 
+
+#' snp quality data
+#' 
+#' Given the positions of known SNPs, this function returns allele quality from
+#' a BamGRL object
+#' 
+#' This function is used to retrieve the allele quality strings from specified positions
+#' in a set of RNA-seq reads. The \code{BamList} argument will typically have
+#' been created using the \code{impBamGAL} function on bam-files. The
+#' \code{GRvariants} is either a GRanges with user-specified locations or else
+#' it is generated through scanning the same bam-files as in \code{BamList} for
+#' heterozygote locations (e.g. using \code{scanForHeterozygotes}). The
+#' GRvariants will currently only accept locations having width=1,
+#' corresponding to bi-allelic SNPs. The strand type information will be kept in the
+#' returned object. If the strand is marked as unknown "*", it will be forced to the "+" 
+#' strand. 
+#'
+#' quaity information is extracted from the BamList object, and requires the presence of
+#' mcols(BamList)[["qual"]] to contain quality sequences.
+#' 
+#' @name getAlleleQuality
+#' @rdname getAlleleQuality
+#' @aliases getAlleleQuality getAlleleQuality,GAlignmentsList-method
+#' @docType methods
+#' @param BamList A \code{GAlignmentsList object} or \code{GRangesList object}
+#' containing data imported from a bam file
+#' @param GRvariants A \code{GRanges object} that contains positions of SNPs to
+#' retrieve.
+#' @param fastq.format default 'illumina.1.8'
+#' @param return.class 'list' or 'array'
+#' @param verbose Setting \code{verbose=TRUE} makes function more talkative
+#' @param ... parameters to pass on
+#' @return \code{getAlleleQuality} returns a list of several data.frame objects,
+#' each storing the count data for one SNP.
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords allele quality
+#' @examples
+#' 
+#' #load example data
+#' data(reads)
+#' data(GRvariants)
+#' 
+#' #get counts at the three positions specified in GRvariants
+#' alleleQualityArray <- getAlleleQuality(BamList=reads,GRvariants)
+#' 
+#' #place in ASEset object
+#' alleleCountsArray <- getAlleleCounts(BamList=reads,GRvariants,
+#'                      strand='*', return.class="array")
+#' 
+#' 	a <- ASEsetFromArrays(GRvariants, countsUnknown = alleleCountsArray) 
+#' 	aquals(a) <- alleleQualityArray	
+NULL
+
+#' @rdname getAlleleQuality
+#' @export
+setGeneric("getAlleleQuality", function(BamList, ... 
+	){
+    standardGeneric("getAlleleQuality")
+})
+
+#' @rdname getAlleleQuality
+#' @export
+setMethod("getAlleleQuality", signature(BamList = "GAlignmentsList"),
+function(BamList, GRvariants, fastq.format = "illumina.1.8",
+						return.class = "array", verbose = TRUE, ...) { 
+
+	if(!return.class %in% c("array")){
+		stop("return.class has to be array")
+	}
+    
+    if (!class(BamList) %in% c("GAlignments", "GAlignmentsList")) {
+        stop("BamList has to be of class GAlignments or GAlignmnetsList\n")
+    }
+    # if just one element of, make list (which is a convenient way of
+	# handling this input type)
+    # 
+    if (class(BamList) == "GAlignments") {
+        BamList <- GAlignmentsList(BamList)
+    }
+    
+    # if the user sent in the GRangesList for GRvariants,
+	# take out only the unique entries.
+    # 
+    if (class(GRvariants) == "GRangesList") {
+        GRvariants <- unique(unlist(GRvariants, use.names = FALSE)) 
+    }
+   
+	#if BamList is not list, make it a list
+	if(class(BamList)=="GAlignments"){
+		BamList <- GAlignmentsList(BamList)
+	}
+
+	#Drop seqlevels in BamList that are not in GRvariants
+	#seqlevels(BamList,force=TRUE) <- seqlevels(GRvariants)
+	seqinfo(GRvariants) <- merge(seqinfo(GRvariants), seqinfo(BamList))
+	seqlevels(GRvariants) <- seqlevelsInUse(GRvariants)
+
+
+    # check that seqlevels are the same
+   # if (!identical(seqlevels(BamList), seqlevels(GRvariants))) {
+   #     stop("!identical(seqlevels(BamList), seqlevels(GRvariants))\n")
+   # }
+    
+    # checking that GRvariants is ok
+    if (class(GRvariants) != "GRanges") 
+        stop(paste("GRvariants must be of class GRanges, not",
+				   class(GRvariants)))
+    if (length(GRvariants) == 0) 
+        stop("GRvariants was given as an empty GRanges object.",
+			 " There can be no Snps retrieved by getAlleleCount then")
+    if (any(width(GRvariants) != 1)) 
+        stop("GRvariants can contain only entries of width=1,",
+			 " corresponding to SNPs.")
+    
+    # checking that verbose is ok
+    if (class(verbose) != "logical") 
+        stop(paste("verbose must be of class logical, not", class(verbose)))
+    if (length(verbose) != 1) 
+        stop(paste("verbose must be of length 1, not", length(verbose)))
+    
+    # make row-names
+    if (sum(grepl("chr", seqnames(GRvariants))) > 0) {
+        snpNames <- paste(seqnames(GRvariants),
+						  "_", start(GRvariants), sep = "")
+    } else {
+        snpNames <- paste("chr", seqnames(GRvariants),
+						  "_", start(GRvariants), sep = "")
+    }
+    
+	# needs name, need a more general solution here
+	if(length(names(BamList)) == 0){
+		warning("no set names for list, new names will be sample1,2,3,etc")
+		names(BamList) <- paste("sample",1:length(BamList),sep="")
+	}
+
+	#choose format
+	if(fastq.format=="illumina.1.8"){
+		dim3 <- c("!","\"","#","$","%","&","'","(",")","*","+",",","-",".","\\","/","0","1","2","3","4","5","6","7","8","9",":",";","<","=",">","?","@","A","B","C","D","E","F","G","H","I","J")
+	}
+
+
+	#empty array that handles only four nucleotides + one del columns
+    dimnames = list(snpNames, names(BamList), dim3, c("+","-"))
+    ar1 <- array(NA, c(length(GRvariants), length(BamList), length(dim3), 2),
+				 dimnames = dimnames)  
+    
+    # force all "*" on "+" strand
+	un1 <- strand(BamList)=="*"
+	un2 <- any(un1) 
+	if(any(un2)){
+		strand(BamList)[un2][un1[un2]] <- "+"
+	}
+    
+    for (j in 1:length(names(BamList))) {
+        sample <- names(BamList)[j]
+        if (verbose) 
+            cat("sample ", sample, "\n")
+        
+		my_IGPOI <- GRvariants
+
+		# + strand
+        gal <- BamList[[j]][strand(BamList[[j]]) == "+"]
+		seqlevels(gal) <- seqlevels(my_IGPOI) 
+        
+		nuclpiles <- pileLettersAt(mcols(gal)$qual, seqnames(gal), start(gal), cigar(gal),
+							                                 my_IGPOI)
+        # fill array
+        nstr <- factor(unlist(strsplit(as.character(nuclpiles), "")),
+					   levels=dim3, labels=dim3)
+		levels(nstr) <- dim3
+
+        for (k in 1:length(nuclpiles)) {
+			tbl <- table(factor(unlist(strsplit(as.character(nuclpiles[k]), "")),
+					   levels=dim3, labels=dim3))
+			ar1[k, j, names(tbl), "+"] <- as.integer(tbl)
+		
+        }
+
+		# - strand
+        gal <- BamList[[j]][strand(BamList[[j]]) == "-"]
+		seqlevels(gal) <- seqlevels(my_IGPOI) 
+        
+		nuclpiles <- pileLettersAt(mcols(gal)$qual, seqnames(gal), start(gal), cigar(gal),
+							                                 my_IGPOI)
+        
+        # fill array
+        nstr <- factor(unlist(strsplit(as.character(nuclpiles), "")),
+					   levels=dim3, labels=dim3)
+		levels(nstr) <- dim3
+
+        for (k in 1:length(nuclpiles)) {
+			tbl <- table(factor(unlist(strsplit(as.character(nuclpiles[k]), "")),
+					   levels=dim3, labels=dim3))
+			ar1[k, j, names(tbl), "-"] <- as.integer(tbl)
+        }
+    }
+    
+	if (return.class == "array") {
+        ar1
+    } else {
+        cat("return.class unknown\n Nothing will be returned from function!")
+    }
+})
+
+
+
+#' lva.internal
+#' 
+#' make an almlof regression for arrays (internal core function)
+#' 
+#' internal method that takes one array with results from regionSummary
+#' and one matrix with group information for each risk SNP (based on phase)
+#'
+#' @name lva.internal
+#' @rdname lva.internal
+#' @aliases lva.internal,array-method
+#' @docType methods
+#' @param x regionSummary array phased for maternal allele
+#' @param grp group 1-3 (1 for 0:0, 2 for 1:0 or 0:1, and 3 for 1:1)
+#' @param ... arguments to forward to internal functions
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords phase
+#' @examples
+#' 
+#' data(ASEset) 
+#' a <- ASEset
+#' # Add phase
+#' set.seed(1)
+#' p1 <- matrix(sample(c(1,0),replace=TRUE, size=nrow(a)*ncol(a)),nrow=nrow(a), ncol(a))
+#' p2 <- matrix(sample(c(1,0),replace=TRUE, size=nrow(a)*ncol(a)),nrow=nrow(a), ncol(a))
+#' p <- matrix(paste(p1,sample(c("|","|","/"), size=nrow(a)*ncol(a), replace=TRUE), p2, sep=""),
+#' 	nrow=nrow(a), ncol(a))
+#' 
+#' phase(a) <- p
+#' 
+#' #add alternative allele information
+#' mcols(a)[["alt"]] <- inferAltAllele(a)
+#' 
+#' # in this example two overlapping subsets of snps in the ASEset defines the region
+#' region <- split(granges(a)[c(1,2,2,3)], c(1,1,2,2))
+#' rs <- regionSummary(a, region, return.class="array", return.meta=FALSE)
+#'
+#' # use  (change to generated riskSNP phase later)
+#' phs <- array(c(phase(a,return.class="array")[1,,c(1, 2)], 
+#'				 phase(a,return.class="array")[2,,c(1, 2)]), dim=c(20,2,2))
+#' grp <- matrix(2, nrow=dim(phs)[1], ncol=dim(phs)[2])		 
+#' grp[(phs[,,1] == 0) & (phs[,,2] == 0)] <- 1
+#' grp[(phs[,,1] == 1) & (phs[,,2] == 1)] <- 3
+#'
+#' lva.internal(rs, grp)
+#' 
+NULL
+
+#' @rdname lva.internal
+#' @export
+setGeneric("lva.internal", function(x, ... 
+	){
+    standardGeneric("lva.internal")
+})
+
+#' @rdname lva.internal
+#' @export
+setMethod("lva.internal", signature(x = "array"),
+		function(x, grp, ...
+	){
+	
+		#only use mean.fr at the moment
+		x2 <- aperm(x,c(1, 3, 2))[ , , 3]
+
+		l <- lapply(1:ncol(x2), function(i,y,x){
+				
+					summary(lm(y[,i]~x[,i]))$coefficients[2,4]
+		}, y=x2, x=grp)
+
+		unlist(l)
+})
+
+#' lva
+#' 
+#' make an almlof regression for arrays
+#' 
+#' internal method that takes one array with results from regionSummary
+#' and one matrix with group information for each risk SNP (based on phase)
+#'
+#' @name lva
+#' @rdname lva
+#' @aliases lva,array-method
+#' @docType methods
+#' @param x ASEset object with phase and 'ref'/'alt' allele information
+#' @param rv riskVariant object with phase and 'ref'/'alt' allele information
+#' @param region riskVariant object with phase and alternative allele information
+#' @param settings riskVariant object with phase and alternative allele information
+#' @param return.class 'vector' or 'matrix'
+#' @param return.meta logical to return a list with metainformation
+#' @param ... arguments to forward to internal functions
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords phase
+#' @examples
+#' 
+#' data(ASEset) 
+#' a <- ASEset
+#' # Add phase
+#' set.seed(1)
+#' p1 <- matrix(sample(c(1,0),replace=TRUE, size=nrow(a)*ncol(a)),nrow=nrow(a), ncol(a))
+#' p2 <- matrix(sample(c(1,0),replace=TRUE, size=nrow(a)*ncol(a)),nrow=nrow(a), ncol(a))
+#' p <- matrix(paste(p1,sample(c("|","|","/"), size=nrow(a)*ncol(a), replace=TRUE), p2, sep=""),
+#' 	nrow=nrow(a), ncol(a))
+#' 
+#' phase(a) <- p
+#' 
+#' #add alternative allele information
+#' mcols(a)[["alt"]] <- inferAltAllele(a)
+#' 
+#' #init risk variants
+#' ge <- inferGenotypes(ASEset)
+#' rv <- riskVariantFromGRanges(x=GRvariants, genotype=ge)
+#' phase(rv) <- p
+#'
+#' # in this example all snps in the ASEset defines the region
+#' r1 <- granges(a)
+#'
+#' # in this example two overlapping subsets of snps in the ASEset defines the region
+#' r2 <- split(granges(a)[c(1,2,2,3)],c(1,1,2,2))
+#'
+#' # use a multilevel list as input (output will keep the list dimensions)
+#' region <- split(granges(a)[c(1,2,2,3)],c(1,1,2,2))
+#' names(region) <- c("introns", "exons")
+#' r3 <- list(g1=list(tx1=region, tx2=region), g2=list(tx1=region, tx2=region, tx3=region))
+#'
+#' # link variant almlof (lva)
+#' lva(a, rv, r1)
+#' lva(a, rv, r2)
+#' lva(a, rv, r3)
+#' 
+NULL
+
+#' @rdname lva
+#' @export
+setGeneric("lva", function(x, ... 
+	){
+    standardGeneric("lva")
+})
+
+#' @rdname lva
+#' @export
+setMethod("lva", signature(x = "ASEset"),
+		function(x, rv, region, settings=list(),
+				 return.class="matrix", return.meta=FALSE, ...
+	){
+
+		if("threshold.distance" %in% names(settings)){
+			distance <- settings[["threshold.distance"]]
+		}else{
+			distance <- 200000
+		}
+
+		#region summary
+		rs <- regionSummary(x, region, return.class="array", return.meta=TRUE,
+							threshold.pvalue=1, drop=FALSE)
+
+		#match riskVariant to rs granges
+		hits <- findOverlaps(rv, rs$gr + distance)
+
+		rs2 <- rs$x[,,subjectHits(hits)]
+
+		rv2 <- rv[queryHits(hits)]
+
+		#groups
+		phs <- aperm(phase(rv2,return.class="array")[,,c(1, 2)],c(2,1,3))
+		grp <- matrix(2, nrow=dim(phs)[1], ncol=dim(phs)[2])		 
+		grp[(phs[,,1] == 0) & (phs[,,2] == 0)] <- 1                             	
+		grp[(phs[,,1] == 1) & (phs[,,2] == 1)] <- 3
+
+		#call internal regression function	
+		pvalues <- lva.internal(rs2, grp)
+
+		#create return object
+		if(return.class=="vector"){
+			pvalues
+		}else if(return.class=="matrix"){
+			if("ixn" %in% names(rs)){
+				rs2.names <- apply(rs$ixn[-nrow(rs$ixn),
+								   subjectHits(hits)],2,paste,collapse="/")
+				region.annotation <- rs2.names
+			}else if("idx.names" %in% names(rs)){
+				rs2.names <- rs$idx.names[subjectHits(hits)]
+				region.annotation <- rs2.names
+			}else{
+				region.annotation <- "nosetname"
+			}
+
+			if(return.meta){
+				list(mat=matrix(c(pvalues, rownames(rv2), region.annotation),ncol=3),
+					 GRrv=rowRanges(rv2),
+					 GRrs=rs$gr[subjectHits(hits)])
+			}else{
+				matrix(c(pvalues, rownames(rv2), region.annotation),ncol=3)
+			}
+		}
+})
+
+
+####' update ASEset
+####' 
+####' converts old ASEsets to new ASEset objects
+####'
+####' It is not possible to convert back to an old version.
+####'
+####' @name ASEsetFromOldVersion
+####' @rdname ASEsetFromOldVersion
+####' @aliases ASEsetFromOldVersion 
+####' ASEsetFromOldVersion,ASEset-method 
+####' @docType methods
+####' @param x ASEset object
+####' @param ... passed on to ASEsetFromOldVersion function
+####' @author Jesper R. Gadin
+####' @keywords ASEset
+####' @examples
+####'
+####' #load an old example object
+####' data(ASEsetOld1)
+####'
+####' # convert to new version
+####' a <- ASEsetFromOldVersion(ASEsetOld1)
+####'  
+###NULL
+###
+####' @rdname ASEsetFromOldVersion
+####' @export
+###setGeneric("ASEsetFromOldVersion", function(x, ... 
+###	){
+###    standardGeneric("ASEsetFromOldVersion")
+###})
+###
+####' @rdname ASEsetFromOldVersion
+####' @export
+###setMethod("ASEsetFromOldVersion", signature(x = "ASEset"),
+### function(x) {
+###
+###	#prepare new merged 
+###	ar <- array(0,dim=c(dim(x),4,2))
+###
+###	#take out old information
+###	if(!is.null(assays(x)[["countsPlus"]])){
+###		ar[,,,1] <- assays(x)[["countsPlus"]]
+###	}
+###	if(!is.null(assays(x)[["countsMinus"]])){
+###		ar[,,,2] <- assays(x)[["countsMinus"]]
+###	}
+###	if(is.null(assays(x)[["countsPlus"]]) & is.null(assays(x)[["countsMinus"]])){
+###		ar[,,,1] <- assays(x)[["countsUnknown"]]
+###	}
+###
+###	#add names
+###	rownames(ar) <-  rownames(x)
+###	colnames(ar) <-  colnames(x)
+###
+###	#Stuff it back again
+###	a <- ASEsetFromArrays(rowRanges(x), acounts = ar, colData=colData(x), mapBiasExpMean=NULL,
+###					 genotype = NULL)
+###
+###	#add extra assays
+###	if(!is.null(assays(x)[["genotype"]])){
+###		genotype(a) <- assays(x)[["genotype"]]
+###	}
+###	if(!is.null(assays(x)[["phase"]])){
+###		genotype(a) <- assays(x)[["phase"]]
+###	}
+###	if(!is.null(assays(x)[["mapBias"]])){
+###		mapBias(a) <- assays(x)[["mapBias"]]
+###	}
+###
+###	#return new version of object
+###	a
+###
+###})
+##
 ##' DNAStringSet2character
 ##' 
 ##' forces e.g. simplelist of variants to an atomic character vector

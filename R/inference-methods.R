@@ -284,7 +284,7 @@ setMethod("inferAltAllele", signature(x = "ASEset"), function(x, strand="*", ret
 
 	#to be able to infer alternative allele, we need to know the reference allele
 	ref <- mcols(x)[,"ref"]
-	ar <- arank(x, return.class="matrix")[,c(1,2)]
+	ar <- arank(x, strand=strand, return.class="matrix")[,c(1,2)]
 	tf <- ar == matrix(ref, nrow=nrow(x), ncol=2)
 	
 	ar[!tf]

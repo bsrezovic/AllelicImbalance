@@ -121,33 +121,36 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
             paste(okStrandTypes, collapse = ", "), sep = ""))
     
     # check if strand type is present in object
-    if (strand == "+") {
-        el <- "countsPlus"
-        if (!(el %in% names(assays(x)))) {
-            stop("strand is not present as assay in ASEset object")
-        }
-    } else if (strand == "-") {
-        el <- "countsMinus"
-        if (!(el %in% names(assays(x)))) {
-            stop("strand is not present as assay in ASEset object")
-        }
-    } else if (strand == "*") {
-        el <- "countsUnknown"
-        if (!(el %in% names(assays(x)))) {
-            stop("strand is not present as assay in ASEset object")
-        }
-    } else if (strand == "both") {
-        el <- "countsPlus"
-        if (!(el %in% names(assays(x)))) {
-            stop("strand is not present as assay in ASEset object")
-        }
-        el <- "countsMinus"
-        if (!(el %in% names(assays(x)))) {
-            stop("strand is not present as assay in ASEset object")
-        }
-    } else {
-        stop("unknown strand option")
-    }
+	# there is a check at the alleleCountsList aswell.
+	# And since the new ASEset version the strands will always be present
+	#
+    #if (strand == "+") {
+    #    el <- "countsPlus"
+    #    if (!(el %in% names(assays(x)))) {
+    #        stop("strand is not present as assay in ASEset object")
+    #    }
+    #} else if (strand == "-") {
+    #    el <- "countsMinus"
+    #    if (!(el %in% names(assays(x)))) {
+    #        stop("strand is not present as assay in ASEset object")
+    #    }
+    #} else if (strand == "*") {
+    #    el <- "countsUnknown"
+    #    if (!(el %in% names(assays(x)))) {
+    #        stop("strand is not present as assay in ASEset object")
+    #    }
+    #} else if (strand == "both") {
+    #    el <- "countsPlus"
+    #    if (!(el %in% names(assays(x)))) {
+    #        stop("strand is not present as assay in ASEset object")
+    #    }
+    #    el <- "countsMinus"
+    #    if (!(el %in% names(assays(x)))) {
+    #        stop("strand is not present as assay in ASEset object")
+    #    }
+    #} else {
+    #    stop("unknown strand option")
+    #}
     
     # check legend
     if (!is.logical(legend)) {

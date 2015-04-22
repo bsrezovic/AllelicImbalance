@@ -35,7 +35,7 @@
 #' @import S4Vectors
 #' @import grid
 #' @import GenomeInfoDb
-#' 
+#' @import Gviz
 #' 
 #' @importFrom IRanges IRanges
 #' @importFrom IRanges ranges
@@ -45,9 +45,6 @@
 #' @importFrom IRanges which
 #' @importFrom IRanges resize
 #' 
-# @importFrom S4Vectors DataFrame
-# @importFrom S4Vectors SimpleList
-#'
 #' @importFrom GenomicRanges GRanges
 #' @importFrom GenomicRanges granges
 #' @importFrom GenomicRanges GRangesList

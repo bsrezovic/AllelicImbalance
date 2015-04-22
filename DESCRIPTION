@@ -1,8 +1,8 @@
 Package: AllelicImbalance
 Type: Package
 Title: Investigates allele specific expression
-Version: 1.7.0
-Date: 2015-04-03
+Version: 1.7.1
+Date: 2015-04-21
 Author: Jesper R Gadin, Lasse Folkersen
 Maintainer: Jesper R Gadin <j.r.gadin@gmail.com>
 Description: Provides a framework for allelic specific expression
@@ -31,11 +31,9 @@ Imports:
     IRanges,
     Rsamtools,
     GenomicFeatures,
-    Gviz,
     lattice,
     seqinr,
-    GenomeInfoDb,
-	VariantAnnotation
+    GenomeInfoDb
 LazyData: TRUE
 biocViews: Genetics, Infrastructure, Sequencing
 VignetteBuilder: knitr
