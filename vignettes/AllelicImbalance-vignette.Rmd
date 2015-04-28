@@ -5,6 +5,7 @@ date: "`r Sys.Date()`"
 output:
   BiocStyle::pdf_document:
     toc: true
+    fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{AllelicImbalance Vignette}
   %\VignetteEngine{knitr::rmarkdown}
@@ -13,18 +14,27 @@ vignette: >
 ```{r style, echo = FALSE, results = 'asis'}
 BiocStyle::markdown()
 ```
+
+```{r functions, include=FALSE}
+# A function for captioning and referencing images
+fig <- local({
+    i <- 0
+    ref <- list()
+    list(
+        cap=function(refName, text) {
+            i <<- i + 1
+            ref[[refName]] <<- i
+            #paste("Figure ", i, ": ", text, sep="")
+            paste(text, sep="")
+        },
+        ref=function(refName) {
+            ref[[refName]]
+        })
+})
+```
+
 #Introduction
-This `r Biocpkg("AllelicImbalance")` package contains functions for investigating
-allelic imbalance effects in RNA-seq data. Maternal and paternal
-alleles could be expected to show identical transcription rate, resulting in a
-50%-50% mix of maternal and paternal mRNA in a sample. However, this turns out
-to sometimes not be the case. The most extreme example is the X-chromosome
-inactivation in females, but many autosomal genes also have deviations from
-identical transcription rate. The causes of this are not always known, but one
-likely cause is the difference in DNA, namely heterozygous SNPs, affecting
-enhancers, promoter regions, splicing and stability. Identifying this allelic
-imbalance is therefore of interest to the characterization of the genome and the
-aim of the AllelicImbalance package is to facilitate this.
+This `r Biocpkg("AllelicImbalance")` package contains functions for investigating allelic imbalance effects in RNA-seq data. Maternal and paternal alleles could be expected to show identical transcription rate, resulting in a 50%-50% mix of maternal and paternal mRNA in a sample. However, this turns out to sometimes not be the case. The most extreme example is the X-chromosome inactivation in females, but many autosomal genes also have deviations from identical transcription rate. The causes of this are not always known, but one likely cause is the difference in DNA, namely heterozygous SNPs, affecting enhancers, promoter regions, splicing and stability. Identifying this allelic imbalance is therefore of interest to the characterization of the genome and the aim of the AllelicImbalance package is to facilitate this.
 
 Load AllelicImbalance
 ```{r echo = TRUE, eval = TRUE, message = FALSE}
@@ -35,12 +45,7 @@ library(AllelicImbalance)
 The ASEset object is the central class of objects in the AllelicImbalance package. The ASEset object has the SummarizedExperiment from the `r Biocpkg("GenomicRanges")` package as parent class, and all functions you can apply on this class you can also apply on an ASEset.
 
 ## Simple example of building an ASEset object
-In this section we will walk through the various ways an ASEset
-object can be created. Although the preprocessing of RNA-seq data is not the
-primary focus of this package, it is a necessary step before analysis. There
-exists several different methods for obtaining a bam file, and this section
-should just be considered an example. For further details we refer
-to the web-pages of tophat, bowtie, bwa and samtools found in the links section at the end of this document.
+In this section we will walk through the various ways an ASEset object can be created. Although the preprocessing of RNA-seq data is not the primary focus of this package, it is a necessary step before analysis. There exists several different methods for obtaining a bam file, and this section should just be considered an example. For further details we refer to the web-pages of tophat, bowtie, bwa and samtools found in the links section at the end of this document.
 
 ```
 wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR009/ERR009135/*
@@ -49,14 +54,7 @@ bowtie -q --best --threads 5 --sam hg19 +
 samtools view -S -b ERR009135.sam > ERR009135.bam
 ```
 
-In the above code one paired-end RNA sequencing sample is downloaded and
-aligned to the human genome, then converted to bam using samtools. The
-resulting bam files can be the direct input to the AllelicImbalance package. Other
-aligners can be used as well, as long as bam files are provided as input. The
-example code following illustrates how to use the import mechanism on a
-chromosome 17-located subset of 20 RNA-seq experiments of HapMap samples. The
-output is an ASEset object containing allele counts for all
-heterozygote coding SNPs in the region.
+In the above code one paired-end RNA sequencing sample is downloaded and aligned to the human genome, then converted to bam using samtools. The resulting bam files can be the direct input to the AllelicImbalance package. Other aligners can be used as well, as long as bam files are provided as input. The example code following illustrates how to use the import mechanism on a chromosome 17-located subset of 20 RNA-seq experiments of HapMap samples. The output is an ASEset object containing allele counts for all heterozygote coding SNPs in the region.
 
 ```{r echo = TRUE, eval = TRUE}
 searchArea <- GRanges(seqnames = c("17"), ranges = IRanges(79478301, 79478361))
@@ -69,12 +67,7 @@ a.simple
 ```
 
 ## Building an ASEset object using Bcf or Vcf files
-If more than a few genes and a few samples are analyzed we recommend
-that a SNP-call is instead made using the samtools mpileup function (see
-links section). The scanForHeterozygotes function is merely a simple 
-SNP-caller and it is not as computationally optimized as e.g. mpileup. In this bash
-code we download reference sequence for chromosome 17 and show how to generate
-mpileup calls on one of the HapMap samples that were described above.
+If more than a few genes and a few samples are analyzed we recommend that a SNP-call is instead made using the samtools mpileup function (see links section). The scanForHeterozygotes function is merely a simple  SNP-caller and it is not as computationally optimized as e.g. mpileup. In this bash code we download reference sequence for chromosome 17 and show how to generate mpileup calls on one of the HapMap samples that were described above.
 
 ```
 #download the reference chromosome in fasta format
@@ -87,18 +80,11 @@ samtools mpileup -uf hg19.fa ERR009135.bam > ERR009135.vcf
 samtools mpileup -uf hg19.fa ERR009135.bam | bcftools view -bvcg - > ERR009135.bcf
 ```
 
-Samtools mpileup generates by default a Vcf file which contains SNP and short INDEL 
-positions. Piping the output to bcftools we get its binary equivalent (Bcf), which 
-takes less space and can be queried more effective. 
+Samtools mpileup generates by default a Vcf file which contains SNP and short INDEL positions. Piping the output to bcftools we get its binary equivalent (Bcf), which takes less space and can be queried more effective. 
 
-The Vcf file is a text file that stores information about positions in the genome.
-In addition to the location, stored informationn could for example be genotype,
-phase, reference and alternative alleles for a collection of samples. More detailed
-information can be found following this [link](http://samtools.github.io/hts-specs/VCFv4.1.pdf).
+The Vcf file is a text file that stores information about positions in the genome. In addition to the location, stored informationn could for example be genotype, phase, reference and alternative alleles for a collection of samples. More detailed information can be found following this [link](http://samtools.github.io/hts-specs/VCFv4.1.pdf).
  
-In the `r Biocpkg("VariantAnnotation")` package there is a lot of useful tools to handle
- Vcf files. The readVcf function reads Vcf data into R, which can be subset to only ranges by granges to
-get a GRanges object that is the object type required by the getAlleleCounts function. 
+In the `r Biocpkg("VariantAnnotation")` package there is a lot of useful tools to handle  Vcf files. The readVcf function reads Vcf data into R, which can be subset to only ranges by granges to get a GRanges object that is the object type required by the getAlleleCounts function. 
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE}
 pathToVcf <- paste(pathToFiles,"/ERP000101.vcf",sep="")
@@ -113,9 +99,7 @@ countList <- getAlleleCounts(reads, gr.filt, verbose=FALSE)
 a.vcf <- ASEsetFromCountList(rowRanges = gr, countList)
 ```
 
-With the Bcf files the process of generating an ASEset object starts with a call to the impBcfGR 
-function instead. This function will import the Bcf file containing all SNP calls that were 
-generated with the samtools mpileup function.
+With the Bcf files the process of generating an ASEset object starts with a call to the impBcfGR  function instead. This function will import the Bcf file containing all SNP calls that were generated with the samtools mpileup function.
 
 ```{r echo = TRUE, eval = TRUE}
 BcfGR <- impBcfGR(pathToFiles,searchArea,verbose=FALSE)
@@ -124,14 +108,7 @@ a.bcf <- ASEsetFromCountList(BcfGR, countListBcf)
 ```
 
 ## Using strand information
-Many RNA-seq experiments do not yield useful information on the strand from
-which a given read was made. This is because they involve a step in which a
-double-stranded cDNA is created without tracking strand-information. Some
-RNA-seq setups do however give this information and in those cases it is important to
-keep track of strand in the ASE-experiment. The example data from above is
-from an experiment which created double-stranded cDNA before labelling and so the '+'
-and '-' information in it is arbitrary. However, if we assume that the
-information has strand information, then the correct procedure is as follows:
+Many RNA-seq experiments do not yield useful information on the strand from which a given read was made. This is because they involve a step in which a double-stranded cDNA is created without tracking strand-information. Some RNA-seq setups do however give this information and in those cases it is important to keep track of strand in the ASE-experiment. The example data from above is from an experiment which created double-stranded cDNA before labelling and so the '+' and '-' information in it is arbitrary. However, if we assume that the information has strand information, then the correct procedure is as follows:
 
 
 ```{r echo = TRUE, eval = TRUE}
@@ -146,21 +123,10 @@ countListMinus=minus
 )
 a.stranded
 ```
-The main effect of doing this, is in the plotting functions which will separate
-reads from different strands if they are specified as done here. It is
-important, however, to make sure that the imported RNA-seq experiment does in
-fact have proper labeling and tracking of strand information before proceeding
-with this method.
+The main effect of doing this, is in the plotting functions which will separate reads from different strands if they are specified as done here. It is important, however, to make sure that the imported RNA-seq experiment does in fact have proper labeling and tracking of strand information before proceeding with this method.
 
 ## Two useful helper functions
-At this stage it is worth highlighting two useful helper functions that both
-uses existing BioC annotation objects. One is the
-getAreaFromGeneNames which quickly retrieves the above mentioned
-searchArea when given just genesymbols as input, and relies on
- `r Biocannopkg("org.Hs.eg.db")`. The other other is
-the getSnpIdFromLocation function which attempts to rename
-location-based SNP names to established rs-IDs in case they exist. These
-functions work as follows:
+At this stage it is worth highlighting two useful helper functions that both uses existing BioC annotation objects. One is the getAreaFromGeneNames which quickly retrieves the above mentioned searchArea when given just genesymbols as input, and relies on  `r Biocannopkg("org.Hs.eg.db")`. The other other is the getSnpIdFromLocation function which attempts to rename location-based SNP names to established rs-IDs in case they exist. These functions work as follows:
 
 ```{r echo = TRUE, eval = TRUE, message = FALSE, results = 'hide'}
 #Getting searchArea from genesymbol
@@ -175,10 +141,7 @@ rowRanges(a.simple)<-updatedGRanges
 ```
 
 ## Adding phenotype data
-Typically an RNA-seq experiment will include additional information about each
-sample. It is an advantage to include this information when creating an ASEset
-because it can be used for subsequent highlights or subsetting in plotting and
-analysis functions.
+Typically an RNA-seq experiment will include additional information about each sample. It is an advantage to include this information when creating an ASEset because it can be used for subsequent highlights or subsetting in plotting and analysis functions.
 
 ```{r echo=TRUE, eval=TRUE}
 #simulate phenotype data
@@ -195,6 +158,13 @@ a.new <- ASEsetFromCountList(
 
 #add to existing object
 colData(a.simple) <- pdata
+```
+## Adding genotype information
+The genotype of the coding SNPs can be set by the command ```genotype(x) <- vale```. If the genotype information is not available it can be inferred from the allele counts. The major allele will then be the allele with most counts and minor with second most counts. The notation is major/minor and for the example G/C, The G allele would be the major and C the minor allele.
+
+```{r echo=TRUE, eval=TRUE}
+genotype(a.simple) <- inferGenotypes(a.simple)
+genotype(a.simple)[,1:4]
 ```
 
 ## Adding phase information
@@ -226,11 +196,7 @@ p.ordered <- p.subset[ , match(colnames(a.subset), colnames(p.subset))]
 ```
 
 ## Adding reference and alternative allele information
-Having the information of reference and alternative allele is important to investigate any 
-presence of mapping bias. It is also important to be able to use phasing information. The 
-reference and alternative alleles are stored in the meta-columns and can be accessed and
- set through the mcols() function. All functions that require reference or alternative 
-allele will visit the meta-columns "ref" or "alt" to extract that information.
+Having the information of reference and alternative allele is important to investigate any presence of mapping bias. It is also important to be able to use phasing information. The reference and alternative alleles are stored in the meta-columns and can be accessed and set through the mcols() function. All functions that require reference or alternative allele will visit the meta-columns "ref" or "alt" to extract that information.
 
 ```{r echo=TRUE, eval=TRUE}
 #from simulated data
@@ -280,7 +246,7 @@ genotype(a) <- inferGenotypes(a)
 ref(a) <- randomRef(a)
 
 #get the fraction of the reference allele
-refFrac <- refFraction(a)
+refFrac <- fraction(a, top.fraction.criteria="ref")
 
 #check mean
 mean(refFrac)
@@ -307,58 +273,65 @@ binom.test(a2,"+")
 chisq.test(a2,"-")
 ```
 
+# Summary functions
+The regionSummary function can be used to investigate if there is a consistent imbalance in the same direction over a region (e.g. a transcript). 
+
+```{r echo=TRUE, eval=TRUE, message=FALSE}
+# in this example every snp is on separate exons
+region <- granges(a.simple)
+rs <- regionSummary(a.simple, region)
+head(rs,3)
+```
+
 # Base graphics
 ## Plotting of an ASEset object
-The barplot function for ASEset objects
-plots the read count of each allele in each sample. This is useful for getting a very
-detailed view of individual SNPs in few samples. As can be seen below, four
-samples from the HapMap data contains a strong imbalance at the chr17:79478331
-position on the plus strand. By default the p-value is calculated by a
-chi-square test. To use other test results the arguments testValue and
-testValue2 can be used. When the counts for one allele are below 5 for
-one allele the chi-square test returns NA. This is why there is no P-value above the first bar in the example below.
+The barplot function for ASEset objects plots the read count of each allele in each sample. This is useful for getting a detailed view of individual SNPs in few samples. 
 
-```{r echo=TRUE, eval=TRUE}
-barplot(a.stranded[1], strand="+", xlab.text="", legend.interspace=2)
+```{r echo=TRUE, eval=TRUE, fig.cap=fig$cap("barplotPlusStrandDefault", "The red bars show how many reads with the G-allele that overlaps the snp at position chr17:79478331, and the green bars show how many reads with the T allele that overlaps.")}
+barplot(a.stranded[2], strand="+", xlab.text="", legend.interspace=2)
+```
 
+As can be seen in figure `r fig$ref("barplotPlusStrandDefault")` several samples from the HapMap data show a strong imbalance at the chr17:79478331 position on the plus strand. By default the p-value is calculated by a chi-square test, and when the counts for one allele are below 5 for one allele the chi-square test returns NA, which is why there is no P-value above the first bar in the figure `r fig$ref("barplotPlusStrandDefault")`. The default p-values can be substitued by other test results via the arguments testValue and testValue2. 
+
+```{r echo=TRUE, eval=TRUE, fig.cap=fig$cap("barplotPlusStrandPsub", "Here the default chi-square p-values have been replaced by p-values from binomial tests.")}
 #use another source of p-values
 btp <- binom.test(a.stranded[1],"+")
-barplot(a.stranded[1], strand="+", testValue=btp, xlab.text="", legend.interspace=2)
+barplot(a.stranded[2], strand="+", testValue=t(btp), xlab.text="", legend.interspace=2)
 ```
 
-Another example of plotting that is useful is the one invoked with the plotting
-type argument "fraction". This plotting mechanism is
-useful to illustrate more SNPs and more samples in less space than the standard
-plot. As can be seen here several other samples are not heterozygote at the
-chr17:79478331 location.
+In the figure `r fig$ref("barplotPlusStrandPsub")` the binomial test has been used instead of the default chi-square test. For low read counts what is declared significant can differ, but as can be seen in the table below the difference matters less with more read counts. 
 
 ```{r echo=TRUE, eval=TRUE}
-barplot(a.simple[1], type="fraction", cex.main = 0.7)
+init <- c(15,20)
+for(i in c(1,2,4,6)){
+	bp <- binom.test(init*i, p=0.5)$p.value
+	cp <- chisq.test(init*i, p=c(0.5,0.5))$p.value 
+	print(paste("A: ", init[1]*i , " B: ", init[2]*i, " binom p: ", bp, "chisq p: ", cp), sep="")
+}
 ```
 
-A typical question would be to ask why certain heterozygote samples have allele
-specific expression. The arguments sampleColour.top and sampleColour.bot allows for
-different highligts such as illustrated here below for gender. This could also
-be used to highlight based on genotype of proximal non-coding SNPs if available.
+Another type of barplot can be invoked by the argument type="fraction". This plotting mechanism is useful to illustrate more SNPs and more samples, using less space than the standard barplot with the default type="counts". 
 
-```{r echo=TRUE, eval=TRUE}
-#top colour
+```{r echo=TRUE, eval=TRUE, fig.cap=fig$cap("barplotFraction", "A barplot with type='fraction'. Each bar represents one sample and by default the most expressed allele over all samples is on the top, here in green. The black line denotes 1:1 expression of the alleles.")}
+barplot(a.simple[2], type="fraction", cex.main = 0.7)
+```
+
+A typical question would be to ask why certain heterozygote samples have allele specific expression. The arguments sampleColour.top and sampleColour.bot allows for different highligts such as illustrated here below for gender. This could also be used to highlight based on genotype of proximal non-coding SNPs if available.
+
+```{r echo=TRUE, eval=TRUE, fig.cap=fig$cap("barplotSampleColour", "A barplot with allele fractions, additionally colored by gender.")}
+#top and bottom colour
 sampleColour.top <-rep("palevioletred",ncol(a.simple))
 sampleColour.top[colData(a.simple)[,"Gender"]%in%"male"] <- "darkgreen"
-#bottom colour
 sampleColour.bot <- rep("blue",ncol(a.simple))
 sampleColour.bot[colData(a.simple)[,"Gender"]%in%"male"] <- "seashell2"
-barplot(a.simple[1], type="fraction", sampleColour.top=sampleColour.top,
+barplot(a.simple[2], type="fraction", sampleColour.top=sampleColour.top,
 	 sampleColour.bot=sampleColour.bot, cex.main = 0.7)
 ```
 
 ## Plot with annotation
-It is often of interest to combine the RNA
-sequencing data with genomic annotation information from online databases. For
-this purpose there is a function to extract variant specific annotation such as
-gene, exon, transcript and CDS.
+It is often of interest to combine the RNA sequencing data with genomic annotation information from online databases. For this purpose there is a function to extract variant specific annotation such as gene, exon, transcript and CDS.
 
-```{r echo=TRUE, eval=TRUE, message=FALSE}
+```{r echo=TRUE, eval=TRUE, message=FALSE, fig.cap=fig$cap("barplotAnnotation", "A barplot with Gene information extracted from the org.Hs.eg.db package")}
 library(org.Hs.eg.db)
 barplot(a.simple[1],OrgDb=org.Hs.eg.db,
 			cex.main = 0.7,
@@ -369,107 +342,87 @@ barplot(a.simple[1],OrgDb=org.Hs.eg.db,
 			)
 ```
 
-## locationplot
-Finally a given gene or set of proximal genes will often have several SNPs close
-to each other. It is of interest to investigate all of them together, in
-connection with annotation information. This can be done using the
-locationplot function. This function in its simplest form just plot
-all the SNPs in an ASEset distributed by genomic location. Additionally it
-contains methods for including gene-map information through the arguments
-OrgDb and TxDb.
-
-```{r echo=TRUE, eval=TRUE, message=FALSE}
-library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-#using count type
-locationplot(a.stranded, type="count", cex.main=0.7, cex.legend=0.4)
-#use annotation
-a.stranded.sorted <- sort(a.stranded, decreasing=FALSE)
-locationplot(a.stranded.sorted, OrgDb=org.Hs.eg.db, TxDb=TxDb.Hsapiens.UCSC.hg19.knownGene)
-```
-
 ##Top allele criteria
 The barplot with type='function' can be visualized according to three different allele sorting criteria. The default behaviour is just to shown the allele with highest overall abundance in the upper half of the plot. This works well for most single SNP investigations. For more complex situations, however, it can be essential to keep track of phase information. This is done either through the reference allele sorting function, or even better, through consistently showing the maternal allele on top. When phase is know, this is essential to compare effect-directions of different coding SNPs
 
-```{r echo=TRUE, eval=TRUE, message=FALSE}
-
+```{r echo=TRUE, eval=TRUE, message=FALSE, fig.cap=fig$cap("barplotRef", "A barplot with the reference allele as top fraction, top.fraction.criteria='ref' ")}
 #load data
 data(ASEset)
 
 #using reference and alternative allele information
 alt(ASEset) <- inferAltAllele(ASEset)
-barplot(ASEset[1], type="fraction", strand="+", xlab.text="", top.fraction.criteria="ref")
+barplot(ASEset[1], type="fraction", strand="+", xlab.text="", top.fraction.criteria="ref", cex.main=0.7)
+```
 
+
+```{r echo=TRUE, eval=TRUE, message=FALSE, fig.cap=fig$cap("barplotPhase", "A barplot with the maternal phase as top fraction, top.fraction.criteria='phase' ")}
 #using phase information
 phase(ASEset) <- phase.mat 
-barplot(ASEset[1], type="fraction", strand="+", xlab.text="", top.fraction.criteria="phase")
+barplot(ASEset[1], type="fraction", strand="+", xlab.text="", top.fraction.criteria="phase", cex.main=0.7)
+```
+
+## locationplot
+Finally a given gene or set of proximal genes will often have several SNPs close to each other. It is of interest to investigate all of them together, in connection with annotation information. This can be done using the locationplot function. This function in its simplest form just plot all the SNPs in an ASEset distributed by genomic location. Additionally it contains methods for including gene-map information through the arguments OrgDb and TxDb.
+
+The overview offers the possibility to view consistency of SNP fractions over consecutive exons which is important to assess the reliability of the measured SNPs. In the best case all fractions deviates from e.g. 0.3 for every SNP in the same gene for an individual. To be able to inspect that the direction is right, it is possible to use the top.fraction.criteria and use phase information as explained earlier.
+
+```{r echo=TRUE, eval=TRUE, message=FALSE, fig.cap=fig$cap("locationplotDefault", "A locationplot with countbars displaying a region of SNPs")}
+# locationplot using count type
+a.stranded.sorted <- sort(a.stranded, decreasing=FALSE)
+locationplot(a.stranded.sorted, type="count", cex.main=0.7, cex.legend=0.4)
+```
+
+
+```{r echo=TRUE, eval=TRUE, message=FALSE, fig.cap=fig$cap("locationplotAnnotation", "A locationplot with Gene and Transcript information extracted from the org.Hs.eg.db and TxDb.Hsapiens.UCSC.hg19.knownGene packages")}
+# locationplot annotation
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+locationplot(a.stranded.sorted, OrgDb=org.Hs.eg.db, TxDb=TxDb.Hsapiens.UCSC.hg19.knownGene)
 ```
 
 # Grid graphics
-To make use of the extra graphical flexibility that comes with grid graphics, 
-the AllelicImbalance package has now functions that can be integrated in the grid
-environment. The low level grid functions are located in the `r CRANpkg("grid package")`, but
-higher level functions based on grid can be found in popular packages such as 
-e.g. `r CRANpkg("lattice")`, `r CRANpkg("ggplot2")`. The benefits using grid graphics is a better control over different 
-graphical regions and coordinate systems, how to construct and redirect graphical output,
-such as lines, points, etc and their appearance.    
+To make use of the extra graphical flexibility that comes with grid graphics, the AllelicImbalance package has now functions that can be integrated in the grid environment. The low level grid functions are located in the `r CRANpkg("grid package")`, but higher level functions based on grid can be found in popular packages such as e.g. `r CRANpkg("lattice")`, `r CRANpkg("ggplot2")`. The benefits using grid graphics is a better control over different graphical regions and coordinate systems, how to construct and redirect graphical output, such as lines, points, etc and their appearance.    
 
-One particular reason for the AllelicImbalance to use grid graphics is the `r Biocpkg("Gviz")` package, which
-uses grids functionality to construct tracks to visualize genomic regions in a smart way. The 
-AllelicImbalance package has grid based barplots and functionality to create Gviz tracks. 
-Observe the extra "g" prefix for the bar- and locationplot versions using the grid, see examples below.  
+One particular reason for the AllelicImbalance to use grid graphics is the `r Biocpkg("Gviz")` package, which uses grids functionality to construct tracks to visualize genomic regions in a smart way. The  AllelicImbalance package has grid based barplots and functionality to create Gviz tracks.  Observe the extra "g" prefix for the bar- and locationplot versions using the grid, see examples below.  
 
 ## gbarplot
-The standard barplot functions for ASEset objects have at the moment much more parameters that can be set by the user
-than the gbarplot. Base graphics also produce graphs faster than the grid environment. The advantage of the gbarplot
-is instead the possiblity to integrate into the Gviz package and other grid based environments.
+The standard barplot functions for ASEset objects have at the moment much more parameters that can be set by the user than the gbarplot. Base graphics also produce graphs faster than the grid environment. The advantage of the gbarplot is instead the possiblity to integrate into the Gviz package and other grid based environments.
 
-```{r echo=TRUE, eval=TRUE, message=FALSE}
+```{r echo=TRUE, eval=TRUE, message=FALSE, fig.cap=fig$cap("gbarplotcount", "A gbarplot with type='count'")}
 #gbarplots with type "count" 
 gbarplot(ASEset, type="count")
+```
 
+
+```{r echo=TRUE, eval=TRUE, message=FALSE, fig.cap=fig$cap("gbarplotfraction", "A gbarplot with type='fraction'")}
 # gbarplots with type "fraction" 
 gbarplot(ASEset, type="fraction")
 ```
 
 ## glocationplot
-The glocationplot is a wrapper to quickly get an overview of ASE in a region. The overview offers
-the possibility to view consistency of SNP fractions over consecutive exons which is important to assess
-the reliability of the measured SNPs. In the best case all fractions deviates from e.g. 0.3 for every SNP 
-in the same gene for an individual. To be able to inspect that the direction is right, it is possible to 
-use the top.fraction.criteria and use phase information as explained earlier.
+The glocationplot is a wrapper to quickly get an overview of ASE in a region, similar to locationplot(), but built with the grid graphics track system from the Gviz package. 
 
-```{r echo=TRUE, eval=TRUE, message=FALSE}
+```{r echo=TRUE, eval=TRUE, message=FALSE, fig.cap=fig$cap("glocationplot", "A glocationplot, showing the ASE of SNPs within a defined region")}
 #remember to set the genome
 genome(ASEset) <- "hg19"
 
-glocationplot(ASEset,strand='+')
+glocationplot(ASEset, strand='+')
 
-#for ASEsets with fewer SNPs the 'count' type plot is useful 
-glocationplot(ASEset[,1:5], type="count")
 ```
 
-##Custom location plots
-More flexibility and functionality from the Gviz package is accessed if the tracks are constructed separately. 
-This is ueful to evalute AI in respect to for example read coverage or transcript annotation. An inconsistency of AI could
-potentially be explained by an uneven coverage over the exons, or lack of coverage. Below is an example
-using two samples from the ASEset and the corresponding reads. Ensuring and setting the seqlevels equal is a security 
-measure, for the internal overlap calculations that otherwise might throw a warning. The GR object is defining the
-region that we want to plot. The ASEDAnnotationTrack will create a track based on the gbarplots and the CoverageDataTrack
-a track based on read coverage. The different tracks are then collected in a list with the first element appearing at the
-top in the final plotting by the plotTracks function. The sizes vector defines the vertical space assigned to each track.
-To use transcript annotation more detailed information can be found in the Gviz [vignette](http://bioconductor.org/packages/release/bioc/vignettes/Gviz/inst/doc/Gviz.pdf)
+## Custom location plots
+More flexibility and functionality from the Gviz package is accessed if the tracks are constructed separately. This is ueful to evalute AI in respect to for example read coverage or transcript annotation. An inconsistency of AI could potentially be explained by an uneven coverage over the exons, or lack of coverage. Below is an example using two samples from the ASEset and the corresponding reads. Ensuring and setting the seqlevels equal is a security  measure, for the internal overlap calculations that otherwise might throw a warning. The GR object is defining the region that we want to plot. The ASEDAnnotationTrack will create a track based on the gbarplots and the CoverageDataTrack a track based on read coverage. The different tracks are then collected in a list with the first element appearing at the top in the final plotting by the plotTracks function. The sizes vector defines the vertical space assigned to each track. To use transcript annotation, more detailed information can be found in the Gviz [vignette](http://bioconductor.org/packages/release/bioc/vignettes/Gviz/inst/doc/Gviz.pdf)
 
-```{r echo=TRUE, eval=TRUE, message=FALSE}
+```{r echo=TRUE, eval=TRUE, message=FALSE, fig.cap=fig$cap("glocationplot", "A custom built Gviz plot using the ASEDAnnotationTrack, showing the ASE of SNPs within a defined region together with read coverage information")}
 #subset ASEset and reads
 x <- ASEset[,1:2]
 r <- reads[1:2]
 seqlevels(r, force=TRUE) <- seqlevels(x)
 
 GR <- GRanges(seqnames=seqlevels(x),
- 		ranges=IRanges(start=min(start(x)),end=max(end(x))),
+ 		ranges=IRanges(start=min(start(x)), end=max(end(x))),
  		strand='+', genome=genome(x))
 
-deTrack <- ASEDAnnotationTrack(x, GR=GR, type='fraction',strand='+')
+deTrack <- ASEDAnnotationTrack(x, GR=GR, type='fraction', strand='+')
 covTracks <- CoverageDataTrack(x, BamList=r, strand='+') 
 lst <- c(deTrack,covTracks)
 sizes <- c(0.5,rep(0.5/length(covTracks),length(covTracks)))
@@ -477,24 +430,8 @@ sizes <- c(0.5,rep(0.5/length(covTracks),length(covTracks)))
 plotTracks(lst, from=min(start(x)), to=max(end(x)), sizes=sizes, col.line = NULL, showId = FALSE, main = 'main', cex.main = 1, title.width = 1, type = 'histogram')
 ```
 
-# Summary functions
-The regionSummary function can be used to investigate if there is a consistent imbalance in the same direction over a region (e.g. a transcript). 
-
-```{r echo=TRUE, eval=TRUE, message=FALSE}
-# in this example every snp is on separate exons
-txGR <- granges(ASEset)
-rs <- regionSummary(ASEset, txGR)
-head(rs)
-```
-
 # Conclusion
-In conclusion we hope that you will find this package useful in the
-investigation of the genetics of RNA-seq experiments. The various import
-functions should assist in the task of actually retrieving allele counts for
-specific nucleotide positions from all RNA-seq reads, including the non-trivial
-cases of intron-spanning reads. Likewise, the statistical analysis and plotting
-functions should be helpful in discovering any allele specific expression
-patterns that might be found in your data.
+In conclusion we hope that you will find this package useful in the investigation of the genetics of RNA-seq experiments. The various import functions should assist in the task of actually retrieving allele counts for specific nucleotide positions from all RNA-seq reads, including the non-trivial cases of intron-spanning reads. Likewise, the statistical analysis and plotting functions should be helpful in discovering any allele specific expression patterns that might be found in your data.
 
 # Links
 
