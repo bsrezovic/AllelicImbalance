@@ -58,7 +58,8 @@ In the above code one paired-end RNA sequencing sample is downloaded and aligned
 
 ```{r echo = TRUE, eval = TRUE}
 searchArea <- GRanges(seqnames = c("17"), ranges = IRanges(79478301, 79478361))
-pathToFiles <- system.file("extdata/ERP000101_subset", package = "AllelicImbalance")
+pathToFiles <- system.file("extdata/ERP000101_subset", 
+								package = "AllelicImbalance")
 reads <- impBamGAL(pathToFiles, searchArea, verbose = FALSE)
 heterozygotePositions <- scanForHeterozygotes(reads, verbose = FALSE)
 countList <- getAlleleCounts(reads, heterozygotePositions, verbose = FALSE)
@@ -77,7 +78,8 @@ wget ftp://hgdownload.cse.ucsc.edu/goldenPath/hg19/chromosomes/chr17.fa.gz
 samtools mpileup -uf hg19.fa ERR009135.bam > ERR009135.vcf
 
 #Bcf format
-samtools mpileup -uf hg19.fa ERR009135.bam | bcftools view -bvcg - > ERR009135.bcf
+samtools mpileup --BCF --fasta-ref hg19.fa \
+	--output ERR009135.bcf ERR009135.bam
 ```
 
 Samtools mpileup generates by default a Vcf file which contains SNP and short INDEL positions. Piping the output to bcftools we get its binary equivalent (Bcf), which takes less space and can be queried more effective. 
@@ -160,7 +162,7 @@ a.new <- ASEsetFromCountList(
 colData(a.simple) <- pdata
 ```
 ## Adding genotype information
-The genotype of the coding SNPs can be set by the command ```genotype(x) <- vale```. If the genotype information is not available it can be inferred from the allele counts. The major allele will then be the allele with most counts and minor with second most counts. The notation is major/minor and for the example G/C, The G allele would be the major and C the minor allele.
+The genotype of the coding SNPs can be set by the command ```genotype(x) <- value```. If the genotype information is not available it can be inferred from the allele counts. The major allele will then be the allele with most counts and minor with second most counts. The notation is major/minor and for the example G/C, The G allele would be the major and C the minor allele.
 
 ```{r echo=TRUE, eval=TRUE}
 genotype(a.simple) <- inferGenotypes(a.simple)
@@ -179,14 +181,16 @@ rows <-nrow(a.simple)
 cols <- ncol(a.simple)
 p1 <- matrix(sample(c(1,0),replace=TRUE, size=rows*cols), nrow=rows, ncol=cols)
 p2 <- matrix(sample(c(1,0),replace=TRUE, size=rows*cols), nrow=rows, ncol=cols)
-phase.mat <- matrix(paste(p1,sample(c("|","|","/"), size=rows*cols, replace=TRUE), p2, sep=""),
-	nrow=rows, ncol=cols)
+phase.mat <- matrix(paste(p1,sample(c("|","|","/"), size=rows*cols, 
+						replace=TRUE), p2, sep=""),	nrow=rows, ncol=cols)
+
 phase(a.simple) <- phase.mat 
 ```
 
 ```{r echo=TRUE, eval=TRUE}
 #use the phase information from a Vcf file
-pathToVcf <- system.file("extdata/ERP000101_subset/ERP000101.vcf", package = "AllelicImbalance")
+pathToVcf <- system.file("extdata/ERP000101_subset/ERP000101.vcf", 
+							package = "AllelicImbalance")
 p <- readGT(pathToVcf)
 #The example Vcf file contains only 19 out of our 20 samples
 #So we have to subset and order
@@ -223,7 +227,8 @@ countListUnknown <- list()
 samples <- paste(rep("sample",10),1:10,sep="")
 snps <- 1000
 for(snp in 1:snps){
-	count<-matrix(0, nrow=length(samples), ncol=4, dimnames=list(samples, c('A','T','G','C')))
+	count<-matrix(0, nrow=length(samples), ncol=4, 
+					dimnames=list(samples, c('A','T','G','C')))
 	alleles <- sample(1:4, 2)
 	for(sample in 1:length(samples)){
 		count[sample, alleles] <- as.integer(rnorm(2,mean=50,sd=10))
@@ -253,28 +258,35 @@ mean(refFrac)
 
 ```
 
-The reference fraction mean ```mean(refFrac)``` is in this case very close to 0.5, and suggests that the mapbias globally is low if present. In this example we randomly assigned the reference genome to one of the two most expressed allele by the randomRef function, so it should not be any reference allele bias (mapbias).
+The reference fraction mean ```mean(refFrac)``` is in this case very close to 0.5, and suggests that the mapbias globally is low if present. However, in this example we randomly assigned the reference genome to one of the two most expressed alleles by the randomRef function, so it should not have any mapbias.
 
 
 # Tests
 ## Statistical analysis of an ASEset object
 One of the simplest statistical test for use in allelic imbalance analysis is
-the chi-square test. This test assumes that the uncertainty of ASE is represented by a normal distribution around an expected mean (i.e 0.5 for equal expression). A significant result suggests an ASE event. Every strand is tested independently. 
+the chi-square test. This test assumes that the uncertainty of ASE is represented by a normal distribution around an expected mean (i.e 0.5 for equal expression). A significant result suggests an ASE event. Every SNP, every sample, and every strand is tested independently. 
 
 ```{r echo=TRUE, eval=TRUE}
 #set ref allele
 ref(a.stranded) <- c("G","T","C")
 
-#use a subset for tests
-a2 <- a.stranded[,5:8]
 #binomial test
-binom.test(a2,"+")
+binom.test(a.stranded[,5:8], "+")
 #chi-square test
-chisq.test(a2,"-")
+chisq.test(a.stranded[,5:8], "-")
 ```
 
 # Summary functions
-The regionSummary function can be used to investigate if there is a consistent imbalance in the same direction over a region (e.g. a transcript). 
+The regionSummary function can be used to investigate if there is a consistent imbalance in the same direction over a region (e.g. a transcript). Besides providing the user with information of how many AI:s are up or down, the function returns several descriptive statistics for the result. The list below explains the acronyms:   
+
+* hets the number of heterozygote SNPs
+* homs the number of homozygote SNPs
+* mean.fr the mean of fractions for all hets
+* sd.fr the standard deviation for the fractions for all hets
+* mean.delta the mean of the delta fractions for all hets
+* sd.delta the standard deviation for the delta fractions for all hets
+* ai.up the number of hets significantly up-regulated in one allele.
+* ai.down the number of hets significantly down-regulated in one allele.
 
 ```{r echo=TRUE, eval=TRUE, message=FALSE}
 # in this example every snp is on separate exons
@@ -296,17 +308,18 @@ As can be seen in figure `r fig$ref("barplotPlusStrandDefault")` several samples
 ```{r echo=TRUE, eval=TRUE, fig.cap=fig$cap("barplotPlusStrandPsub", "Here the default chi-square p-values have been replaced by p-values from binomial tests.")}
 #use another source of p-values
 btp <- binom.test(a.stranded[1],"+")
-barplot(a.stranded[2], strand="+", testValue=t(btp), xlab.text="", legend.interspace=2)
+barplot(a.stranded[2], strand="+", testValue=t(btp), xlab.text="",
+			 legend.interspace=2)
 ```
 
-In the figure `r fig$ref("barplotPlusStrandPsub")` the binomial test has been used instead of the default chi-square test. For low read counts what is declared significant can differ, but as can be seen in the table below the difference matters less with more read counts. 
+In the figure `r fig$ref("barplotPlusStrandPsub")` the binomial test has been used instead of the default chi-square test. At low counts the P-value can differ, but as can be seen in the table below the difference matters less with more read counts. 
 
 ```{r echo=TRUE, eval=TRUE}
 init <- c(15,20)
 for(i in c(1,2,4,6)){
-	bp <- binom.test(init*i, p=0.5)$p.value
-	cp <- chisq.test(init*i, p=c(0.5,0.5))$p.value 
-	print(paste("A: ", init[1]*i , " B: ", init[2]*i, " binom p: ", bp, "chisq p: ", cp), sep="")
+	bp <- signif(binom.test(init*i, p=0.5)$p.value,3)
+	cp <- signif(chisq.test(init*i, p=c(0.5,0.5))$p.value, 3)
+	cat(paste("A: ", init[1]*i , " B: ", init[2]*i, " binom p: ", bp, "chisq p: ", cp))
 }
 ```
 
@@ -343,7 +356,7 @@ barplot(a.simple[1],OrgDb=org.Hs.eg.db,
 ```
 
 ##Top allele criteria
-The barplot with type='function' can be visualized according to three different allele sorting criteria. The default behaviour is just to shown the allele with highest overall abundance in the upper half of the plot. This works well for most single SNP investigations. For more complex situations, however, it can be essential to keep track of phase information. This is done either through the reference allele sorting function, or even better, through consistently showing the maternal allele on top. When phase is know, this is essential to compare effect-directions of different coding SNPs
+The barplot with type='fraction' can be visualized according to three different allele sorting criteria. The default behaviour is just to shown the allele with highest overall abundance in the upper half of the plot. This works well for most single SNP investigations. For more complex situations, however, it can be essential to keep track of phase information. This is done either through the reference allele sorting function, or even better, through consistently showing the maternal allele on top. When phase is know, this is essential to compare effect-directions of different coding SNPs
 
 ```{r echo=TRUE, eval=TRUE, message=FALSE, fig.cap=fig$cap("barplotRef", "A barplot with the reference allele as top fraction, top.fraction.criteria='ref' ")}
 #load data
@@ -351,20 +364,22 @@ data(ASEset)
 
 #using reference and alternative allele information
 alt(ASEset) <- inferAltAllele(ASEset)
-barplot(ASEset[1], type="fraction", strand="+", xlab.text="", top.fraction.criteria="ref", cex.main=0.7)
+barplot(ASEset[1], type="fraction", strand="+", xlab.text="", 
+			top.fraction.criteria="ref", cex.main=0.7)
 ```
 
 
 ```{r echo=TRUE, eval=TRUE, message=FALSE, fig.cap=fig$cap("barplotPhase", "A barplot with the maternal phase as top fraction, top.fraction.criteria='phase' ")}
 #using phase information
 phase(ASEset) <- phase.mat 
-barplot(ASEset[1], type="fraction", strand="+", xlab.text="", top.fraction.criteria="phase", cex.main=0.7)
+barplot(ASEset[1], type="fraction", strand="+", xlab.text="", 
+			top.fraction.criteria="phase", cex.main=0.7)
 ```
 
 ## locationplot
 Finally a given gene or set of proximal genes will often have several SNPs close to each other. It is of interest to investigate all of them together, in connection with annotation information. This can be done using the locationplot function. This function in its simplest form just plot all the SNPs in an ASEset distributed by genomic location. Additionally it contains methods for including gene-map information through the arguments OrgDb and TxDb.
 
-The overview offers the possibility to view consistency of SNP fractions over consecutive exons which is important to assess the reliability of the measured SNPs. In the best case all fractions deviates from e.g. 0.3 for every SNP in the same gene for an individual. To be able to inspect that the direction is right, it is possible to use the top.fraction.criteria and use phase information as explained earlier.
+The overview offers the possibility to view consistency of SNP fractions over consecutive exons which is important to assess the reliability of the measured SNPs. In the best case all fractions deviates with the same magnitude for every SNP in the same gene for an individual. To be able to inspect that the direction is right, it is possible to use the top.fraction.criteria and use phase information as explained earlier.
 
 ```{r echo=TRUE, eval=TRUE, message=FALSE, fig.cap=fig$cap("locationplotDefault", "A locationplot with countbars displaying a region of SNPs")}
 # locationplot using count type
@@ -376,11 +391,12 @@ locationplot(a.stranded.sorted, type="count", cex.main=0.7, cex.legend=0.4)
 ```{r echo=TRUE, eval=TRUE, message=FALSE, fig.cap=fig$cap("locationplotAnnotation", "A locationplot with Gene and Transcript information extracted from the org.Hs.eg.db and TxDb.Hsapiens.UCSC.hg19.knownGene packages")}
 # locationplot annotation
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-locationplot(a.stranded.sorted, OrgDb=org.Hs.eg.db, TxDb=TxDb.Hsapiens.UCSC.hg19.knownGene)
+locationplot(a.stranded.sorted, OrgDb=org.Hs.eg.db, 
+				TxDb=TxDb.Hsapiens.UCSC.hg19.knownGene)
 ```
 
 # Grid graphics
-To make use of the extra graphical flexibility that comes with grid graphics, the AllelicImbalance package has now functions that can be integrated in the grid environment. The low level grid functions are located in the `r CRANpkg("grid package")`, but higher level functions based on grid can be found in popular packages such as e.g. `r CRANpkg("lattice")`, `r CRANpkg("ggplot2")`. The benefits using grid graphics is a better control over different graphical regions and coordinate systems, how to construct and redirect graphical output, such as lines, points, etc and their appearance.    
+To make use of the extra graphical flexibility that comes with grid graphics, the AllelicImbalance package now has functions that can be integrated in the grid environment. The low level grid functions are located in the `r CRANpkg("grid package")`, but higher level functions based on grid can be found in popular packages such as e.g. `r CRANpkg("lattice")`, `r CRANpkg("ggplot2")`. The benefits using grid graphics is a better control over different graphical regions and coordinate systems, how to construct and redirect graphical output, such as lines, points, etc and their appearance.    
 
 One particular reason for the AllelicImbalance to use grid graphics is the `r Biocpkg("Gviz")` package, which uses grids functionality to construct tracks to visualize genomic regions in a smart way. The  AllelicImbalance package has grid based barplots and functionality to create Gviz tracks.  Observe the extra "g" prefix for the bar- and locationplot versions using the grid, see examples below.  
 
@@ -410,7 +426,7 @@ glocationplot(ASEset, strand='+')
 ```
 
 ## Custom location plots
-More flexibility and functionality from the Gviz package is accessed if the tracks are constructed separately. This is ueful to evalute AI in respect to for example read coverage or transcript annotation. An inconsistency of AI could potentially be explained by an uneven coverage over the exons, or lack of coverage. Below is an example using two samples from the ASEset and the corresponding reads. Ensuring and setting the seqlevels equal is a security  measure, for the internal overlap calculations that otherwise might throw a warning. The GR object is defining the region that we want to plot. The ASEDAnnotationTrack will create a track based on the gbarplots and the CoverageDataTrack a track based on read coverage. The different tracks are then collected in a list with the first element appearing at the top in the final plotting by the plotTracks function. The sizes vector defines the vertical space assigned to each track. To use transcript annotation, more detailed information can be found in the Gviz [vignette](http://bioconductor.org/packages/release/bioc/vignettes/Gviz/inst/doc/Gviz.pdf)
+More flexibility and functionality from the Gviz package is accessed if the tracks are constructed separately. This is useful to evalute AI in respect to for example read coverage or transcript annotation. An inconsistency of AI could potentially be explained by an uneven coverage over the exons, or lack of coverage. Below is an example using two samples from the ASEset and the corresponding reads. Ensuring and setting the seqlevels equal is a security  measure, for the internal overlap calculations that otherwise might throw a warning. The GR object is defining the region that we want to plot. The ASEDAnnotationTrack will create a track based on the gbarplots and the CoverageDataTrack a track based on read coverage. The different tracks are then collected in a list with the first element appearing at the top in the final plotting by the plotTracks function. The sizes vector defines the vertical space assigned to each track. To use transcript annotation, more detailed information can be found in the Gviz [vignette](http://bioconductor.org/packages/release/bioc/vignettes/Gviz/inst/doc/Gviz.pdf)
 
 ```{r echo=TRUE, eval=TRUE, message=FALSE, fig.cap=fig$cap("glocationplot", "A custom built Gviz plot using the ASEDAnnotationTrack, showing the ASE of SNPs within a defined region together with read coverage information")}
 #subset ASEset and reads
@@ -427,7 +443,9 @@ covTracks <- CoverageDataTrack(x, BamList=r, strand='+')
 lst <- c(deTrack,covTracks)
 sizes <- c(0.5,rep(0.5/length(covTracks),length(covTracks)))
 
-plotTracks(lst, from=min(start(x)), to=max(end(x)), sizes=sizes, col.line = NULL, showId = FALSE, main = 'main', cex.main = 1, title.width = 1, type = 'histogram')
+plotTracks(lst, from=min(start(x)), to=max(end(x)), sizes=sizes, 
+				col.line = NULL, showId = FALSE, main = 'main', cex.main = 1, 
+				title.width = 1, type = 'histogram')
 ```
 
 # Conclusion
