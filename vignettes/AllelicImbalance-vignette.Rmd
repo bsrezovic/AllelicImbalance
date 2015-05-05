@@ -319,7 +319,7 @@ init <- c(15,20)
 for(i in c(1,2,4,6)){
 	bp <- signif(binom.test(init*i, p=0.5)$p.value,3)
 	cp <- signif(chisq.test(init*i, p=c(0.5,0.5))$p.value, 3)
-	cat(paste("A: ", init[1]*i , " B: ", init[2]*i, " binom p: ", bp, "chisq p: ", cp))
+	cat(paste("A: ", init[1]*i , " B: ", init[2]*i, " binom p: ", bp, "chisq p: ", cp,"\n"))
 }
 ```
 
@@ -475,4 +475,3 @@ Grid graphics
 sessionInfo()
 ```
 
-> "Who is is the master if nature provides the techniques to study itself"
