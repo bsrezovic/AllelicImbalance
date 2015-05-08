@@ -8,9 +8,7 @@
 \alias{alleleCounts,ASEset-method}
 \alias{alleleCounts<-}
 \alias{alleleCounts<-,ASEset-method}
-\alias{alt}
 \alias{alt,ASEset-method}
-\alias{alt<-}
 \alias{alt<-,ASEset,ANY-method}
 \alias{aquals}
 \alias{aquals,ASEset-method}
@@ -42,9 +40,7 @@
 \alias{phase,ASEset-method}
 \alias{phase<-}
 \alias{phase<-,ASEset-method}
-\alias{ref}
 \alias{ref,ASEset-method}
-\alias{ref<-}
 \alias{ref<-,ASEset,ANY-method}
 \title{ASEset objects}
 \usage{

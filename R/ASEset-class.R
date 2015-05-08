@@ -763,13 +763,6 @@ setMethod("mapBias<-", signature(x = "ASEset"), function(x,value) {
 	x
 })
 
-
-
-#' @rdname ASEset-class
-#' @importFrom VariantAnnotation ref
-#' @export 
-setGeneric("ref",package="VariantAnnotaton")
-
 #' @rdname ASEset-class
 #' @export 
 setMethod("ref", signature(x = "ASEset"), function(x) {
@@ -777,11 +770,6 @@ setMethod("ref", signature(x = "ASEset"), function(x) {
 		mcols(x)[["ref"]]
 	
 })
-
-#' @rdname ASEset-class
-#' @importFrom VariantAnnotation ref<-
-#' @export 
-setGeneric("ref<-",package="VariantAnnotaton")
 
 #' @rdname ASEset-class
 #' @export 
@@ -799,22 +787,12 @@ setMethod("ref<-", signature(x = "ASEset"), function(x, value) {
 })
 
 #' @rdname ASEset-class
-#' @importFrom VariantAnnotation alt
-#' @export 
-setGeneric("alt",package="VariantAnnotaton")
-
-#' @rdname ASEset-class
 #' @export 
 setMethod("alt", signature(x = "ASEset"), function(x) {
 
 		mcols(x)[["alt"]]
 	
 })
-
-#' @rdname ASEset-class
-#' @importFrom VariantAnnotation alt<-
-#' @export 
-setGeneric("alt<-",package="VariantAnnotaton")
 
 #' @rdname ASEset-class
 #' @export 
