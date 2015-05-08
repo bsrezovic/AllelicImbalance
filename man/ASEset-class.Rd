@@ -95,19 +95,11 @@ mapBias(x) <- value
 
 \S4method{mapBias}{ASEset}(x) <- value
 
-ref(x)
-
 \S4method{ref}{ASEset}(x)
-
-ref(x) <- value
 
 \S4method{ref}{ASEset,ANY}(x) <- value
 
-alt(x)
-
 \S4method{alt}{ASEset}(x)
-
-alt(x) <- value
 
 \S4method{alt}{ASEset,ANY}(x) <- value
 
