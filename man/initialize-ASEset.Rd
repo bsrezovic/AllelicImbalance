@@ -56,9 +56,8 @@ dimension, samples in the 2nd dimension and variants in the 3rd dimension.}
 Functions to construct ASEset objects
 }
 \details{
-The resulting ASEset object is based on the
-SummarizedExperiment, and will therefore inherit the same accessors
-and ranges operations.
+The resulting ASEset object is based on the RangedSummarizedExperiment class,
+and will therefore inherit the same accessors and ranges operations.
 
 If both countListPlus and countListMinus are given they will be used to
 calculate countListUnknown, which is the sum of the plus and minus strands.
@@ -70,8 +69,8 @@ aquals is new for the devel branch and will be changed slighly before the relase
 to include better granularity.
 }
 \note{
-\code{ASEsetFromCountList} requires the same input data as an
-SummarizedExperiment, but with minimum one assay for the allele counts.
+\code{ASEsetFromCountList} requires the same input data as a
+RangedSummarizedExperiment, but with minimum one assay for the allele counts.
 }
 \examples{
 #make example alleleCountListPlus
@@ -122,8 +121,8 @@ countListMinus=countListMinus, colData=colData)
 Jesper R. Gadin, Lasse Folkersen
 }
 \seealso{
-\itemize{ \item The
-\code{\link[GenomicRanges]{SummarizedExperiment}} for ranges operations.  }
+\itemize{ \item
+\code{\link[SummarizedExperiment]{RangedSummarizedExperiment}} objects. }
 }
 \keyword{ASEset}
 \keyword{ASEsetFromCountList}

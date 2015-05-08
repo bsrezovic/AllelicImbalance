@@ -31,7 +31,7 @@ NULL
 
 #' @rdname DetectedAI-class
 #' @exportClass DetectedAI
-setClass("DetectedAI", contains = "SummarizedExperiment",
+setClass("DetectedAI", contains = "RangedSummarizedExperiment",
 	representation(
 		strand = "character",
 		threshold.count.sample.names="character",

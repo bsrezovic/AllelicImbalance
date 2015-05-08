@@ -7,9 +7,8 @@ NULL
 #' 
 #' Functions to construct ASEset objects
 #' 
-#' The resulting ASEset object is based on the
-#' SummarizedExperiment, and will therefore inherit the same accessors
-#' and ranges operations.
+#' The resulting ASEset object is based on the RangedSummarizedExperiment
+#' class, and will therefore inherit the same accessors and ranges operations.
 #' 
 #' If both countListPlus and countListMinus are given they will be used to 
 #' calculate countListUnknown, which is the sum of the plus and minus strands.
@@ -43,11 +42,11 @@ NULL
 #' @param verbose Makes function more talkative
 #' @param ... arguments passed on to SummarizedExperiment constructor
 #' @return \code{ASEsetFromCountList} returns an \code{ASEset} object.
-#' @note \code{ASEsetFromCountList} requires the same input data as an
-#' SummarizedExperiment, but with minimum one assay for the allele counts.
+#' @note \code{ASEsetFromCountList} requires the same input data as a
+#' RangedSummarizedExperiment, but with minimum one assay for the allele counts.
 #' @author Jesper R. Gadin, Lasse Folkersen
-#' @seealso \itemize{ \item The
-#' \code{\link[GenomicRanges]{SummarizedExperiment}} for ranges operations.  }
+#' @seealso \itemize{ \item
+#' \code{\link[SummarizedExperiment]{RangedSummarizedExperiment}} objects. }
 #' @keywords ASEset ASEsetFromCountList
 #' @examples
 #' 

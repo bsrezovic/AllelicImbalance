@@ -42,7 +42,7 @@ library(AllelicImbalance)
 ```
 
 # ASEset
-The ASEset object is the central class of objects in the AllelicImbalance package. The ASEset object has the SummarizedExperiment from the `r Biocpkg("GenomicRanges")` package as parent class, and all functions you can apply on this class you can also apply on an ASEset.
+The ASEset object is the central class of objects in the AllelicImbalance package. The ASEset object has the RangedSummarizedExperiment from the `r Biocpkg("SummarizedExperiment")` package as parent class, and all functions you can apply on this class you can also apply on an ASEset.
 
 ## Simple example of building an ASEset object
 In this section we will walk through the various ways an ASEset object can be created. Although the preprocessing of RNA-seq data is not the primary focus of this package, it is a necessary step before analysis. There exists several different methods for obtaining a bam file, and this section should just be considered an example. For further details we refer to the web-pages of tophat, bowtie, bwa and samtools found in the links section at the end of this document.

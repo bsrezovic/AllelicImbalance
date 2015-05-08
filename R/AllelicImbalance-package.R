@@ -34,30 +34,11 @@
 #' @import BiocGenerics
 #' @import S4Vectors
 #' @import grid
+#' @import IRanges
 #' @import GenomeInfoDb
+#' @import GenomicRanges
+#' @import SummarizedExperiment
 #' @import Gviz
-#' 
-#' @importFrom IRanges IRanges
-#' @importFrom IRanges ranges
-#' @importFrom IRanges subsetByOverlaps
-#' @importFrom IRanges coverage
-#' @importFrom IRanges unlist
-#' @importFrom IRanges which
-#' @importFrom IRanges resize
-#' 
-#' @importFrom GenomicRanges GRanges
-#' @importFrom GenomicRanges granges
-#' @importFrom GenomicRanges GRangesList
-#' @importFrom GenomicRanges unlist
-#' @importFrom GenomicRanges reduce
-#' @importFrom GenomicRanges findOverlaps
-#' @importFrom GenomicRanges rowRanges
-#' @importFrom GenomicRanges colData
-#' @importFrom GenomicRanges SummarizedExperiment
-#' @importFrom GenomicRanges grglist
-#' @importFrom GenomicRanges flank
-#' @importFrom GenomicRanges assays
-#' @importFrom GenomicRanges assays<-
 #' 
 #' @importFrom Biostrings subseq
 #' @importFrom Biostrings DNAStringSet
@@ -112,8 +93,6 @@
 #'
 #' @importFrom seqinr write.fasta
 #'
-#' @importClassesFrom GenomicRanges GRangesList
-#' @importClassesFrom GenomicRanges GRanges
 # @importClassesFrom Gviz DataTrack
 # @importClassesFrom Gviz AnnotationTrack
 # @importClassesFrom Gviz DetailsAnnotationTrack

@@ -12,6 +12,7 @@
 \alias{hetPerSnp,ReferenceBias-method}
 \alias{refbiasByAnnotation}
 \alias{refbiasByAnnotation,ReferenceBias-method}
+\alias{updateObject,ReferenceBias-method}
 \title{ReferenceBias class}
 \usage{
 refbiasByAnnotation(x, ...)

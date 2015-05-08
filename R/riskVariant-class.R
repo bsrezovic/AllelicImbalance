@@ -27,7 +27,7 @@ NULL
 
 #' @rdname riskVariant-class
 #' @exportClass riskVariant
-setClass("riskVariant", contains = "SummarizedExperiment",
+setClass("riskVariant", contains = "RangedSummarizedExperiment",
 	representation(
 		meta = "list"
 	)
