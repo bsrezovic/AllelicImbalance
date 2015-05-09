@@ -42,7 +42,6 @@
 \alias{phase<-,ASEset-method}
 \alias{ref,ASEset-method}
 \alias{ref<-,ASEset,ANY-method}
-\alias{updateObject,ASEset-method}
 \title{ASEset objects}
 \usage{
 alleleCounts(x, strand = "*", return.class = "list")

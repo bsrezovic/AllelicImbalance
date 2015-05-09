@@ -151,16 +151,3 @@ setMethod("hetPerSnp", signature(x = "ReferenceBias"), function(x,
 	vec
 })
 
-#' @rdname ReferenceBias-class
-#' @export
-setMethod("updateObject", "ReferenceBias",
-    function(object, ..., verbose=FALSE)
-    {
-        new(class(object), metadata=as.list(object@exptData),
-                           rowRanges=object@rowData,
-                           colData=object@colData,
-                           assays=object@assays,
-                           strands=object@strands)
-    }
-)
-

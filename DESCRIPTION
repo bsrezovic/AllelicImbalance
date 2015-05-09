@@ -1,7 +1,7 @@
 Package: AllelicImbalance
 Type: Package
 Title: Investigates allele specific expression
-Version: 1.7.5
+Version: 1.7.6
 Date: 2015-05-05
 Author: Jesper R Gadin, Lasse Folkersen
 Maintainer: Jesper R Gadin <j.r.gadin@gmail.com>
@@ -19,7 +19,7 @@ Depends:
     R (>= 3.1.0),
     grid,
     GenomicRanges,
-    SummarizedExperiment (>= 0.1.0),
+    SummarizedExperiment (>= 0.1.1),
     GenomicAlignments,
     VariantAnnotation,
     Gviz

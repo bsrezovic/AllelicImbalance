@@ -903,16 +903,3 @@ setMethod("paternalAllele", signature(x = "ASEset"),
 		}, ref=ref, alt=alt)
 })
 
-#' @rdname ASEset-class
-#' @export 
-setMethod("updateObject", "ASEset",
-    function(object, ..., verbose=FALSE)
-    {
-        new(class(object), metadata=as.list(object@exptData),
-                           rowRanges=object@rowData,
-                           colData=object@colData,
-                           assays=object@assays,
-                           variants=object@variants)
-    }
-)
-
