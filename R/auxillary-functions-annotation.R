@@ -132,7 +132,7 @@ getGenesFromAnnotation <- function(OrgDb, GR, leftFlank = 0, rightFlank = 0, get
     startFilter <- max(c(1, start(range(GR)) - 10^6))
     endFilter <- end(range(GR)) + 10^6
     colsFilter <- c("CHR", "CHRLOC", "CHRLOCEND", "SYMBOL")
-    sFilter <- suppressWarnings(select(OrgDb, keys = seqLevels, cols = colsFilter, 
+    sFilter <- suppressWarnings(select(OrgDb, keys = seqLevels, columns = colsFilter, 
         keytype = "CHR"))
     symbolsToGet <- sFilter[abs(sFilter[, "CHRLOC"]) > startFilter & abs(sFilter[, 
         "CHRLOCEND"]) < endFilter & !is.na(sFilter[, "CHRLOCEND"]) & !is.na(sFilter[, 
@@ -145,7 +145,7 @@ getGenesFromAnnotation <- function(OrgDb, GR, leftFlank = 0, rightFlank = 0, get
     } else {
         cols <- c("SYMBOL", "CHR", "CHRLOC", "CHRLOCEND", "ENSEMBL")
     }
-    s <- suppressWarnings(select(OrgDb, keys = symbolsToGet, cols = cols, keytype = "SYMBOL"))
+    s <- suppressWarnings(select(OrgDb, keys = symbolsToGet, columns = cols, keytype = "SYMBOL"))
     
     
     # remove Symbols with NAs

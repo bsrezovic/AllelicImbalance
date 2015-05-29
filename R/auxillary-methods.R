@@ -1356,7 +1356,7 @@ function(genesymbols, OrgDb, leftFlank = 0, rightFlank = 0,
     
     # retrieving data
     colsFilter <- c("CHR", "CHRLOC", "CHRLOCEND", "SYMBOL")
-    s <- suppressWarnings(select(OrgDb, keys = genesymbols, cols = colsFilter, keytype = "SYMBOL"))
+    s <- suppressWarnings(select(OrgDb, keys = genesymbols, columns = colsFilter, keytype = "SYMBOL"))
     
     missing <- genesymbols[!genesymbols %in% s[, "SYMBOL"]]
     if (verbose & length(missing) > 0) {
