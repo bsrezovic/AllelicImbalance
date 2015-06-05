@@ -8,12 +8,14 @@
 \usage{
 defaultMapBias(x, ...)
 
-\S4method{defaultMapBias}{ASEset}(x)
+\S4method{defaultMapBias}{ASEset}(x, return.class = "array")
 }
 \arguments{
 \item{x}{\code{ASEset} object}
 
 \item{...}{internal arguments}
+
+\item{return.class}{"array" or "ASEset"}
 }
 \description{
 Create mapbias array from genotype matrix requires genotype information

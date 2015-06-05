@@ -14,7 +14,7 @@ locationplot(x, ...)
   xlab.text = "", ylab.text = "", legend.colnames = "", size = c(0.8,
   1), main = NULL, pValue = FALSE, cex.main = 0.7, cex.ylab = 0.6,
   cex.legend = 0.5, OrgDb = NULL, TxDb = NULL, verbose = TRUE,
-  top.fraction.criteria = "maxcount", ...)
+  top.fraction.criteria = "maxcount", allow.whole.chromosome = FALSE, ...)
 }
 \arguments{
 \item{x}{an ASEset object.}
@@ -62,6 +62,8 @@ together with argument TxDb this will only be used to extract genesymbols.}
 function run}
 
 \item{top.fraction.criteria}{'maxcount', 'ref' or 'phase'}
+
+\item{allow.whole.chromosome}{logical, overrides 200kb region limit, defaults to FALSE}
 }
 \description{
 plotting ASE effects over a specific genomic region

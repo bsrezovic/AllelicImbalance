@@ -10,6 +10,10 @@
 
 \item{return.class}{class of returned object}
 
+\item{allele.source}{'arank'}
+
+\item{verbose}{make function more talkative}
+
 \item{...}{arguments to forward to internal functions}
 }
 \description{
@@ -24,7 +28,7 @@ bi-allelic alternative alleles are available.
 #load data
 data(ASEset)
 
-inferAltAllele(ASEset)
+alt <- inferAltAllele(ASEset)
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

@@ -41,6 +41,7 @@
 #' @param random.ref set the reference as random if you dont know. Affects interpretation of results.
 #' @param verbose makes function more talkative
 #' @param gc use garbage collection when possible to save space
+#' @param biasMatrix use biasMatrix in ASEset, or use default expected frequency of 0.5 for all sites
 #' @param ... internal arguments 
 #' @author Jesper R. Gadin
 #' @keywords detection
@@ -69,7 +70,7 @@ setMethod("detectAI", signature(x = "ASEset"), function(x,
 	random.ref=FALSE,
 	function.test="binom.test",
 	verbose=TRUE,
-	gc=FALSE) {
+	gc=FALSE, biasMatrix=FALSE) {
 
 	if(inferGenotype){
 		genotype(x) <- inferGenotypes(x,threshold.frequency = 0.05, return.allele.allowed ="bi")
@@ -97,7 +98,7 @@ setMethod("detectAI", signature(x = "ASEset"), function(x,
 	#2) make t.c.s array
 	if(verbose){cat("checking count thresholds\n")}
 	acounts <- alleleCounts(x, strand=strand, return.class="array")
-	acounts[array(!hetFilt(x), dim=c(nrow(x), ncol(x), 4))] <- 0
+	#acounts[array(!hetFilt(x), dim=c(nrow(x), ncol(x), 4))] <- 0  # unnecessary het is checked from fraction later
 	allele.count.tot <- apply(acounts, c(1,2), sum)
 	t.c.s  <- !array(allele.count.tot,dim=c(nrow(x),ncol(x),length(threshold.count.sample))) < 
 					aperm(array(threshold.count.sample,
@@ -128,7 +129,12 @@ setMethod("detectAI", signature(x = "ASEset"), function(x,
 
 	#4) delta freq array 
 	if(verbose){cat("checking delta frequency thresholds\n")}
-	biasmatRef <- mapBiasRef(x)
+
+	if(biasMatrix){
+		biasmatRef <- mapBiasRef(x)
+	}else{
+		biasmatRef <- matrix(0.5, ncol=ncol(x), nrow=nrow(x))
+	}
 
 	fr2 <- fr
 	fr2[is.na(fr2)] <- biasmatRef[is.na(fr2)] 
@@ -139,48 +145,54 @@ setMethod("detectAI", signature(x = "ASEset"), function(x,
 	t.d.f <- aperm(array(threshold.delta.frequency, dim=c(newDims,ncol(x),nrow(x))),dim=c(3,2,1))
 
 	#to keep1 (fullfills cond min.delta.freq)
-	if(any(fr2<biasmatRef)){
-		fr3 <- fr2
-		fr3[fr2<biasmatRef] <- biasmatRef[fr2<biasmatRef] - fr[fr2<biasmatRef]
-		fr3[fr2<=biasmatRef] <- 1	
-		#reset the NA again
-		#fr3[is.na(fr)] <- NA
-		#make 3d array return object 
-		fr3 <- array(fr3,dim=c(nrow(x),ncol(x),newDims))
-		tf.keep1 <- !(fr3 < t.d.f)
-	}else{
-		#set all FALSE (NAs will be kept )
-		tf.keep1 <- matrix(FALSE,ncol=ncol(fr),nrow=nrow(fr))
-		#tf.keep1[is.na(fr)] <- NA
-		#make 3d array return object 
-		tf.keep1 <- array(tf.keep1,dim=c(nrow(x),ncol(x),newDims))
-	}
+	#if(any(fr2<biasmatRef)){
+	#	#fr3 <- fr2
+	#	#fr3[fr2<biasmatRef] <- biasmatRef[fr2<biasmatRef] - fr2[fr2<biasmatRef]
+	#	#fr3[fr2<=biasmatRef] <- 1	
+	#	#reset the NA again
+	#	#fr3[is.na(fr)] <- NA
+	#	#make 3d array return object 
+	#	#fr3 <- array(fr3,dim=c(nrow(x),ncol(x),newDims))
+	#	#tf.keep1 <- !(fr3 < t.d.f)
+	#	tf.not.keep1 <- !array(abs(fr2-biasmatRef),dim=c(nrow(x),ncol(x),newDims)) > t.d.f
 
-	#to keep2 (fullfills cond min.delta.freq)
-	if(any(fr2>biasmatRef)){
-		fr3 <- fr2
-		#fr3[fr2>biasmatRef] <- fr[fr2>biasmatRef] - biasmatRef[fr2>biasmatRef] 
-		fr3[fr2>biasmatRef] <- fr[fr2>biasmatRef] - biasmatRef[fr2>biasmatRef] 
-		fr3[fr2<=biasmatRef] <- 1	
-		#fr3[is.na(fr)] <- NA
-		#make 3d array return object 
-		fr3 <- array(fr3,dim=c(nrow(x),ncol(x),newDims))
-		tf.keep2 <- !(fr3 < t.d.f)
-	}else{
-		#set all FALSE (NAs will be kept )
-		tf.keep2 <- matrix(TRUE,ncol=ncol(fr),nrow=nrow(fr))
-		#tf.keep2[is.na(fr)] <- NA
-		#make 3d array return object 
-		tf.keep2 <- array(tf.keep2,dim=c(nrow(x),ncol(x),newDims))
-	}
+	#}else{
+	#	#set all FALSE (NAs will not be kept )
+	#	tf.keep1 <- matrix(FALSE,ncol=ncol(fr),nrow=nrow(fr))
+	#	#tf.keep1[is.na(fr)] <- NA
+	#	#make 3d array return object 
+	#	tf.not.keep1 <- !array(tf.keep1,dim=c(nrow(x),ncol(x),newDims))
+	#}
+
+	##to keep2 (fullfills cond min.delta.freq)
+	#if(any(fr2>biasmatRef)){
+	#	#fr3 <- fr2
+	#	##fr3[fr2>biasmatRef] <- fr[fr2>biasmatRef] - biasmatRef[fr2>biasmatRef] 
+	#	#fr3[fr2>biasmatRef] <- fr[fr2>biasmatRef] - biasmatRef[fr2>biasmatRef] 
+	#	#fr3[fr2<=biasmatRef] <- 1	
+	#	##fr3[is.na(fr)] <- NA
+	#	##make 3d array return object 
+	#	#fr3 <- array(fr3,dim=c(nrow(x),ncol(x),newDims))
+	#	#tf.keep2 <- !(fr3 < t.d.f)
+	#	tf.not.keep1 <- !array((fr2-biasmatRef),dim=c(nrow(x),ncol(x),newDims)) > t.d.f
+	#}else{
+	#	#set all FALSE (NAs will not be kept )
+	#	tf.keep2 <- matrix(TRUE,ncol=ncol(fr),nrow=nrow(fr))
+	#	#tf.keep2[is.na(fr)] <- NA
+	#	#make 3d array return object 
+	#	tf.not.keep2 <- !array(tf.keep2,dim=c(nrow(x),ncol(x),newDims))
+	#}
 	
-	delta.freq <- tf.keep1 | tf.keep2
+	tf.keep <- array(abs(fr2-biasmatRef),dim=c(nrow(x),ncol(x),newDims)) >= t.d.f
+
+	#delta.freq <- tf.not.keep1 | tf.not.keep2
+	delta.freq <- tf.keep
 	dimnames(delta.freq) <- list(rownames(fr),colnames(fr),1:length(threshold.delta.frequency))
-	delta.freq[is.na(fr)] <- NA
+	#delta.freq[is.na(fr)] <- NA
 
 	if(gc){
 		if(verbose){cat("removing and garbage collect temporary variables\n")}
-		rm(fr2,fr3,biasmatRef,tf.keep1,tf.keep2,newDims)
+		rm(fr2, biasmatRef,tf.keep1,tf.keep2,newDims)
 		gc()
 	}
 
@@ -224,6 +236,9 @@ setMethod("detectAI", signature(x = "ASEset"), function(x,
 		#cerate matrix in same size as fr	
 		pv <- fr	
 		pv[idx] <- ml
+		#replace na with 1
+		pv[is.na(fr)] <- 1
+		
 
 		#make pv array
 		pv <- array(pv,dim=c(nrow(fr), ncol(fr),length(threshold.pvalue)),
@@ -232,7 +247,7 @@ setMethod("detectAI", signature(x = "ASEset"), function(x,
 		#filter
 		newDims <- length(threshold.pvalue)
 		pv.thr <- aperm(array(threshold.pvalue, dim=c(newDims,nrow(x),ncol(x))), c(2,3,1))
-		pv.thr.ret <- pv < pv.thr
+		pv.thr.ret <- pv <= pv.thr
 	
 		if(gc){
 			if(verbose){cat("removing and garbage collect temporary variables\n")}

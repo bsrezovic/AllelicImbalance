@@ -12,7 +12,7 @@ detectAI(x, ...)
   threshold.frequency = 0, threshold.count.sample = 1,
   threshold.delta.frequency = 0, threshold.pvalue = 0.05,
   inferGenotype = FALSE, random.ref = FALSE, function.test = "binom.test",
-  verbose = TRUE, gc = FALSE)
+  verbose = TRUE, gc = FALSE, biasMatrix = FALSE)
 }
 \arguments{
 \item{x}{ASEset}
@@ -41,6 +41,8 @@ from 0.5 (or mapbias adjusted value)}
 \item{verbose}{makes function more talkative}
 
 \item{gc}{use garbage collection when possible to save space}
+
+\item{biasMatrix}{use biasMatrix in ASEset, or use default expected frequency of 0.5 for all sites}
 }
 \description{
 detection of AllelicImbalance

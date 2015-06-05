@@ -39,6 +39,7 @@ NULL
 #' @param OrgDb an OrgDb object from which to plot a gene map. If given
 #' together with argument TxDb this will only be used to extract genesymbols.
 #' @param TxDb a TxDb object from which to plot an exon map.
+#' @param allow.whole.chromosome logical, overrides 200kb region limit, defaults to FALSE
 #' @param verbose Setting \code{verbose=TRUE} gives details of procedure during
 #' function run
 #' @param ... arguments passed on to barplot function
@@ -72,15 +73,17 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
     strand = "*", yaxis = TRUE, xaxis = FALSE, xlab = FALSE, ylab = TRUE, 
     xlab.text="", ylab.text="", legend.colnames = "", size = c(0.8, 1), main = NULL, pValue = FALSE, cex.main = 0.7, 
     cex.ylab = 0.6, cex.legend = 0.5, OrgDb = NULL, TxDb = NULL, verbose = TRUE, 
-    top.fraction.criteria="maxcount", ...) {
+    top.fraction.criteria="maxcount",allow.whole.chromosome=FALSE, ...) {
 
     # check basic chromosome and region requirement
     if (!length(unique(seqnames(rowRanges(x)))) == 1) {
         stop("this plot only allows one chromosome")
     }
-    if ((max(end(rowRanges(x))) - min(start(rowRanges(x)))) > 2e+05) {
-        stop("this plot only allows a 200kb region")
-    }
+	if(!allow.whole.chromosome){
+		if ((max(end(rowRanges(x))) - min(start(rowRanges(x)))) > 2e+05) {
+			stop("this plot only allows a 200kb region")
+		}
+	}
     
     # check type
     if (class(type) != "character") 
