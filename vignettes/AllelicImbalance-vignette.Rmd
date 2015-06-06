@@ -89,6 +89,7 @@ The Vcf file is a text file that stores information about positions in the genom
 In the `r Biocpkg("VariantAnnotation")` package there is a lot of useful tools to handle  Vcf files. The readVcf function reads Vcf data into R, which can be subset to only ranges by granges to get a GRanges object that is the object type required by the getAlleleCounts function. 
 
 ```{r echo = TRUE, eval = TRUE, warning = FALSE}
+library(VariantAnnotation)
 pathToVcf <- paste(pathToFiles,"/ERP000101.vcf",sep="")
 VCF <- readVcf(pathToVcf,"hg19") 
 gr <- granges(VCF) 
@@ -188,7 +189,7 @@ phase(a.simple) <- phase.mat
 ```
 
 ```{r echo=TRUE, eval=TRUE}
-#use the phase information from a Vcf file
+#load VariantAnnotation and use the phase information from a Vcf file
 pathToVcf <- system.file("extdata/ERP000101_subset/ERP000101.vcf", 
 							package = "AllelicImbalance")
 p <- readGT(pathToVcf)
@@ -429,6 +430,10 @@ glocationplot(ASEset, strand='+')
 More flexibility and functionality from the Gviz package is accessed if the tracks are constructed separately. This is useful to evalute AI in respect to for example read coverage or transcript annotation. An inconsistency of AI could potentially be explained by an uneven coverage over the exons, or lack of coverage. Below is an example using two samples from the ASEset and the corresponding reads. Ensuring and setting the seqlevels equal is a security  measure, for the internal overlap calculations that otherwise might throw a warning. The GR object is defining the region that we want to plot. The ASEDAnnotationTrack will create a track based on the gbarplots and the CoverageDataTrack a track based on read coverage. The different tracks are then collected in a list with the first element appearing at the top in the final plotting by the plotTracks function. The sizes vector defines the vertical space assigned to each track. To use transcript annotation, more detailed information can be found in the Gviz [vignette](http://bioconductor.org/packages/release/bioc/vignettes/Gviz/inst/doc/Gviz.pdf)
 
 ```{r echo=TRUE, eval=TRUE, message=FALSE, fig.cap=fig$cap("glocationplot", "A custom built Gviz plot using the ASEDAnnotationTrack, showing the ASE of SNPs within a defined region together with read coverage information")}
+
+#load Gviz package
+library(Gviz)
+
 #subset ASEset and reads
 x <- ASEset[,1:2]
 r <- reads[1:2]

@@ -47,14 +47,14 @@ be improved before next release.
 #generate example
 data(ASEset)
 a <- ASEset
-object <- detectAI(a,
+dai <- detectAI(a,
 			threshold.count.sample=1:50,
 			threshold.frequency=seq(0,0.5,by=0.01),
 			threshold.delta.frequency=seq(0,0.5,by=0.01),
 			threshold.pvalue=rev(seq(0.001,0.05, by=0.005))
 )
 
-frequency_vs_threshold_variable_summary(object)
+frequency_vs_threshold_variable_summary(dai)
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

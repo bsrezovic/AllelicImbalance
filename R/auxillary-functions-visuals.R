@@ -317,9 +317,11 @@ barplotLatticeFraction <- function(identifier, ...) {
 					  #, rot = c(90, 0))
 	}
 	if(e$top.fraction.criteria=="phase"){
-		df$groups <- df$phase
+		groups <- df$phase
+		df$groups <- groups
 	}else{
-		df$groups <- df$alleles
+		groups <- df$alleles
+		df$groups <- groups
 	}
     
 	if(!e$middleLine) {
@@ -346,6 +348,10 @@ barplotLatticeFraction <- function(identifier, ...) {
 
 #' @rdname barplot-lattice-support
 barplotLatticeCounts <- function(identifier, ...) {
+
+	#null out a variable later used in a lattice plot
+	#read here why: http://stackoverflow.com/questions/9439256/how-can-i-handle-r-cmd-check-no-visible-binding-for-global-variable-notes-when
+	alleles <- NULL
    
     if (length(list(...)) == 0) {
         e <- new.env(hash = TRUE)
@@ -411,8 +417,9 @@ barplotLatticeCounts <- function(identifier, ...) {
 		if(strand=="-" && e$strand=="both"){
 			values <- -values
 		}
-		df <- data.frame(values = values, sample = sample, alleles = rep(colnames(a.c), nrow(a.c))
-)
+		alleles <- rep(colnames(a.c), nrow(a.c))
+		df <- data.frame(values = values, sample = sample, alleles = alleles)
+
 		
 		# to get right order in barchart
 		df$sample <- factor(df$sample, levels = unique(df$sample))

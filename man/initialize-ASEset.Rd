@@ -56,8 +56,8 @@ dimension, samples in the 2nd dimension and variants in the 3rd dimension.}
 Functions to construct ASEset objects
 }
 \details{
-The resulting ASEset object is based on the RangedSummarizedExperiment class,
-and will therefore inherit the same accessors and ranges operations.
+The resulting ASEset object is based on the RangedSummarizedExperiment
+class, and will therefore inherit the same accessors and ranges operations.
 
 If both countListPlus and countListMinus are given they will be used to
 calculate countListUnknown, which is the sum of the plus and minus strands.

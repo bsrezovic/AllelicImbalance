@@ -613,7 +613,7 @@ riskVariantFromGRanges <- function(
 						genotype=genotype
 						), 
 					rowRanges = x,
-					colData = coldata
+					colData = colData
 				) 
 	}
 

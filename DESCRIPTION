@@ -1,8 +1,8 @@
 Package: AllelicImbalance
 Type: Package
 Title: Investigates allele specific expression
-Version: 1.7.8
-Date: 2015-06-05
+Version: 1.7.9
+Date: 2015-06-06
 Author: Jesper R Gadin, Lasse Folkersen
 Maintainer: Jesper R Gadin <j.r.gadin@gmail.com>
 Description: Provides a framework for allelic specific expression
@@ -14,24 +14,25 @@ Suggests:
     org.Hs.eg.db,
     TxDb.Hsapiens.UCSC.hg19.knownGene,
     SNPlocs.Hsapiens.dbSNP.20120608,
+    BiocStyle,
     knitr
 Depends: 
-    R (>= 3.1.0),
+    R (>= 3.3.0),
     grid,
     GenomicRanges,
     SummarizedExperiment (>= 0.1.1),
-    GenomicAlignments,
-    VariantAnnotation,
-    Gviz
+    GenomicAlignments
 Imports:
     methods,
     BiocGenerics,
     AnnotationDbi,
+    VariantAnnotation,
     Biostrings,
     S4Vectors,
     IRanges,
     Rsamtools,
     GenomicFeatures,
+    Gviz,
     lattice,
     seqinr,
     GenomeInfoDb

@@ -38,7 +38,6 @@
 #' @import GenomeInfoDb
 #' @import GenomicRanges
 #' @import SummarizedExperiment
-#' @import Gviz
 #' 
 #' @importFrom Biostrings subseq
 #' @importFrom Biostrings DNAStringSet
@@ -82,6 +81,10 @@
 # @export readVcf
 # @importFrom VariantAnnotation readGT
 # @export readGT
+#' @importFrom VariantAnnotation alt
+#' @importFrom VariantAnnotation ref
+#' @importFrom VariantAnnotation 'alt<-'
+#' @importFrom VariantAnnotation 'ref<-'
 #'
 #' @importFrom lattice barchart
 #' @importFrom lattice xyplot
@@ -93,20 +96,18 @@
 #'
 #' @importFrom seqinr write.fasta
 #'
-# @importClassesFrom Gviz DataTrack
-# @importClassesFrom Gviz AnnotationTrack
-# @importClassesFrom Gviz DetailsAnnotationTrack
-# @importClassesFrom Gviz GeneRegionTrack
-# @importClassesFrom Gviz GenomeAxisTrack
-#
-# @importFrom Gviz DataTrack
-# @importFrom Gviz AnnotationTrack
-# @importFrom Gviz DetailsAnnotationTrack
-# @importFrom Gviz GeneRegionTrack
-# @importFrom Gviz GenomeAxisTrack
-#
-# @importFrom Gviz plotTracks
-# @export plotTracks
+#' @importClassesFrom Gviz DataTrack
+#' @importClassesFrom Gviz AnnotationTrack
+#' @importClassesFrom Gviz DetailsAnnotationTrack
+#' @importClassesFrom Gviz GeneRegionTrack
+#' @importClassesFrom Gviz GenomeAxisTrack
+#'
+#' @importFrom Gviz DataTrack
+#' @importFrom Gviz AnnotationTrack
+#' @importFrom Gviz DetailsAnnotationTrack
+#' @importFrom Gviz GeneRegionTrack
+#' @importFrom Gviz GenomeAxisTrack
+#' @importFrom Gviz plotTracks
 #' 
 #' @importClassesFrom GenomicFeatures TxDb
 #' @importClassesFrom AnnotationDbi AnnotationDb
