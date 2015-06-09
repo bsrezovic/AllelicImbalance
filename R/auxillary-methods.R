@@ -766,14 +766,14 @@ setMethod("impBamGAL", signature(UserDir = "character"),
 		allFiles <- list.files(bamDir, full.names = TRUE)  #list files in a folder.
 		bamFiles <- allFiles[grep(".bam$", allFiles)]  #list only the files ending in .bam .
 	}else{
-		bamFiles <- paste(bamDir, "/", files ,sep="")
+		bamFiles <- .mergeDirAndFilename(bamDir, files)
 	}
 
     if (length(bamFiles) == 0) 
         stop(paste("No bam files found in", bamDir))
     if (!all(file.exists(paste(bamFiles, ".bai", sep = "")))) {
         if (verbose) 
-            cat(paste("The bam files in UserDir are required to also have .bam.bai index files. Trying to run indexBam function on each"), 
+            cat(paste("The bam files in UserDir are required to also have .bam.bai index files in the same directory. Trying to run indexBam function on each"), 
                 "\n")
         indexBam(bamFiles)
         if (!all(file.exists(paste(bamFiles, ".bai", sep = "")))) {
@@ -2422,111 +2422,36 @@ setMethod("lva", signature(x = "ASEset"),
 		}
 })
 
-
-####' update ASEset
-####' 
-####' converts old ASEsets to new ASEset objects
-####'
-####' It is not possible to convert back to an old version.
-####'
-####' @name ASEsetFromOldVersion
-####' @rdname ASEsetFromOldVersion
-####' @aliases ASEsetFromOldVersion 
-####' ASEsetFromOldVersion,ASEset-method 
-####' @docType methods
-####' @param x ASEset object
-####' @param ... passed on to ASEsetFromOldVersion function
-####' @author Jesper R. Gadin
-####' @keywords ASEset
-####' @examples
-####'
-####' #load an old example object
-####' data(ASEsetOld1)
-####'
-####' # convert to new version
-####' a <- ASEsetFromOldVersion(ASEsetOld1)
-####'  
-###NULL
-###
-####' @rdname ASEsetFromOldVersion
-####' @export
-###setGeneric("ASEsetFromOldVersion", function(x, ... 
-###	){
-###    standardGeneric("ASEsetFromOldVersion")
-###})
-###
-####' @rdname ASEsetFromOldVersion
-####' @export
-###setMethod("ASEsetFromOldVersion", signature(x = "ASEset"),
-### function(x) {
-###
-###	#prepare new merged 
-###	ar <- array(0,dim=c(dim(x),4,2))
-###
-###	#take out old information
-###	if(!is.null(assays(x)[["countsPlus"]])){
-###		ar[,,,1] <- assays(x)[["countsPlus"]]
-###	}
-###	if(!is.null(assays(x)[["countsMinus"]])){
-###		ar[,,,2] <- assays(x)[["countsMinus"]]
-###	}
-###	if(is.null(assays(x)[["countsPlus"]]) & is.null(assays(x)[["countsMinus"]])){
-###		ar[,,,1] <- assays(x)[["countsUnknown"]]
-###	}
-###
-###	#add names
-###	rownames(ar) <-  rownames(x)
-###	colnames(ar) <-  colnames(x)
-###
-###	#Stuff it back again
-###	a <- ASEsetFromArrays(rowRanges(x), acounts = ar, colData=colData(x), mapBiasExpMean=NULL,
-###					 genotype = NULL)
-###
-###	#add extra assays
-###	if(!is.null(assays(x)[["genotype"]])){
-###		genotype(a) <- assays(x)[["genotype"]]
-###	}
-###	if(!is.null(assays(x)[["phase"]])){
-###		genotype(a) <- assays(x)[["phase"]]
-###	}
-###	if(!is.null(assays(x)[["mapBias"]])){
-###		mapBias(a) <- assays(x)[["mapBias"]]
-###	}
-###
-###	#return new version of object
-###	a
-###
-###})
 ##
-##' DNAStringSet2character
-##' 
-##' forces e.g. simplelist of variants to an atomic character vector
-##' 
-##' @name DNAStringSet2character
-##' @rdname DNAStringSet2character
-##' @aliases DNAStringSet2character
-##' DNAStringSet2character,DNAStringSet-method 
-##' @docType methods
-##' @param x DNAStringSet
-##' @param verbose makes function more talkative
-##' @param ... arguments to pass on
-##' @author Jesper R. Gadin
-##' @keywords global wrapper
-##' @examples
-##'
-##' #empty as function doesn't exist
-##' 
+## DNAStringSet2character
+## 
+## forces e.g. simplelist of variants to an atomic character vector
+## 
+## @name DNAStringSet2character
+## @rdname DNAStringSet2character
+## @aliases DNAStringSet2character
+## DNAStringSet2character,DNAStringSet-method 
+## @docType methods
+## @param x DNAStringSet
+## @param verbose makes function more talkative
+## @param ... arguments to pass on
+## @author Jesper R. Gadin
+## @keywords global wrapper
+## @examples
+##
+## #empty as function doesn't exist
+## 
 #NULL
 #
-##' @rdname gba
-##' @export
+## @rdname gba
+## @export
 #setGeneric("DNAStringSet2character", function(x, ... 
 #	){
 #    standardGeneric("DNAStringSet2character")
 #})
 #
-##' @rdname gba
-##' @export
+## @rdname gba
+## @export
 #setMethod("DNAStringSet2character", signature(x = "character"),
 #function(x, verbose){
 #	
@@ -2535,7 +2460,7 @@ setMethod("lva", signature(x = "ASEset"),
 #	}
 #	as.character(x)
 #	
-#})
+#)
 #
 #
 #isSnp <- function(x) {
