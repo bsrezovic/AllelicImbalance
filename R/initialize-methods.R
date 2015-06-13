@@ -417,15 +417,15 @@ RBias <- function(
 	#if non-stranded data	
 	if(all(c("countsPlus","countsMinus") %in% names(assays(x)))){
 		assay <- 
-			array(c(refFraction(x,strand="*",...),
-				  refFraction(x,strand="+",...),
-				  refFraction(x,strand="-",...)),
+			array(c(t(fraction(x,strand="*", top.fraction.criteria="ref",...)),
+				  t(fraction(x,strand="+", top.fraction.criteria="ref", ...)),
+				  t(fraction(x,strand="-", top.fraction.criteria="ref", ...))),
 				  dim=c(nrow(x),ncol(x),3),
 				  dimnames=list(rownames(x),colnames(x),c("*","+","-")))
 	}
 	else if(c("countsUnknown") %in% names(assays(x))){
 		assay <- 
-			array(c(refFraction(x,strand="*",...),
+			array(c(t(fraction(x,strand="*", top.fraction.criteria="ref", ...)),
 				  matrix(NA, nrow=nrow(x),ncol=ncol(x)),
 				  matrix(NA, nrow=nrow(x),ncol=ncol(x))),
 				  dim=c(nrow(x),ncol(x),3),

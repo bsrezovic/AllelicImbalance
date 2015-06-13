@@ -247,7 +247,11 @@ setMethod("defaultMapBias", signature(x = "ASEset"), function(x, return.class="a
 #' Create a vector of random reference alleles
 #' 
 #' Randomly shuffles which of the two alleles for each genotype that is 
-#' indicated as reference allele.
+#' indicated as reference allele, based on either allele count information
+#' or previous ref and alt alleles.
+#' 
+#' When the source is 'alleleCounts', the two most expressed alleles are taken
+#' as reference and alternative allele. 
 #' 
 #' @name randomRef
 #' @rdname randomRef
@@ -255,7 +259,7 @@ setMethod("defaultMapBias", signature(x = "ASEset"), function(x, return.class="a
 #' @docType methods
 #' @param x \code{ASEset} object
 #' @param ... internal arguments
-#' @param inferGenotypes infer genotypes from count matrix
+#' @param source 'alleleCounts'
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords mapbias
 #' @examples
@@ -264,7 +268,7 @@ setMethod("defaultMapBias", signature(x = "ASEset"), function(x, return.class="a
 #' data(ASEset.sim)
 #' a <- ASEset.sim
 #'
-#' mcols(a)[["ref"]] <- randomRef(a, inferGenotypes=TRUE) 
+#' ref(a) <- randomRef(a, source = 'alleleCounts') 
 #'
 NULL
 
@@ -276,31 +280,32 @@ setGeneric("randomRef", function(x,... ){
 
 #' @rdname randomRef
 #' @export
-setMethod("randomRef", signature(x = "ASEset"), function(x, inferGenotypes=FALSE){
+setMethod("randomRef", signature(x = "ASEset"), 
+	function(x, source="alleleCounts", ...)
+{
+	#check for old arguments
+	if("inferGenotypes" %in% list(...)){
+		stop("inferGenotypes is not an available argument anymore")
+	}
 
-		if (!inferGenotypes){
-			if (!("genotype" %in% names(assays(x)))) {
-				stop(paste("genotype matrix is not present as assay in",
-						   " ASEset object, see '?inferGenotypes' "))
-			}
-		}else{
-			genotype(x) <- inferGenotypes(x)
-		}
-
-		g <- genotype(x)
-		allele1 <- sub("/.*","",as.character(g))
-		allele2 <- sub(".*/","",as.character(g))
-
-		mat1 <- matrix(allele1, nrow=nrow(x),ncol=ncol(x),byrow=FALSE)
-		mat2 <- matrix(allele2, nrow=nrow(x),ncol=ncol(x),byrow=FALSE)
-
-		mat <- matrix(c(mat1,mat2),nrow=nrow(x))
-
-		alleles <- apply(mat, 1, 
-					 function(x){names(sort(table(x), decreasing=TRUE))[c(1,2)]})
-
-		apply(alleles, 2, sample, size=1)
-
+	if(source=="alleleCounts"){
+		apply(arank(x, return.class="matrix")[,1:2],1,sample,1)
+#	}else if(source=="refAndAlt"){
+#		
+#		if(!("ref" %in% names(mcols(x)))){
+#			stop(paste("ref allele is not present in mcols in",
+#					   " ASEset object, see '?ASEset' "))
+#		}
+#		if(!("alt" %in% names(mcols(x)))){
+#			stop(paste("alt allele is not present in mcols in",
+#					   " ASEset object, see '?inferAltAllele' "))
+#		}
+#
+#		matrix(c(ref(x),alt(x)), nrow(x),ncol=2)
+#
+	}else{
+		stop("selected source is not available")
+	}
 })
 
 #' mapBias for reference allele 

@@ -191,3 +191,18 @@ NULL
 #' #data(ASEset.sim)
 #' 
 NULL 
+
+#' genomatrix object
+#' 
+#' genomatrix is an example of a matrix with genotypes
+#' 
+#' @name genomatrix
+#' @docType data
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords data genotype
+#' @examples
+#' 
+#' ##load eample data (Not Run)  
+#' #data(genomatrix)
+#' 
+NULL 

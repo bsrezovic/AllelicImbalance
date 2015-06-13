@@ -92,8 +92,9 @@ setMethod("detectAI", signature(x = "ASEset"), function(x,
 
 	#1) make refFreq array (third dim has length 1 and softest condition)
 	if(verbose){cat("calculating reference fractions\n")}
-	fr <- refFraction(x, strand=strand,
-			  threshold.count.sample= 1)[,,1]
+	fr <- t(fraction(x, strand=strand,
+				top.fraction.criteria="ref",
+				threshold.count.sample = 1))
 
 	#2) make t.c.s array
 	if(verbose){cat("checking count thresholds\n")}

@@ -9,7 +9,9 @@
 \alias{multiAllelicFilt,ASEset-method}
 \title{genotype filter methods}
 \arguments{
-\item{x}{\code{ASEset} object}
+\item{x}{ASEset object}
+
+\item{source}{'genotype' or 'alleleCounts'}
 
 \item{x}{\code{ASEset} object}
 
@@ -27,7 +29,8 @@ useful genotype filters
 filter on multiallelic snps
 }
 \details{
-These filters are called upon ASEset objects
+hetFilt returns TRUE if the samples is heterozygote, based on stored genotype information
+present in the phase data.
 
 based on the allele counts for all four variants A, T, G and C and returns true
 if there is counts enough suggesting a third or more alleles. The sensitivity can

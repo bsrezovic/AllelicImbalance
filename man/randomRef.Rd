@@ -8,28 +8,32 @@
 \usage{
 randomRef(x, ...)
 
-\S4method{randomRef}{ASEset}(x, inferGenotypes = FALSE)
+\S4method{randomRef}{ASEset}(x, source = "alleleCounts", ...)
 }
 \arguments{
 \item{x}{\code{ASEset} object}
 
 \item{...}{internal arguments}
 
-\item{inferGenotypes}{infer genotypes from count matrix}
+\item{source}{'alleleCounts'}
 }
 \description{
 Create a vector of random reference alleles
 }
 \details{
 Randomly shuffles which of the two alleles for each genotype that is
-indicated as reference allele.
+indicated as reference allele, based on either allele count information
+or previous ref and alt alleles.
+
+When the source is 'alleleCounts', the two most expressed alleles are taken
+as reference and alternative allele.
 }
 \examples{
 #load example data
 data(ASEset.sim)
 a <- ASEset.sim
 
-mcols(a)[["ref"]] <- randomRef(a, inferGenotypes=TRUE)
+ref(a) <- randomRef(a, source = 'alleleCounts')
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

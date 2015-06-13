@@ -370,14 +370,14 @@ setGeneric("fraction", function(x, ...) {
 #' @rdname ASEset-class
 #' @export 
 setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*", 
-    top.fraction.criteria="maxcount", verbose = FALSE) {
+    top.fraction.criteria="maxcount", verbose = FALSE, ...) {
     
     if (!sum(strand %in% c("+", "-", "*")) > 0) {
         stop("strand parameter has to be either '+', '-', '*' ")
     }
     
 	#core function
-	fr <- frequency(x, strand=strand, return.class="array")
+	fr <- frequency(x, strand=strand, return.class="array", ...)
 
 	#check and use top.fraction.criteria=="phase"
 	if(top.fraction.criteria=="phase"){
@@ -577,7 +577,6 @@ setMethod("frequency", signature(x = "ASEset"), function(x,
 		stop("return.class has to be 'array' or 'list'")
 	}
 })
-
 #' @rdname ASEset-class
 #' @export 
 setGeneric("genotype", function(x, ...){
@@ -589,57 +588,32 @@ setGeneric("genotype", function(x, ...){
 setMethod("genotype", signature(x = "ASEset"), function(x,
 			return.class="matrix"){
 
-    if (!("genotype" %in% names(assays(x)))) {
-		stop(paste("genotype matrix is not present as assay in",
+    if (!("phase" %in% names(assays(x)))) {
+		stop(paste("phase is not present in assays in",
 				   " ASEset object, see '?inferGenotypes' "))
     }
+	if(!("ref" %in% names(mcols(x)))){
+		stop(paste("ref allele is not present in mcols in",
+				   " ASEset object, see '?ASEset' "))
+	}
+	if(!("alt" %in% names(mcols(x)))){
+		stop(paste("alt allele is not present in mcols in",
+				   " ASEset object, see '?inferAltAllele' "))
+	}
 
-	if(return.class=="matrix"){
-		assays(x)[["genotype"]]
-	}else if(return.class=="array"){
-
-		ar <- array(NA,dim=c(nrow(x),ncol(x),length(x@variants)),
-					dimnames=list(rownames(x), colnames(x),1:length(x@variants)))
-
-		ar[,,1] <- vapply(
-					assays(x)[["genotype"]],
-					function(y){
-						substring(y,1,1) 
-					 }, character(1))
-				
-		ar[,,2] <- vapply(
-					assays(x)[["genotype"]],
-					function(y){
-						substring(y,3,3) 
-					 }, character(1))
-				
-
-		ar[,,3] <- vapply(
-					assays(x)[["genotype"]],
-					function(y){
-						substring(y,5,5) 
-					 }, character(1))
-
-		ar[,,4] <- vapply(
-					assays(x)[["genotype"]],
-					function(y){
-						substring(y,7,7) 
-					 }, character(1))
-
-		ar[ar==""] <- NA
-		ar
-	}else{ stop("return.class type doesnt exist")}
+	phase2genotype(phase(x, return.class="array"), ref(x), alt(x), return.class=return.class)
 
 })
+
 #' @rdname ASEset-class
 #' @export 
-setGeneric("genotype<-", function(x,value){
+setGeneric("genotype<-", function(x, value){
     standardGeneric("genotype<-")
 })
 
 #' @rdname ASEset-class
 #' @export 
-setMethod("genotype<-", signature(x = "ASEset"), function(x,value){
+setMethod("genotype<-", signature(x = "ASEset"), function(x, value){
 	
 	#check dimensions
 	if(!nrow(x)==nrow(value)){
@@ -648,10 +622,15 @@ setMethod("genotype<-", signature(x = "ASEset"), function(x,value){
 	if(!ncol(x)==ncol(value)){
 		stop("ncol(x) is not equal to ncol(value)")	
 	}
+	#check prexence of ref
+	if(!"ref" %in% names(mcols(x))){
+		stop("ref() is not set in ASEset")	
+	}
 
-	assays(x)[["genotype"]] <- value	
+	assays(x)[["phase"]] <- genotype2phase(value, ref(x))	
 	x
 })
+
 
 #' @rdname ASEset-class
 #' @export 
@@ -713,7 +692,7 @@ setMethod("phase", signature(x = "ASEset"), function(x,
 	return.class = "matrix" ) {
 
 	if(return.class=="matrix"){
-		mat <- phaseArray2Matrix(assays(x)[["phase"]])
+		mat <- phaseArray2phaseMatrix(assays(x)[["phase"]])
 		colnames(mat) <- colnames(x)
 		rownames(mat) <- rownames(x)
 		mat
@@ -767,11 +746,19 @@ setMethod("mapBias<-", signature(x = "ASEset"), function(x,value) {
 
 #' @rdname ASEset-class
 #' @export 
+setGeneric("ref")
+
+#' @rdname ASEset-class
+#' @export 
 setMethod("ref", signature(x = "ASEset"), function(x) {
 
 		mcols(x)[["ref"]]
 	
 })
+
+#' @rdname ASEset-class
+#' @export 
+setGeneric("ref<-")
 
 #' @rdname ASEset-class
 #' @export 
@@ -790,6 +777,10 @@ setMethod("ref<-", signature(x = "ASEset"), function(x, value) {
 
 #' @rdname ASEset-class
 #' @export 
+setGeneric("alt")
+
+#' @rdname ASEset-class
+#' @export 
 setMethod("alt", signature(x = "ASEset"), function(x) {
 
 		mcols(x)[["alt"]]
@@ -798,7 +789,10 @@ setMethod("alt", signature(x = "ASEset"), function(x) {
 
 #' @rdname ASEset-class
 #' @export 
-#could be renamed to countsAllAlleles
+setGeneric("alt<-")
+
+#' @rdname ASEset-class
+#' @export 
 setMethod("alt<-", signature(x = "ASEset"), function(x, value) {
 
 	if(class(value)=="character") {
@@ -902,4 +896,5 @@ setMethod("paternalAllele", signature(x = "ASEset"),
 			vec
 		}, ref=ref, alt=alt)
 })
+
 

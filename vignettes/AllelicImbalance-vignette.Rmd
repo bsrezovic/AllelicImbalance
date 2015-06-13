@@ -163,10 +163,15 @@ a.new <- ASEsetFromCountList(
 colData(a.simple) <- pdata
 ```
 ## Adding genotype information
-The genotype of the coding SNPs can be set by the command ```genotype(x) <- value```. If the genotype information is not available it can be inferred from the allele counts. The major allele will then be the allele with most counts and minor with second most counts. The notation is major/minor and for the example G/C, The G allele would be the major and C the minor allele.
+The genotype of the coding SNPs can be set by the command ```genotype(x) <- value```. If the genotype information is not available it can be inferred from the allele counts. The major allele will then be the allele with most counts and minor with second most counts. The notation is major/minor and for the example G/C, The G allele would be the major and C the minor allele. To be able to infer and store the genotype information it is required to first declare reference alleles. In cases when it is not important to know which allele is reference, the reference allele can be inferred from allele counts, by random takingone of the most expressed alleles. 
 
 ```{r echo=TRUE, eval=TRUE}
+#infer and add genotype require declaration of the reference allele 
+ref(a.simple) <- randomRef(a.simple)
 genotype(a.simple) <- inferGenotypes(a.simple)
+
+#access to genotype information requires knowledge of alternative allele
+alt(a.simple) <- inferAltAllele(a.simple)
 genotype(a.simple)[,1:4]
 ```
 
@@ -248,8 +253,8 @@ gr <- GRanges(
 a <- ASEsetFromCountList(gr, countListUnknown=countListUnknown)
 
 #set a random allele as reference
-genotype(a) <- inferGenotypes(a)
 ref(a) <- randomRef(a)
+genotype(a) <- inferGenotypes(a)
 
 #get the fraction of the reference allele
 refFrac <- fraction(a, top.fraction.criteria="ref")

@@ -56,15 +56,15 @@ setMethod("phaseMatrix2Array", signature(x = "matrix"),
 		
 })
 
-#' phaseArray2Matrix
+#' phaseArray2phaseMatrix
 #' 
 #' used to convert the phase from the visually friendly matrix to array.
 #' 
 #' A more effectice way of store the phase data in the ASEset object
 #'
-#' @name phaseArray2Matrix
-#' @rdname phaseArray2Matrix
-#' @aliases phaseArray2Matrix,array-method
+#' @name phaseArray2phaseMatrix
+#' @rdname phaseArray2phaseMatrix
+#' @aliases phaseArray2phaseMatrix,array-method
 #' @docType methods
 #' @param x array see examples 
 #' @param ... arguments to forward to internal functions
@@ -85,31 +85,45 @@ setMethod("phaseMatrix2Array", signature(x = "matrix"),
 #' ar <- phaseMatrix2Array(p)
 #'
 #' #Convert back 
-#' mat <- phaseArray2Matrix(ar)
+#' mat <- phaseArray2phaseMatrix(ar)
 #'
 NULL
 
-#' @rdname phaseArray2Matrix
+#' @rdname phaseArray2phaseMatrix
 #' @export
-setGeneric("phaseArray2Matrix", function(x, ... 
-	){
-    standardGeneric("phaseArray2Matrix")
-})
+setGeneric("phaseArray2phaseMatrix", function(x, ...)
+	{
+		standardGeneric("phaseArray2phaseMatrix")
+	}
+)
 
-#' @rdname phaseArray2Matrix
+#' @rdname phaseArray2phaseMatrix
 #' @export
-setMethod("phaseArray2Matrix", signature(x = "array"),
-		function(x, ...
-	){
+setMethod("phaseArray2phaseMatrix", signature(x = "array"),
+	function(x, ...)
+	{
+		.mergePhaseArray2phaseMatrix(x)
+	}
+)
 
-		phased <- x[,,3]
-		phased[phased==1] <- "|"
-		phased[phased==0] <- "/"
+### -------------------------------------------------------------------------
+### helpers for phaseArray2phaseMatrix
+###
 
-		matrix(paste(x[,,1], phased, x[,,2], sep=""), nrow=nrow(x), ncol(x),
-			   dimnames = dimnames(x)[1:2])
+# if any of the maternal paternal alles are NA, NA is retrieved
+# if phase is NA it will be set to /
+.mergePhaseArray2phaseMatrix <- function(x, ...)
+{
+	pha <- matrix("/", ncol=ncol(x), nrow=nrow(x))
+	pha[x[,,3]==1] <- "|"
 	
-})
+	nas <- is.na(x[,,1]) | is.na(x[,,2])
+	merg <- paste(x[,,1], pha, x[,,2], sep="")
+	merg[nas] <- NA
+
+	matrix(merg, nrow=nrow(x), ncol(x))
+}
+
 
 #' Plot Dataframe
 #' 
@@ -2421,6 +2435,236 @@ setMethod("lva", signature(x = "ASEset"),
 			}
 		}
 })
+
+#' genotype2phase
+#' 
+#' used to convert the genomatrix from the visually friendly matrix to phase array.
+#' 
+#' To not introduce redundant information in the ASEset object, the genotype matrix is
+#' translated to a phase matrix, containing the same information.
+#' Does not allow tri-allelic or multi-allelic SNPs, and if present the multi-allelic 
+#' SNPs will lose the least occuring genotype. 
+#' 
+#' This function can handle indels, but if the reference allele is not provided, the 
+#' rank matrix which is temporary created might use lots of memory, depending on the
+#' amount of indels among the genotypes. As conclusion, it is preferable to send in 
+#' reference genome when converting to phase.
+#'
+#' levels information is only important if the reference allele has to be guessed,
+#' and so if reference information is provided, the levels argument can be ignored. 
+#'
+#' @name genotype2phase
+#' @rdname genotype2phase
+#' @aliases genotype2phase,matrix-method
+#' @docType methods
+#' @param x matrix see examples 
+#' @param ref reference alleles
+#' @param return.class 'array' or 'list'
+#' @param levels vector of expected alleles
+#' @param ... pass on additional param
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords phase
+#' @examples
+#' 
+#' #load example data
+#' data(genomatrix) 
+#' data(ASEset) 
+#' p <- genotype2phase(genomatrix, ref(ASEset))
+#' 
+NULL
+
+#' @rdname genotype2phase
+#' @export
+setGeneric("genotype2phase", function(x, ... 
+	){
+    standardGeneric("genotype2phase")
+})
+
+#' @rdname genotype2phase
+#' @export
+setMethod("genotype2phase", signature(x = "matrix"),
+		function(x, ref=NULL, return.class="array", levels=c("A","C","G","T") , ...
+	){
+
+	#check x
+	if(!class(x)=="matrix"){
+		stop("x is not of class matrix")
+	}
+
+	#checks return.class
+	if(return.class=="list" & !is.null(ref)){
+		stop("reference is already known, no need to use return.class='list'")
+	}
+
+	#check ref
+	if(!is.null(ref)){
+		if(!length(ref)==nrow(x)){
+		 stop("reference length is not equal to genotype matrix nrow")
+		}
+	}
+
+	sgm <- .splitGenotypeMatrix(x)
+	if(is.null(ref)){
+		#if length of levels is to long the rank matrix risks being very huge
+		sgc <- .splitGenotypeCount(sgm, levels)
+		sgr <- .splitGenotypeRank(sgc)
+		ref <- .splitGenotypePickRefAllele(sgr)
+		alt <- .splitGenotypePickAltAllele(sgr, ref)
+	}
+
+	p <-  array(c((!sgm == ref)*1, rep(0, length(sgm[,,1]))),dim= c(nrow(x), ncol(x), 3))
+
+	if(return.class=="list"){
+		list(phase=p,ref=ref,alt=alt)
+	}else if(return.class=="array"){
+		p		
+	}
+})
+
+### -------------------------------------------------------------------------
+### helpers for genotype2phase
+###
+
+#split a genotype matrix into an array of two dimensions(one for each allele)
+.splitGenotypeMatrix <- 
+	function(genomatrix, ...)	{
+	str <- unlist(strsplit(genomatrix,"/"))
+	inx <- which(is.na(str))
+	val <- c(str, rep(NA,length(inx)))
+	id  <- sort(c( seq_along(str), inx+0.5), index.return=TRUE)$ix
+
+	aperm(array(val[id], dim=c(2, nrow(genomatrix), ncol(genomatrix))),c(2,3,1))
+}
+
+#from a genotype array of two dimensions, count occurences of each allele for 
+#each snp
+.splitGenotypeCount <- 
+	function(x, levels=c("A", "C", "G", "T"), ...)
+{
+	mat <- matrix(aperm(x, c(3,2,1)), ncol(x)*2, nrow(x))
+	t(apply(mat, 2, function(x){table(factor(x, levels=levels))}))
+}
+
+#from matrix rank the alleles for each SNP 
+.splitGenotypeRank <- 
+	function(x, levels=colnames(x), ...)
+{
+	mat <- t(apply(x, 1, function(x){sort(x, decreasing=TRUE, index.return=TRUE)$ix}))
+	matrix(levels[mat], nrow(x), ncol(x), dimnames=list(NULL,paste("r",1:length(levels),sep="")))
+}
+
+#pick a random ref allele from two most occured
+.splitGenotypePickRefAllele <- function(x, ...){
+	apply(x[,1:2], 1, sample,1)
+}
+
+#pick a random alt allele from two most occured (which is not ref allele)
+.splitGenotypePickAltAllele <- function(x, ref, ...){
+	x[,1:2][!x[,1:2] == ref]
+}
+
+
+#' phase2genotype
+#' 
+#' Convert the phase from the internally stored phase, ref and alt information
+#' 
+#' To not introduce redundant information in the ASEset object, the genotype matrix is
+#' accessed from the phase matrix, which together with ref and alt allele information
+#' contains the same information(not taken into account three-allelic or more SNPs).
+#' 
+#' The genotype matrix retrieved from an ASEset object can differ from the genotype matrix
+#' stored in the object if reference and alternative alleles were not used or has changed
+#' since the phase genotype matrix was stored. Basically, it is preferable to provide 
+#' reference and alternative information when storing the genotype matrix.
+#'
+#' If possible, it is better to not use a genotype matrix, but instead relying completely 
+#' on storing a phase matrix(or array) together with reference and alternative allele 
+#' information.
+#'
+#' @name phase2genotype
+#' @rdname phase2genotype
+#' @aliases phase2genotype,array-method
+#' @docType methods
+#' @param x array see examples 
+#' @param ref reference allele vector
+#' @param alt alternative allele vector
+#' @param return.class 'matrix' or 'array'
+#' @param ... pass on additional param
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords phase
+#' @examples
+#' 
+#' #load example data
+#' data(ASEset) 
+#' data(genomatrix)
+#' p <- genotype2phase(genomatrix, ref(ASEset), return.class="array")
+#' ref <- ref(ASEset)
+#' alt <- inferAltAllele(ASEset)
+#'
+#' gt <- phase2genotype(p, ref, alt, return.class="matrix")
+#' 
+NULL
+
+#' @rdname phase2genotype
+#' @export
+setGeneric("phase2genotype", function(x, ... 
+	){
+    standardGeneric("phase2genotype")
+})
+
+#' @rdname phase2genotype
+#' @export
+setMethod("phase2genotype", signature(x = "array"),
+		function(x, ref, alt, return.class="matrix", ...
+	){
+
+	gta <- .phaseArray2genotypeArray(x, ref, alt)
+
+	if(return.class=="matrix"){
+		.genotypeArray2genotypeMatrix(gta)
+	}else if(return.class=="array"){
+		gta
+	}else{ stop("return.class type doesnt exist")}
+
+})
+
+### -------------------------------------------------------------------------
+### helpers for phase2genotype
+###
+#NAs will be kept
+.phaseArray2genotypeArray <- function(x, ref, alt, ...){
+	mat <- matrix(alt, nrow(x), ncol(x))
+	pat <- matrix(alt, nrow(x), ncol(x))
+	pha <- matrix("/", ncol=ncol(x), nrow=nrow(x))
+
+	namat <- is.na(x[,,1])
+	napat <- is.na(x[,,2])
+
+	mat[x[,,1]==1 & !namat] <- matrix(ref, nrow(x), ncol(x))[x[,,1]==1 & !namat]
+	pat[x[,,2]==1 & !napat] <- matrix(ref, nrow(x), ncol(x))[x[,,2]==1 & !napat]
+	
+	mat[namat] <- NA
+	pat[napat] <- NA
+
+	pha[x[,,3]==1] <- "|"
+
+	array(c(mat, pat, pha), dim=c(dim(x)), 
+		  dimnames=list(NULL, NULL, c("mat","pat", "phased")))
+}
+
+#NAs will be kept and merged
+.genotypeArray2genotypeMatrix <- function(x, ...)
+{
+	napha <- is.na(x[,,3])
+	x[,,3][napha] <- "/"
+
+	gv <- paste(x[,,1], x[,,3], x[,,2], sep="")
+	namat <- is.na(x[,,1])
+	napat <- is.na(x[,,2])
+
+	gv[namat | napat] <- NA
+	matrix(gv, nrow(x), ncol(x))
+}
 
 ##
 ## DNAStringSet2character

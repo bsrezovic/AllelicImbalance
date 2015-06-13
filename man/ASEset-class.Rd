@@ -8,7 +8,9 @@
 \alias{alleleCounts,ASEset-method}
 \alias{alleleCounts<-}
 \alias{alleleCounts<-,ASEset-method}
+\alias{alt}
 \alias{alt,ASEset-method}
+\alias{alt<-}
 \alias{alt<-,ASEset,ANY-method}
 \alias{aquals}
 \alias{aquals,ASEset-method}
@@ -40,7 +42,9 @@
 \alias{phase,ASEset-method}
 \alias{phase<-}
 \alias{phase<-,ASEset-method}
+\alias{ref}
 \alias{ref,ASEset-method}
+\alias{ref<-}
 \alias{ref<-,ASEset,ANY-method}
 \title{ASEset objects}
 \usage{
@@ -59,7 +63,7 @@ mapBias(x, ...)
 fraction(x, ...)
 
 \S4method{fraction}{ASEset}(x, strand = "*",
-  top.fraction.criteria = "maxcount", verbose = FALSE)
+  top.fraction.criteria = "maxcount", verbose = FALSE, ...)
 
 arank(x, return.type = "names", return.class = "list", strand = "*", ...)
 
@@ -95,11 +99,19 @@ mapBias(x) <- value
 
 \S4method{mapBias}{ASEset}(x) <- value
 
+ref(x)
+
 \S4method{ref}{ASEset}(x)
+
+ref(x) <- value
 
 \S4method{ref}{ASEset,ANY}(x) <- value
 
+alt(x)
+
 \S4method{alt}{ASEset}(x)
+
+alt(x) <- value
 
 \S4method{alt}{ASEset,ANY}(x) <- value
 

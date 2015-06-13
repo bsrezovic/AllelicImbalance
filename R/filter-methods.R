@@ -5,13 +5,15 @@ NULL
 #' 
 #' useful genotype filters
 #' 
-#' These filters are called upon ASEset objects 
+#' hetFilt returns TRUE if the samples is heterozygote, based on stored genotype information
+#' present in the phase data.
 #' 
 #' @name genofilters
 #' @rdname genofilters
 #' @aliases hetFilt hetFilt,ASEset-method 
 #' @docType methods
-#' @param x \code{ASEset} object
+#' @param x ASEset object
+#' @param source 'genotype' or 'alleleCounts'
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords filter
 #' @examples
@@ -27,19 +29,29 @@ NULL
 NULL
 
 # @rdname genofilters
-setGeneric("hetFilt", function(x){
+setGeneric("hetFilt", function(x, ...){
     standardGeneric("hetFilt")
 })
 
-setMethod("hetFilt", signature(x = "ASEset"), function(x){
-	
-	 matrix(vapply(
-		    genotype(x),
-			function(y){substring(y,1,1)==substring(y,3,3)}, numeric(1)),
-			nrow=nrow(x), ncol=ncol(x), dimnames=list(rownames(x),colnames(x))
-	) == 0
+setMethod("hetFilt", signature(x = "ASEset"), 
+	function(x, source="genotype", ...)
+	{
+		if(source=="genotype"){
+			.heterozygozityFromPhaseArray(phase(x , return.class="array"))
+		}else if(source=="alleleCounts"){
+			stop("not implemented")
+		}else{
+			stop("source must be 'genotype' or 'alleleCounts' ")
+		}
+	}
+)
 
-})
+### -------------------------------------------------------------------------
+### helpers for hetFilt
+###
+.heterozygozityFromPhaseArray <- function(x){
+	!(x[,,1] == x[,,2])
+}
 
 #' multi-allelic filter methods 
 #' 
