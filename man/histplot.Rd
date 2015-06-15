@@ -8,8 +8,6 @@
 \alias{histplot}
 \title{histogram plots}
 \usage{
-\S4method{hist}{ReferenceBias}(x, strand = "*", ...)
-
 \S4method{hist}{ASEset}(x, strand = "*", type = "mean", log = 1, ...)
 }
 \arguments{
@@ -17,11 +15,11 @@
 
 \item{strand}{'+','-' or '*'}
 
-\item{...}{arguments to forward to interal boxplots function}
-
 \item{type}{'mean' (only one option atm)}
 
 \item{log}{an integer to log each value (integer 10 for log10)}
+
+\item{...}{arguments to forward to interal boxplots function}
 }
 \description{
 uses base graphics hist plot

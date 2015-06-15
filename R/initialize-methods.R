@@ -385,63 +385,6 @@ ASEsetFromArrays <- function(rowRanges, countsUnknown = NULL, countsPlus = NULL,
     ASEset(sset, variants = variants)
 } 
 
-#' Initialize ReferenceBias
-#' 
-#' Functions to construct ReferenceBias objects
-#' 
-#' produces a class container for reference bias calculations
-#' 
-#' @name initialize-ReferenceBias
-#' @rdname initialize-ReferenceBias
-#' @aliases initialize-ReferenceBias RBias
-#' @param x \code{ASEset} 
-#' @param ... internal arguments
-#' @author Jesper R. Gadin, Lasse Folkersen
-#' @keywords bias mapbias refBias
-#' @examples
-#'
-#' data(ASEset)
-#' a <- ASEset
-#' refbiasObject <- RBias(a)
-#' 
-NULL
-
-
-#' @rdname initialize-ReferenceBias
-#' @export 
-#setMethod("ReferenceBias","ReferenceBias", function(
-RBias <- function(
-	x = "ASEset",
-	...
-	){
-	#if non-stranded data	
-	if(all(c("countsPlus","countsMinus") %in% names(assays(x)))){
-		assay <- 
-			array(c(t(fraction(x,strand="*", top.fraction.criteria="ref",...)),
-				  t(fraction(x,strand="+", top.fraction.criteria="ref", ...)),
-				  t(fraction(x,strand="-", top.fraction.criteria="ref", ...))),
-				  dim=c(nrow(x),ncol(x),3),
-				  dimnames=list(rownames(x),colnames(x),c("*","+","-")))
-	}
-	else if(c("countsUnknown") %in% names(assays(x))){
-		assay <- 
-			array(c(t(fraction(x,strand="*", top.fraction.criteria="ref", ...)),
-				  matrix(NA, nrow=nrow(x),ncol=ncol(x)),
-				  matrix(NA, nrow=nrow(x),ncol=ncol(x))),
-				  dim=c(nrow(x),ncol(x),3),
-				  dimnames=list(rownames(x),colnames(x),c("*","+","-")))
-	}
-
-	sset <- SummarizedExperiment(assays = SimpleList(referenceFrequency=assay), rowRanges = rowRanges(x), colData = colData(x)) 
-	rownames(sset) <- rownames(x)
-
-	#valid
-	#validObject(.Object)
-
-	#Return object
-	new("ReferenceBias", sset, strands = c("*","+","-"))
-}
-
 #' Initialize DetectedAI
 #' 
 #' Functions to construct DetectedAI objects
