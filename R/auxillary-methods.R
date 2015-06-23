@@ -388,11 +388,11 @@ setMethod("regionSummary", signature("ASEset"),
 			ar.dim3 <- length(region)
 			ar.dim3.names <- names(region)
 		}else if(class(region)=="list") {
-			idx.mat <- multiUnlist.index(region)	
-			idx.mat.names <- multiUnlist.index.names(region)	
+			idx.mat <- .multiUnlist.index(region)	
+			idx.mat.names <- .multiUnlist.index.names(region)	
 			rownames(idx.mat) <- paste("lvl", (nrow(idx.mat)+1):2, sep="")
 			rownames(idx.mat.names) <- paste("lvl", (nrow(idx.mat.names)+1):2, sep="")
-			region <- multiUnlist(region)		
+			region <- .multiUnlist(region)		
 			populate.list <- TRUE
 
 			idx <- togroup(PartitioningByWidth(elementLengths(region)))
@@ -488,7 +488,7 @@ setMethod("regionSummary", signature("ASEset"),
 			}
 		}else if(return.class=="list"){
 			if(populate.list){
-				lst <- region.list.populate(ar, idx.mat[-nrow(idx.mat),], idx.mat.names[-nrow(idx.mat.names),])
+				lst <- .region.list.populate(ar, idx.mat[-nrow(idx.mat),], idx.mat.names[-nrow(idx.mat.names),])
 				lst
 			}else{
 

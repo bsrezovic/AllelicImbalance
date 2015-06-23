@@ -4,57 +4,34 @@
 #  
 ###################
 
-#' general list methods
-#' 
-#' general list methods that supports flatteing and indexing of lists
-#' 
-#' This is a collection of supportive list methods. The documentation will
-#' be improved before next release.
-#' 
-#' @name general-list
-#' @rdname general-list
-#' @aliases general-list list.depth multiUnlist multiUnlist.index multiUlist.index.names
-#' @param this a list
-#' @param thisdepth, start value for recursion
-#' @param lst, the single snp name to plot
-#' @param expand.lowest.level logical
-#' @param ar array to use for repopulation
-#' @param idx.mat array to use for repopulation
-#' @param idx.mat.names array to use for repopulation
-#' @param ... pass on variables internally
-#' @author Jesper R. Gadin, Lasse Folkersen
-#' @keywords list
-#' @examples
-#' 
-#' #some example code here
-#' 
-#' 
-NULL
+# general list methods
+# 
+# general list methods that supports flatteing, indexing of lists and conversion of
+# flattened lists to lists to lists based on index.
+# 
+# This is a collection of supportive list methods. The documentation will
+# be improved before next release.
+# 
 
-#' @rdname general-list
-#' @export
-list.depth <- function(this, thisdepth = 0) {
+
+.list.depth <- function(this, thisdepth = 0, ...) {
 	  if(!is.list(this)) {
 		return(thisdepth)
 	  }else {
-		return(list.depth(this[[1]], thisdepth = thisdepth+1))
+		return(.list.depth(this[[1]], thisdepth = thisdepth+1))
 	  }
 }
 			
 
-#' @rdname general-list
-#' @export
-multiUnlist <- function(lst, ...){
+.multiUnlist <- function(lst, ...){
 	 if(!is.list(lst)){
 		 return(lst)
 	 }else{
-		  multiUnlist(do.call(c, unname(lst)))
+		  .multiUnlist(do.call(c, unname(lst)))
 	 }
 }
 
-#' @rdname general-list
-#' @export
-multiUnlist.index <- function(lst, expand.lowest.level=FALSE){
+.multiUnlist.index <- function(lst, expand.lowest.level=FALSE){
 	
 	list.idx.vec <- function(this, i=vector(),vec = vector()) {
 		  if(class(this) == "GRanges") {
@@ -67,7 +44,7 @@ multiUnlist.index <- function(lst, expand.lowest.level=FALSE){
 		  }
 	}
 
-	idx.mat <- matrix(list.idx.vec(lst),nrow=list.depth(lst)+2)
+	idx.mat <- matrix(list.idx.vec(lst),nrow=.list.depth(lst)+2)
 					  
 	if(expand.lowest.level){
 		matrix(inverse.rle(structure(list(lengths = rep(idx.mat[nrow(idx.mat),],nrow(idx.mat)-1), 
@@ -78,9 +55,7 @@ multiUnlist.index <- function(lst, expand.lowest.level=FALSE){
 	}
 }
 
-#' @rdname general-list
-#' @export
-multiUnlist.index.names <- function(lst, expand.lowest.level=FALSE){
+.multiUnlist.index.names <- function(lst, expand.lowest.level=FALSE){
 	
 	list.idx.vec <- function(this, i=vector(),vec = vector(), nms=names(this)) {
 		
@@ -102,7 +77,7 @@ multiUnlist.index.names <- function(lst, expand.lowest.level=FALSE){
 
 	list.idx.vec(lst)
 
-	idx.mat <- matrix(list.idx.vec(lst),nrow=list.depth(lst)+2)
+	idx.mat <- matrix(list.idx.vec(lst),nrow=.list.depth(lst)+2)
 					  
 	if(expand.lowest.level){
 		matrix(inverse.rle(structure(list(lengths = rep(idx.mat[nrow(idx.mat),],nrow(idx.mat)-1), 
@@ -113,9 +88,7 @@ multiUnlist.index.names <- function(lst, expand.lowest.level=FALSE){
 	}
 }
 
-#' @rdname general-list
-#' @export
-region.list.populate <- function(ar, idx.mat, idx.mat.names ){
+.region.list.populate <- function(ar, idx.mat, idx.mat.names ){
 
 	if(!class(idx.mat) == "matrix") {
 		l <- lapply(unique(idx.mat), 
@@ -129,7 +102,7 @@ region.list.populate <- function(ar, idx.mat, idx.mat.names ){
 		l <- lapply(unique(idx.mat[1,]), 
 		   function(i, a, m, m2){ 
 
-			   region.list.populate(a[,,m[1,]==i], m[-1, m[1, ]==i], m2[-1, m[1, ]==i]) 
+			   .region.list.populate(a[,,m[1,]==i], m[-1, m[1, ]==i], m2[-1, m[1, ]==i]) 
 
 		   },
 		   a=ar, m=idx.mat, m2=idx.mat.names)
