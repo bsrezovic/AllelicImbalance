@@ -520,16 +520,15 @@ GAnalysis <- function(
 #' @rdname initialize-riskVariant
 #' @aliases initialize-riskVariant 
 #' @param x GRanges object for the SNPs
-#' @param genotype matrix
-#' @param colData A \code{DataFrame} object containing sample specific data
+#' @param phase array with phaseinfo
 #' @param ... internal arguments
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords bias mapbias refBias
 #' @examples
 #'
 #' data(ASEset)
-#' ge <- inferGenotypes(ASEset)
-#' rv <- riskVariantFromGRanges(x=GRvariants, genotype=ge)
+#' #p <- getPhaseFromSomewhere
+#' #rv <- riskVariantFromGRangesAndPhaseArray(x=GRvariants, phase=p)
 #'
 #' 
 NULL
@@ -537,30 +536,17 @@ NULL
 #' @rdname initialize-riskVariant
 #' @export 
 #setMethod("riskVariant","riskVariant", function(
-riskVariantFromGRanges <- function(
+riskVariantFromGRangesAndPhaseArray <- function(
 	x,
-	genotype,
-	colData = NULL,
+	phase,
 	...){
 
-	if(is.null(colData)){
 		sset <- SummarizedExperiment(
-					assays = SimpleList(
-						genotype=genotype
-						), 
-					rowRanges = x
-				) 
-	}else{
-		sset <- SummarizedExperiment(
-					assays = SimpleList(
-						genotype=genotype
-						), 
-					rowRanges = x,
-					colData = colData
-				) 
-	}
+					assays = SimpleList(phase=phase), 
+					colData = DataFrame(row.names=1:ncol(phase)),
+					rowRanges = x)
 
-	rownames(sset) <- names(x)
+		rownames(sset) <- names(x)
 
 	#valid
 	#validObject(.Object)

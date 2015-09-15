@@ -45,14 +45,14 @@ setMethod("ref", signature(x = "riskVariant"), function(x) {
 #' @export 
 setMethod("ref<-", signature(x = "riskVariant"), function(x, value) {
 
-	if(class(value)=="character") {
-
-		mcols(x)[["ref"]] <- value
-	}else{
-
-		stop("wrong class")
-	}
+	#we want to accept more classes than just character (e.g. characterList or DNAStringSetList)
+	#if(class(value)=="character") {
+		#mcols(x)[["ref"]] <- value
+	#}else{
+		#stop("wrong class")
+	#}
 	
+	mcols(x)[["ref"]] <- value
 	x
 })
 
@@ -70,13 +70,15 @@ setMethod("alt", signature(x = "riskVariant"), function(x) {
 #could be renamed to countsAllAlleles
 setMethod("alt<-", signature(x = "riskVariant"), function(x, value) {
 
-	if(class(value)=="character") {
+	#we want to accept more classes than just character (e.g. characterList or DNAStringSetList)
+	#if(class(value)=="character") {
 
-		mcols(x)[["alt"]] <- value
-	}else{
+	#	mcols(x)[["alt"]] <- value
+	#}else{
 
-		stop("wrong class")
-	}
+	#	stop("wrong class")
+	#}
+	mcols(x)[["alt"]] <- value
 	
 	x
 })
@@ -87,7 +89,7 @@ setMethod("phase", signature(x = "riskVariant"), function(x,
 	return.class = "matrix" ) {
 
 	if(return.class=="matrix"){
-		mat <- phaseArray2Matrix(assays(x)[["phase"]])
+		mat <- phaseArray2phaseMatrix(assays(x)[["phase"]])
 		colnames(mat) <- colnames(x)
 		rownames(mat) <- rownames(x)
 		mat
@@ -105,8 +107,8 @@ setMethod("phase<-", signature(x = "riskVariant"), function(x,value) {
 		if(!identical(dim(x),dim(value))){
 			stop("dimension of value does not correspond to the values of object riskVariant")	
 		}
-	
-		assays(x)[["phase"]] <- phaseMatrix2Array(value,dimnames=dimnames(x))
+		
+		assays(x)[["phase"]] <- phaseMatrix2Array(value, dimnames=NULL)
 
 	}else if(class(value)=="array"){
 		assays(x)[["phase"]] <- value
@@ -114,3 +116,33 @@ setMethod("phase<-", signature(x = "riskVariant"), function(x,value) {
 	
 	x
 })
+
+#####################
+# addColnames might not be needed when phase is required
+
+##' @rdname ASEset-class
+##' @export 
+#setGeneric("addColnames<-", function(x, value){
+#    standardGeneric("addColnames<-")
+#})
+#
+##' @rdname riskVariant-class
+##' @export 
+#setMethod("addColnames<-", signature(x = "riskVariant"), function(x,value) {
+#
+#		  if(is.null(colnames(x))){
+#				sset <- SummarizedExperiment(
+#					assays = assays(x), 
+#					rowRanges = granges(x),
+#					colData=DataFrame(row.names=value))
+#				rownames(sset) <- names(x)
+#				cnrv <- new("riskVariant", sset,
+#					meta = list()
+#				)
+#
+#		  }else{
+#			  (stop("object has already colnames, use cbind."))
+#		  }
+#})
+#
+#

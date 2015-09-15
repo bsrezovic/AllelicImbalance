@@ -2,17 +2,15 @@
 % Please edit documentation in R/initialize-methods.R
 \name{initialize-riskVariant}
 \alias{initialize-riskVariant}
-\alias{riskVariantFromGRanges}
+\alias{riskVariantFromGRangesAndPhaseArray}
 \title{Initialize riskVariant}
 \usage{
-riskVariantFromGRanges(x, genotype, colData = NULL, ...)
+riskVariantFromGRangesAndPhaseArray(x, phase, ...)
 }
 \arguments{
 \item{x}{GRanges object for the SNPs}
 
-\item{genotype}{matrix}
-
-\item{colData}{A \code{DataFrame} object containing sample specific data}
+\item{phase}{array with phaseinfo}
 
 \item{...}{internal arguments}
 }
@@ -24,8 +22,8 @@ produces a class container for reference bias calculations
 }
 \examples{
 data(ASEset)
-ge <- inferGenotypes(ASEset)
-rv <- riskVariantFromGRanges(x=GRvariants, genotype=ge)
+#p <- getPhaseFromSomewhere
+#rv <- riskVariantFromGRangesAndPhaseArray(x=GRvariants, phase=p)
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen
