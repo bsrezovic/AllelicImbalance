@@ -10,7 +10,7 @@
 lva(x, ...)
 
 \S4method{lva}{ASEset}(x, rv, region, settings = list(),
-  return.class = "matrix", return.meta = FALSE, ...)
+  return.class = "matrix", return.meta = FALSE, verbose = FALSE, ...)
 }
 \arguments{
 \item{x}{ASEset object with phase and 'ref'/'alt' allele information}
@@ -26,6 +26,8 @@ lva(x, ...)
 \item{return.class}{'vector' or 'matrix'}
 
 \item{return.meta}{logical to return a list with metainformation}
+
+\item{verbose}{logical, if set TRUE, then function will be more talkative}
 }
 \description{
 make an almlof regression for arrays
@@ -50,9 +52,8 @@ phase(a) <- p
 mcols(a)[["alt"]] <- inferAltAllele(a)
 
 #init risk variants
-ge <- inferGenotypes(ASEset)
-rv <- riskVariantFromGRanges(x=GRvariants, genotype=ge)
-phase(rv) <- p
+p.ar <- phaseMatrix2Array(p)
+rv <- riskVariantFromGRangesAndPhaseArray(x=GRvariants, phase=p.ar)
 
 # in this example all snps in the ASEset defines the region
 r1 <- granges(a)

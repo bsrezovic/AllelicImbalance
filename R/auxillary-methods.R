@@ -2329,6 +2329,7 @@ setMethod("lva.internal", signature(x = "array"),
 #' @param settings riskVariant object with phase and alternative allele information
 #' @param return.class 'vector' or 'matrix'
 #' @param return.meta logical to return a list with metainformation
+#' @param verbose logical, if set TRUE, then function will be more talkative
 #' @param ... arguments to forward to internal functions
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords phase
@@ -2349,9 +2350,8 @@ setMethod("lva.internal", signature(x = "array"),
 #' mcols(a)[["alt"]] <- inferAltAllele(a)
 #' 
 #' #init risk variants
-#' ge <- inferGenotypes(ASEset)
-#' rv <- riskVariantFromGRanges(x=GRvariants, genotype=ge)
-#' phase(rv) <- p
+#' p.ar <- phaseMatrix2Array(p)
+#' rv <- riskVariantFromGRangesAndPhaseArray(x=GRvariants, phase=p.ar)
 #'
 #' # in this example all snps in the ASEset defines the region
 #' r1 <- granges(a)
@@ -2382,7 +2382,8 @@ setGeneric("lva", function(x, ...
 #' @export
 setMethod("lva", signature(x = "ASEset"),
 		function(x, rv, region, settings=list(),
-				 return.class="matrix", return.meta=FALSE, ...
+				 return.class="matrix", return.meta=FALSE, 
+				 verbose=FALSE, ...
 	){
 
 		if("threshold.distance" %in% names(settings)){
@@ -2409,6 +2410,7 @@ setMethod("lva", signature(x = "ASEset"),
 		grp[(phs[,,1] == 1) & (phs[,,2] == 1)] <- 3
 
 		#call internal regression function	
+		#function below will fail if there were no overlap between rs and rv
 		pvalues <- lva.internal(rs2, grp)
 
 		#create return object
