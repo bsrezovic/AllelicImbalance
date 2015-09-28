@@ -100,6 +100,7 @@ test_that(paste("checking .selectRegionAndTransferIndexToASEset"), {
 	exp <- a[c(1,2,2,3)]
 	idx <- c(1,1,2,2)
 	idn <- paste(c(1,1,2,2))
+	mcols(exp)[["ASEsetIndex"]] <- c(1,2,2,3)
 	mcols(exp)[["regionIndex"]] <- DataFrame(lvl1=idx)
 	mcols(exp)[["regionIndexName"]] <- DataFrame(lvl1=idn)
 
@@ -159,6 +160,7 @@ test_that(paste("checking .makeRegionGRangesFromASEsetWithRegionIndex"), {
 	
 	#add one region that is missing
 	x <- a[c(1,2,3,2,2,2,3,2,1,3)]
+	mcols(x)[["ASEsetIndex"]] <- c(1,2,3,2,2,2,3,2,1,3)
 	mcols(x)[["regionIndex"]] <- DataFrame(lvl1=c(1,1,2,2,3,3,4,4,5,5))
 	mcols(x)[["regionIndexName"]] <- DataFrame(lvl1=c(1,1,2,2,3,3,4,4,5,5))
 
@@ -167,8 +169,9 @@ test_that(paste("checking .makeRegionGRangesFromASEsetWithRegionIndex"), {
 	end(exp) <-	start(exp)[c(3,3,3,3,1)]
 	names(exp) <- 1:5
 	mcols(exp) <- NULL
-	mcols(exp)[["dummy"]] <- 1:5
+	mcols(exp)[["ASEsetIndex"]] <- IntegerList(list(c(1,2),c(3,2),c(2,2),c(3,2),c(1,3)))
 	mcols(exp)[["regionIndex"]] <- DataFrame(lvl1=1:5)
+	mcols(exp)[["regionIndexName"]] <- DataFrame(lvl1=as.character(c(1,2,3,4,5)))
 
 	#run tests
 	res <- .makeRegionGRangesFromASEsetWithRegionIndex(x)

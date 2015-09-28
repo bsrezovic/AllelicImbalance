@@ -46,7 +46,7 @@ NULL
 #' #add alternative allele information
 #' mcols(a)[["alt"]] <- inferAltAllele(a)
 #'
-#' # in this example all snps in the ASEset defines the region
+#' # in this example each and all snps in the ASEset defines the region
 #' region <- granges(a)
 #' t <- regionSummary(a, region)
 #'
@@ -54,13 +54,7 @@ NULL
 #' region <- split(granges(a)[c(1,2,2,3)],c(1,1,2,2))
 #' t <- regionSummary(a, region)
 #'
-#' # use a multilevel list as input (output will keep the list dimensions)
-#' # (Warning! The code for multievel lists will be implemented fully in time
-#' # for next release)
-#' # region <- split(granges(a)[c(1,2,2,3)],c(1,1,2,2))
-#' # names(region) <- c("introns", "exons")
-#' # region <- list(g1=list(tx1=region, tx2=region), g2=list(tx1=region, tx2=region, tx3=region))
-#' # t <- regionSummary(a, region)
+#' 
 NULL
 
 #' @rdname regionSummary
@@ -83,34 +77,15 @@ setMethod("regionSummary", signature("ASEset"),
 		#3 ref REF
 
 		if(class(region)=="GRanges" | class(region)=="GRangesList"){
-		reg <- .unlistGRangesListAndIndex(region)
-			
-		}else if(class(region)=="list"){
-			#something more complicated
-		}
+			reg <- .unlistGRangesListAndIndex(region)
+		}else if(class(region)=="list"){cat("list version not implemented")}
 
 		#make overlap and subset for ASEset
 		x <- .selectRegionAndTransferIndexToASEset(x, reg)
 		#make regional granges for she summaries
-		gr <- .makeRegionGRangesFromASEsetWithRegIndexAndASEsetIndex(x)
+		gr <- .makeRegionGRangesFromASEsetWithRegionIndex(x)
 		#pick our important variables
 		idx <-  mcols(x)[["regionIndex"]][[1]]
-		ar.dim3 <- length(unique(idx))
-
-#		}else if(class(region)=="list") {
-#			stop("The code here needs an update")
-	#		idx.mat <- .multiUnlist.index(region)	
-	#		idx.mat.names <- .multiUnlist.index.names(region)	
-	#		rownames(idx.mat) <- paste("lvl", (nrow(idx.mat)+1):2, sep="")
-	#		rownames(idx.mat.names) <- paste("lvl", (nrow(idx.mat.names)+1):2, sep="")
-	#		region <- .multiUnlist(region)		
-
-	#		idx <- togroup(PartitioningByWidth(elementLengths(region)))
-	#		ar.dim3 <- length(region)
-	#		ar.dim3.names <- 1:ar.dim3
-	# }
-
-
 		#fraction with maternal phase used as numerator
 		fr <- fraction(x, strand=strand, top.fraction.criteria="phase")
 		#which snp and sample pairs are heterozygotes
@@ -118,9 +93,12 @@ setMethod("regionSummary", signature("ASEset"),
 		#filter so all homozygotes become NAs 
 		fr[!t(fr.het.filt)] <- NA
 		#maternal phase map bias
-		mb <- .maternalPhaseMapBias(mb=mapBias(x, return.class="array"), ma=maternalAllele(x), va=x@variants)
+		print(dim(x))
+		mb <- t(.maternalPhaseMapBias(mb=mapBias(x, return.class="array"), ma=maternalAllele(x), va=x@variants))
 		#calculate delta
-		fr.d <- .deltaFromFractionMatrixAndMapBias(fr, t(mb))
+		print(dim(fr))
+		print(dim(mb))
+		fr.d <- .deltaFromFractionMatrixAndMapBias(fr, mb)
 		
 		#Summarize the statistics
 		hets <- .regionStatisticsFromMatrixAndIndex(t(fr.het.filt), idx, sum)
@@ -129,7 +107,7 @@ setMethod("regionSummary", signature("ASEset"),
 		sd.delta <- .regionStatisticsFromMatrixAndIndex(fr.d, idx, mean)
 		mean.fr <- .regionStatisticsFromMatrixAndIndex(fr, idx, mean)
 		sd.fr <- .regionStatisticsFromMatrixAndIndex(fr, idx, mean)
-		ai.dir <- .aiRegionDirectionFromMaternalPhaseMapBiasAndIndex(fr, t(mb), idx)
+		ai.dir <- .aiRegionDirectionFromMaternalPhaseMapBiasAndIndex(fr, mb, idx)
 
 		#make array
 		ar <- aperm(array(c(hets, homs, mean.fr, sd.fr, mean.delta, sd.delta, ai.dir),
@@ -141,7 +119,7 @@ setMethod("regionSummary", signature("ASEset"),
 		#create RegionSummary object
 		sset <- SummarizedExperiment(
 					assays = SimpleList(rs1=ar), 
-					colData = DataFrame(row.names=colnames(x)),
+					colData = colData(x),
 					rowRanges = gr)
 
 		rownames(sset) <- names(gr)
@@ -150,31 +128,10 @@ setMethod("regionSummary", signature("ASEset"),
 		#validObject(.Object)
 
 		#Return object
-		RS <- new("RegionSummary", sset,
-			meta = list()
+		new("RegionSummary", sset,
+			meta = list(),
+			sumnames = dimnames(ar)[[3]]
 		)
-		
-
-		if(return.class=="array"){
-			#check if index should be returned (recommended when wrapping GRangesList in lists )
-			if(return.meta){
-				if(populate.list){
-					list(x=ar,ix=idx.mat,ixn=idx.mat.names, gr=gr)
-				}else{
-					list(x=ar, gr=gr, idx.names=ar.dim3.names)
-				}
-			}else{
-				ar
-			}
-		}else if(return.class=="list"){
-			if(populate.list){
-				lst <- .region.list.populate(ar, idx.mat[-nrow(idx.mat),], idx.mat.names[-nrow(idx.mat.names),])
-				lst
-			}else{
-				lst <- lapply(seq(dim(ar)[3]), function(x) ar[ , , x])
-				names(lst) <- ar.dim3.names
-			}
-		}
 })
 
 
@@ -201,7 +158,7 @@ setMethod("regionSummary", signature("ASEset"),
 .maternalPhaseMapBias<- function(mb, ma, va){
 		#for loop (for now)
 		vmat <- matrix(va, byrow=TRUE, ncol=length(va), nrow=ncol(mb))
-		mbias.values <- matrix(NA, ncol=ncol(x), nrow=nrow(x))
+		mbias.values <- matrix(NA, ncol=ncol(mb), nrow=nrow(mb))
 		for (i in 1:nrow(mb)){
 			it.mbias <- mb[i,,]
 			it.mallele <- ma[i,]
@@ -228,6 +185,7 @@ setMethod("regionSummary", signature("ASEset"),
 
 		hits <- findOverlaps(a, reg)
 		a <- a[queryHits(hits)]
+		mcols(a)[["ASEsetIndex"]] <- queryHits(hits)
 		mcols(a)[["regionIndex"]] <- mcols(reg[subjectHits(hits)])[["regionIndex"]]
 		mcols(a)[["regionIndexName"]] <- mcols(reg[subjectHits(hits)])[["regionIndexName"]]
 		a <- a[sort(mcols(a)[["regionIndex"]][[1]], index.return=TRUE)$ix]
@@ -247,11 +205,15 @@ setMethod("regionSummary", signature("ASEset"),
 #return granges for each bin (index has to be sorted)
 .makeRegionGRangesFromASEsetWithRegionIndex <- function(x){
 	idx <- mcols(x)[["regionIndex"]][[1]]
+	idn <- mcols(x)[["regionIndexName"]][[1]]
 	spl <- split(granges(x), idx)
+	il <- IntegerList(lapply(spl,function(x){mcols(x)[["ASEsetIndex"]]}))
+	names(il) <- NULL
 	gr <- unlist(reduce(spl, min.gapwidth=100000000))
 	mcols(gr) <- NULL
-	mcols(gr)[["dummy"]] <- 1:5
+	mcols(gr)[["ASEsetIndex"]] <- il
 	mcols(gr)[["regionIndex"]] <- DataFrame(lvl1=as.integer(unique(idx)))
+	mcols(gr)[["regionIndexName"]] <- DataFrame(lvl1=as.character(unique(idn)))
 	gr
 }
 

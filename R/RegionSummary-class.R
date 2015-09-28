@@ -27,10 +27,22 @@ NULL
 #' @exportClass RegionSummary
 setClass("RegionSummary", contains = "RangedSummarizedExperiment",
 	representation(
-		meta = "list"
+		meta = "list",
+		sumnames = "character"
 	)
 )
 
+#' @rdname ASEset-class
+#' @export 
+setGeneric("sumnames", function(x, ...){
+    standardGeneric("sumnames")
+})
+
+#' @rdname ASEset-class
+#' @export 
+setMethod("sumnames", signature(x = "RegionSummary"), function(x) {
+	x@sumnames
+})
 
 
 
