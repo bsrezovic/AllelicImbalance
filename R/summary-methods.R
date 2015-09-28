@@ -94,7 +94,7 @@ setMethod("regionSummary", signature("ASEset"),
 		#make regional granges for she summaries
 		gr <- .makeRegionGRangesFromASEsetWithRegIndexAndASEsetIndex(x)
 		#pick our important variables
-		idx <-  mcols(x)[["regIndex"]][[1]]
+		idx <-  mcols(x)[["regionIndex"]][[1]]
 		ar.dim3 <- length(unique(idx))
 
 #		}else if(class(region)=="list") {
@@ -228,9 +228,9 @@ setMethod("regionSummary", signature("ASEset"),
 
 		hits <- findOverlaps(a, reg)
 		a <- a[queryHits(hits)]
-		mcols(a)[["regIndex"]] <- mcols(reg[subjectHits(hits)])[["regIndex"]]
-		mcols(a)[["regIndexName"]] <- mcols(reg[subjectHits(hits)])[["regIndexName"]]
-		a <- a[sort(mcols(a)[["regIndex"]][[1]], index.return=TRUE)$ix]
+		mcols(a)[["regionIndex"]] <- mcols(reg[subjectHits(hits)])[["regionIndex"]]
+		mcols(a)[["regionIndexName"]] <- mcols(reg[subjectHits(hits)])[["regionIndexName"]]
+		a <- a[sort(mcols(a)[["regionIndex"]][[1]], index.return=TRUE)$ix]
 		a
 }
 
@@ -239,17 +239,19 @@ setMethod("regionSummary", signature("ASEset"),
 		idx <- togroup(PartitioningByWidth(elementLengths(grl)))
 		idn <- names(grl)[idx]
 		new <- unlist(grl)
-		mcols(new)[["regIndex"]] <- DataFrame(lvl1=idx)
-		mcols(new)[["regIndexName"]] <- DataFrame(lvl1=idn)
+		mcols(new)[["regionIndex"]] <- DataFrame(lvl1=idx)
+		mcols(new)[["regionIndexName"]] <- DataFrame(lvl1=idn)
 		new
 }
 
-#return granges for each bin
-.makeRegionGRangesFromASEsetWithRegIndex <- function(x){
-	idx <- mcols(x)[["regIndex"]][[1]]
+#return granges for each bin (index has to be sorted)
+.makeRegionGRangesFromASEsetWithRegionIndex <- function(x){
+	idx <- mcols(x)[["regionIndex"]][[1]]
 	spl <- split(granges(x), idx)
 	gr <- unlist(reduce(spl, min.gapwidth=100000000))
-	mcols(gr)[["regIndex"]] <- unique(idx)
+	mcols(gr) <- NULL
+	mcols(gr)[["dummy"]] <- 1:5
+	mcols(gr)[["regionIndex"]] <- DataFrame(lvl1=as.integer(unique(idx)))
 	gr
 }
 

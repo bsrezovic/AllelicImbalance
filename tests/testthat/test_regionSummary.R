@@ -77,7 +77,7 @@ test_that(paste("checking .deltaFromFractionMatrixAndMapBias"), {
 
 })
 
-test_that(paste("checking .subsetAndMatchGRanges"), {
+test_that(paste("checking .selectRegionAndTransferIndexToASEset"), {
 
 	#####################
 	# Prepare data 1 
@@ -88,17 +88,23 @@ test_that(paste("checking .subsetAndMatchGRanges"), {
 	#####################
 	# Test 1 - one level region
 	#####################
-
-	reg <- c(granges(a)[c(1,2,2,3,1,1)])
+	reg <- c(split(granges(a)[c(1,2,2,3,1,1)], c(1,1,2,2,3,3)))
 			 
-	start(reg)[3:4] <- c(1,2)
-	end(reg)[3:4] <- c(1,2)
+	start(reg)[[3]] <- c(1,2)
+	end(reg)[[3]] <- c(1,2)
 
 	#prepeare expected data
-	exp <- a[1:2]
+	reg <- .unlistGRangesListAndIndex(reg)
+
+	#prepeare expected data
+	exp <- a[c(1,2,2,3)]
+	idx <- c(1,1,2,2)
+	idn <- paste(c(1,1,2,2))
+	mcols(exp)[["regionIndex"]] <- DataFrame(lvl1=idx)
+	mcols(exp)[["regionIndexName"]] <- DataFrame(lvl1=idn)
 
 	#run tests
-	res <- .subsetAndMatchGRanges(a, reg)
+	res <- .selectRegionAndTransferIndexToASEset(a, reg)
 	
 	#test equality
     expect_that(exp, equals(res))
@@ -125,8 +131,11 @@ test_that(paste("checking .unlistGRangesListAndIndex"), {
 	end(reg)[[3]] <- c(1,2)
 
 	#prepeare expected data
+	idx <- c(1,1,2,2,3,3,4,4,5,5,6,6)
+	idn <- paste(c(1,1,2,2,3,3,1,1,2,2,3,3))
 	exp <- unlist(reg)
-	mcols(exp)[["regindex"]] <- DataFrame(lvl1=c(1,1,2,2,3,3,4,4,5,5,6,6))
+	mcols(exp)[["regionIndex"]] <- DataFrame(lvl1=idx)
+	mcols(exp)[["regionIndexName"]] <- DataFrame(lvl1=idn)
 
 	#run tests
 	res <- .unlistGRangesListAndIndex(reg)
@@ -136,4 +145,36 @@ test_that(paste("checking .unlistGRangesListAndIndex"), {
 
 })
 
+test_that(paste("checking .makeRegionGRangesFromASEsetWithRegionIndex"), {
+
+	#####################
+	# Prepare data 1 
+	#####################
+	data(ASEset) 
+	a <- ASEset
+
+	#####################
+	# Test 1 
+	#####################
+	
+	#add one region that is missing
+	x <- a[c(1,2,3,2,2,2,3,2,1,3)]
+	mcols(x)[["regionIndex"]] <- DataFrame(lvl1=c(1,1,2,2,3,3,4,4,5,5))
+	mcols(x)[["regionIndexName"]] <- DataFrame(lvl1=c(1,1,2,2,3,3,4,4,5,5))
+
+	#prepeare expected data
+	exp <- granges(a)[c(1,3,2,3,3)]
+	end(exp) <-	start(exp)[c(3,3,3,3,1)]
+	names(exp) <- 1:5
+	mcols(exp) <- NULL
+	mcols(exp)[["dummy"]] <- 1:5
+	mcols(exp)[["regionIndex"]] <- DataFrame(lvl1=1:5)
+
+	#run tests
+	res <- .makeRegionGRangesFromASEsetWithRegionIndex(x)
+	
+	#test equality
+    expect_that(exp, equals(res))
+
+})
 
