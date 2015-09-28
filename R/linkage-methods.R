@@ -43,21 +43,15 @@ NULL
 #' p.ar <- phaseMatrix2Array(p)
 #' rv <- riskVariantFromGRangesAndPhaseArray(x=GRvariants, phase=p.ar)
 #'
-#' # in this example all snps in the ASEset defines the region
+#' # in this example each and every snp in the ASEset defines a region
 #' r1 <- granges(a)
 #'
 #' # in this example two overlapping subsets of snps in the ASEset defines the region
 #' r2 <- split(granges(a)[c(1,2,2,3)],c(1,1,2,2))
 #'
-#' # use a multilevel list as input (output will keep the list dimensions)
-#' region <- split(granges(a)[c(1,2,2,3)],c(1,1,2,2))
-#' names(region) <- c("introns", "exons")
-#' r3 <- list(g1=list(tx1=region, tx2=region), g2=list(tx1=region, tx2=region, tx3=region))
-#'
 #' # link variant almlof (lva)
 #' lva(a, rv, r1)
 #' lva(a, rv, r2)
-#' lva(a, rv, r3)
 #' 
 NULL
 
@@ -72,7 +66,7 @@ setGeneric("lva", function(x, ...
 #' @export
 setMethod("lva", signature(x = "ASEset"),
 		function(x, rv, region, settings=list(),
-				 return.class="matrix", return.meta=FALSE, 
+				 return.class="LinkVariantAlmlof",
 				 verbose=FALSE, ...
 	){
 		if("threshold.distance" %in% names(settings)){
@@ -82,8 +76,8 @@ setMethod("lva", signature(x = "ASEset"),
 		}
 
 		#region summary
-		rs <- regionSummary(x, region, return.class="array", return.meta=TRUE,
-							threshold.pvalue=1)
+		rs <- regionSummary(x, region)
+							
 
 		#match riskVariant to rs granges
 		hits <- findOverlaps(rv, rs$gr + distance)
