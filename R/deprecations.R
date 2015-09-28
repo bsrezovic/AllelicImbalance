@@ -539,3 +539,4 @@ implodeList.old <- function(x) {
     eval(parse(text = paste0("for(i in 1:length(", oname, ")){assign(names(", oname, 
         ")[i],", oname, "[[i]])}")), parent.frame())
 } 
+

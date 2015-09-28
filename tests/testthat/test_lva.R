@@ -63,3 +63,4 @@ test_that(paste("checking .groupBasedOnPhaseAndAlleleCombination"), {
 })
 
 
+

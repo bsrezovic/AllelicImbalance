@@ -75,7 +75,6 @@ setMethod("lva", signature(x = "ASEset"),
 				 return.class="matrix", return.meta=FALSE, 
 				 verbose=FALSE, ...
 	){
-
 		if("threshold.distance" %in% names(settings)){
 			distance <- settings[["threshold.distance"]]
 		}else{
@@ -84,31 +83,31 @@ setMethod("lva", signature(x = "ASEset"),
 
 		#region summary
 		rs <- regionSummary(x, region, return.class="array", return.meta=TRUE,
-							threshold.pvalue=1, drop=FALSE)
+							threshold.pvalue=1)
 
 		#match riskVariant to rs granges
 		hits <- findOverlaps(rv, rs$gr + distance)
-
+		#stop if no overlap
+		if(length(rv2)==0){stop("no overlap between rs and rv")}
+		#if overlap, then subset hits
 		rs2 <- rs$x[,,subjectHits(hits), drop=FALSE]
-
 		rv2 <- rv[queryHits(hits), drop=FALSE]
 
-		#groups
-		#make unit of this section
-		#make sure it is possible to have rv2 with only one row or column.
-
-		#pick out 
+		#make groups for regression based on (het hom het)
 		grp <- .groupBasedOnPhaseAndAlleleCombination(phase(rv2,return.class="array")[,,c(1, 2), drop=FALSE])
-
 		#call internal regression function	
-		#function below will fail if there were no overlap between rs and rv
 		pvalues <- lva.internal(rs2, grp)
+
+		#create an object with results
+		#lva <- new("Lva", sset,
+		#	meta = list()
+		#)
 
 		#create return object
 		if(return.class=="vector"){
 			pvalues
 		}else if(return.class=="matrix"){
-			if("ixn" %in% names(rs)){
+			if("ixn" %in% names(rs2)){
 				rs2.names <- apply(rs$ixn[-nrow(rs$ixn),
 								   subjectHits(hits)],2,paste,collapse="/")
 				region.annotation <- rs2.names

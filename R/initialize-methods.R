@@ -548,13 +548,12 @@ riskVariantFromGRangesAndPhaseArray <- function(
 
 		rownames(sset) <- names(x)
 
-	#valid
-	#validObject(.Object)
+		#valid
+		#validObject(.Object)
 
-	#Return object
-	new("riskVariant", sset,
-		meta = list()
-	)
+		#Return object
+		new("riskVariant", sset,
+			meta = list()
+		)
 }
-
 
