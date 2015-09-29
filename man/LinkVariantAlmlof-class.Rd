@@ -5,11 +5,18 @@
 \alias{LinkVariantAlmlof}
 \alias{LinkVariantAlmlof-class}
 \alias{LinkVariantAlmlof-method}
+\alias{pvalue}
+\alias{pvalue,LinkVariantAlmlof-method}
 \title{LinkVariantAlmlof class}
-\arguments{
-\item{value}{argument used for replacement}
+\usage{
+pvalue(x, ...)
 
+\S4method{pvalue}{LinkVariantAlmlof}(x)
+}
+\arguments{
 \item{...}{pass arguments to internal functions}
+
+\item{value}{argument used for replacement}
 }
 \description{
 Object that holds results from AI detection.

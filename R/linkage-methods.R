@@ -45,12 +45,19 @@ NULL
 #'
 #' # in this example each and every snp in the ASEset defines a region
 #' r1 <- granges(a)
+#' 
+#' #use GRangesList to merge and use regions defined by each element of the
+#' GRangesList
+#' r1b <- GRangesList(r1)
+#' r1c <- GRangesList(r1, r1)
 #'
 #' # in this example two overlapping subsets of snps in the ASEset defines the region
 #' r2 <- split(granges(a)[c(1,2,2,3)],c(1,1,2,2))
 #'
 #' # link variant almlof (lva)
 #' lva(a, rv, r1)
+#' lva(a, rv, r1b)
+#' lva(a, rv, r1c)
 #' lva(a, rv, r2)
 #' 
 NULL
@@ -85,22 +92,21 @@ setMethod("lva", signature(x = "ASEset"),
 		#stop if no overlap
 		if(length(rv2)==0){stop("no overlap between rs and rv")}
 		#if overlap, then subset hits
-		rs2 <- rs$x[,,subjectHits(hits), drop=FALSE]
-		rv2 <- rv[queryHits(hits), drop=FALSE]
-
+		rs2 <- rs[subjectHits(hits)]
+		rv2 <- rv[queryHits(hits),, drop=FALSE]
 		#make groups for regression based on (het hom het)
-		grp <- .groupBasedOnPhaseAndAlleleCombination(phase(rv,return.class="array")[,,c(1, 2), drop=FALSE])
+		grp <- .groupBasedOnPhaseAndAlleleCombination(phase(rv2,return.class="array")[,,c(1, 2), drop=FALSE])
 		#call internal regression function	
-		mat <- lva.internal(assays(rs)[["rs1"]], grp)
+		mat <- lva.internal(assays(rs2)[["rs1"]], t(grp))
 		#create return object
 		if(return.class=="LinkVariantAlmlof"){
 			sset <- SummarizedExperiment(
-						assays = SimpleList(rs1=assays(rs)[["rs1"]], lvagroup=t(grp)), 
-						colData = colData(rs),
-						rowRanges = granges(rs))
+						assays = SimpleList(rs1=assays(rs2)[["rs1"]], lvagroup=grp), 
+						colData = colData(rs2),
+						rowRanges = granges(rs2))
 
-			rownames(sset) <- rownames(rs)
-			mcols(sset)[["RiskVariantMeta"]] <- DataFrame(GR=granges(rv))
+			rownames(sset) <- rownames(rs2)
+			mcols(sset)[["RiskVariantMeta"]] <- DataFrame(GR=granges(rv2))
 			mcols(sset)[["LMCommonParam"]] <- DataFrame(mat, row.names=NULL)
 
 			#create an object with results
@@ -118,7 +124,7 @@ setMethod("lva", signature(x = "ASEset"),
 #send in an array rows=SNPs, cols=sampels, 3dim=phase with maternal as el. 1 and paternal as el. 2)
 #returns a matrix with three groups, het A/B =1, hom (A/A, B/B) =2 and het B/A =3
 .groupBasedOnPhaseAndAlleleCombination <- function(ar){
-		grp <- matrix(2, nrow=dim(ar)[2], ncol=dim(ar)[1])
+		grp <- matrix(2, nrow=dim(ar)[1], ncol=dim(ar)[2])
 		grp[(ar[,,1] == 1) & (ar[,,2] == 0)] <- 1                             	
 		grp[(ar[,,1] == 0) & (ar[,,2] == 1)] <- 3
 		grp

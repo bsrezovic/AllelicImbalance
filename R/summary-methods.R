@@ -22,8 +22,7 @@ NULL
 #' @aliases regionSummary,numeric-method
 #' @docType methods
 #' @param x ASEset object
-#' @param region to summmarize over, the object can be a GRanges, GRangesList or 
-#' list containing a GRangesList in the root
+#' @param region to summmarize over, the object can be a GRanges, GRangesList 
 #' @param strand can be "+", "-" or "*"
 #' @param threshold.pvalue used in filter when to count AI as significant
 #' @param return.class "array" or "list".
@@ -207,7 +206,7 @@ setMethod("regionSummary", signature("ASEset"),
 		if(!is.null(names(grl))){
 			idn <- names(grl)[idx]
 		}else{
-			idn <- 1:length(idx)
+			idn <- "nameless"
 		}
 		new <- unlist(grl)
 		mcols(new)[["regionIndex"]] <- DataFrame(lvl1=idx)

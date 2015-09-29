@@ -17,8 +17,7 @@ regionSummary(x, ...)
 
 \item{...}{arguments to forward to internal functions}
 
-\item{region}{to summmarize over, the object can be a GRanges, GRangesList or
-list containing a GRangesList in the root}
+\item{region}{to summmarize over, the object can be a GRanges, GRangesList}
 
 \item{strand}{can be "+", "-" or "*"}
 

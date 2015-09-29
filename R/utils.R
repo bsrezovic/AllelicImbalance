@@ -33,7 +33,7 @@
 #important helper to pick put the frequence of the reference allele
 .arrayFromAlleleVector <- function(var, sel, nr, nc){
 	array(matrix(var, ncol=length(var), nrow=nr, byrow=TRUE)==sel
-		, dim=c(nr, length(x@variants), ncol=nc))
+		, dim=c(nr, length(var), ncol=nc))
 }
 
 #this is the follow up on arrayFromAlleleVector. 

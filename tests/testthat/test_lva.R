@@ -127,6 +127,41 @@ test_that(paste("checking .groupBasedOnPhaseAndAlleleCombination"), {
 	res <- .groupBasedOnPhaseAndAlleleCombination(ar)
 	
 	#test equality
-    expect_equal(as.numeric(exp), as.numeric(res))
+    expect_that(exp, equals(res))
+
+	#####################
+	# Test 2 - test that same rows give same values in the result
+	#####################
+	# rows: SNPs
+	# cols: samples
+			
+	mat <- c(0, 1, 1, 1,
+			 1, 0, 1, 1,
+			 0, 1, 1, 1,
+			 0, 1, 1, 1,
+			 0, 1, 1, 1)
+
+	pat <- c(0, 1, 0, 1,
+			 0, 1, 1, 0,
+			 1, 1, 0, 0,
+			 1, 1, 0, 0,
+			 1, 1, 0, 0)
+
+	ar <- aperm(array(c(mat, pat), c(4, 5, 2)),c(2,1,3))
+
+	#prepare expected data (homozygotes should have 2)
+	e1  <- c(2, 2, 1, 2,
+			 1, 3, 2, 1,
+			 3, 2, 1, 1,
+			 3, 2, 1, 1,
+			 3, 2, 1, 1)
+	exp <- matrix(e1,ncol=4, byrow=TRUE)
+
+	#run tests
+	res <- .groupBasedOnPhaseAndAlleleCombination(ar)
+	
+	#test equality
+    expect_that(exp, equals(res))
 
 })
+
