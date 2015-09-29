@@ -127,21 +127,21 @@ setMethod("minFreqFilt", signature(x = "ASEset"),
 
 		if(VariantAlleleSource=="mcols"){
 			cat("not implemented yet")
-		}else if(altAlleleSource=="alleleCounts"){
+		}else if(VariantAlleleSource=="alleleCounts"){
 
 			tf <- fr >= threshold.frequency
 			apply(tf, c(1,2), function(x){sum(x)>=2})
 		}
 })
 
-# @rdname multiAllelicFilt
+# @rdname minCountFilt
 setGeneric("minCountFilt", function(x, ...){
     standardGeneric("minCountFilt")
 })
 
 setMethod("minCountFilt", signature(x = "ASEset"), 
 		function(x, strand="*", threshold.counts=1,
-				   sum=NULL){
+				   sum=""){
 
 		#extract alleleCounts
 		ar <- alleleCounts(x, strand=strand, return.class="array")
@@ -151,10 +151,16 @@ setMethod("minCountFilt", signature(x = "ASEset"),
 	##	if(sum=="sample"){}
 	##	acst <- apply(ar, c(1,2), sum)
 	##	
-	##	if(sum=="variants"){}
-
-		#return object with three dim
-		ar  >= threshold.counts
-
+		if(sum=="variants"){
+			
+			apply(ar, c(1,2), function(x){sum(x)>= threshold.counts})
+		
+		}else{
+			#return object with three dim
+			ar  >= threshold.counts
+		}
 })
+
+
+
 

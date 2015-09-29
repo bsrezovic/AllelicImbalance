@@ -394,8 +394,11 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*",
 		if(!"ref" %in% names(mcols(x))){
 			stop("the ref mcol has not been initialized")
 		}
+
+		ref <- ref(x)
+
 		#select only ref rows (here is mcols() ref required)
-		ar <- .arrayFromAlleleVector(x@variants, mcols(x)[,"ref"], nrow(x), ncol(x))
+		ar <- .arrayFromAlleleVector(x@variants, ref,nc=ncol(x))
 		#use the array to subset the ref frequencies
 		ret <- .subsetFrequencyWithAlleleArray(fr, ar)
 		#use maternal phase freq, by reverse values in mat that are not ref (0)
@@ -406,13 +409,13 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*",
 			stop("the ref mcol has not been initialized")
 		}
 		#select only ref rows (here is mcols() ref required)
-		ar <- .arrayFromAlleleVector(x@variants, mcols(x)[,"ref"], nrow(x), ncol(x))
+		ar <- .arrayFromAlleleVector(x@variants, ref,nc=ncol(x))
 		#use the array to subset the ref frequencies
 		ret <- .subsetFrequencyWithAlleleArray(fr, ar)
 	}else if(top.fraction.criteria=="maxcount"){
 		#use output from rank as maxcount, select only 1st rank 
 		ar <- .arrayFromAlleleVector(x@variants, 
-				arank(x, strand = strand, return.class="matrix")[,1], nrow(x), ncol(x))
+				arank(x, strand = strand, return.class="matrix")[,1], ncol(x))
 		#use the array to subset the ref frequencies
 		ret <- .subsetFrequencyWithAlleleArray(fr, ar)
 	}
@@ -528,11 +531,11 @@ setMethod("frequency", signature(x = "ASEset"), function(x,
 	#threshold.count.sample cannot be zero (further down f=1/0 woulf fail)
 	if(threshold.count.sample<1){stop("threshold.count.sample needs to be >1")}
 	#calculate frequency from Allele counts
-	ar <- .calcFrequencyFromAlleleCounts(alleleCounts(x, strand=strand, return.class="array"), threshold.count.sample)
+	ar2 <- .calcFrequencyFromAlleleCounts(alleleCounts(x, strand=strand, return.class="array"), threshold.count.sample)
 	if(return.class=="array"){
-		return(ar)
+		return(ar2)
 	}else if(return.class=="list"){
-		return(.array2MatrixList(ar))
+		return(.array2MatrixList(ar2))
 	}else{
 		stop("return.class has to be 'array' or 'list'")
 	}
@@ -541,7 +544,7 @@ setMethod("frequency", signature(x = "ASEset"), function(x,
 ### helpers for frequemcy
 ###
 .calcFrequencyFromAlleleCounts <- function(ar, th){
-	actot <- apply(ar, c(1,2), sum)
+	actot <- apply(ar, c(1,2), sum, na.rm=TRUE)
 	actot[actot  < th] <- NaN
 	ar * array(as.vector(1/actot),dim=dim(ar))
 }
