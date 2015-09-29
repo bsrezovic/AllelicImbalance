@@ -111,4 +111,50 @@ setMethod("multiAllelicFilt", signature(x = "ASEset"),
 		}
 })
 
+# @rdname multiAllelicFilt
+setGeneric("minFreqFilt", function(x, ...){
+    standardGeneric("minFreqFilt")
+})
+
+setMethod("minFreqFilt", signature(x = "ASEset"), 
+		function(x, strand="*", VariantAlleleSource="alleleCounts", threshold.frequency=0.10
+				   ){
+
+		#find SNP types
+		fr <- frequency(x, strand=strand, 
+			threshold.count.sample=1,
+			return.class="array")
+
+		if(VariantAlleleSource=="mcols"){
+			cat("not implemented yet")
+		}else if(altAlleleSource=="alleleCounts"){
+
+			tf <- fr >= threshold.frequency
+			apply(tf, c(1,2), function(x){sum(x)>=2})
+		}
+})
+
+# @rdname multiAllelicFilt
+setGeneric("minCountFilt", function(x, ...){
+    standardGeneric("minCountFilt")
+})
+
+setMethod("minCountFilt", signature(x = "ASEset"), 
+		function(x, strand="*", threshold.counts=1,
+				   sum=NULL){
+
+		#extract alleleCounts
+		ar <- alleleCounts(x, strand=strand, return.class="array")
+
+	##	if(sum=="alleles"){}
+	##	acat <- apply(ar, c(1,2), sum)
+	##	if(sum=="sample"){}
+	##	acst <- apply(ar, c(1,2), sum)
+	##	
+	##	if(sum=="variants"){}
+
+		#return object with three dim
+		ar  >= threshold.counts
+
+})
 

@@ -1,4 +1,4 @@
-#'@include ASEset-class.R
+#'@include oSEset-class.R
 NULL
 
 
@@ -204,6 +204,21 @@ setMethod("lva.internal", signature(x = "array"),
 
 
 
-
-
+.lvaRegressionReturnCommonParamMatrix <- function(ar, grp, element){
+	mat <- t(sapply(1:dim(ar)[1], function(i, y, x){
+				if(sum(!(is.na(y[i, ,element])))==0){
+					c(NA, NA, NA, NA, NA, NA, NA, NA)
+					
+				}else{
+					s <-summary(lm(y[i, ,element]~x[, i]))$coefficients
+					if(!nrow(s)==1){
+						c(s[1,1],s[2,1],s[1,2],s[2,2],s[1,3],s[2,3],s[1,4],s[2,4])
+					}else{
+						c(s[1,1],NA,s[1,2],NA,s[1,3],NA,s[1,4],NA)
+					}
+				}
+		}, y=ar, x=grp))
+	colnames(mat) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
+	mat
+}
 

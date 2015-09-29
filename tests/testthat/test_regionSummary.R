@@ -144,6 +144,13 @@ test_that(paste("checking .unlistGRangesListAndIndex"), {
 	#test equality
     expect_that(exp, equals(res))
 
+	#####################
+	# Test 2 - test what happens if names(region) is null
+	#####################
+
+	## The function can handle it right now.
+	## Implement test as fast as possible!!
+
 })
 
 test_that(paste("checking .makeRegionGRangesFromASEsetWithRegionIndex"), {

@@ -354,13 +354,11 @@ setMethod("plot", signature(x = "LinkVariantAlmlof"), function(x,
 
 	for(i in 1:length(x)){
 		#y
-		mv <- assays(lv)[["rs1"]][i,,3]
+		mv <- assays(x)[["rs1"]][i,,3]
 		#x
-		grp <- assays(lv)[["lvagroup"]][i,]
-		#regr line
-		grp <- assays(lv)[["lvagroup"]][i,]
+		grp <- assays(x)[["lvagroup"]][i,]
 		#lmcp
-		lmcp <- mcols(lv)[["LMCommonParam"]][i,,drop=FALSE]
+		lmcp <- mcols(x)[["LMCommonParam"]][i,,drop=FALSE]
 		#slope
 		slope <- lmcp[["est2"]]
 		#intercept
@@ -369,12 +367,12 @@ setMethod("plot", signature(x = "LinkVariantAlmlof"), function(x,
 		plot(grp, mv, pch=16)
 		abline(intcpt,slope,lwd=2)
 		
-		ra <- paste(as.data.frame(range(granges(lv[1]))))
-		text1 <- paste("Region:", names(lv[i]), " P-value:",signif(pvalue(lv[i]),3), sep="")
+		ra <- paste(as.data.frame(range(granges(x[1]))))
+		text1 <- paste("Region:", names(x[i]), " P-value:",signif(pvalue(x[i]),3), sep="")
 		text2 <- paste("Chr:", ra[1], " Start:", ra[2], " End:", ra[3] , sep="")
 
-		SNPs <- length(mcols(lv1)[["ASEsetIndex"]][[1]])
-		text3 <- paste("Nr of SNPs:", SNPs, " Hom:", sum(assays(lv)[["rs1"]][i,,1]), " Het:", sum(assays(lv)[["rs1"]][i,,2]) , sep="")
+		SNPs <- length(mcols(x[1])[["ASEsetIndex"]][[1]])
+		text3 <- paste("Nr of SNPs:", SNPs, " Hom:", sum(assays(x)[["rs1"]][i,,1]), " Het:", sum(assays(x)[["rs1"]][i,,2]) , sep="")
 
 		mtext(text1, padj=-3.5)
 		mtext(text2, padj=-2.0)

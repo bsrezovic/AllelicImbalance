@@ -204,7 +204,11 @@ setMethod("regionSummary", signature("ASEset"),
 #sorted and indexed ASEset
 .unlistGRangesListAndIndex <- function(grl){
 		idx <- togroup(PartitioningByWidth(elementLengths(grl)))
-		idn <- names(grl)[idx]
+		if(!is.null(names(grl))){
+			idn <- names(grl)[idx]
+		}else{
+			idn <- 1:length(idx)
+		}
 		new <- unlist(grl)
 		mcols(new)[["regionIndex"]] <- DataFrame(lvl1=idx)
 		mcols(new)[["regionIndexName"]] <- DataFrame(lvl1=idn)
