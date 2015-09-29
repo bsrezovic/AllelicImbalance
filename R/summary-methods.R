@@ -220,4 +220,3 @@ setMethod("regionSummary", signature("ASEset"),
 	mcols(gr)[["regionIndexName"]] <- DataFrame(lvl1=as.character(unique(idn)))
 	gr
 }
-
