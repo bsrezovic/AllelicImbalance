@@ -180,4 +180,3 @@ test_that(paste("checking .makeRegionGRangesFromASEsetWithRegionIndex"), {
     expect_that(exp, equals(res))
 
 })
-
