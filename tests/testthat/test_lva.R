@@ -61,4 +61,3 @@ test_that(paste("checking .groupBasedOnPhaseAndAlleleCombination"), {
     expect_equal(as.numeric(exp), as.numeric(res))
 
 })
-

@@ -8,4 +8,3 @@
 	files <- sub("/","",files)
 	paste(normalizePath(dir),"/",files, sep="")
 }
-
