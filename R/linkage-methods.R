@@ -1,4 +1,4 @@
-#'@include oSEset-class.R
+#'@include ASEset-class.R
 NULL
 
 
@@ -87,9 +87,9 @@ setMethod("lva", signature(x = "ASEset"),
 							
 
 		#match riskVariant to rs granges
-		hits <- findOverlaps(rv, rs$gr + distance)
+		hits <- findOverlaps(rv, granges(rs) + distance)
 		#stop if no overlap
-		if(length(rv2)==0){stop("no overlap between rs and rv")}
+		if(length(hits)==0){stop(paste("no rs and rv are close with distance: ",distance, sep=""))}
 		#if overlap, then subset hits
 		rs2 <- rs[subjectHits(hits)]
 		rv2 <- rv[queryHits(hits),, drop=FALSE]
@@ -203,20 +203,22 @@ setMethod("lva.internal", signature(x = "array"),
 		function(x, grp, element=3, ...
 	){
 		
-		unlist(.lvaRegressionPvalue(x, grp, element))
+		#unlist(.lvaRegressionPvalue(x, grp, element))
+		.lvaRegressionReturnCommonParamMatrix(x, grp, element)
+
 })
 
 ### -------------------------------------------------------------------------
 ### helpers for lva.internal
 ###
 
-# input ar array 1d=samples, 2d=variable, 3d=SNP
+# input ar array 1d=SNP, 2d=samples, 3d=variable
 # input grp matrix with group 1 2 3. 2d=samples, 1d=SNP
 # lapply over each snp and make regression over variable element based on grp
 # output is a list with one result for each SNP
 .lvaRegressionPvalue <- function(ar, grp, element){
-	lapply(1:dim(ar)[3], function(i, y, x){
-				summary(lm(y[, element, 1]~x[i, ]))$coefficients[2, 4]
+	lapply(1:dim(ar)[1], function(i, y, x){
+				summary(lm(y[i, ,element]~x[, i]))$coefficients[2, 4]
 		}, y=ar, x=grp)
 }
 

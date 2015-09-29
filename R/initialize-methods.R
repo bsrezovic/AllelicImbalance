@@ -510,15 +510,15 @@ GAnalysis <- function(
 	object
 }
 
-#' Initialize riskVariant
+#' Initialize RiskVariant
 #' 
-#' Functions to construct riskVariant objects
+#' Functions to construct RiskVariant objects
 #' 
 #' produces a class container for reference bias calculations
 #' 
-#' @name initialize-riskVariant
-#' @rdname initialize-riskVariant
-#' @aliases initialize-riskVariant 
+#' @name initialize-RiskVariant
+#' @rdname initialize-RiskVariant
+#' @aliases initialize-RiskVariant 
 #' @param x GRanges object for the SNPs
 #' @param phase array with phaseinfo
 #' @param ... internal arguments
@@ -533,7 +533,7 @@ GAnalysis <- function(
 #' 
 NULL
 
-#' @rdname initialize-riskVariant
+#' @rdname initialize-RiskVariant
 #' @export 
 #setMethod("riskVariant","riskVariant", function(
 riskVariantFromGRangesAndPhaseArray <- function(
@@ -552,7 +552,7 @@ riskVariantFromGRangesAndPhaseArray <- function(
 		#validObject(.Object)
 
 		#Return object
-		new("riskVariant", sset,
+		new("RiskVariant", sset,
 			meta = list()
 		)
 }
