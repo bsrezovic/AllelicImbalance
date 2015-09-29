@@ -85,7 +85,7 @@ test_that(paste("checking .lvaRegressionReturnCommonParamMatrix"), {
 			  ncol=8, nrow=2,byrow=TRUE)
 	exp2 <- matrix(
 			c(0.23333333, 0.05, 0.31180478, 0.14433757, 0.7483315, 0.3464102, 0.5910148, 0.7877044,
-			  1, NA, NA, NA, NA, NA, NA, NA),
+			  1.00000000, NaN, NaN, NaN, NA, NA, NA, NA),
 			  ncol=8, nrow=2,byrow=TRUE)
 	colnames(exp1) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
 	colnames(exp2) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
@@ -165,37 +165,8 @@ test_that(paste("checking .groupBasedOnPhaseAndAlleleCombination"), {
 
 })
 
-test_that(paste("checking .groupBasedOnPhaseAndAlleleCombinationCharacter"), {
+test_that(paste("checking .groupBasedOnPhaseAndAlleleCombination"), {
 
-	#####################
-	# Test 1
-	#####################
-	# rows: SNPs
-	# cols: samples
-			
-	mat <- c(0, 1, 1, 1,
-			 1, 0, 1, 1,
-			 0, 1, 1, 1)
-
-	pat <- c(0, 1, 0, 1,
-			 0, 1, 1, 0,
-			 1, 1, 0, 0)
-
-	ar <- aperm(array(c(mat, pat), c(4, 3, 2)),c(2,1,3))
-	ref <- c("A","T","G")
-	alt <- c("T","G","C")
-	#prepare expected data (homozygotes should have 2)
-	e1  <- c(2, 2, 1, 2,
-			 1, 3, 2, 1,
-			 3, 2, 1, 1)
-	exp <- matrix(e1,ncol=4, byrow=TRUE)
-	
-
-	#run tests
-	res <- .groupBasedOnPhaseAndAlleleCombinationCharacter(ar)
-	
-	#test equality
-    expect_that(exp, equals(res))
 
 	#####################
 	# Test 2 - test that same rows give same values in the result
