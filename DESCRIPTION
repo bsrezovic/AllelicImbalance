@@ -10,15 +10,15 @@ Description: Provides a framework for allelic specific expression
     investigation using RNA-seq data.
 License: GPL-3
 URL: https://github.com/pappewaio/AllelicImbalance
-BugReports: https://github.com/pappewaio/AllelicImbalance/issues 
-Suggests: 
+BugReports: https://github.com/pappewaio/AllelicImbalance/issues
+Suggests:
     testthat,
     org.Hs.eg.db,
     TxDb.Hsapiens.UCSC.hg19.knownGene,
     SNPlocs.Hsapiens.dbSNP.20120608,
     BiocStyle,
     knitr
-Depends: 
+Depends:
     R (>= 3.2.0),
     grid,
     GenomicRanges,
@@ -41,3 +41,36 @@ Imports:
 LazyData: TRUE
 biocViews: Genetics, Infrastructure, Sequencing
 VignetteBuilder: knitr
+Collate:
+    'ASEset-class.R'
+    'AllelicImbalance-package.R'
+    'DetectedAI-class.R'
+    'GlobalAnalysis-class.R'
+    'GvizTrack-methods.R'
+    'LinkVariantAlmlof-class.R'
+    'initialize-methods.R'
+    'RegionSummary-class.R'
+    'RiskVariant-class.R'
+    'auxillary-functions-annotation.R'
+    'auxillary-functions-visuals.R'
+    'auxillary-methods-annotation.R'
+    'auxillary-methods-summaries.R'
+    'auxillary-methods.R'
+    'barplot-methods.R'
+    'binom.test-methods.R'
+    'boxplot-methods.R'
+    'chisq.test-methods.R'
+    'deprecations.R'
+    'detect-methods.R'
+    'filter-methods.R'
+    'histplot-methods.R'
+    'inference-methods.R'
+    'linkage-methods.R'
+    'list-methods.R'
+    'locationplot-methods.R'
+    'mapbias-methods.R'
+    'plot-methods.R'
+    'show-methods.R'
+    'simulation-methods.R'
+    'summary-methods.R'
+    'utils.R'

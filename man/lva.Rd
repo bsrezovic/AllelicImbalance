@@ -23,11 +23,9 @@ lva(x, ...)
 
 \item{settings}{RiskVariant object with phase and alternative allele information}
 
-\item{return.class}{'vector' or 'matrix'}
+\item{return.class}{'LinkVariantAlmlof' (more options in future)}
 
 \item{verbose}{logical, if set TRUE, then function will be more talkative}
-
-\item{return.meta}{logical to return a list with metainformation}
 }
 \description{
 make an almlof regression for arrays
@@ -58,11 +56,18 @@ rv <- RiskVariantFromGRangesAndPhaseArray(x=GRvariants, phase=p.ar)
 # in this example each and every snp in the ASEset defines a region
 r1 <- granges(a)
 
+#use GRangesList to merge and use regions defined by each element of the
+GRangesList
+r1b <- GRangesList(r1)
+r1c <- GRangesList(r1, r1)
+
 # in this example two overlapping subsets of snps in the ASEset defines the region
 r2 <- split(granges(a)[c(1,2,2,3)],c(1,1,2,2))
 
 # link variant almlof (lva)
 lva(a, rv, r1)
+lva(a, rv, r1b)
+lva(a, rv, r1c)
 lva(a, rv, r2)
 }
 \author{

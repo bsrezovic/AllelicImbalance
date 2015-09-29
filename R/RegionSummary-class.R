@@ -1,19 +1,18 @@
-#'@include initialize-methods.R
+#' @include initialize-methods.R
 NULL
 
 #' RegionSummary class
 #' 
-#' Object that holds results from AI detection.
+#' Object that holds results from the regionSummary method
 #'
-#' The RegionSummary-class contains 
+#' The RegionSummary-class objects contains summaries for specified regions
 #'
 #' @name RegionSummary-class
 #' @rdname RegionSummary-class
 #' @aliases RegionSummary-class RegionSummary RegionSummary-method
-#' @docType class
-#' @param value argument used for replacement
+#' @docType class 
+#' @param x RegionSummary object
 #' @param ... pass arguments to internal functions
-#'
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords class RegionSummary
 #' @examples

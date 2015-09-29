@@ -14,11 +14,10 @@ NULL
 #' @aliases lva,array-method
 #' @docType methods
 #' @param x ASEset object with phase and 'ref'/'alt' allele information
-#' @param rv riskVariant object with phase and 'ref'/'alt' allele information
-#' @param region riskVariant object with phase and alternative allele information
-#' @param settings riskVariant object with phase and alternative allele information
-#' @param return.class 'vector' or 'matrix'
-#' @param return.meta logical to return a list with metainformation
+#' @param rv RiskVariant object with phase and 'ref'/'alt' allele information
+#' @param region RiskVariant object with phase and alternative allele information
+#' @param settings RiskVariant object with phase and alternative allele information
+#' @param return.class 'LinkVariantAlmlof' (more options in future)
 #' @param verbose logical, if set TRUE, then function will be more talkative
 #' @param ... arguments to forward to internal functions
 #' @author Jesper R. Gadin, Lasse Folkersen
@@ -143,10 +142,11 @@ setMethod("lva", signature(x = "ASEset"),
 
 #' lva.internal
 #' 
-#' make an almlof regression for arrays (internal core function)
+#' make an almlof regression for arrays (internal function)
 #' 
 #' internal method that takes one array with results from regionSummary
-#' and one matrix with group information for each risk SNP (based on phase)
+#' and one matrix with group information for each risk SNP (based on phase).
+#' Input and output objects can change format slightly in future.
 #'
 #' @name lva.internal
 #' @rdname lva.internal
@@ -154,6 +154,7 @@ setMethod("lva", signature(x = "ASEset"),
 #' @docType methods
 #' @param x regionSummary array phased for maternal allele
 #' @param grp group 1-3 (1 for 0:0, 2 for 1:0 or 0:1, and 3 for 1:1)
+#' @param element which column in x contains the values to use with lm.
 #' @param ... arguments to forward to internal functions
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords phase
@@ -185,7 +186,7 @@ setMethod("lva", signature(x = "ASEset"),
 #' grp[(phs[,,1] == 1) & (phs[,,2] == 1)] <- 3
 
 #' #only use mean.fr at the moment, which is col 3
-#' lva.internal(rs, grp, 3)
+#' lva.internal(assays(rs)[["rs1"]], grp, 3)
 #' 
 NULL
 

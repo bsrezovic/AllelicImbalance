@@ -24,7 +24,6 @@ NULL
 #' @param x ASEset object
 #' @param region to summmarize over, the object can be a GRanges, GRangesList 
 #' @param strand can be "+", "-" or "*"
-#' @param threshold.pvalue used in filter when to count AI as significant
 #' @param return.class "array" or "list".
 #' @param ... arguments to forward to internal functions
 #' @author Jesper R. Gadin, Lasse Folkersen

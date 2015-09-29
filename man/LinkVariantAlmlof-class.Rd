@@ -14,9 +14,9 @@ pvalue(x, ...)
 \S4method{pvalue}{LinkVariantAlmlof}(x)
 }
 \arguments{
-\item{...}{pass arguments to internal functions}
+\item{x}{LinkVariantAlmlof object}
 
-\item{value}{argument used for replacement}
+\item{...}{pass arguments to internal functions}
 }
 \description{
 Object that holds results from AI detection.

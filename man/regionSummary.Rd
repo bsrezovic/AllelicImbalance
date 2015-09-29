@@ -22,8 +22,6 @@ regionSummary(x, ...)
 \item{strand}{can be "+", "-" or "*"}
 
 \item{return.class}{"array" or "list".}
-
-\item{threshold.pvalue}{used in filter when to count AI as significant}
 }
 \description{
 Gives a summary of AI-consistency for a transcript

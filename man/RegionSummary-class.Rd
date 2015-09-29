@@ -7,15 +7,15 @@
 \alias{RegionSummary-method}
 \title{RegionSummary class}
 \arguments{
-\item{value}{argument used for replacement}
+\item{x}{RegionSummary object}
 
 \item{...}{pass arguments to internal functions}
 }
 \description{
-Object that holds results from AI detection.
+Object that holds results from the regionSummary method
 }
 \details{
-The RegionSummary-class contains
+The RegionSummary-class objects contains summaries for specified regions
 }
 \examples{
 #some code

@@ -11,7 +11,7 @@ NULL
 #' @rdname LinkVariantAlmlof-class
 #' @aliases LinkVariantAlmlof-class LinkVariantAlmlof LinkVariantAlmlof-method
 #' @docType class
-#' @param value argument used for replacement
+#' @param x LinkVariantAlmlof object
 #' @param ... pass arguments to internal functions
 #'
 #' @author Jesper R. Gadin, Lasse Folkersen

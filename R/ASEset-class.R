@@ -375,10 +375,6 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*",
     if (!sum(strand %in% c("+", "-", "*")) > 0) {
         stop("strand parameter has to be either '+', '-', '*' ")
     }
-    
-	#############################
-	#Before calling the frequency-function, set counts to zero for all alleles that are not used
-	#############################
 
 	#calculate frequency
 	fr <- frequency(x, strand=strand, return.class="array", ...)
@@ -391,23 +387,18 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*",
 		if(is.null(assays(x)[["phase"]])){
 			stop("the phase slot cannot be empty if 'top.fraction.criteria=\"phase\"'")
 		}
-		if(!"ref" %in% names(mcols(x))){
-			stop("the ref mcol has not been initialized")
-		}
 
+		#take out reference allele information
 		ref <- ref(x)
-
 		#select only ref rows (here is mcols() ref required)
 		ar <- .arrayFromAlleleVector(x@variants, ref,nc=ncol(x))
 		#use the array to subset the ref frequencies
 		ret <- .subsetFrequencyWithAlleleArray(fr, ar)
 		#use maternal phase freq, by reverse values in mat that are not ref (0)
 		ret <- .returnMaternalPhaseFrequency(phase(x,return.class="array")[,,1], ret)
-
 	}else if(top.fraction.criteria=="ref"){
-		if(!"ref" %in% names(mcols(x))){
-			stop("the ref mcol has not been initialized")
-		}
+		#take out reference allele information
+		ref <- ref(x)
 		#select only ref rows (here is mcols() ref required)
 		ar <- .arrayFromAlleleVector(x@variants, ref,nc=ncol(x))
 		#use the array to subset the ref frequencies
@@ -419,7 +410,6 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*",
 		#use the array to subset the ref frequencies
 		ret <- .subsetFrequencyWithAlleleArray(fr, ar)
 	}
-
     # return object matrix
 	rownames(ret) <- colnames(x)
 	colnames(ret) <- rownames(x)

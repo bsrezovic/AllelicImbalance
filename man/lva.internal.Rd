@@ -8,8 +8,7 @@
 \usage{
 lva.internal(x, ...)
 
-\S4method{lva.internal}{array}(x, grp, element = 3, return.type = "all",
-  ...)
+\S4method{lva.internal}{array}(x, grp, element = 3, ...)
 }
 \arguments{
 \item{x}{regionSummary array phased for maternal allele}
@@ -17,13 +16,16 @@ lva.internal(x, ...)
 \item{...}{arguments to forward to internal functions}
 
 \item{grp}{group 1-3 (1 for 0:0, 2 for 1:0 or 0:1, and 3 for 1:1)}
+
+\item{element}{which column in x contains the values to use with lm.}
 }
 \description{
-make an almlof regression for arrays (internal core function)
+make an almlof regression for arrays (internal function)
 }
 \details{
 internal method that takes one array with results from regionSummary
-and one matrix with group information for each risk SNP (based on phase)
+and one matrix with group information for each risk SNP (based on phase).
+Input and output objects can change format slightly in future.
 }
 \examples{
 data(ASEset)
@@ -51,7 +53,7 @@ grp <- matrix(2, nrow=dim(phs)[1], ncol=dim(phs)[2])
 grp[(phs[,,1] == 0) & (phs[,,2] == 0)] <- 1
 grp[(phs[,,1] == 1) & (phs[,,2] == 1)] <- 3
 #only use mean.fr at the moment, which is col 3
-lva.internal(rs, grp, 3)
+lva.internal(assays(rs)[["rs1"]], grp, 3)
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

@@ -15,7 +15,9 @@ plot(x, y, ...)
 \arguments{
 \item{x}{LinkVariantAlmlof object}
 
-\item{...}{for simpler generics when extending function}
+\item{y}{not used}
+
+\item{...}{pass on arguments to internal methods}
 }
 \description{
 blabla
@@ -56,7 +58,7 @@ r2 <- split(granges(a)[c(1,2,2,3)],c(1,1,2,2))
 # link variant almlof (lva)
 lv1 <- lva(a, rv, r1)
 lv2 <- lva(a, rv, r2)
-plot(LinkVariantAlmlof[1])
+plot(lv2[1])
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

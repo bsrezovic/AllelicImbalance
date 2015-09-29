@@ -306,7 +306,8 @@ setMethod("reference_frequency_density_vs_threshold_variable_multigraph_plot", s
 #' @aliases LinkVariantAlmlof-plot plot plot,LinkVariantAlmlof-method
 #' @docType methods
 #' @param x LinkVariantAlmlof object
-#' @param ... for simpler generics when extending function
+#' @param y not used
+#' @param ... pass on arguments to internal methods
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords plot
 #' @examples
@@ -338,7 +339,7 @@ setMethod("reference_frequency_density_vs_threshold_variable_multigraph_plot", s
 #' # link variant almlof (lva)
 #' lv1 <- lva(a, rv, r1)
 #' lv2 <- lva(a, rv, r2)
-#' plot(LinkVariantAlmlof[1])
+#' plot(lv2[1])
 #'
 #' @importFrom graphics plot
 #' @exportMethod plot
