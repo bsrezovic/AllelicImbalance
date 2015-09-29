@@ -14,4 +14,3 @@ citEntry(entry="Article",
          number = 194,
          textVersion = paste("Jesper R Gådin, Ferdinand van't Hooft, Per Eriksson and Lasse Folkersen (2015): AllelicImbalance: an R/bioconductor package for detecting, managing, and visualizing allele expression imbalance data from RNA sequencing. BMC Bioinformatics.") 
 )
-
