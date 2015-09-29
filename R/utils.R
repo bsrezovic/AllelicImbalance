@@ -23,4 +23,9 @@
 	IRanges(c(1,idx@partitioning@end[-length(idx@partitioning@end)]+1), idx@partitioning@end)
 }
 
-
+#first dimension of array will make up the length of the list
+.Array2MatrixList <- function(ar){
+	lapply(setNames(1:dim(ar)[1], dimnames(ar)[[1]]), function(i, ar){
+		ar[i,,]
+	}, ar=ar)
+}

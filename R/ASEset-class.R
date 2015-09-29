@@ -543,40 +543,29 @@ setGeneric("frequency")
 setMethod("frequency", signature(x = "ASEset"), function(x, 
 	return.class = "list", strand = "*",
 	threshold.count.sample = 1) {
-
 	#threshold.count.sample cannot be zero (further down f=1/0 woulf fail)
-
-	if(threshold.count.sample<1){
-		stop("threshold.count.sample needs to be >1")
-	}
-
-	# get counts
-	ar <- alleleCounts(x, strand=strand, return.class="array")
-	allele.count.tot <- apply(ar, c(1,2), sum)
-
-	#set allele.count.tot to NaN for all values not passing threshold
-	#this is to indicate that we do not have enough reads to say anything
-	tf <- allele.count.tot  < threshold.count.sample
-	allele.count.tot[tf] <- NaN
-
-	#make frequency array
-	ar <- ar * array(as.vector(1/allele.count.tot),dim=dim(ar))
-
+	if(threshold.count.sample<1){stop("threshold.count.sample needs to be >1")}
+	#calculate frequency from Allele counts
+	ar <- .calcFrequencyFromAlleleCounts(alleleCounts(x, strand=strand, return.class="array"), threshold.count.sample)
 	if(return.class=="array"){
 		return(ar)
 	}else if(return.class=="list"){
-		lst <- list()
-		for (i in 1:nrow(x)){
-			mat <- ar[i,,]
-			dimnames(mat) <- list(colnames(x),x@variants)
-			lst[[i]] <- mat
-		}
-		names(lst) <- rownames(x)
-		lst
+		return(.Array2MatrixList(ar))
 	}else{
 		stop("return.class has to be 'array' or 'list'")
 	}
 })
+### -------------------------------------------------------------------------
+### helpers for regionSummary
+###
+.calcFrequencyFromAlleleCounts <- function(ar, th){
+	actot <- apply(ar, c(1,2), sum)
+	actot[actot  < th] <- NaN
+	ar * array(as.vector(1/actot),dim=dim(ar))
+}
+
+
+
 #' @rdname ASEset-class
 #' @export 
 setGeneric("genotype", function(x, ...){
