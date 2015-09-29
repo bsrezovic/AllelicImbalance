@@ -17,7 +17,8 @@ test_that(paste("checking .lvaRegressionPvalue"), {
 	ai.down <- c(0, 1, 2)
 						  
 	ar <- array(c(hets,homs,mean.fr, sd.fr, mean.delta, sd.delta, ai.up, ai.down), dim=c(3,8,2))
-	grp <- matrix(c(1,1,3,2,2,3),nrow=2)
+	ar <- aperm(ar,c(3,1,2))
+	grp <- t(matrix(c(1,1,3,2,2,3),nrow=2))
 
 	#prepare expected data (values are from an execution of the linear model)
 	exp <- list(0.7877044, 0.1210377)

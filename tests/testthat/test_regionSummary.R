@@ -187,3 +187,29 @@ test_that(paste("checking .makeRegionGRangesFromASEsetWithRegionIndex"), {
     expect_that(exp, equals(res))
 
 })
+
+test_that(paste("checking .makeMetaFractionValueForRegion"), {
+			
+	#####################
+	# Prepare data 1 
+	#####################
+	data(ASEset) 
+	a <- ASEset
+	
+	#####################
+	# Test 1 
+	#####################
+	x <- a[c(1,1,2,2,3)]
+	idx <- c(1,2,1,2,2)
+	
+	#prepeare expected data
+	exp <- DataFrame(ASEsetList=split(x,idx))
+	
+	#run tests
+	res <- .makeMetaASEsetDataFrameForRegionSummary(x, idx)
+	
+	#test equality
+	expect_that(exp, equals(res))
+							
+})
+

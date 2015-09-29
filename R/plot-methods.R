@@ -328,7 +328,7 @@ setMethod("reference_frequency_density_vs_threshold_variable_multigraph_plot", s
 #' 
 #' #init risk variants
 #' p.ar <- phaseMatrix2Array(p)
-#' rv <- RiskVariantFromGRangesAndPhaseArray(x=GRvariants, phase=p.ar)
+#' rv <- riskVariantFromGRangesAndPhaseArray(x=GRvariants, phase=p.ar)
 #'
 #' # in this example each and every snp in the ASEset defines a region
 #' r1 <- granges(a)

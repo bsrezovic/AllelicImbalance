@@ -52,11 +52,6 @@ NULL
 #' region <- split(granges(a)[c(1,2,2,3)],c(1,1,2,2))
 #' t <- regionSummary(a, region)
 #'
-#' 
-#' region <- split(granges(a)[c(1,2,2,3)],c(1,1,2,2))
-#' names(region) <- c("introns", "exons")
-#' region <- list(g1=list(tx1=region, tx2=region), g2=list(tx1=region, tx2=region, tx3=region))
-#' t <- regionSummary(a, region)
 NULL
 
 #' @rdname regionSummary
@@ -93,11 +88,8 @@ setMethod("regionSummary", signature("ASEset"),
 		#filter so all homozygotes become NAs 
 		fr[!t(fr.het.filt)] <- NA
 		#maternal phase map bias
-		print(dim(x))
 		mb <- t(.maternalPhaseMapBias(mb=mapBias(x, return.class="array"), ma=maternalAllele(x), va=x@variants))
 		#calculate delta
-		print(dim(fr))
-		print(dim(mb))
 		fr.d <- .deltaFromFractionMatrixAndMapBias(fr, mb)
 		#pick our important variables
 		idx <-  mcols(x)[["regionIndex"]][[1]]
@@ -227,3 +219,11 @@ setMethod("regionSummary", signature("ASEset"),
 	mcols(gr)[["regionIndexName"]] <- DataFrame(lvl1=as.character(unique(idn)))
 	gr
 }
+
+#make list of the ASEset components relative to region
+.makeMetaASEsetDataFrameForRegionSummary <- function(as, idx){
+		DataFrame(ASEsetList=split(as, idx))
+}
+
+
+
