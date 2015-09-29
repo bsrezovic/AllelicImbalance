@@ -556,4 +556,3 @@ riskVariantFromGRangesAndPhaseArray <- function(
 			meta = list()
 		)
 }
-

@@ -2029,8 +2029,6 @@ function(BamList, GRvariants, fastq.format = "illumina.1.8",
 })
 
 
-
-
 #' genotype2phase
 #' 
 #' used to convert the genomatrix from the visually friendly matrix to phase array.
