@@ -89,37 +89,24 @@ setMethod("lva", signature(x = "ASEset"),
 		rv2 <- rv[queryHits(hits), drop=FALSE]
 
 		#make groups for regression based on (het hom het)
-		grp <- .groupBasedOnPhaseAndAlleleCombination(phase(rv2,return.class="array")[,,c(1, 2), drop=FALSE])
+		grp <- .groupBasedOnPhaseAndAlleleCombination(phase(rv,return.class="array")[,,c(1, 2), drop=FALSE])
 		#call internal regression function	
-		pvalues <- lva.internal(rs2, grp)
-
-		#create an object with results
-		#lva <- new("Lva", sset,
-		#	meta = list()
-		#)
-
+		mat <- lva.internal(assays(rs)[["rs1"]], grp)
 		#create return object
-		if(return.class=="vector"){
-			pvalues
-		}else if(return.class=="matrix"){
-			if("ixn" %in% names(rs2)){
-				rs2.names <- apply(rs$ixn[-nrow(rs$ixn),
-								   subjectHits(hits)],2,paste,collapse="/")
-				region.annotation <- rs2.names
-			}else if("idx.names" %in% names(rs)){
-				rs2.names <- rs$idx.names[subjectHits(hits)]
-				region.annotation <- rs2.names
-			}else{
-				region.annotation <- "nosetname"
-			}
+		if(return.class=="LinkVariantAlmlof"){
+			sset <- SummarizedExperiment(
+						assays = SimpleList(rs1=assays(rs)[["rs1"]], lvagroup=t(grp)), 
+						colData = colData(rs),
+						rowRanges = granges(rs))
 
-			if(return.meta){
-				list(mat=matrix(c(pvalues, rownames(rv2), region.annotation),ncol=3),
-					 GRrv=rowRanges(rv2),
-					 GRrs=rs$gr[subjectHits(hits)])
-			}else{
-				matrix(c(pvalues, rownames(rv2), region.annotation),ncol=3)
-			}
+			rownames(sset) <- rownames(rs)
+			mcols(sset)[["RiskVariantMeta"]] <- DataFrame(GR=granges(rv))
+			mcols(sset)[["LMCommonParam"]] <- DataFrame(mat, row.names=NULL)
+
+			#create an object with results
+			new("LinkVariantAlmlof", sset,
+				meta = list()
+			)
 		}
 })
 
@@ -135,6 +122,13 @@ setMethod("lva", signature(x = "ASEset"),
 		grp[(ar[,,1] == 1) & (ar[,,2] == 0)] <- 1                             	
 		grp[(ar[,,1] == 0) & (ar[,,2] == 1)] <- 3
 		grp
+}
+
+#extract the detailed values from ASEset used to calculate regionSummary
+. <- function(rs, as){
+
+	mcols(rs)[["ASEsetIndex"]]
+
 }
 
 #' lva.internal
