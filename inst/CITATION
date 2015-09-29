@@ -1,5 +1,4 @@
 citHeader("To cite AllelicImbalance in publications use:")
-
 citEntry(entry="Article",
 		 key = "gadin20150613",
          author = c(  as.person("Jesper Robert Gådin"),
@@ -13,8 +12,6 @@ citEntry(entry="Article",
          url = "http://dx.doi.org/10.1186/s12859-015-0620-2",
          volume = 16,
          number = 194,
-         textVersion = 
-		 paste("Jesper R Gådin, Ferdinand van't Hooft, Per Eriksson and Lasse Folkersen (2015): AllelicImbalance: an R/bioconductor package for detecting, managing, and visualizing allele expression imbalance data from RNA sequencing. BMC Bioinformatics." ) 
-			
+         textVersion = paste("Jesper R Gådin, Ferdinand van't Hooft, Per Eriksson and Lasse Folkersen (2015): AllelicImbalance: an R/bioconductor package for detecting, managing, and visualizing allele expression imbalance data from RNA sequencing. BMC Bioinformatics.") 
 )
 
