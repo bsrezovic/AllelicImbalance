@@ -88,8 +88,6 @@ setMethod("regionSummary", signature("ASEset"),
 		x <- .selectRegionAndTransferIndexToASEset(x, reg)
 		#make regional granges for she summaries
 		gr <- .makeRegionGRangesFromASEsetWithRegionIndex(x)
-		#pick our important variables
-		idx <-  mcols(x)[["regionIndex"]][[1]]
 		#fraction with maternal phase used as numerator
 		fr <- fraction(x, strand=strand, top.fraction.criteria="phase")
 		#which snp and sample pairs are heterozygotes
@@ -103,7 +101,8 @@ setMethod("regionSummary", signature("ASEset"),
 		print(dim(fr))
 		print(dim(mb))
 		fr.d <- .deltaFromFractionMatrixAndMapBias(fr, mb)
-		
+		#pick our important variables
+		idx <-  mcols(x)[["regionIndex"]][[1]]
 		#Summarize the statistics
 		hets <- .regionStatisticsFromMatrixAndIndex(t(fr.het.filt), idx, sum)
 		homs <- .regionStatisticsFromMatrixAndIndex(t(!fr.het.filt), idx, sum)
@@ -112,6 +111,9 @@ setMethod("regionSummary", signature("ASEset"),
 		mean.fr <- .regionStatisticsFromMatrixAndIndex(fr, idx, mean)
 		sd.fr <- .regionStatisticsFromMatrixAndIndex(fr, idx, mean)
 		ai.dir <- .aiRegionDirectionFromMaternalPhaseMapBiasAndIndex(fr, mb, idx)
+
+		#For Meta infor, split ASEset and put into a DataFrame with same nrows as return object 
+		xdf <- .makeMetaASEsetDataFrameForRegionSummary(x, idx)
 
 		#make array
 		ar <- aperm(array(c(hets, homs, mean.fr, sd.fr, mean.delta, sd.delta, ai.dir),
@@ -127,6 +129,9 @@ setMethod("regionSummary", signature("ASEset"),
 					rowRanges = gr)
 
 		rownames(sset) <- names(gr)
+
+		#add ASEset meta objects
+		mcols(sset)[["ASEsetMeta"]] <- xdf
 
 		#valid
 		#validObject(.Object)

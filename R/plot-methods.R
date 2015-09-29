@@ -290,3 +290,49 @@ setMethod("reference_frequency_density_vs_threshold_variable_multigraph_plot", s
 })
 
 
+#' plot LinkVariantAlmlof objects
+#' 
+#' blabla
+#' blabla
+#' blabla
+#' blabla
+#' 
+#' blabla2
+#' blabla2
+#' blabla2
+#' 
+#' @name LinkVariantAlmlof-plot
+#' @rdname LinkVariantAlmlof-plot
+#' @aliases LinkVariantAlmlof-plot plot plot,LinkVariantAlmlof-method
+#' @docType methods
+#' @param x LinkVariantAlmlof object
+#' @param ... for simpler generics when extending function
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords plot
+#' @examples
+#' 
+#' data(LinkVariantAlmlof)
+#' plot(LinkVariantAlmlof[1])
+#'
+#' @importFrom graphics plot
+#' @exportMethod plot
+NULL
+
+#' @rdname LinkVariantAlmlof-plot
+setGeneric("plot")
+
+#' @rdname LinkVariantAlmlof-plot
+setMethod("plot", signature(x = "LinkVariantAlmlof"), function(x, 
+	...) 
+{
+
+	#plot()
+    
+})
+
+### -------------------------------------------------------------------------
+### helpers for plot method to the LinkVariantAlmlof generic
+###
+
+
+

@@ -47,4 +47,43 @@ test_that(paste("test trailing slash remover"), {
 
 })
 
+test_that(paste("test lm simplifier"), {
 
+	#######################
+	# Test 1
+	#######################
+	y <- c(1,2,4,3,2,4,3,2)
+	x <- c(1,1,1,1,2,2,2,2)
+	en	<- lm(x~y)
+	lst <- list(en,en,en,en)
+
+	exp <- matrix(c(1.333333, 0.06349206, 0.5727498, 0.2040984,
+				  2.327951, 0.3110855, 0.05880542, 0.7662601),
+				  ncol=8, nrow=4, byrow=TRUE)
+	colnames(exp) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
+	
+	res <- .matrixFromLmListCommonParam(lst)
+
+    expect_equal(res, exp, tolerance=1e-5)
+
+})
+
+test_that(paste("checking .IRangesFromIntegerList"), {
+
+	#####################
+	# Test 1 
+	#####################
+	
+	#add one region that is missing
+	idx <- IntegerList(list(c(1,2),c(3,3,4,1),c(4,4,3)))
+
+	#prepeare expected data
+	exp <- IRanges(c(1,3,7), c(2,6,9))
+
+	#run tests
+	res <- .IRangesFromIntegerList(idx)
+	
+	#test equality
+    expect_that(exp, equals(res))
+
+})

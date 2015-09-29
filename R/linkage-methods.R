@@ -124,13 +124,6 @@ setMethod("lva", signature(x = "ASEset"),
 		grp
 }
 
-#extract the detailed values from ASEset used to calculate regionSummary
-. <- function(rs, as){
-
-	mcols(rs)[["ASEsetIndex"]]
-
-}
-
 #' lva.internal
 #' 
 #' make an almlof regression for arrays (internal core function)
