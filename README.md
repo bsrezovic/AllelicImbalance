@@ -71,8 +71,8 @@ bioconductor support-site which can be found [HERE][bioc-support-site]
 [vignette-devel]: http://bioconductor.org/packages/devel/bioc/vignettes/AllelicImbalance/inst/doc/AllelicImbalance-vignette.pdf "AllelicImbalance Vignette"
 [bioc-mirror-branches]: https://github.com/Bioconductor-mirror/AllelicImbalance/branches "bioc-mirror-branches"
 [bioc-home]: www.bioconductor.org] "Bioconductor home"
-[bioc-release]: http://bioconductor.org/packages/release/bioc/html/AllelicImbalance.html] "Bioconductor release"
-[bioc-devel]: http://bioconductor.org/packages/devel/bioc/html/AllelicImbalance.html] "Bioconductor devel"
-[bioc-support-site]: https://support.bioconductor.org/t/AllelicImbalance/ "support site AllelicImbalance"
+[bioc-release]: http://bioconductor.org/packages/release/bioc/html/AllelicImbalance.html "Bioconductor release"
+[bioc-devel]: http://bioconductor.org/packages/devel/bioc/html/AllelicImbalance.html "Bioconductor devel"
+[bioc-support-site]: https://support.bioconductor.org/t/AllelicImbalance "support site AllelicImbalance"
 [devtoolsLink]: https://github.com/hadley/devtools "devtools"
 

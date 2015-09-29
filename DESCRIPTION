@@ -6,7 +6,7 @@ Date: 2015-09-29
 Encoding: UTF-8
 Author: Jesper R Gadin, Lasse Folkersen
 Maintainer: Jesper R Gadin <j.r.gadin@gmail.com>
-Description: Provides a framework for allelic specific expression
+Description: The package provides a framework for allelic specific expression 
     investigation using RNA-seq data.
 License: GPL-3
 URL: https://github.com/pappewaio/AllelicImbalance
