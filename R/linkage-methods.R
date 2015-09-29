@@ -43,15 +43,31 @@ NULL
 #' p.ar <- phaseMatrix2Array(p)
 #' rv <- riskVariantFromGRangesAndPhaseArray(x=GRvariants, phase=p.ar)
 #'
+<<<<<<< HEAD
 #' # in this example each and every snp in the ASEset defines a region
+=======
+#' # in this example all snps in the ASEset defines the region
+>>>>>>> chopped out linkage and summary methods R files and chopped out a first batch of units and tested them
 #' r1 <- granges(a)
 #'
 #' # in this example two overlapping subsets of snps in the ASEset defines the region
 #' r2 <- split(granges(a)[c(1,2,2,3)],c(1,1,2,2))
 #'
+<<<<<<< HEAD
 #' # link variant almlof (lva)
 #' lva(a, rv, r1)
 #' lva(a, rv, r2)
+=======
+#' # use a multilevel list as input (output will keep the list dimensions)
+#' region <- split(granges(a)[c(1,2,2,3)],c(1,1,2,2))
+#' names(region) <- c("introns", "exons")
+#' r3 <- list(g1=list(tx1=region, tx2=region), g2=list(tx1=region, tx2=region, tx3=region))
+#'
+#' # link variant almlof (lva)
+#' lva(a, rv, r1)
+#' lva(a, rv, r2)
+#' lva(a, rv, r3)
+>>>>>>> chopped out linkage and summary methods R files and chopped out a first batch of units and tested them
 #' 
 NULL
 
@@ -66,9 +82,16 @@ setGeneric("lva", function(x, ...
 #' @export
 setMethod("lva", signature(x = "ASEset"),
 		function(x, rv, region, settings=list(),
+<<<<<<< HEAD
 				 return.class="LinkVariantAlmlof",
 				 verbose=FALSE, ...
 	){
+=======
+				 return.class="matrix", return.meta=FALSE, 
+				 verbose=FALSE, ...
+	){
+
+>>>>>>> chopped out linkage and summary methods R files and chopped out a first batch of units and tested them
 		if("threshold.distance" %in% names(settings)){
 			distance <- settings[["threshold.distance"]]
 		}else{
@@ -76,6 +99,7 @@ setMethod("lva", signature(x = "ASEset"),
 		}
 
 		#region summary
+<<<<<<< HEAD
 		rs <- regionSummary(x, region)
 							
 
@@ -97,11 +121,38 @@ setMethod("lva", signature(x = "ASEset"),
 		#	meta = list()
 		#)
 
+=======
+		rs <- regionSummary(x, region, return.class="array", return.meta=TRUE,
+							threshold.pvalue=1, drop=FALSE)
+
+		#match riskVariant to rs granges
+		hits <- findOverlaps(rv, rs$gr + distance)
+
+		rs2 <- rs$x[,,subjectHits(hits), drop=FALSE]
+
+		rv2 <- rv[queryHits(hits), drop=FALSE]
+
+		#groups
+		#make unit of this section
+		#make sure it is possible to have rv2 with only one row or column.
+
+		#pick out 
+		grp <- .groupBasedOnPhaseAndAlleleCombination(phase(rv2,return.class="array")[,,c(1, 2), drop=FALSE])
+
+		#call internal regression function	
+		#function below will fail if there were no overlap between rs and rv
+		pvalues <- lva.internal(rs2, grp)
+
+>>>>>>> chopped out linkage and summary methods R files and chopped out a first batch of units and tested them
 		#create return object
 		if(return.class=="vector"){
 			pvalues
 		}else if(return.class=="matrix"){
+<<<<<<< HEAD
 			if("ixn" %in% names(rs2)){
+=======
+			if("ixn" %in% names(rs)){
+>>>>>>> chopped out linkage and summary methods R files and chopped out a first batch of units and tested them
 				rs2.names <- apply(rs$ixn[-nrow(rs$ixn),
 								   subjectHits(hits)],2,paste,collapse="/")
 				region.annotation <- rs2.names

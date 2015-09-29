@@ -63,4 +63,7 @@ test_that(paste("checking .groupBasedOnPhaseAndAlleleCombination"), {
 })
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> chopped out linkage and summary methods R files and chopped out a first batch of units and tested them
