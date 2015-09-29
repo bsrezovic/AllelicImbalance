@@ -31,5 +31,17 @@ setClass("LinkVariantAlmlof", contains = "RangedSummarizedExperiment",
 	)
 )
 
+#' @rdname LinkVariantAlmlof-class
+#' @export 
+setGeneric("pvalue", function(x, ...){
+    standardGeneric("pvalue")
+})
+
+#' @rdname LinkVariantAlmlof-class
+#' @export 
+setMethod("pvalue", signature(x = "LinkVariantAlmlof"), function(x) {
+		mcols(x)[["LMCommonParam"]][,8]
+})
+
 
 

@@ -311,7 +311,33 @@ setMethod("reference_frequency_density_vs_threshold_variable_multigraph_plot", s
 #' @keywords plot
 #' @examples
 #' 
-#' data(LinkVariantAlmlof)
+#' data(ASEset) 
+#' a <- ASEset
+#' # Add phase
+#' set.seed(1)
+#' p1 <- matrix(sample(c(1,0),replace=TRUE, size=nrow(a)*ncol(a)),nrow=nrow(a), ncol(a))
+#' p2 <- matrix(sample(c(1,0),replace=TRUE, size=nrow(a)*ncol(a)),nrow=nrow(a), ncol(a))
+#' p <- matrix(paste(p1,sample(c("|","|","/"), size=nrow(a)*ncol(a), replace=TRUE), p2, sep=""),
+#' 	nrow=nrow(a), ncol(a))
+#' 
+#' phase(a) <- p
+#' 
+#' #add alternative allele information
+#' mcols(a)[["alt"]] <- inferAltAllele(a)
+#' 
+#' #init risk variants
+#' p.ar <- phaseMatrix2Array(p)
+#' rv <- RiskVariantFromGRangesAndPhaseArray(x=GRvariants, phase=p.ar)
+#'
+#' # in this example each and every snp in the ASEset defines a region
+#' r1 <- granges(a)
+#'
+#' # in this example two overlapping subsets of snps in the ASEset defines the region
+#' r2 <- split(granges(a)[c(1,2,2,3)],c(1,1,2,2))
+#'
+#' # link variant almlof (lva)
+#' lv1 <- lva(a, rv, r1)
+#' lv2 <- lva(a, rv, r2)
 #' plot(LinkVariantAlmlof[1])
 #'
 #' @importFrom graphics plot
@@ -326,13 +352,43 @@ setMethod("plot", signature(x = "LinkVariantAlmlof"), function(x,
 	...) 
 {
 
-	#plot()
+	for(i in 1:length(x)){
+		#y
+		mv <- assays(lv)[["rs1"]][i,,3]
+		#x
+		grp <- assays(lv)[["lvagroup"]][i,]
+		#regr line
+		grp <- assays(lv)[["lvagroup"]][i,]
+		#lmcp
+		lmcp <- mcols(lv)[["LMCommonParam"]][i,,drop=FALSE]
+		#slope
+		slope <- lmcp[["est2"]]
+		#intercept
+		intcpt <- lmcp[["est1"]]
+
+		plot(grp, mv, pch=16)
+		abline(intcpt,slope,lwd=2)
+		
+		ra <- paste(as.data.frame(range(granges(lv[1]))))
+		text1 <- paste("Region:", names(lv[i]), " P-value:",signif(pvalue(lv[i]),3), sep="")
+		text2 <- paste("Chr:", ra[1], " Start:", ra[2], " End:", ra[3] , sep="")
+
+		SNPs <- length(mcols(lv1)[["ASEsetIndex"]][[1]])
+		text3 <- paste("Nr of SNPs:", SNPs, " Hom:", sum(assays(lv)[["rs1"]][i,,1]), " Het:", sum(assays(lv)[["rs1"]][i,,2]) , sep="")
+
+		mtext(text1, padj=-3.5)
+		mtext(text2, padj=-2.0)
+		mtext(text3, padj=-0.5)
+		
+	}
     
 })
 
 ### -------------------------------------------------------------------------
 ### helpers for plot method to the LinkVariantAlmlof generic
 ###
+
+
 
 
 
