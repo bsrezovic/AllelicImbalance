@@ -96,6 +96,7 @@ setMethod("lva", signature(x = "ASEset"),
 		rv2 <- rv[queryHits(hits),, drop=FALSE]
 		#make groups for regression based on (het hom het)
 		grp <- .groupBasedOnPhaseAndAlleleCombination(phase(rv2,return.class="array")[,,c(1, 2), drop=FALSE])
+		plotGroups <- .lvaGroups(mcols(rv2)[["alt"]], mcols(rv2)[["ref"]])
 		#call internal regression function	
 		mat <- lva.internal(assays(rs2)[["rs1"]], t(grp))
 		#create return object
@@ -106,8 +107,9 @@ setMethod("lva", signature(x = "ASEset"),
 						rowRanges = granges(rs2))
 
 			rownames(sset) <- rownames(rs2)
-			mcols(sset)[["RiskVariantMeta"]] <- DataFrame(GR=granges(rv2))
+			mcols(sset)[["RiskVariantMeta"]] <- DataFrame(GR=granges(rv2), rsid=rownames(rv2))
 			mcols(sset)[["LMCommonParam"]] <- DataFrame(mat, row.names=NULL)
+			mcols(sset)[["LvaPlotGroups"]] <- DataFrame(plotGroups, row.names=NULL)
 
 			#create an object with results
 			new("LinkVariantAlmlof", sset,
@@ -128,6 +130,15 @@ setMethod("lva", signature(x = "ASEset"),
 		grp[(ar[,,1] == 1) & (ar[,,2] == 0)] <- 1                             	
 		grp[(ar[,,1] == 0) & (ar[,,2] == 1)] <- 3
 		grp
+}
+
+
+.lvaGroups <- function(ref, alt){
+		fir <- paste(alt,"|", ref, sep="")
+		sec <- paste(ref,"|", ref, " AND ",alt,"|", alt, sep="")
+		thi <- paste(ref,"|", alt, sep="")
+
+		matrix(c(fir, sec, thi), ncol=3)
 }
 
 #' lva.internal

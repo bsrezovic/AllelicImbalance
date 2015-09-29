@@ -364,8 +364,8 @@ setMethod("plot", signature(x = "LinkVariantAlmlof"), function(x,
 		#intercept
 		intcpt <- lmcp[["est1"]]
 
-		plot(grp, mv, pch=16)
-		abline(intcpt,slope,lwd=2)
+		plot(grp, mv, pch=16, xaxt='n')
+		abline(intcpt, slope, lwd=2)
 		
 		ra <- paste(as.data.frame(range(granges(x[1]))))
 		text1 <- paste("Region:", names(x[i]), " P-value:",signif(pvalue(x[i]),3), sep="")
