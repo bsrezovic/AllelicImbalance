@@ -376,7 +376,11 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*",
         stop("strand parameter has to be either '+', '-', '*' ")
     }
     
-	#core function
+	#############################
+	#Before calling the frequency-function, set counts to zero for all alleles that are not used
+	#############################
+
+	#calculate frequency
 	fr <- frequency(x, strand=strand, return.class="array", ...)
 
 	#check and use top.fraction.criteria=="phase"
@@ -387,68 +391,46 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*",
 		if(is.null(assays(x)[["phase"]])){
 			stop("the phase slot cannot be empty if 'top.fraction.criteria=\"phase\"'")
 		}
-
-		#select only ref rows
-		ar <- array(matrix(x@variants, ncol=length(x@variants),
-				 nrow=nrow(x), byrow=TRUE)==mcols(x)[,"ref"]
-			 ,dim=c(nrow(x), length(x@variants), ncol=ncol(x)))
-		
-		#rearrange to be able to transform back
-		fr2 <- aperm(fr, c(3,2,1))
-		ar2 <- aperm(ar, c(2,3,1))
-
-		#subset ref allele frequencies and make matrix
-		ret <- matrix(fr2[ar2], ncol=nrow(x), nrow=ncol(x))
-		
-		#check mat in phase
-		mat <- phase(x,return.class="array")[,,1]
-		ret[t(mat)==1] <- 1 - ret[t(mat)==1]
-
-		#reverse values in mat that are not ref (0)
-
-
-	}else if(top.fraction.criteria=="ref"){
-		#check and use top.fraction.criteria=="ref"
 		if(!"ref" %in% names(mcols(x))){
 			stop("the ref mcol has not been initialized")
 		}
+		#select only ref rows (here is mcols() ref required)
+		ar <- .arrayFromAlleleVector(x@variants, mcols(x)[,"ref"], nrow(x), ncol(x))
+		#use the array to subset the ref frequencies
+		ret <- .subsetFrequencyWithAlleleArray(fr, ar)
+		#use maternal phase freq, by reverse values in mat that are not ref (0)
+		ret <- .returnMaternalPhaseFrequency(phase(x,return.class="array")[,,1], ret)
 
-		#select only ref rows
-		ar <- array(matrix(x@variants, ncol=length(x@variants),
-				 nrow=nrow(x), byrow=TRUE)==mcols(x)[,"ref"]
-			 ,dim=c(nrow(x), length(x@variants), ncol=ncol(x)))
-		
-		#rearrange to be able to transform back
-		fr2 <- aperm(fr, c(3,2,1))
-		ar2 <- aperm(ar, c(2,3,1))
-
-		#subset ref allele frequencies and make matrix
-		ret <- matrix(fr2[ar2], ncol=nrow(x), nrow=ncol(x))
-
+	}else if(top.fraction.criteria=="ref"){
+		if(!"ref" %in% names(mcols(x))){
+			stop("the ref mcol has not been initialized")
+		}
+		#select only ref rows (here is mcols() ref required)
+		ar <- .arrayFromAlleleVector(x@variants, mcols(x)[,"ref"], nrow(x), ncol(x))
+		#use the array to subset the ref frequencies
+		ret <- .subsetFrequencyWithAlleleArray(fr, ar)
 	}else if(top.fraction.criteria=="maxcount"){
-		#use output from rank as maxcount
-		#arank <- arank(x, strand = strand, return.class="matrix")
-
-		#select only 1st rank 
-		ar <- array(matrix(x@variants, ncol=length(x@variants),
-				 nrow=nrow(x), byrow=TRUE)==arank(x, strand = strand, return.class="matrix")[,1]
-			 ,dim=c(nrow(x), length(x@variants), ncol=ncol(x)))
-		
-		#rearrange to be able to transform back
-		fr2 <- aperm(fr, c(3,2,1))
-		ar2 <- aperm(ar, c(2,3,1))
-
-		#subset ref allele frequencies and make matrix
-		ret <- matrix(fr2[ar2], ncol=nrow(x), nrow=ncol(x))
-
+		#use output from rank as maxcount, select only 1st rank 
+		ar <- .arrayFromAlleleVector(x@variants, 
+				arank(x, strand = strand, return.class="matrix")[,1], nrow(x), ncol(x))
+		#use the array to subset the ref frequencies
+		ret <- .subsetFrequencyWithAlleleArray(fr, ar)
 	}
 
     # return object matrix
 	rownames(ret) <- colnames(x)
 	colnames(ret) <- rownames(x)
     ret
-
 })
+### -------------------------------------------------------------------------
+### helpers for fraction
+###
+
+#ph is an array, rf is the fraction matrix for ref frequencies
+.returnMaternalPhaseFrequency <- function(ph,rf){
+	rf[t(ph)==1] <- 1 - rf[t(ph)==1]
+	rf
+}
 
 #' @rdname ASEset-class
 #' @export 
@@ -550,13 +532,13 @@ setMethod("frequency", signature(x = "ASEset"), function(x,
 	if(return.class=="array"){
 		return(ar)
 	}else if(return.class=="list"){
-		return(.Array2MatrixList(ar))
+		return(.array2MatrixList(ar))
 	}else{
 		stop("return.class has to be 'array' or 'list'")
 	}
 })
 ### -------------------------------------------------------------------------
-### helpers for regionSummary
+### helpers for frequemcy
 ###
 .calcFrequencyFromAlleleCounts <- function(ar, th){
 	actot <- apply(ar, c(1,2), sum)

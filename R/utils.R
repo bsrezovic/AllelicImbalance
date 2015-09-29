@@ -24,8 +24,22 @@
 }
 
 #first dimension of array will make up the length of the list
-.Array2MatrixList <- function(ar){
+.array2MatrixList <- function(ar){
 	lapply(setNames(1:dim(ar)[1], dimnames(ar)[[1]]), function(i, ar){
 		ar[i,,]
 	}, ar=ar)
 }
+
+#important helper to pick put the frequence of the reference allele
+.arrayFromAlleleVector <- function(var, sel, nr, nc){
+	array(matrix(var, ncol=length(var), nrow=nr, byrow=TRUE)==sel
+		, dim=c(nr, length(x@variants), ncol=nc))
+}
+
+#this is the follow up on arrayFromAlleleVector. 
+.subsetFrequencyWithAlleleArray <- function(fr, ar){
+		matrix(aperm(fr, c(3,2,1))[aperm(ar, c(2,3,1))], ncol=nrow(fr), nrow=ncol(fr))
+}
+
+
+
