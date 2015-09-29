@@ -1,12 +1,12 @@
 Package: AllelicImbalance
 Type: Package
 Title: Investigates allele specific expression
-Version: 1.7.22
+Version: 1.7.23
 Date: 2015-09-29
 Encoding: UTF-8
 Author: Jesper R Gadin, Lasse Folkersen
 Maintainer: Jesper R Gadin <j.r.gadin@gmail.com>
-Description: Provides a framework for allelic specific expression 
+Description: Provides a framework for allelic specific expression
     investigation using RNA-seq data.
 License: GPL-3
 URL: https://github.com/pappewaio/AllelicImbalance
