@@ -45,4 +45,3 @@ setMethod("sumnames", signature(x = "RegionSummary"), function(x) {
 })
 
 
-
