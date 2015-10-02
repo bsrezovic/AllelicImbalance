@@ -27,10 +27,13 @@ See the "DESCRIPTION" file for additional requirements.
 
 ## Documentation
 
-The [Vignette][vignLink] provides an introduction to the allelic imbalance
+The vignette provides an introduction to the allelic imbalance
 concept and show examples of how the AllelicImbalance package can be used to
 find AI-events and measure the global or local mapping bias from the alignment
 of RNA-seq reads to a reference genome. 
+
+* [vignette-release][vignette-release]
+* [vignette-devel][vignette-devel]
 
 ## Installation
 
@@ -43,8 +46,8 @@ library(devtools)
 install_github("AllelicImbalance","pappewaio")
 ```
 
-Alternatively, you can install the release version of **AllelicImbalance** from
-Bioconductor itself.
+Alternatively, you can easily install the release version of **AllelicImbalance** from
+Bioconductor.
 
 ```r
 source("http://bioconductor.org/biocLite.R")
@@ -70,7 +73,7 @@ bioconductor support-site which can be found [HERE][bioc-support-site]
 [vignette-release]: http://bioconductor.org/packages/release/bioc/vignettes/AllelicImbalance/inst/doc/AllelicImbalance-vignette.pdf "AllelicImbalance Vignette"
 [vignette-devel]: http://bioconductor.org/packages/devel/bioc/vignettes/AllelicImbalance/inst/doc/AllelicImbalance-vignette.pdf "AllelicImbalance Vignette"
 [bioc-mirror-branches]: https://github.com/Bioconductor-mirror/AllelicImbalance/branches "bioc-mirror-branches"
-[bioc-home]: www.bioconductor.org] "Bioconductor home"
+[bioc-home]: www.bioconductor.org "Bioconductor home"
 [bioc-release]: http://bioconductor.org/packages/release/bioc/html/AllelicImbalance.html "Bioconductor release"
 [bioc-devel]: http://bioconductor.org/packages/devel/bioc/html/AllelicImbalance.html "Bioconductor devel"
 [bioc-support-site]: https://support.bioconductor.org/t/AllelicImbalance "support site AllelicImbalance"
