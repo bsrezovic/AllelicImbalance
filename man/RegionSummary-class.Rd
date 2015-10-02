@@ -5,7 +5,20 @@
 \alias{RegionSummary}
 \alias{RegionSummary-class}
 \alias{RegionSummary-method}
+\alias{basic}
+\alias{basic,RegionSummary-method}
+\alias{sumnames}
+\alias{sumnames,RegionSummary-method}
 \title{RegionSummary class}
+\usage{
+sumnames(x, ...)
+
+\S4method{sumnames}{RegionSummary}(x)
+
+basic(x, ...)
+
+\S4method{basic}{RegionSummary}(x)
+}
 \arguments{
 \item{x}{RegionSummary object}
 

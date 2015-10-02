@@ -31,15 +31,33 @@ setClass("RegionSummary", contains = "RangedSummarizedExperiment",
 	)
 )
 
-#' @rdname ASEset-class
+#' @rdname RegionSummary-class
 #' @export 
 setGeneric("sumnames", function(x, ...){
     standardGeneric("sumnames")
 })
 
-#' @rdname ASEset-class
+#' @rdname RegionSummary-class
 #' @export 
 setMethod("sumnames", signature(x = "RegionSummary"), function(x) {
 	x@sumnames
 })
+
+#' @rdname RegionSummary-class
+#' @export 
+setGeneric("basic", function(x, ...){
+    standardGeneric("basic")
+})
+
+#' @rdname RegionSummary-class
+#' @export 
+setMethod("basic", signature(x = "RegionSummary"), function(x) {
+	ar <- assays(x)[["rs1"]]
+	dimnames(ar)[[3]] <- x@sumnames
+	lst <- .array2MatrixList(ar)
+	names(lst) <- rownames(x)
+	lst
+})
+
+
 

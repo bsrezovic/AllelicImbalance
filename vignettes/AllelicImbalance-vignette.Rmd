@@ -170,7 +170,8 @@ The genotype of the coding SNPs can be set by the command ```genotype(x) <- valu
 ref(a.simple) <- randomRef(a.simple)
 genotype(a.simple) <- inferGenotypes(a.simple)
 
-#access to genotype information requires knowledge of alternative allele
+#access to genotype information requires not only the information about the
+#reference allele but also the alternative allele
 alt(a.simple) <- inferAltAllele(a.simple)
 genotype(a.simple)[,1:4]
 ```
@@ -283,7 +284,7 @@ chisq.test(a.stranded[,5:8], "-")
 ```
 
 # Summary functions
-The regionSummary function can be used to investigate if there is a consistent imbalance in the same direction over a region (e.g. a transcript). Besides providing the user with information of how many AI:s are up or down, the function returns several descriptive statistics for the result. The list below explains the acronyms:   
+The regionSummary function can be used to investigate if there is a consistent imbalance in the same direction over a region (e.g. a transcript). Besides providing the user with information of how many AI:s are up or down, the function returns several descriptive statistics for the result. The list below explains the acronyms retrieved using the 'basic' accessor:   
 
 * hets the number of heterozygote SNPs
 * homs the number of homozygote SNPs
@@ -298,7 +299,8 @@ The regionSummary function can be used to investigate if there is a consistent i
 # in this example every snp is on separate exons
 region <- granges(a.simple)
 rs <- regionSummary(a.simple, region)
-head(rs,3)
+rs
+basic(rs)
 ```
 
 # Base graphics
@@ -456,6 +458,16 @@ sizes <- c(0.5,rep(0.5/length(covTracks),length(covTracks)))
 plotTracks(lst, from=min(start(x)), to=max(end(x)), sizes=sizes, 
 				col.line = NULL, showId = FALSE, main = 'main', cex.main = 1, 
 				title.width = 1, type = 'histogram')
+```
+# Important notifications
+
+## Update old objects
+Due to changes in the RangedSummarizedExperiment class from the `r Biocpkg("SummarizedExperiment")` package, all RangedSummarizedExperiment objects prior the release of Bioconductor 3.2 needs to be updated. The ASEset is based on the RangedSummarizedExperiment class and solely needs to be updated as well.
+
+
+```{r echo = TRUE, eval = TRUE, message = FALSE}
+data(ASEset.old)
+ASEset.new <- updateObject(ASEset.old)
 ```
 
 # Conclusion

@@ -202,3 +202,19 @@ NULL
 #' #data(genomatrix)
 #' 
 NULL 
+
+
+#' ASEset.old object
+#' 
+#' old version of an ASEset which needs to be updated
+#' 
+#' @name ASEset.old
+#' @docType data
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords data object example
+#' @examples
+#' 
+#' ##load eample data (Not Run)  
+#' #data(ASEset.old)
+#' 
+NULL 
