@@ -6,7 +6,7 @@ NEW FEATURES
     o genotype accessor requires reference and alternative allele information
     o genotype setter requires reference allele information
     o reference fraction is now accessed through fraction(ASEset, top.allele.criteria="ref")
-    o for a more robust performance unit tests are know covering the most crucial calculations, such as e.g. fraction, frequency, summary, mapbias and phase specific calculations. 
+    o for a more robust performance unit tests are now covering the most crucial calculations, such as e.g. fraction, frequency, summary, mapbias and phase specific calculations. 
 
 CHANGES IN VERSION 1.6.0
 -----------------------
