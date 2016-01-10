@@ -1231,8 +1231,8 @@ function(genesymbols, OrgDb, leftFlank = 0, rightFlank = 0,
 #' data(ASEset)
 #' 
 #' #get counts at the three positions specified in GRvariants
-#' if(require(SNPlocs.Hsapiens.dbSNP.20120608)){
-#' updatedGRanges<-getSnpIdFromLocation(rowRanges(ASEset), SNPlocs.Hsapiens.dbSNP.20120608)
+#' if(require(SNPlocs.Hsapiens.dbSNP144.GRCh37)){
+#' updatedGRanges<-getSnpIdFromLocation(rowRanges(ASEset), SNPlocs.Hsapiens.dbSNP144.GRCh37)
 #' rowRanges(ASEset)<-updatedGRanges
 #'}
 #' 
@@ -1276,25 +1276,43 @@ function(GR, SNPloc, return.vector = FALSE, verbose = TRUE) {
     }
     
     
-    SNPlocThisChr <- getSNPlocs(seqlevels(GR), as.GRanges = TRUE, caching = FALSE)
-    
-    seqlevels(SNPlocThisChr, force = TRUE) <- seqlevels(GR)
-    # seqlengths(GR) <- seqlengths(SNPlocThisChr)
-	genome(SNPlocThisChr) <- genome(GR)
-    
-    overlaps <- findOverlaps(GR, SNPlocThisChr)
-    
-    if (verbose) 
-        cat(paste("Replacing position-based SNP name with rs-ID for", length(overlaps), 
-            "SNP(s)"), "\n")
-    
-    # replace name in GR for(i in 1:length(overlaps)){
-    # snp<-paste('rs',mcols(SNPlocThisChr[subjectHits(overlaps[i])])[,'RefSNP_id'],sep='')
-    # names(GR)[queryHits(overlaps[i])] <-snp }
-    
-    snp <- paste("rs", mcols(SNPlocThisChr[subjectHits(overlaps)])[, "RefSNP_id"], 
-        sep = "")
-    names(GR)[queryHits(overlaps)] <- snp
+    #SNPlocThisChr <- getSNPlocs(seqlevels(GR), as.GRanges = TRUE, caching = FALSE)
+    #
+    #seqlevels(SNPlocThisChr, force = TRUE) <- seqlevels(GR)
+    ## seqlengths(GR) <- seqlengths(SNPlocThisChr)
+	#genome(SNPlocThisChr) <- genome(GR)
+    #
+    #overlaps <- findOverlaps(GR, SNPlocThisChr)
+    #
+    #if (verbose) 
+    #    cat(paste("Replacing position-based SNP name with rs-ID for", length(overlaps), 
+    #        "SNP(s)"), "\n")
+    #
+    ## replace name in GR for(i in 1:length(overlaps)){
+    ## snp<-paste('rs',mcols(SNPlocThisChr[subjectHits(overlaps[i])])[,'RefSNP_id'],sep='')
+    ## names(GR)[queryHits(overlaps[i])] <-snp }
+    #
+    #snp <- paste("rs", mcols(SNPlocThisChr[subjectHits(overlaps)])[, "RefSNP_id"], 
+    #    sep = "")
+
+	if(is.na(genome(GR))| is.null(genome(GR))){
+		genome(GR) <- "NoSetGenome"
+	}
+
+	if(!(genome(GR)==genome(SNPloc))){
+		message("setting the GR genome to the same as SNPloc, 
+				which is a requirement to make overlap calculations")
+		genome(GR) <- genome(SNPloc)
+	}
+	overlap1 <- snpsByOverlaps(SNPloc, GR, type="equal")
+	overlap1 <- keepSeqlevels(overlap1, seqlevels(GR))
+#	seqinfo(overlap1) <- seqinfo(GR)
+#	strand(overlap1) <- "*"
+#	mcols(overlap1) <- NULL
+#	names(GR) <- NULL
+	
+	overlap2 <- findOverlaps(overlap1, GR, type="equal")
+    names(GR)[subjectHits(overlap2)] <- mcols(overlap1)[["RefSNP_id"]][queryHits(overlap2)]
     
     # change back to chr from ch
     seqlevels(GR) <- sub("^ch", "chr", seqlevels(GR))

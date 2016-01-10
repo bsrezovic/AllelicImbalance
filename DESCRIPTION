@@ -1,8 +1,8 @@
 Package: AllelicImbalance
 Type: Package
 Title: Investigates allele specific expression
-Version: 1.9.0
-Date: 2015-10-02
+Version: 1.9.1
+Date: 2016-01-10
 Encoding: UTF-8
 Author: Jesper R Gadin, Lasse Folkersen
 Maintainer: Jesper R Gadin <j.r.gadin@gmail.com>
@@ -15,7 +15,7 @@ Suggests:
     testthat,
     org.Hs.eg.db,
     TxDb.Hsapiens.UCSC.hg19.knownGene,
-    SNPlocs.Hsapiens.dbSNP.20120608,
+	SNPlocs.Hsapiens.dbSNP144.GRCh37,
     BiocStyle,
     knitr
 Depends:
@@ -42,13 +42,15 @@ LazyData: TRUE
 biocViews: Genetics, Infrastructure, Sequencing
 VignetteBuilder: knitr
 Collate:
-    'ASEset-class.R'
     'AllelicImbalance-package.R'
+    'initialize-methods.R'
+    'ASEset-class.R'
     'DetectedAI-class.R'
     'GlobalAnalysis-class.R'
+    'barplot-methods.R'
+    'locationplot-methods.R'
     'GvizTrack-methods.R'
     'LinkVariantAlmlof-class.R'
-    'initialize-methods.R'
     'RegionSummary-class.R'
     'RiskVariant-class.R'
     'auxillary-functions-annotation.R'
@@ -56,10 +58,9 @@ Collate:
     'auxillary-methods-annotation.R'
     'auxillary-methods-summaries.R'
     'auxillary-methods.R'
-    'barplot-methods.R'
+    'chisq.test-methods.R'
     'binom.test-methods.R'
     'boxplot-methods.R'
-    'chisq.test-methods.R'
     'deprecations.R'
     'detect-methods.R'
     'filter-methods.R'
@@ -67,10 +68,10 @@ Collate:
     'inference-methods.R'
     'linkage-methods.R'
     'list-methods.R'
-    'locationplot-methods.R'
     'mapbias-methods.R'
     'plot-methods.R'
     'show-methods.R'
     'simulation-methods.R'
     'summary-methods.R'
     'utils.R'
+RoxygenNote: 5.0.1

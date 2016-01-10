@@ -125,8 +125,6 @@
 #' @importFrom GenomicFeatures 'isActiveSeq<-'
 NULL
 
-## @importFrom SNPlocs.Hsapiens.dbSNP.20120608 getSNPlocs
-
 #' GRvariants object
 #' 
 #' this data is a \code{GRanges} object that contains the ranges for three

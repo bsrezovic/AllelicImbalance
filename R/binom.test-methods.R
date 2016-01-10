@@ -30,7 +30,7 @@ NULL
 NULL
 
 #' @rdname binom.test
-#'  @export 
+#' @export 
 setMethod("binom.test", signature(x = "ASEset", n = "ANY"), function(x, n = "*") {
     
 	if(!("genotype" %in% names(assays(x)))){

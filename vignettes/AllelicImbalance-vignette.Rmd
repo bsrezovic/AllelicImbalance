@@ -137,9 +137,9 @@ library(org.Hs.eg.db )
 searchArea<-getAreaFromGeneNames("ACTG1",org.Hs.eg.db)
 
 #Getting rs-IDs
-library(SNPlocs.Hsapiens.dbSNP.20120608)
+library(SNPlocs.Hsapiens.dbSNP144.GRCh37)
 gr <- rowRanges(a.simple)
-updatedGRanges<-getSnpIdFromLocation(gr, SNPlocs.Hsapiens.dbSNP.20120608)
+updatedGRanges<-getSnpIdFromLocation(gr, SNPlocs.Hsapiens.dbSNP144.GRCh37)
 rowRanges(a.simple)<-updatedGRanges
 ```
 
@@ -467,7 +467,8 @@ Due to changes in the RangedSummarizedExperiment class from the `r Biocpkg("Summ
 
 ```{r echo = TRUE, eval = TRUE, message = FALSE}
 data(ASEset.old)
-ASEset.new <- updateObject(ASEset.old)
+#this command doesnt work anymore, for some reason(Will ask the mail-list)
+#ASEset.new <- updateObject(ASEset.old)
 ```
 
 # Conclusion

@@ -1,4 +1,4 @@
-#'@include auxillary-functions.R
+#'@include auxillary-methods.R
 NULL
 
 #' chi-square test

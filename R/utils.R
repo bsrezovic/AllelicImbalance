@@ -1,3 +1,6 @@
+#'@include AllelicImbalance-package.R
+NULL
+
 ### =========================================================================
 ### Helper functions not exported
 ### =========================================================================
@@ -40,6 +43,3 @@
 .subsetFrequencyWithAlleleArray <- function(fr, ar){
 		matrix(aperm(fr, c(3,2,1))[aperm(ar, c(2,3,1))], ncol=nrow(fr), nrow=ncol(fr))
 }
-
-
-

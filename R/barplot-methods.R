@@ -1224,49 +1224,81 @@ setMethod("gbarplot", signature(x = "ASEset"), function(x, type = "count", stran
 		} else {
 			stop("type has to be fraction or count")
 		}
+	
+		b
 	}
-    b
 }) 
 
-##' topalleleexample ASEset objects
-##' 
-##' used as a visual example to the top.fraction.criteria
-##' 
-##' shows what is top and what is down
-##' 
-##' @name ASEset-topalleleexample
-##' @aliases ASEset-topalleleexample topalleleexample topalleleexample,ASEset-method
-##' @docType methods
-##' @param x "missing", and so no argument is given
-##' @author Jesper R. Gadin
-##' @keywords topallele
-##' @examples
-##' 
-##' data(ASEset)
-##' topalleleexample()
-##' 
-##' @export topalleleexample
-#setGeneric("topalleleexample", function(x) {standardGeneric("topalleleexample")})
-#    
-#setMethod("topalleleexample", signature(x = "missing"), function() {
-#
-#	df <- data.frame(value=c(0.5,0.5,0.5,0.5),sample=c("sample1","sample1","sample2","sample2"), group=c("grp1","grp2","grp1","grp2"))
-#	df <- df[1:2,]
-#
-#	barchart(
-#		value~sample,data=df,
-#		groups=group,
-#		ylim=c(0,1), cex=0.8, ylab="fraction",
-#		xlab="samples",
-#		horizontal=F, stack=T, 
-#		col=c("ivory","ivory"),
-#		panel=function(x,y,...){
-#			panel.barchart(x,y,...)
-#			panel.text(x, 0.75, labels=c("top"), cex=2, font=2)
-#			panel.text(x, 0.25, labels=c("bottom"),cex=2, font=2)
-#			panel.abline=0.5
-#			}
-#	) 
-#
-#}) 
-#
+barplotLatticeFraction <- function(identifier, ...) {
+
+    if (length(list(...)) == 0) {
+        e <- new.env(hash = TRUE)
+    } else {
+        e <- list2env(list(...))
+    }
+
+	e$ids <- unlist(e$ids)
+	e$strand <- e$astrand
+
+	df <- fractionPlotDf(e$x, identifier, strand=e$strand, top.fraction.criteria=e$top.fraction.criteria)
+    
+    # Grah params
+    my_cols <- c("green", "red")
+    
+    # set default values
+    parset <- list(superpose.polygon=list(col=my_cols))
+
+    scales = list(rot = c(90, 0))
+    
+	if (e$deAnnoPlot) {
+		parset <- list(
+				   layout.widths = list(
+						left.padding = 0,
+						axis.left = 0,
+						ylab.axis.padding = 0, 
+						right.padding = 0, 
+						axis.right = 0
+						),
+				   layout.heights = list(
+						top.padding = 0.1,
+						between = 0.1,
+						xlab.top= 0.1,
+						axis.top = 0,
+						main=1.1,
+						main.key.padding=1,
+						axis.xlab.padding = 1, 
+						bottom.padding = 1, 
+						axis.bottom = 0.3
+						),
+				   superpose.polygon=list(col=my_cols)
+				   )
+	
+		scales = list(y = list(at = NULL, labels = NULL),
+					  x = list(labels = rep("",ncol(e$x)))
+					  )
+					  #, rot = c(90, 0))
+	}
+
+    
+	if(!e$middleLine) {
+		b <- barchart(values ~ sample, group = groups, data = df, origin = 0, 
+		    stack = TRUE, scales = scales, 
+			main = list(label=e$main, cex=e$cex.mainvec), 
+			ylab = e$ylab, xlab = e$xlab, 
+		    par.settings = parset)
+	}else {
+
+# if middle line at 0.5	
+		b <- barchart(values ~ sample, group = groups, data = df, origin = 0, 
+			stack = TRUE, scales = scales, 
+			main = list(label=e$main, cex=e$cex.mainvec), 
+			ylab = e$ylab, xlab = e$xlab, 
+			par.settings = parset, panel=function(x, y, ...) {
+				 panel.barchart(x, y, ...)
+				 panel.abline(h=0.5, lty=1)
+			}  )
+	}
+
+    b
+}
+
