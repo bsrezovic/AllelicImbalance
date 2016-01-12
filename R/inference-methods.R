@@ -279,8 +279,6 @@ setGeneric("inferAltAllele", function(x, ...
 setMethod("inferAltAllele", signature(x = "ASEset"), function(x, strand="*", allele.source="alleleCounts", return.class="vec", verbose=TRUE
 	){ 
 
-
-	#
 	if(allele.source=="alleleCounts"){
 
 		#check if ref exists
@@ -291,18 +289,29 @@ setMethod("inferAltAllele", signature(x = "ASEset"), function(x, strand="*", all
 		#to be able to infer alternative allele, we need to know the reference allele
 		ref <- mcols(x)[,"ref"]
 		ar <- arank(x, strand=strand, return.class="matrix")[,c(1,2)]
+	}else{
+		stop("no such option for allele.source")
 	}
 
-	tf <- ar == matrix(ref, nrow=nrow(x), ncol=2)
+	pickSecondMostExpressedAllele(ref, ar)
+})
 
-	ap0 <- apply(tf,1,function(x){sum(x)==0})
+### -------------------------------------------------------------------------
+### helpers for inferAltAllele
+###
+
+pickSecondMostExpressedAllele <- function(ref, ar){
+
+	tf <- ar == matrix(ref, nrow=nrow(ar), ncol=2)
+
+	ap0 <- apply(tf, 1, function(x){sum(x)==0})
 	if(any(ap0)){
-		warning(sum(ap0),"SNP reference alleles, were not among the two most expressed alleles")
+		warning(sum(ap0)," SNP reference alleles, were not among the two most expressed alleles")
 		tf[ap0,1] <- TRUE
 		tf[ap0,2] <- FALSE
 	}
 
-	ar[!tf]
+	t(ar)[!t(tf)]
 
-})
+}
 

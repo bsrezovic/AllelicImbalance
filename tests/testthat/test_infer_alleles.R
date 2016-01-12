@@ -18,5 +18,20 @@ test_that("correct inference of alleles from ASEset return.type='all'", {
 
 })
 
+test_that("test inferAltAllele", {
+
+	#prepare testdata
+	ref <- c("G","G","C")
+	ar <- matrix(c("G", "T", "C", "A", "G", "G"), ncol=2)
+		
+	res <- pickSecondMostExpressedAllele(ref, ar)
+	exp <- c("A", "T", "G")
+
+    expect_that(res, equals(exp))
+
+})
+
+
+
 
 
