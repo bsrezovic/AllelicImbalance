@@ -193,7 +193,7 @@ setMethod("regionSummary", signature("ASEset"),
 
 #sorted and indexed ASEset
 .unlistGRangesListAndIndex <- function(grl){
-		idx <- togroup(PartitioningByWidth(elementLengths(grl)))
+		idx <- togroup(PartitioningByWidth(elementNROWS(grl)))
 		if(!is.null(names(grl))){
 			idn <- names(grl)[idx]
 		}else{
