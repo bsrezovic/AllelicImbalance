@@ -43,7 +43,7 @@ Installation of the devel version of this package from Github requires the
 ```r
 install.packages("devtools")
 library(devtools)
-install_github("AllelicImbalance","pappewaio")
+install_github("pappewaio/AllelicImbalance")
 ```
 
 Alternatively, you can easily install the release version of **AllelicImbalance** from
