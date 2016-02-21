@@ -229,12 +229,15 @@ setMethod("lva.internal", signature(x = "array"),
 	mat <- matrix(NA, ncol=dim(ar)[3], nrow=nrow(ar))
 	nocalc <- apply(ar[,,3, drop=FALSE], 1, function(x){sum(!(is.na(x)))==0})
 
-	mat[!nocalc] <- t(sapply(1:sum(!nocalc), function(i, y, x){
-					mat2 <- matrix(NA, ncol=2, nrow=4)
-					s <-summary(lm(y[i, ,element]~x[, i]))$coefficients
-					mat2[,1:nrow(s)] <- s
-					c(mat2)
-				}, y=ar[!nocalc,,,drop=FALSE], x=grp[,!nocalc,drop=FALSE]))
+	#only make regression if there is at least one row possible to compute
+	if(any(!nocalc)){
+		mat[!nocalc,] <- t(sapply(which(!nocalc), function(i, y, x){
+						mat2 <- matrix(NA, ncol=2, nrow=4)
+						s <-summary(lm(y[i, ,element]~x[, i]))$coefficients
+						mat2[,1:nrow(s)] <- s
+						c(mat2)
+					}, y=ar[!nocalc,,,drop=FALSE], x=grp[,!nocalc,drop=FALSE]))
+	}
 	colnames(mat) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
 	mat
 }

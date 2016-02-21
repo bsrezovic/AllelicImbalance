@@ -98,6 +98,28 @@ test_that(paste("checking .lvaRegressionReturnCommonParamMatrix"), {
 	#test equality
     expect_equal(exp1, res1, tolerance=1e-6)
     expect_equal(exp2, res2, tolerance=1e-6)
+
+	#####################
+	# Test 3 - works when ar is full of NA
+	#####################
+	#
+	#
+
+	#introduce NAs in a whole matrix
+	ar1 <- ar
+	ar1[] <- NA
+	#prepare expected data (values are from an execution of the linear model)
+	exp1 <- matrix(
+			c(NA, NA, NA, NA, NA, NA, NA, NA,
+			  NA, NA, NA, NA, NA, NA, NA, NA),
+			  ncol=8, nrow=2,byrow=TRUE)
+	colnames(exp1) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
+
+	#run tests
+	res1 <- .lvaRegressionReturnCommonParamMatrix(ar1, grp, 3)
+	
+	#test equality
+    expect_equal(exp1, res1, tolerance=1e-6)
 })
 
 test_that(paste("checking .groupBasedOnPhaseAndAlleleCombination"), {
