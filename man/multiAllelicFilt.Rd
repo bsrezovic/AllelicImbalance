@@ -5,16 +5,25 @@
 \alias{multiAllelicFilt}
 \alias{multiAllelicFilt,ASEset-method}
 \title{multi-allelic filter methods}
+\usage{
+multiAllelicFilt(x, ...)
+
+\S4method{multiAllelicFilt}{ASEset}(x, strand = "*",
+  threshold.count.sample = 10, threshold.frequency = 0.1,
+  filterOver = "eachSample")
+}
 \arguments{
 \item{x}{\code{ASEset} object}
 
-\item{strand}{strand to infer from}
+\item{...}{internal param}
 
-\item{inferOver}{'eachSample' or 'allSamples'}
+\item{strand}{strand to infer from}
 
 \item{threshold.count.sample}{least amount of counts to try to infer allele}
 
 \item{threshold.frequency}{least fraction to classify (see details)}
+
+\item{filterOver}{'eachSample' or 'allSamples'}
 }
 \description{
 filter on multiallelic snps

@@ -5,36 +5,16 @@
 \alias{ASEset-filters}
 \alias{hetFilt}
 \alias{hetFilt,ASEset-method}
-\alias{minCountFilt}
-\alias{minCountFilt,ASEset-method}
-\alias{minFreqFilt}
-\alias{minFreqFilt,ASEset-method}
-\alias{multiAllelicFilt}
-\alias{multiAllelicFilt,ASEset-method}
 \title{genotype filter methods}
 \usage{
 hetFilt(x, ...)
 
 \S4method{hetFilt}{ASEset}(x, source = "genotype", ...)
-
-multiAllelicFilt(x, ...)
-
-\S4method{multiAllelicFilt}{ASEset}(x, strand = "*",
-  threshold.count.sample = 10, threshold.frequency = 0.1,
-  filterOver = "eachSample")
-
-minFreqFilt(x, ...)
-
-\S4method{minFreqFilt}{ASEset}(x, strand = "*", threshold.frequency = 0.1,
-  replace.with = "zero", return.class = "ASEset", sum = "all")
-
-minCountFilt(x, ...)
-
-\S4method{minCountFilt}{ASEset}(x, strand = "*", threshold.counts = 1,
-  sum = "all", replace.with = "zero", return.class = "ASEset")
 }
 \arguments{
 \item{x}{ASEset object}
+
+\item{...}{internal param}
 
 \item{source}{'genotype' or 'alleleCounts'}
 }

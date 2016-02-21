@@ -14,6 +14,7 @@ NULL
 #' @docType methods
 #' @param x ASEset object
 #' @param source 'genotype' or 'alleleCounts'
+#' @param ... internal param
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords filter
 #' @examples
@@ -64,14 +65,15 @@ setMethod("hetFilt", signature(x = "ASEset"),
 #' be specified using 'threshold.count.sample' and 'threshold.frequency'.
 #' 
 #' @name multiAllelicFilt
-#' @rdname genofilters
+#' @rdname multiAllelicFilt
 #' @aliases multiAllelicFilt multiAllelicFilt,ASEset-method 
 #' @docType methods
 #' @param x \code{ASEset} object
 #' @param strand strand to infer from
-#' @param inferOver 'eachSample' or 'allSamples' 
+#' @param filterOver 'eachSample' or 'allSamples' 
 #' @param threshold.count.sample least amount of counts to try to infer allele
 #' @param threshold.frequency least fraction to classify (see details)
+#' @param ... internal param
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords filter
 #' @examples
@@ -84,13 +86,13 @@ setMethod("hetFilt", signature(x = "ASEset"),
 #' 
 NULL
 
-#' @rdname ASEset-filters
+#' @rdname multiAllelicFilt
 #' @export 
 setGeneric("multiAllelicFilt", function(x, ...){
     standardGeneric("multiAllelicFilt")
 })
 
-#' @rdname ASEset-filters
+#' @rdname multiAllelicFilt
 #' @export 
 setMethod("multiAllelicFilt", signature(x = "ASEset"), 
 		function(x, strand="*", threshold.count.sample=10, threshold.frequency=0.10,
@@ -115,13 +117,42 @@ setMethod("multiAllelicFilt", signature(x = "ASEset"),
 		}
 })
 
-#' @rdname ASEset-filters
+#' minFreqFilt methods 
+#' 
+#' filter on minFreqFilt snps
+#' 
+#' Description info here
+#' 
+#' @name minFreqFilt
+#' @rdname minFreqFilt
+#' @aliases minfreqFilt minFreqFilt,ASEset-method 
+#' @docType methods
+#' @param x \code{ASEset} object
+#' @param strand strand to infer from
+#' @param sum 'each' or 'all' 
+#' @param threshold.frequency least fraction to classify (see details)
+#' @param replace.with only option 'zero' 
+#' @param return.class 'ASEset', 'array' or 'matrix'
+#' @param ... internal param
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords filter
+#' @examples
+#' 
+#' #load example data
+#' data(ASEset)
+#' a <- ASEset
+#'
+#' minFreqFilt(a)
+#' 
+NULL
+
+#' @rdname minFreqFilt
 #' @export 
 setGeneric("minFreqFilt", function(x, ...){
     standardGeneric("minFreqFilt")
 })
 
-#' @rdname ASEset-filters
+#' @rdname minFreqFilt
 #' @export 
 setMethod("minFreqFilt", signature(x = "ASEset"), 
 		function(x, strand="*", threshold.frequency=0.10, replace.with="zero", 
@@ -209,14 +240,42 @@ setMethod("minFreqFilt", signature(x = "ASEset"),
 			#.expandMatrixToArray(tfFilt, length(var))
 }
 
+#' minCountFilt methods 
+#' 
+#' filter on minCountFilt snps
+#' 
+#' Description info here
+#' 
+#' @name minCountFilt
+#' @rdname minCountFilt
+#' @aliases minCountFilt minCountFilt,ASEset-method 
+#' @docType methods
+#' @param x \code{ASEset} object
+#' @param strand strand to infer from
+#' @param sum 'each' or 'all' 
+#' @param threshold.counts cutoff for read counts (see details)
+#' @param replace.with only option 'zero' 
+#' @param return.class 'ASEset', 'array' or 'matrix'
+#' @param ... internal param
+#' @author Jesper R. Gadin, Lasse Folkersen
+#' @keywords filter
+#' @examples
+#' 
+#' #load example data
+#' data(ASEset)
+#' a <- ASEset
+#'
+#' minCountFilt(a)
+#' 
+NULL
 
-#' @rdname ASEset-filters
+#' @rdname minCountFilt
 #' @export 
 setGeneric("minCountFilt", function(x, ...){
     standardGeneric("minCountFilt")
 })
 
-#' @rdname ASEset-filters
+#' @rdname minCountFilt
 #' @export 
 setMethod("minCountFilt", signature(x = "ASEset"), 
 		function(x, strand="*", threshold.counts=1,
