@@ -189,7 +189,7 @@ setMethod("fractionPlotDf", signature(x = "ASEset"),
 		snprow <- snp
 	}
 
-	afraction <- fraction(x[snprow], strand = strand, top.fraction.criteria=top.fraction.criteria)
+	afraction <- t(fraction(x[snprow], strand = strand, top.fraction.criteria=top.fraction.criteria))
 
 	values <- as.vector(t(matrix(as.numeric(afraction), ncol=2, nrow=ncol(x))))
 	#values[seq(1,ncol(x)*2,by=2)+1] <- 1 - values[seq(1,ncol(x)*2,by=2)+1]

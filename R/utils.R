@@ -35,11 +35,14 @@ NULL
 
 #important helper to pick put the frequence of the reference allele
 .arrayFromAlleleVector <- function(var, sel, nc){
-	array(matrix(var, ncol=length(var), nrow=length(sel), byrow=TRUE)==sel
-		, dim=c(length(sel), length(var), ncol=nc))
+	aperm(array(array(var, dim=c(length(var), length(sel)))==sel
+		, dim=c(length(var), length(sel), nc)),c(2,3,1) )
 }
 
-#this is the follow up on arrayFromAlleleVector. 
-.subsetFrequencyWithAlleleArray <- function(fr, ar){
-		matrix(aperm(fr, c(3,2,1))[aperm(ar, c(2,3,1))], ncol=nrow(fr), nrow=ncol(fr))
+#this is eg. the follow up on arrayFromAlleleVector to extract frequency from that spcific variant
+#It accepts all dimensions, as long as dim(fr)==dim(ar)
+.subsetArrayToMatrix <- function(fr, ar){
+	array(aperm(fr,c(3,1,2))[aperm(ar,c(3,1,2))],dim=c(nrow(fr),ncol(fr)))
 }
+
+

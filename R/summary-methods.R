@@ -82,7 +82,7 @@ setMethod("regionSummary", signature("ASEset"),
 		#make regional granges for she summaries
 		gr <- .makeRegionGRangesFromASEsetWithRegionIndex(x)
 		#fraction with maternal phase used as numerator
-		fr <- fraction(x, strand=strand, top.fraction.criteria="phase")
+		fr <- t(fraction(x, strand=strand, top.fraction.criteria="phase"))
 		#which snp and sample pairs are heterozygotes
 		fr.het.filt <- hetFilt(x)
 		#filter so all homozygotes become NAs 

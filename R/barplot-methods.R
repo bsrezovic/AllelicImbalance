@@ -633,7 +633,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                     
                   } else {
                     # use chisq by default
-                    TFf <- fraction(x[i], strand = strand) < filter.pValue.fraction
+                    TFf <- t(fraction(x[i], strand = strand) < filter.pValue.fraction)
                     ct <- signif(chisq.test(x[i], strand), 1)
                     ct[!TFf] <- NA
                     text(xat, apply(heightsOfRectangles, 2, max), ct, cex = cex.pValue, 
@@ -955,7 +955,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                     }
                   } else {
                     # use chisq by default
-                    TFf <- fraction(x[i], strand = "+") < filter.pValue.fraction
+                    TFf <- t(fraction(x[i], strand = "+") < filter.pValue.fraction)
                     ct <- signif(chisq.test(x[i], "+"), 1)
                     ct[!TFf] <- NA
                     text(xat, apply(middleLine + heightsOfRectanglesPlus, 2, max), 
@@ -972,7 +972,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                     }
                   } else {
                     # use chisq by default
-                    TFf <- fraction(x[i], strand = "-") < filter.pValue.fraction
+                    TFf <- t(fraction(x[i], strand = "-") < filter.pValue.fraction)
                     ct <- signif(chisq.test(x[i], "-"), 1)
                     ct[!TFf] <- NA
                     text(xat, apply(barMinusEdge, 2, min), ct, cex = cex.pValue, 

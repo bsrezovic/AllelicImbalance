@@ -87,3 +87,50 @@ test_that(paste("checking .IRangesFromIntegerList"), {
     expect_that(exp, equals(res))
 
 })
+
+test_that(paste("checking .arrayFromAlleleVector"), {
+
+	#####################
+	# Test 1 
+	#####################
+	
+	#add one region that is missing
+	var <- c("A", "T", "G", "C")
+	sel <- c("A", "A","C")
+	nc <- 2
+
+	#prepeare expected data
+	exp <- array(c(c(T,T,F,T,T,F,F,F,F,F,F,F),
+				   c(F,F,F,F,F,F,F,F,T,F,F,T))
+				   , dim=c(3,2,4))
+
+	#run tests
+	res <- .arrayFromAlleleVector(var, sel, nc)
+	
+	#test equality
+    expect_equal(exp, res)
+
+})
+
+test_that(paste("checking .subsetArrayToMatrix"), {
+
+	#####################
+	# Test 1 - when array to be subsetted is the frequency array
+	#####################
+	
+	#add one region that is missing
+	ar <- aperm(array(c(T,T,F,F,F,F,F,F,F,F,F,T), dim=c(3,4,2)), c(1,3,2))
+	fr <- array(c(0.3,0.2,0.3,0.2,0.8,0.2,0.3,0.7,0.4,0.2,0.1,0.3), dim=c(3,2,4))
+
+	#prepeare expected data
+	exp <- array(c(0.3,0.2,0.4,0.2,0.8,0.3), dim=c(3,2))
+
+	#run tests
+	res <- .subsetArrayToMatrix(fr, ar)
+	
+	#test equality
+    expect_equal(exp, res)
+
+})
+
+

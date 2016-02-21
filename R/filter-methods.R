@@ -141,23 +141,39 @@ setGeneric("minCountFilt", function(x, ...){
 
 setMethod("minCountFilt", signature(x = "ASEset"), 
 		function(x, strand="*", threshold.counts=1,
-				   sum=""){
+				   sum="all"){
 
 		#extract alleleCounts
 		ar <- alleleCounts(x, strand=strand, return.class="array")
 
-	##	if(sum=="alleles"){}
-	##	acat <- apply(ar, c(1,2), sum)
-	##	if(sum=="sample"){}
-	##	acst <- apply(ar, c(1,2), sum)
-	##	
-		if(sum=="variants"){
+		if(sum=="all"){
 			
 			apply(ar, c(1,2), function(x){sum(x)>= threshold.counts})
 		
-		}else{
+		}else if(sum=="each"){
 			#return object with three dim
-			ar  >= threshold.counts
+
+			ref <-  as.character(mcols(x)[["REF"]])
+			alt <-  as.character(unlist(mcols(x)[["ALT"]]))
+
+			#take out count values only for ref allele
+			ref.ar <- .arrayFromAlleleVector(x@variants, ref, ncol(x) )
+			alt.ar <- .arrayFromAlleleVector(x@variants, alt, ncol(x) )
+
+			#use on counts
+			ref.ac <- .subsetArrayToMatrix(ac, ref.ar)
+			alt.ac <- .subsetArrayToMatrix(ac, alt.ar)
+
+			#at least 30 in both groups
+			#tfFilt <- (ref.ac > 20) & (alt.ac > 20)
+			tfFilt <- (ref.ac > thr) & (alt.ac > thr)
+			#tfFilt <- (ref.ac > 30) & (alt.ac > 30)
+
+			#take out these pairs and look at them
+			matrix(c(ref.ac[tfFilt], alt.ac[tfFilt]), ncol=2)
+
+			assays(x)[["countsPlus"]][!t(tfFilt)] <- 0
+			x
 		}
 })
 

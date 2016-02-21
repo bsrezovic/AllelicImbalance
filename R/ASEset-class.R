@@ -393,7 +393,7 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*",
 		#select only ref rows (here is mcols() ref required)
 		ar <- .arrayFromAlleleVector(x@variants, ref,nc=ncol(x))
 		#use the array to subset the ref frequencies
-		ret <- .subsetFrequencyWithAlleleArray(fr, ar)
+		ret <- .subsetArrayToMatrix(fr, ar)
 		#use maternal phase freq, by reverse values in mat that are not ref (0)
 		ret <- .returnMaternalPhaseFrequency(phase(x,return.class="array")[,,1], ret)
 	}else if(top.fraction.criteria=="ref"){
@@ -402,17 +402,17 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*",
 		#select only ref rows (here is mcols() ref required)
 		ar <- .arrayFromAlleleVector(x@variants, ref,nc=ncol(x))
 		#use the array to subset the ref frequencies
-		ret <- .subsetFrequencyWithAlleleArray(fr, ar)
+		ret <- .subsetArrayToMatrix(fr, ar)
 	}else if(top.fraction.criteria=="maxcount"){
 		#use output from rank as maxcount, select only 1st rank 
 		ar <- .arrayFromAlleleVector(x@variants, 
 				arank(x, strand = strand, return.class="matrix")[,1], ncol(x))
 		#use the array to subset the ref frequencies
-		ret <- .subsetFrequencyWithAlleleArray(fr, ar)
+		ret <- .subsetArrayToMatrix(fr, ar)
 	}
     # return object matrix
-	rownames(ret) <- colnames(x)
-	colnames(ret) <- rownames(x)
+	colnames(ret) <- colnames(x)
+	rownames(ret) <- rownames(x)
     ret
 })
 ### -------------------------------------------------------------------------
@@ -421,7 +421,7 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*",
 
 #ph is an array, rf is the fraction matrix for ref frequencies
 .returnMaternalPhaseFrequency <- function(ph,rf){
-	rf[t(ph)==1] <- 1 - rf[t(ph)==1]
+	rf[ph==1] <- 1 - rf[ph==1]
 	rf
 }
 

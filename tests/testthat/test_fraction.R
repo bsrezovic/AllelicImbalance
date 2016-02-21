@@ -7,6 +7,7 @@ test_that(paste("test fraction default"), {
 	data(ASEset)	
 	x <- ASEset
 
+	res <- t(fraction(x))
 	res <- fraction(x)
 
 	#check 
@@ -39,7 +40,7 @@ test_that(paste("test fraction usePhase=TRUE"), {
 	phase(a) <- pha
 	
 	#check 
-	res <- fraction(a, top.fraction.criteria="phase")
+	res <- t(fraction(a, top.fraction.criteria="phase"))
 
 	#check 
     expect_that(colnames(res), equals(rownames(a)))
@@ -48,4 +49,32 @@ test_that(paste("test fraction usePhase=TRUE"), {
     expect_that(as.vector(res)[57:60], equals(c(NaN,0,0,0)))
 
 })
+
+test_that(paste("checking .returnMaternalPhaseFrequency"), {
+
+	#####################
+	# Test 1 - 
+	#####################
+	
+	#add one region that is missing
+	ar <- aperm(array(c(T,T,F,F,F,F,F,F,F,F,F,T), dim=c(3,4,2)), c(1,3,2))
+	fr <- array(c(0.3,0.2,0.3,0.2,0.8,0.2,0.3,0.7,0.4,0.2,0.1,0.3), dim=c(3,2,4))
+	
+	#prepare phase matrix
+	ph <- array(c(1,1,0,0,1,0),dim=c(3,2))
+	#prepare reference allele matrix
+	rf <- array(c(0,0.2,0.8,0,0,1),dim=c(3,2))
+
+	#prepeare expected data
+	exp <- array(c(1.0,0.8,0.8,0,1,1), dim=c(3,2))
+
+	#run tests
+	res <- .returnMaternalPhaseFrequency(ph,rf)
+	
+	#test equality
+    expect_equal(exp, res)
+
+
+})
+
 

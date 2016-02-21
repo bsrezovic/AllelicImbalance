@@ -39,9 +39,9 @@ setMethod("binom.test", signature(x = "ASEset", n = "ANY"), function(x, n = "*")
 
     strand <- n
 
-	fr <- t(fraction(x, strand=strand,
+	fr <- fraction(x, strand=strand,
 			top.fraction.criteria="ref",
-			threshold.count.sample= 1))
+			threshold.count.sample= 1)
     
     # checks
     if (!sum(strand %in% c("+", "-", "*")) > 0) {
