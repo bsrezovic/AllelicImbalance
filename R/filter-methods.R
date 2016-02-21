@@ -124,22 +124,91 @@ setGeneric("minFreqFilt", function(x, ...){
 #' @rdname ASEset-filters
 #' @export 
 setMethod("minFreqFilt", signature(x = "ASEset"), 
-		function(x, strand="*", threshold.frequency=0.10)
+		function(x, strand="*", threshold.frequency=0.10, replace.with="zero", 
+				 return.class="ASEset", sum="all" )
+				
 		{
+		thr <- threshold.frequency
+		fr <- frequency(x, strand=strand, threshold.count.sample=1,
+				return.class="array")
 
-		#find SNP types
-		fr <- frequency(x, strand=strand, 
-			threshold.count.sample=1,
-			return.class="array")
+		#create tfmat
+		if(sum=="each"){
+			#check if ref and alt allele are present
+			if(!refExist(x)){stop("ref(x) is empty")}
+			if(!altExist(x)){stop("alt(x) is empty")}
+			#check if ref and alt are character, otherwise give a warning and 
+			#coerce to character
+			ref <- .verboseCoerceToCharacter(ref(x)) 
+			alt <- .verboseCoerceToCharacter(alt(x)) 
+			tfmat <- .toKeepMatrixMinFreqFilterEach(fr,ref,alt,ncol(x),thr,x@variants)
 
-		if(VariantAlleleSource=="mcols"){
-			cat("not implemented yet")
-		}else if(VariantAlleleSource=="alleleCounts"){
-
-			tf <- fr >= threshold.frequency
-			apply(tf, c(1,2), function(x){sum(x)>=2})
+		}else if(sum=="all"){
+			tfmat <- .Na2False(.toKeepMatrixMinFreqFilterAll(fr, thr))
 		}
+
+		#return object
+		if(return.class=="ASEset"){
+			#will only filter out the selected strand, and while the unknown strand is
+			#based on the plus and minus we have to filter all of them, to have the back
+			#free. In the future the assays(x)[["countsUnknown"]] will be dropped so it 
+			#always calculated on the fly as the sum of the plus and minus strand
+			tfarray <- .expandMatrixToArray(tfmat, length(x@variants))
+			if(strand=="*"){
+				if(.unknownStrandCountsExists(x)) alleleCounts(x, strand="*", return.class="array")[!tfarray] <- 0
+				if(.minusStrandCountsExists(x)) alleleCounts(x, strand="-", return.class="array")[!tfarray] <- 0
+				if(.plusStrandCountsExists(x)) alleleCounts(x, strand="+", return.class="array")[!tfarray] <- 0
+			}else if(strand=="+" | strand=="-"){
+				alleleCounts(x, strand=strand, return.class="array")[!tfarray] <- 0
+			}
+			return(x)
+		}
+		if(return.class=="array") return(.expandMatrixToArray(tfmat, length(x@variants)))
+		if(return.class=="matrix") return(tfmat)
 })
+### -------------------------------------------------------------------------
+### helpers for minFreqFilt
+###
+
+#get the replacement matrix for "all"
+.toKeepMatrixMinFreqFilterAll <- function(fr, thr){
+		tf <- fr >= thr
+		apply(tf, c(1,2), function(x){sum(x)>=2})	
+}
+
+#get the replacement matrix for "each"
+.toKeepMatrixMinFreqFilterEach <- function(fr,ref,alt,nc,thr,var){
+			#check that overall dimensions are fine
+			if(!length(nc)==1) stop("dimensions do not agree in .altAlleleFreqThreshold")
+			if(any(!dim(fr) == c(length(ref), nc, length(var))) | 
+			   !(length(ref) == length(alt)) |
+			   !(length(nc) == 1) |
+			   !(length(thr) == 1)
+			) stop("dimensions do not agree in .altAlleleFreqThreshold")
+			
+
+			#take out count values only for ref allele
+			ref.ar <- .arrayFromAlleleVector(var, ref, nc )
+			alt.ar <- .arrayFromAlleleVector(var, alt, nc )
+
+			#use on counts
+			ref.fr <- .subsetArrayToMatrix(fr, ref.ar)
+			alt.fr <- .subsetArrayToMatrix(fr, alt.ar)
+
+			#at least eg. 0.1 in each group
+			.Na2False(ref.fr > thr) & .Na2False(alt.fr > thr)
+
+			#tfFilt <- .Na2False(ref.fr > thr) & .Na2False(alt.fr > thr)
+			#take out these pairs and look at them (manually control that all is fine)
+			#this is atm not tested in a unit test, but should be covered by
+			#another test
+			#matrix(c(ref.fr[tfFilt], alt.fr[tfFilt]), ncol=2)
+			#matrix(c(ref.fr[!tfFilt], alt.fr[!tfFilt]), ncol=2)
+
+			#extend the matrix to 3d for the subset/replacement now done outside this unit
+			#.expandMatrixToArray(tfFilt, length(var))
+}
+
 
 #' @rdname ASEset-filters
 #' @export 
@@ -180,17 +249,16 @@ setMethod("minCountFilt", signature(x = "ASEset"),
 			#always calculated on the fly as the sum of the plus and minus strand
 			tfarray <- .expandMatrixToArray(tfmat, length(x@variants))
 			if(strand=="*"){
-				alleleCounts(x, strand="*", return.class="array")[!tfarray] <- 0
-				alleleCounts(x, strand="-", return.class="array")[!tfarray] <- 0
-				alleleCounts(x, strand="+", return.class="array")[!tfarray] <- 0
+				if(.unknownStrandCountsExists(x)) alleleCounts(x, strand="*", return.class="array")[!tfarray] <- 0
+				if(.minusStrandCountsExists(x)) alleleCounts(x, strand="-", return.class="array")[!tfarray] <- 0
+				if(.plusStrandCountsExists(x)) alleleCounts(x, strand="+", return.class="array")[!tfarray] <- 0
 			}else if(strand=="+" | strand=="-"){
 				alleleCounts(x, strand=strand, return.class="array")[!tfarray] <- 0
 			}
-			print(alleleCounts(x, strand=strand, return.class="array"))
 			return(x)
 		}
 		if(return.class=="array") return(.expandMatrixToArray(tfmat, length(x@variants)))
-		if(return.class=="mat") return(tfmat)
+		if(return.class=="matrix") return(tfmat)
 
 })
 

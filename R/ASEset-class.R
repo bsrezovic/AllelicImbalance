@@ -290,6 +290,20 @@ setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*",
 
     
 })
+### -------------------------------------------------------------------------
+### helpers for alleleCounts
+###
+.plusStrandCountsExists <- function(x){
+	"countsPlus" %in% names(assays(x))
+}
+.minusStrandCountsExists <- function(x){
+	"countsMinus" %in% names(assays(x))
+}
+.unknownStrandCountsExists <- function(x){
+	"countsUnknown" %in% names(assays(x))
+}
+
+
 
 #' @rdname ASEset-class
 #' @export 

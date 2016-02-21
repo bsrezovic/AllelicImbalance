@@ -2,7 +2,7 @@
 NULL
 
 ### =========================================================================
-### Helper functions not exported
+### General helper functions not exported
 ### =========================================================================
 
 #supposed to merge paths and file irrespective OS and presence of trailing slash
@@ -64,5 +64,13 @@ NULL
 		warning("arg was not of type character, and will therefore be coerced to character")
 		as.character(x)
 	}else x
+}
+
+#convert NA to FALSE
+.Na2False <- function(x){
+	if(class(x[1])=="numeric" | class(x[1])=="integer") 
+		stop("not possible to replace a numeric or integer with FALSE and get the expected result")
+	x[is.na(x)] <- FALSE
+	x
 }
 

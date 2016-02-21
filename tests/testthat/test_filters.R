@@ -152,3 +152,108 @@ test_that(paste("checking .toKeepMatrixMinCountFilterAll"), {
 	#expect_error(.toKeepMatrixMinCountFilterEach(ac[1:2,,], ref, alt, nc, thr, var))
 
 })
+
+context("internal functions for minFreqFilt")
+
+test_that(paste("checking .toKeepMatrixMinFreqFilterEach"), {
+
+	#####################
+	# Test 1
+	#####################
+	
+
+	ref <-	c("T","C","G")
+	alt <- c("G","G","A")
+	nc <- 7
+	thr <- 0.1
+	var <- c("A","C","G","T")
+
+	p1 <- c(
+			 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.0000000,
+			 0.0000000,       NaN, 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.0000000,
+			 0.0000000, 0.0000000, 0.0000000, 0.4347826, 0.0000000, 0.0000000, 0.0000000,
+			 0.0000000, 0.8076923, 0.0000000, 0.0000000, 1.0000000, 0.0000000, 0.0000000,
+			 1.0000000,       NaN, 0.0000000, 1.0000000, 0.0000000, 0.0000000, 1.0000000,
+			 0.0000000, 0.0000000, 0.8615385, 0.0000000, 0.0000000, 0.6428571, 0.0000000,
+			 0.2000000, 0.1923077, 1.0000000, 0.0000000, 0.0000000, 1.0000000, 0.0000000,
+			 0.0000000,       NaN, 0.0000000, 0.0000000, 1.0000000, 0.0000000, 0.0000000,
+			 1.0000000, 0.2435897, 0.1384615, 0.5652174, 0.3090909, 0.3571429, 1.0000000,
+			 0.8000000, 0.0000000, 0.0000000, 1.0000000, 0.0000000, 0.0000000, 1.0000000,
+			 0.0000000,       NaN, 1.0000000, 0.0000000, 0.0000000, 1.0000000, 0.0000000,
+			 0.0000000, 0.7564103, 0.0000000, 0.0000000, 0.6909091, 0.0000000, 0.0000000
+	) 
+	fr <- array(p1,dim=c(3,nc,4))
+						  
+	#prepare expected data
+	e1 <- c(
+			 TRUE,  TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+			 FALSE, FALSE, FALSE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, FALSE
+		)
+	exp <- array(e1, dim=c(3,7))
+
+			
+	#run tests
+	res <- .toKeepMatrixMinFreqFilterEach(fr,ref,alt,nc,thr,var)
+    expect_that(exp, equals(res))
+
+
+	#####################
+	# Test 2 - make sure the test throws error if input has dimension missmatch
+	#####################
+		
+	expect_error(.toKeepMatrixMinFreqFilterEach(fr[1:2,,], ref, alt, nc, thr, var))
+	expect_error(.toKeepMatrixMinFreqFilterEach(fr[1:2,,1,drop=FALSE], ref, alt, nc, thr, var))
+	expect_error(.toKeepMatrixMinFreqFilterEach(fr[,,1:3], ref, alt, nc, thr, var))
+	expect_error(.toKeepMatrixMinFreqFilterEach(fr[,1:4,], ref, alt, nc, thr, var))
+	expect_error(.toKeepMatrixMinFreqFilterEach(fr, ref[1:2], alt, nc, thr, var))
+	expect_error(.toKeepMatrixMinFreqFilterEach(fr, ref , alt[1:2], nc, thr, var))
+	expect_error(.toKeepMatrixMinFreqFilterEach(fr, ref , alt, nc[c(1,1)], thr, var))
+	expect_error(.toKeepMatrixMinFreqFilterEach(fr, ref , alt, nc, thr[c(1,1)], var))
+
+})
+test_that(paste("checking .toKeepMatrixMinFreqFilterAll"), {
+
+	#####################
+	# Test 1
+	#####################
+	
+
+	nc <- 7
+	thr <- 0.1
+
+	p1 <- c(
+			 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.0000000,
+			 0.0000000,       NaN, 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.0000000,
+			 0.0000000, 0.0000000, 0.0000000, 0.4347826, 0.0000000, 0.0000000, 0.0000000,
+			 0.0000000, 0.8076923, 0.0000000, 0.0000000, 1.0000000, 0.0000000, 0.0000000,
+			 1.0000000,       NaN, 0.0000000, 1.0000000, 0.0000000, 0.0000000, 1.0000000,
+			 0.0000000, 0.0000000, 0.8615385, 0.0000000, 0.0000000, 0.6428571, 0.0000000,
+			 0.2000000, 0.1923077, 1.0000000, 0.0000000, 0.0000000, 1.0000000, 0.0000000,
+			 0.0000000,       NaN, 0.0000000, 0.0000000, 1.0000000, 0.0000000, 0.0000000,
+			 1.0000000, 0.2435897, 0.1384615, 0.5652174, 0.3090909, 0.3571429, 1.0000000,
+			 0.8000000, 0.0000000, 0.0000000, 1.0000000, 0.0000000, 0.0000000, 1.0000000,
+			 0.0000000,       NaN, 1.0000000, 0.0000000, 0.0000000, 1.0000000, 0.0000000,
+			 0.0000000, 0.7564103, 0.0000000, 0.0000000, 0.6909091, 0.0000000, 0.0000000
+	) 
+	fr <- array(p1,dim=c(3,nc,4))
+						  
+						  
+	#prepare expected data
+	e1 <- c(
+			 TRUE,  TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,    NA, FALSE, FALSE, FALSE,
+			 FALSE, FALSE, FALSE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE, FALSE
+		)
+	exp <- array(e1, dim=c(3,7))
+
+	#run tests
+	res <- .toKeepMatrixMinFreqFilterAll(fr,thr)
+    expect_that(exp, equals(res))
+
+
+	#####################
+	# Test 2 - make sure the test throws error if input has dimension missmatch
+	#####################
+		
+	#expect_error(.toKeepMatrixMinCountFilterEach(ac[1:2,,], ref, alt, nc, thr, var))
+
+})

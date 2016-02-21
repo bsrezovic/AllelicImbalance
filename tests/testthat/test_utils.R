@@ -192,7 +192,7 @@ test_that(paste("checking .expandMatrixToArray"), {
 
 })
 
-test_that(paste("checking verboseCoerceToCharacter"), {
+test_that(paste("checking .verboseCoerceToCharacter"), {
 
 	#####################
 	# Test 1 - 
@@ -221,6 +221,40 @@ test_that(paste("checking verboseCoerceToCharacter"), {
 	#test 
     expect_warning(res <- .verboseCoerceToCharacter(vec))
     expect_equal(exp, res)
+
+})
+
+test_that(paste("checking .Na2False"), {
+
+	#####################
+	# Test 1 - vector
+	#####################
+	
+	#prepeare expected data
+	vec <- c("A",NA,"G")
+	#add one region that is missing
+	exp <- c("A",FALSE,"G")
+	#run tests
+	res <- .Na2False(vec)
+	#test equality
+    expect_equal(exp, res)
+
+	#####################
+	# Test 2 - test a matrix with numbers
+	# numbers will not give the expected output
+	#####################
+
+	vec <- matrix(c(1,2,3,NA,5,6), ncol=2)
+    expect_error(.Na2False(vec))
+
+	#####################
+	# Test 2 - test a matrix with numbers
+	# numbers will not give the expected output
+	#####################
+	vec <- matrix(c(T,F,T,NA,F,T), ncol=2)
+	exp <- matrix(c(T,F,T,F,F,T), ncol=2)
+	res <- .Na2False(vec)
+	expect_equal(exp, res)
 
 })
 
