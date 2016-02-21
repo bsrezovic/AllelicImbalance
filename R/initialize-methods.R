@@ -528,7 +528,7 @@ GAnalysis <- function(
 #'
 #' data(ASEset)
 #' #p <- getPhaseFromSomewhere
-#' #rv <- riskVariantFromGRangesAndPhaseArray(x=GRvariants, phase=p)
+#' #rv <- RiskVariantFromGRangesAndPhaseArray(x=GRvariants, phase=p)
 #'
 #' 
 NULL
@@ -536,7 +536,7 @@ NULL
 #' @rdname initialize-RiskVariant
 #' @export 
 #setMethod("riskVariant","riskVariant", function(
-riskVariantFromGRangesAndPhaseArray <- function(
+RiskVariantFromGRangesAndPhaseArray <- function(
 	x,
 	phase,
 	...){

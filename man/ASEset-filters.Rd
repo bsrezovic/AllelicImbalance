@@ -25,8 +25,8 @@ multiAllelicFilt(x, ...)
 
 minFreqFilt(x, ...)
 
-\S4method{minFreqFilt}{ASEset}(x, strand = "*",
-  VariantAlleleSource = "alleleCounts", threshold.frequency = 0.1)
+\S4method{minFreqFilt}{ASEset}(x, strand = "*", threshold.frequency = 0.1,
+  replace.with = "zero", return.class = "ASEset", sum = "all")
 
 minCountFilt(x, ...)
 
