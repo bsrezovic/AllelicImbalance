@@ -110,6 +110,27 @@ test_that(paste("checking .arrayFromAlleleVector"), {
 	#test equality
     expect_equal(exp, res)
 
+
+	#####################
+	# Test 2 - something the unit test 1, did not catch
+	#####################
+	
+	#add one region that is missing
+	var <- c("A", "C", "G", "T")
+	sel <- c("T", "C","G")
+	nc <- 20
+
+	#prepeare expected data
+	ma <- array(c(F,F,F,T,F,T,F,F,F,F,T,F), dim=c(4,3))
+	exp <- aperm(array(ma,dim=c(nrow(ma),ncol(ma),nc)),c(2,3,1) )
+ 
+	#run tests
+	res <- .arrayFromAlleleVector(var, sel, nc)
+	
+	#test equality
+    expect_equal(exp, res)
+
+
 })
 
 test_that(paste("checking .subsetArrayToMatrix"), {
@@ -119,18 +140,87 @@ test_that(paste("checking .subsetArrayToMatrix"), {
 	#####################
 	
 	#add one region that is missing
-	ar <- aperm(array(c(T,T,F,F,F,F,F,F,F,F,F,T), dim=c(3,4,2)), c(1,3,2))
-	fr <- array(c(0.3,0.2,0.3,0.2,0.8,0.2,0.3,0.7,0.4,0.2,0.1,0.3), dim=c(3,2,4))
+	ar2 <- aperm(array(c(T,T,F,F,F,F,F,F,F,F,F,T), dim=c(3,4,2)), c(1,3,2))
+	ar <- array(c(0.3,0.2,0.3,0.2,0.8,0.2,0.3,0.7,0.4,0.2,0.1,0.3), dim=c(3,2,4))
 
 	#prepeare expected data
 	exp <- array(c(0.3,0.2,0.4,0.2,0.8,0.3), dim=c(3,2))
 
 	#run tests
-	res <- .subsetArrayToMatrix(fr, ar)
+	res <- .subsetArrayToMatrix(ar, ar2)
+	
+	#test equality
+    expect_equal(exp, res)
+
+	#####################
+	# Test 2 - when array to be subsetted is the count array
+	#####################
+	
+	#add one region that is missing
+	ar2 <- aperm(array(c(T,T,F,F,F,F,F,F,F,F,F,T), dim=c(3,4,2)), c(1,3,2))
+	ar <- array(c(10,20,30,40,50,60,11,22,33,44,55,66), dim=c(3,2,4))
+
+	#prepeare expected data
+	exp <- array(c(10,20,33,40,50,66), dim=c(3,2))
+
+	#run tests
+	res <- .subsetArrayToMatrix(ar, ar2)
 	
 	#test equality
     expect_equal(exp, res)
 
 })
 
+test_that(paste("checking .expandMatrixToArray"), {
+
+	#####################
+	# Test 1 - 
+	#####################
+	
+	#prepeare expected data
+	mat <- array(c(0.3,0.2,0.4,0.2,0.8,0.3), dim=c(3,2))
+	len <- 4
+
+	#add one region that is missing
+	exp <- array(mat, dim=c(3,2,4))
+
+	#run tests
+	res <- .expandMatrixToArray(mat, len)
+	
+	#test equality
+    expect_equal(exp, res)
+
+})
+
+test_that(paste("checking verboseCoerceToCharacter"), {
+
+	#####################
+	# Test 1 - 
+	#####################
+	
+	#prepeare expected data
+	vec <- c("A","T","G")
+
+	#add one region that is missing
+	exp <- c("A","T","G")
+
+	#run tests
+	res <- .verboseCoerceToCharacter(vec)
+	
+	#test equality
+    expect_equal(exp, res)
+
+	#####################
+	# Test 1 - test a class that is not character
+	#####################
+
+	vec <- c(1,2,3)
+	#add one region that is missing
+	exp <- c("1","2","3")
+
+	#test 
+    expect_warning(res <- .verboseCoerceToCharacter(vec))
+    expect_equal(exp, res)
+
+})
 

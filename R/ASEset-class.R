@@ -293,14 +293,17 @@ setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*",
 
 #' @rdname ASEset-class
 #' @export 
-setGeneric("alleleCounts<-", function(x, strand = "*", value) {
+setGeneric("alleleCounts<-", function(x, ..., value) {
     standardGeneric("alleleCounts<-")
 })
 
 #' @rdname ASEset-class
 #' @export 
-setMethod("alleleCounts<-", signature(x = "ASEset"), function(x,
-	 strand = "*", value) {
+setReplaceMethod("alleleCounts", "ASEset", 
+	function(x, strand="*", return.class="array", ..., value) {
+
+	#for dev
+	#message("valueX: ", paste0(value, collapse=", "))
 
     if (!sum(strand %in% c("+", "-", "*")) > 0) {
         stop("strand parameter has to be either '+', '-', '*' ")
@@ -316,14 +319,17 @@ setMethod("alleleCounts<-", signature(x = "ASEset"), function(x,
         stop("not existing strand option")
     }
     
-	#check that value has the right dimensions
-	if(!all(dim(value)==dim(assays(x)[["countsUnknown"]]))){
-		stop("dimensions in replacement object is not correct")
-	}
 
-	assays(x)[[el]] <- value
+	
+	#check that value has the right dimensions (make validObject method)
+	#if(!all(dim(value)==dim(assays(x)[["countsUnknown"]]))){
+	#	stop("dimensions in replacement object is not correct")
+	#}
+
+	assays(x)[[el]][] <- value
+
+	#return object
 	x
-
 })
 
 #' @rdname ASEset-class
@@ -710,6 +716,18 @@ setMethod("mapBias<-", signature(x = "ASEset"), function(x,value) {
 
 #' @rdname ASEset-class
 #' @export 
+setGeneric("refExist", function(x){
+    standardGeneric("refExist")
+})
+
+#' @rdname ASEset-class
+#' @export 
+setMethod("refExist", signature(x = "ASEset"), function(x) {
+		!is.null(ref(x))
+})
+
+#' @rdname ASEset-class
+#' @export 
 setGeneric("ref")
 
 #' @rdname ASEset-class
@@ -737,6 +755,18 @@ setMethod("ref<-", signature(x = "ASEset"), function(x, value) {
 	}
 	
 	x
+})
+
+#' @rdname ASEset-class
+#' @export 
+setGeneric("altExist", function(x){
+    standardGeneric("altExist")
+})
+
+#' @rdname ASEset-class
+#' @export 
+setMethod("altExist", signature(x = "ASEset"), function(x) {
+		!is.null(ref(x))
 })
 
 #' @rdname ASEset-class
@@ -862,3 +892,62 @@ setMethod("paternalAllele", signature(x = "ASEset"),
 })
 
 
+##' @rdname ASEset-class
+##' @export 
+#setGeneric("testet<-", signature="x", function(x, ..., value){
+#    standardGeneric("testet<-")
+#})
+##we need to set a normal generic to be able to use the replacement generic
+#setGeneric("testet", signature="x", function(x, ...){
+#    standardGeneric("testet")
+#})
+#
+##' @rdname ASEset-class
+##' @export 
+#setReplaceMethod("testet", c("ASEset"), 
+#				 function(x, ... ,value){
+#					message("value0: ", paste0(value, collapse=", "))
+#					.set_ASEset_ref(x, value)
+#				 }
+#)
+#
+#setMethod("testet","ASEset",
+#	function(x) ref(x)
+#)
+#
+#.set_ASEset_ref <- function(x, value)
+#{
+#	message("value1: ", paste0(value, collapse=", "))	
+#    ## Use 'x@width[]' instead of 'x@width' so the right value is recycled.
+#	ref(x)[] <- value
+#	x
+#}
+#
+#ref(x)
+#testet(x) <- c("O","P","Q")
+#testet(x)
+#testet(x)[1:2] <- c("S","I")
+#
+#
+##another test
+#
+#setGeneric("getLetters", function(x)standardGeneric("getLetters"))
+#setGeneric("getLetters<-", function(x, value)standardGeneric("getLetters<-"))
+#
+#setMethod("getLetters", "ASEset", function(x) {
+#		    x@variants
+#})
+#
+#setReplaceMethod("getLetters", c("ASEset", "character"), function(x, value) {
+#				   message("value: ", paste0(value, collapse=", "))
+#				     x@variants <- value
+#				     x
+#})
+#
+## [1] "<0x3716b40>"
+#getLetters(x)
+##  [1] "A" "B" "C" "D" "E" "F" "G" "H" "I" "J"
+#getLetters(x)[1:2] <- letters[1:2]
+#
+#
+#

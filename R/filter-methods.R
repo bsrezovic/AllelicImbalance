@@ -8,8 +8,8 @@ NULL
 #' hetFilt returns TRUE if the samples is heterozygote, based on stored genotype information
 #' present in the phase data.
 #' 
-#' @name genofilters
-#' @rdname genofilters
+#' @name ASEset-filters
+#' @rdname ASEset-filters
 #' @aliases hetFilt hetFilt,ASEset-method 
 #' @docType methods
 #' @param x ASEset object
@@ -25,14 +25,16 @@ NULL
 #' genotype(a) <- inferGenotypes(a)
 #' hets <- hetFilt(a) 
 #' 
-#' @exportMethod hetFilt
 NULL
 
-# @rdname genofilters
+#' @rdname ASEset-filters
+#' @export 
 setGeneric("hetFilt", function(x, ...){
     standardGeneric("hetFilt")
 })
 
+#' @rdname ASEset-filters
+#' @export 
 setMethod("hetFilt", signature(x = "ASEset"), 
 	function(x, source="genotype", ...)
 	{
@@ -80,14 +82,16 @@ setMethod("hetFilt", signature(x = "ASEset"),
 #'
 #' multiAllelicFilt(a)
 #' 
-#' @exportMethod multiAllelicFilt
 NULL
 
-# @rdname multiAllelicFilt
+#' @rdname ASEset-filters
+#' @export 
 setGeneric("multiAllelicFilt", function(x, ...){
     standardGeneric("multiAllelicFilt")
 })
 
+#' @rdname ASEset-filters
+#' @export 
 setMethod("multiAllelicFilt", signature(x = "ASEset"), 
 		function(x, strand="*", threshold.count.sample=10, threshold.frequency=0.10,
 				   filterOver="eachSample"){
@@ -111,14 +115,17 @@ setMethod("multiAllelicFilt", signature(x = "ASEset"),
 		}
 })
 
-# @rdname multiAllelicFilt
+#' @rdname ASEset-filters
+#' @export 
 setGeneric("minFreqFilt", function(x, ...){
     standardGeneric("minFreqFilt")
 })
 
+#' @rdname ASEset-filters
+#' @export 
 setMethod("minFreqFilt", signature(x = "ASEset"), 
-		function(x, strand="*", VariantAlleleSource="alleleCounts", threshold.frequency=0.10
-				   ){
+		function(x, strand="*", threshold.frequency=0.10)
+		{
 
 		#find SNP types
 		fr <- frequency(x, strand=strand, 
@@ -134,49 +141,97 @@ setMethod("minFreqFilt", signature(x = "ASEset"),
 		}
 })
 
-# @rdname minCountFilt
+#' @rdname ASEset-filters
+#' @export 
 setGeneric("minCountFilt", function(x, ...){
     standardGeneric("minCountFilt")
 })
 
+#' @rdname ASEset-filters
+#' @export 
 setMethod("minCountFilt", signature(x = "ASEset"), 
 		function(x, strand="*", threshold.counts=1,
-				   sum="all"){
+				   sum="all", replace.with="zero", return.class="ASEset"){
+
+		#set shorter name
+		thr <- threshold.counts
 
 		#extract alleleCounts
-		ar <- alleleCounts(x, strand=strand, return.class="array")
+		ac <- alleleCounts(x, strand=strand, return.class="array")
 
-		if(sum=="all"){
+		#create tfmat
+		if(sum=="all") tfmat <- .toKeepMatrixMinCountFilterAll(ac, thr)
+		else if(sum=="each"){
+			#check if ref and alt allele are present
+			if(!refExist(x)){stop("ref(x) is empty")}
+			if(!altExist(x)){stop("alt(x) is empty")}
+			#check if ref and alt are character, otherwise give a warning and 
+			#coerce to character
+			ref <- .verboseCoerceToCharacter(ref(x)) 
+			alt <- .verboseCoerceToCharacter(alt(x)) 
+			tfmat <- .toKeepMatrixMinCountFilterEach(ac,ref,alt,ncol(x),thr,x@variants)
+		}
+
+		#return object
+		if(return.class=="ASEset"){
+			#will only filter out the selected strand, and while the unknown strand is
+			#based on the plus and minus we have to filter all of them, to have the back
+			#free. In the future the assays(x)[["countsUnknown"]] will be dropped so it 
+			#always calculated on the fly as the sum of the plus and minus strand
+			tfarray <- .expandMatrixToArray(tfmat, length(x@variants))
+			if(strand=="*"){
+				alleleCounts(x, strand="*", return.class="array")[!tfarray] <- 0
+				alleleCounts(x, strand="-", return.class="array")[!tfarray] <- 0
+				alleleCounts(x, strand="+", return.class="array")[!tfarray] <- 0
+			}else if(strand=="+" | strand=="-"){
+				alleleCounts(x, strand=strand, return.class="array")[!tfarray] <- 0
+			}
+			print(alleleCounts(x, strand=strand, return.class="array"))
+			return(x)
+		}
+		if(return.class=="array") return(.expandMatrixToArray(tfmat, length(x@variants)))
+		if(return.class=="mat") return(tfmat)
+
+})
+
+### -------------------------------------------------------------------------
+### helpers for minCountFilt
+###
+
+#get the replacement matrix for "all"
+.toKeepMatrixMinCountFilterAll <- function(ac, thr){
+	apply(ac, c(1,2), function(x,thr){sum(x)> thr},thr=thr)
+}
+
+#get the replacement matrix for "each"
+.toKeepMatrixMinCountFilterEach <- function(ac,ref,alt,nc,thr,var){
+			#check that overall dimensions are fine
+			if(!length(nc)==1) stop("dimensions do not agree in .toKeepArrayMinCountFilter")
+			if(any(!dim(ac) == c(length(ref), nc, length(var))) | 
+			   !(length(ref) == length(alt)) |
+			   !(length(nc) == 1) |
+			   !(length(thr) == 1)
+			) stop("dimensions do not agree in .toKeepArrayMinCountFilter")
 			
-			apply(ar, c(1,2), function(x){sum(x)>= threshold.counts})
-		
-		}else if(sum=="each"){
-			#return object with three dim
-
-			ref <-  as.character(mcols(x)[["REF"]])
-			alt <-  as.character(unlist(mcols(x)[["ALT"]]))
 
 			#take out count values only for ref allele
-			ref.ar <- .arrayFromAlleleVector(x@variants, ref, ncol(x) )
-			alt.ar <- .arrayFromAlleleVector(x@variants, alt, ncol(x) )
+			ref.ar <- .arrayFromAlleleVector(var, ref, nc )
+			alt.ar <- .arrayFromAlleleVector(var, alt, nc )
 
 			#use on counts
 			ref.ac <- .subsetArrayToMatrix(ac, ref.ar)
 			alt.ac <- .subsetArrayToMatrix(ac, alt.ar)
 
 			#at least 30 in both groups
-			#tfFilt <- (ref.ac > 20) & (alt.ac > 20)
-			tfFilt <- (ref.ac > thr) & (alt.ac > thr)
-			#tfFilt <- (ref.ac > 30) & (alt.ac > 30)
+			(ref.ac > thr) & (alt.ac > thr)
 
-			#take out these pairs and look at them
-			matrix(c(ref.ac[tfFilt], alt.ac[tfFilt]), ncol=2)
+			#take out these pairs and look at them (manually control that all is fine)
+			#this is atm not tested in a unit test, but should be covered by
+			#another test
+			#matrix(c(ref.ac[tfFilt], alt.ac[tfFilt]), ncol=2)
+			#matrix(c(ref.ac[!tfFilt], alt.ac[!tfFilt]), ncol=2)
 
-			assays(x)[["countsPlus"]][!t(tfFilt)] <- 0
-			x
-		}
-})
-
-
-
+			#extend the matrix to 3d for the subset/replacement now done outside this unit
+			#.expandMatrixToArray(tfFilt, length(var))
+}
 

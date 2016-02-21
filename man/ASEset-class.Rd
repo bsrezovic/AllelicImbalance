@@ -12,6 +12,8 @@
 \alias{alt,ASEset-method}
 \alias{alt<-}
 \alias{alt<-,ASEset,ANY-method}
+\alias{altExist}
+\alias{altExist,ASEset-method}
 \alias{aquals}
 \alias{aquals,ASEset-method}
 \alias{aquals<-}
@@ -46,15 +48,18 @@
 \alias{ref,ASEset-method}
 \alias{ref<-}
 \alias{ref<-,ASEset,ANY-method}
+\alias{refExist}
+\alias{refExist,ASEset-method}
 \title{ASEset objects}
 \usage{
 alleleCounts(x, strand = "*", return.class = "list")
 
 \S4method{alleleCounts}{ASEset}(x, strand = "*", return.class = "list")
 
-alleleCounts(x, strand = "*") <- value
+alleleCounts(x, ...) <- value
 
-\S4method{alleleCounts}{ASEset}(x, strand = "*") <- value
+\S4method{alleleCounts}{ASEset}(x, strand = "*", return.class = "array",
+  ...) <- value
 
 mapBias(x, ...)
 
@@ -99,6 +104,10 @@ mapBias(x) <- value
 
 \S4method{mapBias}{ASEset}(x) <- value
 
+refExist(x)
+
+\S4method{refExist}{ASEset}(x)
+
 ref(x)
 
 \S4method{ref}{ASEset}(x)
@@ -106,6 +115,10 @@ ref(x)
 ref(x) <- value
 
 \S4method{ref}{ASEset,ANY}(x) <- value
+
+altExist(x)
+
+\S4method{altExist}{ASEset}(x)
 
 alt(x)
 
@@ -138,9 +151,9 @@ paternalAllele(x, ...)
 
 \item{return.class}{return 'list' or 'array'}
 
-\item{value}{replacement variable}
-
 \item{...}{additional arguments}
+
+\item{value}{replacement variable}
 
 \item{top.fraction.criteria}{'maxcount', 'ref' or 'phase'}
 

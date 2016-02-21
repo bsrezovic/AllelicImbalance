@@ -35,8 +35,14 @@ NULL
 
 #important helper to pick put the frequence of the reference allele
 .arrayFromAlleleVector <- function(var, sel, nc){
-	aperm(array(array(var, dim=c(length(var), length(sel)))==sel
-		, dim=c(length(var), length(sel), nc)),c(2,3,1) )
+	selmat <- array(sel, dim=c(length(sel), length(var)))
+	varmat <- array(var, dim=c(length(var), length(sel)))
+	tf <- t(selmat) == varmat
+
+	#expand to array
+	aperm(array(tf,dim=c(nrow(tf),ncol(tf),nc)),c(2,3,1) )
+		
+
 }
 
 #this is eg. the follow up on arrayFromAlleleVector to extract frequency from that spcific variant
@@ -45,4 +51,18 @@ NULL
 	array(aperm(fr,c(3,1,2))[aperm(ar,c(3,1,2))],dim=c(nrow(fr),ncol(fr)))
 }
 
+#this is eg. the follow up on arrayFromAlleleVector to extract frequency from that spcific variant
+#It accepts dim 1 or 2, and is the one
+.expandMatrixToArray <- function(mat, len){
+	array(mat, dim=c(nrow(mat),ncol(mat), len))
+}
+
+#when we need to make sure the input is character
+#returns target as character and issues a warning if the input wasnt
+.verboseCoerceToCharacter <- function(x){
+	if(!class(x)=="character"){
+		warning("arg was not of type character, and will therefore be coerced to character")
+		as.character(x)
+	}else x
+}
 
