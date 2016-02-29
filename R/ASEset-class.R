@@ -202,7 +202,11 @@ setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*",
 	if(strand=="*" ){
 		if(!("countsMinus" %in% names(assays(x)) | "countsPlus" %in% names(assays(x)))){
 			stop(paste("for strand '*' at least one of '+' or '-' is required to be",
-					   " present in ASEset object",sep=""))
+					   " present in ASEset object. Old ASEsets set the '*' strand in",
+					   " countsUnknown, but that has been deprecated. If so, move your counts",
+					   " to the plus or minus slot instead ",
+					   " assays(yourASEset)[['countsPlus']] <- assays(yourASEset)[['countsUnknown']]",
+					   sep=""))
 		}
 	}
 	if(strand=="both" ){
