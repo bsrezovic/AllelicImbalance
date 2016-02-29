@@ -193,7 +193,7 @@ setMethod("detectAI", signature(x = "ASEset"), function(x,
 
 	if(gc){
 		if(verbose){cat("removing and garbage collect temporary variables\n")}
-		rm(fr2, biasmatRef,tf.keep1,tf.keep2,newDims)
+		rm(fr2, biasmatRef, tf.keep, newDims)
 		gc()
 	}
 

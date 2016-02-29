@@ -87,7 +87,7 @@ setMethod("frequency_vs_threshold_variable_plot", signature(x = "DetectedAI"),
 
 		if(hetOverlay==TRUE){
 
-			library(latticeExtra)
+			#library(latticeExtra)
 			b <- xyplot(meanHetSNPs ~ variable, data2,grid=TRUE, lwd=2, pch=16,type=c("p","l"),
 				xlab="",ylab="Nr. of Het SNPs Left", add=TRUE, col="green")
 
@@ -155,7 +155,7 @@ setMethod("detectedAI_vs_threshold_variable_plot", signature(x = "DetectedAI"),
 
 		if(hetOverlay){
 
-			library(latticeExtra)
+			#library(latticeExtra)
 			b <- xyplot(meanHetSNPs ~ variable, data2,grid=TRUE, lwd=2, pch=16,type=c("h"),
 				xlab=var,ylab="", add=TRUE, col="green")
 
@@ -226,7 +226,7 @@ setGeneric("detectedAI_vs_threshold_variable_multigraph_plot", function(x, ...
 setMethod("detectedAI_vs_threshold_variable_multigraph_plot", signature(x = "DetectedAI"),
 	function(x, ncol=2, ...){
 	
-	require(gridExtra)
+	#require(gridExtra)
 
 	graphs <- c("threshold.frequency", "threshold.count.sample",
 	"threshold.delta.frequency", "threshold.pvalue" ) 
@@ -251,7 +251,7 @@ setGeneric("frequency_vs_threshold_variable_multigraph_plot", function(x, ...
 setMethod("frequency_vs_threshold_variable_multigraph_plot", signature(x = "DetectedAI"),
 	function(x, ncol=2, ...){
 
-	require(gridExtra)
+	#require(gridExtra)
 	
 	graphs <- c("threshold.frequency", "threshold.count.sample",
 	"threshold.delta.frequency", "threshold.pvalue" ) 
@@ -276,7 +276,7 @@ setGeneric("reference_frequency_density_vs_threshold_variable_multigraph_plot", 
 setMethod("reference_frequency_density_vs_threshold_variable_multigraph_plot", signature(x = "DetectedAI"),
 	function(x, ncol=2, ...){
 
-	require(gridExtra)
+	#require(gridExtra)
 	
 	graphs <- c("threshold.frequency", "threshold.count.sample",
 	"threshold.delta.frequency", "threshold.pvalue" ) 
@@ -292,14 +292,7 @@ setMethod("reference_frequency_density_vs_threshold_variable_multigraph_plot", s
 
 #' plot LinkVariantAlmlof objects
 #' 
-#' blabla
-#' blabla
-#' blabla
-#' blabla
-#' 
-#' blabla2
-#' blabla2
-#' blabla2
+#' plot an object of type LinkVariantAlmlof
 #' 
 #' @name LinkVariantAlmlof-plot
 #' @rdname LinkVariantAlmlof-plot

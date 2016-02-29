@@ -83,12 +83,14 @@
 #' @importFrom VariantAnnotation 'ref<-'
 #'
 #' @importFrom lattice barchart
+#' @importFrom lattice levelplot
 #' @importFrom lattice xyplot
 #' @importFrom lattice trellis.par.set
 #' @importFrom lattice panel.abline
 #' @importFrom lattice panel.text
 #' @importFrom lattice panel.barchart
-# @importFrom gridExtra grid.arrange
+#' @importFrom lattice panel.smoothScatter
+#' @importFrom lattice panel.linejoin
 #'
 #' @importFrom seqinr write.fasta
 #'
@@ -104,7 +106,11 @@
 #' @importFrom Gviz GeneRegionTrack
 #' @importFrom Gviz GenomeAxisTrack
 #' @importFrom Gviz plotTracks
-#' 
+#'
+#' @importFrom gridExtra grid.arrange
+#'
+#' @importFrom latticeExtra doubleYScale
+#'
 #' @importClassesFrom GenomicFeatures TxDb
 #' @importClassesFrom AnnotationDbi AnnotationDb
 #' @importClassesFrom AnnotationDbi OrgDb
@@ -112,8 +118,10 @@
 #' @importClassesFrom AnnotationDbi InparanoidDb
 #' @importClassesFrom AnnotationDbi GODb
 #' @importClassesFrom AnnotationDbi ReactomeDb
-
+#'
 #' @importMethodsFrom AnnotationDbi columns
+#'
+#' @importMethodsFrom BSgenome snpsByOverlaps
 #' 
 #' @importFrom AnnotationDbi select
 #' @importFrom AnnotationDbi keys

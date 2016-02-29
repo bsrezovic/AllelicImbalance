@@ -20,15 +20,7 @@ plot(x, y, ...)
 \item{...}{pass on arguments to internal methods}
 }
 \description{
-blabla
-blabla
-blabla
-blabla
-}
-\details{
-blabla2
-blabla2
-blabla2
+plot an object of type LinkVariantAlmlof
 }
 \examples{
 

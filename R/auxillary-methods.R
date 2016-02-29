@@ -1544,7 +1544,7 @@ function(gr, pathToDir, flag=NULL, scanBamFlag=NULL, return.class="array", verbo
 			stop("The bam files in UserDir are required to also have", ".bam.bai index files.")
 		} else {
 			if (verbose) {
-				cat(paste("Succesfully indexed all bamFiles in UserDir", UserDir, 
+				cat(paste("Succesfully indexed all bamFiles in UserDir", pathToDir, 
 				  "\n"))
 			}
 		}
