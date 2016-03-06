@@ -15,9 +15,10 @@ Suggests:
     testthat,
     org.Hs.eg.db,
     TxDb.Hsapiens.UCSC.hg19.knownGene,
-	SNPlocs.Hsapiens.dbSNP144.GRCh37,
+    SNPlocs.Hsapiens.dbSNP144.GRCh37,
     BiocStyle,
-    knitr
+    knitr,
+    rmarkdown
 Depends:
     R (>= 3.2.0),
     grid,
@@ -37,8 +38,8 @@ Imports:
     GenomicFeatures,
     Gviz,
     lattice,
-	latticeExtra,
-	gridExtra,
+    latticeExtra,
+    gridExtra,
     seqinr,
     GenomeInfoDb
 LazyData: TRUE
