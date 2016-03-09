@@ -1295,11 +1295,11 @@ function(GR, SNPloc, return.vector = FALSE, verbose = TRUE) {
     #snp <- paste("rs", mcols(SNPlocThisChr[subjectHits(overlaps)])[, "RefSNP_id"], 
     #    sep = "")
 
-	if(is.na(genome(GR))| is.null(genome(GR))){
+	if(any(is.na(genome(GR)))| any(is.null(genome(GR)))){
 		genome(GR) <- "NoSetGenome"
 	}
 
-	if(!(genome(GR)==genome(SNPloc))){
+	if(!(unique(genome(GR))==unique(genome(SNPloc)))){
 		message("setting the GR genome to the same as SNPloc, 
 				which is a requirement to make overlap calculations")
 		genome(GR) <- genome(SNPloc)
