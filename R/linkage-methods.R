@@ -76,6 +76,10 @@ setMethod("lva", signature(x = "ASEset"),
 				 verbose=FALSE, ...
 	){
 
+		#safety check
+		if(any(!colnames(x) %in% colnames(rv)) | any(!colnames(rv) %in% colnames(x))) 
+				stop("missmatch of colnames for x and rv")
+
 		if("threshold.distance" %in% names(settings)){
 			distance <- settings[["threshold.distance"]]
 		}else{
