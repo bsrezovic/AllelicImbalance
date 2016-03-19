@@ -42,6 +42,9 @@ mcols(a)[["alt"]] <- inferAltAllele(a)
 p.ar <- phaseMatrix2Array(p)
 rv <- RiskVariantFromGRangesAndPhaseArray(x=GRvariants, phase=p.ar)
 
+#colnames has to be samea and same order in ASEset and RiskVariant
+colnames(a) <- colnames(rv)
+
 # in this example each and every snp in the ASEset defines a region
 r1 <- granges(a)
 
