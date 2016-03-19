@@ -42,11 +42,14 @@ NULL
 #' p.ar <- phaseMatrix2Array(p)
 #' rv <- RiskVariantFromGRangesAndPhaseArray(x=GRvariants, phase=p.ar)
 #'
+#' #colnames has to be samea and same order in ASEset and RiskVariant
+#' colnames(a) <- colnames(rv)
+#'
 #' # in this example each and every snp in the ASEset defines a region
 #' r1 <- granges(a)
 #' 
 #' #use GRangesList to merge and use regions defined by each element of the
-#' GRangesList
+#' #GRangesList
 #' r1b <- GRangesList(r1)
 #' r1c <- GRangesList(r1, r1)
 #'
