@@ -91,7 +91,7 @@ setMethod("lva", signature(x = "ASEset"),
 
 		#region summary
 		rs <- regionSummary(x, region)
-							
+
 
 		#match riskVariant to rs granges
 		hits <- findOverlaps(rv, granges(rs) + distance)
@@ -105,6 +105,10 @@ setMethod("lva", signature(x = "ASEset"),
 		plotGroups <- .lvaGroups(mcols(rv2)[["alt"]], mcols(rv2)[["ref"]])
 		#call internal regression function	
 		mat <- lva.internal(assays(rs2)[["rs1"]], t(grp))
+
+		#make txSNP specific lva test
+		rs2 <- .addLva2ASEset(rs2, grp)
+
 		#create return object
 		if(return.class=="LinkVariantAlmlof"){
 			sset <- SummarizedExperiment(
@@ -146,6 +150,18 @@ setMethod("lva", signature(x = "ASEset"),
 
 		matrix(c(fir, sec, thi), ncol=3)
 }
+
+.addLva2ASEset <- function(rs2, grp){
+		lst <- mcols(rs2)[["ASEsetMeta"]][[1]]
+		for(i in 1:length(lst)){
+		  fr <- assays(lst[[i]])[["matfreq"]]
+		  grp2 <- grp[i,]
+		  lmcomparam <- .lvaRegressionReturnCommonParamMatrixTxSNPspecific(fr,grp2)
+		  mcols(mcols(rs2)[["ASEsetMeta"]][[1]][[i]])[["lmcomparam"]] <- DataFrame(lmcomparam)
+		}
+		rs2
+}
+
 
 #' lva.internal
 #' 
@@ -246,6 +262,38 @@ setMethod("lva.internal", signature(x = "array"),
 					}, y=ar[!nocalc,,,drop=FALSE], x=grp[,!nocalc,drop=FALSE]))
 	}
 	colnames(mat) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
+	mat
+}
+
+.lvaRegressionReturnCommonParamMatrixTxSNPspecific <- function(fr, grp){
+	fr2 <- t(fr)
+	grp2 <- grp
+	mat <- matrix(NA, ncol=8, nrow=ncol(fr2))
+	nocalc <- apply(fr2[,, drop=FALSE], 2, function(x){sum(!(is.na(x)))==0})
+		#y <- fr2[!nocalc,,drop=FALSE]
+		#x <- grp[,!nocalc,drop=FALSE]
+	    x <- grp2
+		for(i in 1:ncol(fr2)){
+			y <- fr2[,i]
+			mat2 <- matrix(NA, ncol=2, nrow=4)
+			if(!(nocalc[i])){
+			  s <-summary(lm(y~x))$coefficients
+			  mat2[,1:nrow(s)] <- s
+			  mat[i,] <- c(mat2)
+			}
+		}
+	colnames(mat) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
+
+	#only make regression if there is at least one row possible to compute
+	#if(any(!nocalc)){
+	#	mat[!nocalc,] <- t(sapply(which(!nocalc), function(i, y, x){
+	#					mat2 <- matrix(NA, ncol=2, nrow=4)
+	#					s <-summary(lm(y[i, ]~x[, i]))$coefficients
+	#					mat2[,1:nrow(s)] <- s
+	#					c(mat2)
+	#				}, y=fr2[!nocalc,,drop=FALSE], x=grp[,!nocalc,drop=FALSE]))
+	#}
+
 	mat
 }
 
