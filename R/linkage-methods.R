@@ -118,6 +118,7 @@ setMethod("lva", signature(x = "ASEset"),
 
 			rownames(sset) <- rownames(rs2)
 			mcols(sset)[["RiskVariantMeta"]] <- DataFrame(GR=granges(rv2), rsid=rownames(rv2))
+			mcols(sset)[["RiskVariantMetaFull"]] <- rv2
 			mcols(sset)[["LMCommonParam"]] <- DataFrame(mat, row.names=NULL)
 			mcols(sset)[["LvaPlotGroups"]] <- DataFrame(plotGroups, row.names=NULL)
 
