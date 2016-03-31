@@ -24,7 +24,10 @@ test_that(paste("checking .phaseArray2genotypeArray"), {
 	arr <- aperm(array(c(p1, p2, p3), dim=c(4,3,3)), c(2,1,3))
 	dimnames(arr) <- list(NULL, NULL, NULL )
 						  
-						  
+	#shift 1 to 0 (so that ref equals 0 and alt equals 1)
+	tf <- arr[,,1:2] == 1
+	arr[,,1:2][tf] <- 0
+	arr[,,1:2][!tf] <- 1
 
 	#prepare expected data
 	e1 <- c("A", "T", "A", "T",
@@ -66,6 +69,11 @@ test_that(paste("checking .phaseArray2genotypeArray"), {
 
 	arr <- aperm(array(c(p1, p2, p3), dim=c(4,3,3)), c(2,1,3))
 	dimnames(arr) <- list(NULL, NULL, NULL )
+
+	#shift 1 to 0 (so that ref equals 0 and alt equals 1)
+	tf <- arr[,,1:2] == 1
+	arr[,,1:2][tf] <- 0
+	arr[,,1:2][!tf] <- 1
 
 	#prepare expected data
 	e1 <- c("A", "T", "A", "T",

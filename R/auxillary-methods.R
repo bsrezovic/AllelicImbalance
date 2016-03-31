@@ -2243,7 +2243,7 @@ setMethod("phase2genotype", signature(x = "array"),
 ### helpers for phase2genotype
 ###
 #NAs will be kept
-.phaseArray2genotypeArray <- function(x, ref, alt, ...){
+.phaseArray2genotypeArray <- function(x, ref, alt){
 	mat <- matrix(alt, nrow(x), ncol(x))
 	pat <- matrix(alt, nrow(x), ncol(x))
 	pha <- matrix("/", ncol=ncol(x), nrow=nrow(x))
@@ -2251,8 +2251,8 @@ setMethod("phase2genotype", signature(x = "array"),
 	namat <- is.na(x[,,1])
 	napat <- is.na(x[,,2])
 
-	mat[x[,,1]==1 & !namat] <- matrix(ref, nrow(x), ncol(x))[x[,,1]==1 & !namat]
-	pat[x[,,2]==1 & !napat] <- matrix(ref, nrow(x), ncol(x))[x[,,2]==1 & !napat]
+	mat[x[,,1]==0 & !namat] <- matrix(ref, nrow(x), ncol(x))[x[,,1]==0 & !namat]
+	pat[x[,,2]==0 & !napat] <- matrix(ref, nrow(x), ncol(x))[x[,,2]==0 & !napat]
 	
 	mat[namat] <- NA
 	pat[napat] <- NA
