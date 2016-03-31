@@ -1,3 +1,16 @@
+CHANGES IN VERSION 1.10.0
+-----------------------
+
+NEW FEATURES
+
+    o minFreqFilt and minCountFilt
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o The Phase2Genotype function now treats phase 0 as the ref allele and
+      phase 1 as the alternative allele.
+
+
 CHANGES IN VERSION 1.8.0
 -----------------------
 
