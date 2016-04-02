@@ -102,7 +102,7 @@ setMethod("lva", signature(x = "ASEset"),
 		rv2 <- rv[queryHits(hits),, drop=FALSE]
 		#make groups for regression based on (het hom het)
 		grp <- .groupBasedOnPhaseAndAlleleCombination(phase(rv2,return.class="array")[,,c(1, 2), drop=FALSE])
-		plotGroups <- .lvaGroups(mcols(rv2)[["ref"]],mcols(rv2)[["alt"]], )
+		plotGroups <- .lvaGroups(mcols(rv2)[["ref"]], mcols(rv2)[["alt"]])
 		#call internal regression function	
 		mat <- lva.internal(assays(rs2)[["rs1"]], t(grp))
 
