@@ -1530,7 +1530,7 @@ setGeneric("countAllelesFromBam", function(gr, ...
 #' @rdname countAllelesFromBam
 #' @export
 setMethod("countAllelesFromBam", signature(gr = "GRanges"),
-function(gr, pathToDir, flag=NULL, scanBamFlag=NULL, return.class="array", verbose=TRUE, ..., ) {
+function(gr, pathToDir, flag=NULL, scanBamFlag=NULL, return.class="array", verbose=TRUE, ...) {
 
 	bamDir <- normalizePath(pathToDir)
 	allFiles <- list.files(bamDir, full.names = TRUE)
