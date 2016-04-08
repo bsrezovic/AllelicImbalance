@@ -1625,7 +1625,7 @@ function(gr, pathToDir, flag=NULL, scanBamFlag=NULL, return.class="array", verbo
 							what="seq",
 							yieldBy = "position",
 							yieldAll=TRUE,
-							maxDept=.Machine$integer.max,
+							maxDepth=.Machine$integer.max,
 							...
 							)
 
