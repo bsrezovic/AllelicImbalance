@@ -9,7 +9,7 @@
 countAllelesFromBam(gr, ...)
 
 \S4method{countAllelesFromBam}{GRanges}(gr, pathToDir, flag = NULL,
-  scanBamFlag = NULL, return.class = "array", verbose = TRUE)
+  scanBamFlag = NULL, return.class = "array", verbose = TRUE, ...)
 }
 \arguments{
 \item{gr}{GRanges that contains SNPs of interest}
@@ -32,6 +32,11 @@ count alleles before creating ASEse.
 }
 \details{
 counts the alleles in a bam file based on GRanges positions.
+
+Important excerpt from the details section of the internal applyPileups 
+ function: Regardless of 'param' values, the algorithm follows samtools by
+ excluding reads flagged as unmapped, secondary, duplicate, or
+ failing quality control.
 }
 \examples{
 
