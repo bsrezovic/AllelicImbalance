@@ -10,7 +10,7 @@
 lva(x, ...)
 
 \S4method{lva}{ASEset}(x, rv, region, settings = list(),
-  return.class = "LinkVariantAlmlof", verbose = FALSE, ...)
+  return.class = "LinkVariantAlmlof", type = "lm", verbose = FALSE, ...)
 }
 \arguments{
 \item{x}{ASEset object with phase and 'ref'/'alt' allele information}
@@ -24,6 +24,8 @@ lva(x, ...)
 \item{settings}{RiskVariant object with phase and alternative allele information}
 
 \item{return.class}{'LinkVariantAlmlof' (more options in future)}
+
+\item{type}{"lm" or "nlme", "nlme" needs subject information}
 
 \item{verbose}{logical, if set TRUE, then function will be more talkative}
 }
@@ -73,6 +75,21 @@ lva(a, rv, r1)
 lva(a, rv, r1b)
 lva(a, rv, r1c)
 lva(a, rv, r2)
+
+# link variant almlof (lva), using nlme
+a2 <- a
+ac <- assays(a2)[["countsPlus"]]
+jit <- sample(c(seq(-0.10,0,length=5), seq(0,0.10,length=5)), size=length(ac) , replace=TRUE)
+assays(a2)[["countsPlus"]] <- round(ac * (1+jit),0)
+ab <- cbind(a, a2)
+colData(ab)[["subject.group"]] <- c(1:ncol(a),1:ncol(a))
+rv2 <- rv[,c(1:ncol(a),1:ncol(a))]
+colnames(ab) <- colnames(rv2)
+
+lva(ab, rv2, r1, type="nlme")
+lva(ab, rv2, r1b, type="nlme")
+lva(ab, rv2, r1c, type="nlme")
+lva(ab, rv2, r2, type="nlme")
 
 }
 \author{

@@ -131,6 +131,25 @@
 #' @importFrom GenomicFeatures cds
 #' @importFrom GenomicFeatures isActiveSeq
 #' @importFrom GenomicFeatures 'isActiveSeq<-'
+#'
+#' @importFrom grDevices heat.colors
+#'
+#' @importFrom graphics abline 
+#' @importFrom graphics lines
+#' @importFrom graphics mtext
+#' @importFrom graphics plot.default
+#' @importFrom graphics symbols
+#' @importFrom graphics text
+#' @importFrom graphics title
+#' @importFrom graphics points
+#'
+#' @importFrom stats anova
+#' @importFrom stats dist
+#' @importFrom stats lm
+#' @importFrom stats setNames
+#'
+#' @importFrom nlme lme
+#'
 NULL
 
 #' GRvariants object

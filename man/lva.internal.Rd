@@ -8,7 +8,8 @@
 \usage{
 lva.internal(x, ...)
 
-\S4method{lva.internal}{array}(x, grp, element = 3, ...)
+\S4method{lva.internal}{array}(x, grp, element = 3, type = "lm",
+  subject = NULL, ...)
 }
 \arguments{
 \item{x}{regionSummary array phased for maternal allele}
@@ -18,6 +19,10 @@ lva.internal(x, ...)
 \item{grp}{group 1-3 (1 for 0:0, 2 for 1:0 or 0:1, and 3 for 1:1)}
 
 \item{element}{which column in x contains the values to use with lm.}
+
+\item{type}{which column in x contains the values to use with lm.}
+
+\item{subject}{which samples belongs to the same individual}
 }
 \description{
 make an almlof regression for arrays (internal function)
@@ -54,7 +59,7 @@ grp <- matrix(2, nrow=dim(phs)[1], ncol=dim(phs)[2])
 grp[(phs[,,1] == 0) & (phs[,,2] == 0)] <- 1
 grp[(phs[,,1] == 1) & (phs[,,2] == 1)] <- 3
 #only use mean.fr at the moment, which is col 3
-lva.internal(assays(rs)[["rs1"]], grp, 3)
+lva.internal(x=assays(rs)[["rs1"]],grp=grp, element=3)
 
 }
 \author{

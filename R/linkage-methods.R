@@ -19,6 +19,7 @@ NULL
 #' @param settings RiskVariant object with phase and alternative allele information
 #' @param return.class 'LinkVariantAlmlof' (more options in future)
 #' @param verbose logical, if set TRUE, then function will be more talkative
+#' @param type "lm" or "nlme", "nlme" needs subject information
 #' @param ... arguments to forward to internal functions
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords phase
@@ -61,6 +62,21 @@ NULL
 #' lva(a, rv, r1b)
 #' lva(a, rv, r1c)
 #' lva(a, rv, r2)
+#'
+#' # link variant almlof (lva), using nlme
+#' a2 <- a
+#' ac <- assays(a2)[["countsPlus"]]
+#' jit <- sample(c(seq(-0.10,0,length=5), seq(0,0.10,length=5)), size=length(ac) , replace=TRUE)
+#' assays(a2)[["countsPlus"]] <- round(ac * (1+jit),0)
+#' ab <- cbind(a, a2)
+#' colData(ab)[["subject.group"]] <- c(1:ncol(a),1:ncol(a))
+#' rv2 <- rv[,c(1:ncol(a),1:ncol(a))]
+#' colnames(ab) <- colnames(rv2)
+#'
+#' lva(ab, rv2, r1, type="nlme")
+#' lva(ab, rv2, r1b, type="nlme")
+#' lva(ab, rv2, r1c, type="nlme")
+#' lva(ab, rv2, r2, type="nlme")
 #' 
 NULL
 
@@ -75,8 +91,8 @@ setGeneric("lva", function(x, ...
 #' @export
 setMethod("lva", signature(x = "ASEset"),
 		function(x, rv, region, settings=list(),
-				 return.class="LinkVariantAlmlof",
-				 verbose=FALSE, ...
+				 return.class="LinkVariantAlmlof", type="lm",
+				 verbose=FALSE,  ...
 	){
 
 		#safety check
@@ -104,10 +120,15 @@ setMethod("lva", signature(x = "ASEset"),
 		grp <- .groupBasedOnPhaseAndAlleleCombination(phase(rv2,return.class="array")[,,c(1, 2), drop=FALSE])
 		plotGroups <- .lvaGroups(mcols(rv2)[["ref"]], mcols(rv2)[["alt"]])
 		#call internal regression function	
-		mat <- lva.internal(assays(rs2)[["rs1"]], t(grp))
+		if(type=="lm"){
+			mat <- lva.internal(x = assays(rs2)[["rs1"]], grp = t(grp), element = 3, type=type)
+		}else if(type=="nlme"){
+			mat <- lva.internal(x = assays(rs2)[["rs1"]], grp = t(grp), element = 3, type=type, 
+								subject=colData(rs2)[["subject.group"]])
+		}
 
 		#make txSNP specific lva test
-		rs2 <- .addLva2ASEset(rs2, grp)
+		rs2 <- .addLva2ASEset(rs2, grp, type=type)
 
 		#create return object
 		if(return.class=="LinkVariantAlmlof"){
@@ -152,12 +173,17 @@ setMethod("lva", signature(x = "ASEset"),
 		matrix(c(fir, sec, thi), ncol=3)
 }
 
-.addLva2ASEset <- function(rs2, grp){
+.addLva2ASEset <- function(rs2, grp, type){
 		lst <- mcols(rs2)[["ASEsetMeta"]][[1]]
 		for(i in 1:length(lst)){
 		  fr <- assays(lst[[i]])[["matfreq"]]
 		  grp2 <- grp[i,]
-		  lmcomparam <- .lvaRegressionReturnCommonParamMatrixTxSNPspecific(fr,grp2)
+		  if(type=="lm"){ 
+				  lmcomparam <- .lvaRegressionReturnCommonParamMatrixTxSNPspecific(fr,grp2)
+		  }else if(type=="nlme"){
+				  subj <- colData(rs2)[["subject.group"]]
+				  lmcomparam <- .lvaRegressionReturnCommonParamMatrixTxSNPspecific.nlme(fr,grp2, subj)
+		  }
 		  mcols(mcols(rs2)[["ASEsetMeta"]][[1]][[i]])[["lmcomparam"]] <- DataFrame(lmcomparam)
 		}
 		rs2
@@ -179,6 +205,8 @@ setMethod("lva", signature(x = "ASEset"),
 #' @param x regionSummary array phased for maternal allele
 #' @param grp group 1-3 (1 for 0:0, 2 for 1:0 or 0:1, and 3 for 1:1)
 #' @param element which column in x contains the values to use with lm.
+#' @param type which column in x contains the values to use with lm.
+#' @param subject which samples belongs to the same individual
 #' @param ... arguments to forward to internal functions
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords phase
@@ -210,7 +238,7 @@ setMethod("lva", signature(x = "ASEset"),
 #' grp[(phs[,,1] == 1) & (phs[,,2] == 1)] <- 3
 
 #' #only use mean.fr at the moment, which is col 3
-#' lva.internal(assays(rs)[["rs1"]], grp, 3)
+#' lva.internal(x=assays(rs)[["rs1"]],grp=grp, element=3)
 #' 
 NULL
 
@@ -224,11 +252,23 @@ setGeneric("lva.internal", function(x, ...
 #' @rdname lva.internal
 #' @export
 setMethod("lva.internal", signature(x = "array"),
-		function(x, grp, element=3, ...
+		function(x, grp, element=3, type="lm", subject=NULL, ...
 	){
 		
 		#unlist(.lvaRegressionPvalue(x, grp, element))
+		#normal regression
+		if(type=="lm"){
 		.lvaRegressionReturnCommonParamMatrix(x, grp, element)
+		#mixed models lme4 regression
+		} else if(type=="nlme"){
+			if(!is.null(subject)){
+			.lvaRegressionReturnCommonParamMatrix.nlme(x, grp, subject, element)
+			}else{
+				stop("subject cannot be null when using nlme method")
+			}
+		}else{
+				stop("type version not specified")
+		}
 
 })
 
@@ -266,6 +306,58 @@ setMethod("lva.internal", signature(x = "array"),
 	mat
 }
 
+#mixed model variant lme4 (gives no straight forward p-value)
+#.lvaRegressionReturnCommonParamMatrix.lme4 <- function(ar, grp, subject, element){
+#
+#	mat <- matrix(NA, ncol=dim(ar)[3], nrow=nrow(ar))
+#	nocalc <- apply(ar[,,3, drop=FALSE], 1, function(x){sum(!(is.na(x)))==0})
+#
+#	#only make regression if there is at least one row possible to compute
+#	if(any(!nocalc)){
+#		mat[!nocalc,] <- t(sapply(which(!nocalc), function(i, y, x, s){
+#						mat2 <- matrix(NA, ncol=2, nrow=4)
+#						nas <- !(is.na(y[i, ,element]) | is.na(x[, i]) | is.na(s))
+#						l <- lmer(y[i,nas ,element]~x[nas, i]+(1|s[nas]))
+#
+#						s <-l$coefficients
+#						mat2[,1:nrow(s)] <- s
+#						c(mat2)
+#					}, y=ar[!nocalc,,,drop=FALSE], x=grp[,!nocalc,drop=FALSE], s=subject))
+#	}
+#	colnames(mat) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
+#	mat
+#}
+#
+#inspired by ben bolkers answer here
+#http://stats.stackexchange.com/questions/22988/how-to-obtain-the-p-value-check-significance-of-an-effect-in-a-lme4-mixed-mode
+.lvaRegressionReturnCommonParamMatrix.nlme <- function(ar, grp, subject, element){
+
+	mat <- matrix(NA, ncol=dim(ar)[3], nrow=nrow(ar))
+	nocalc <- apply(ar[,,3, drop=FALSE], 1, function(x){sum(!(is.na(x)))==0})
+
+	#only make regression if there is at least one row possible to compute
+	if(any(!nocalc)){
+		mat[!nocalc,] <- t(sapply(which(!nocalc), function(i, y, x, s){
+						#for(i in 1:5){
+							mat2 <- matrix(NA, ncol=2, nrow=4)
+							nas <- (is.na(y[i, ,element]) | is.na(x[, i]) | is.na(s))
+							few <- length(unique(x[!nas,i])) == 1
+							if(!few){
+								df <- data.frame(res=y[i,!nas ,element], exp=x[!nas, i], ran=s[!nas])
+								m1 <- lme(res~exp, random=~1|ran, data=df)
+								mat2[7:8] <- anova(m1)$'p-value'
+								c(mat2)
+							}else{
+								c(mat2)
+							}
+						#}
+					}, y=ar[!nocalc,,,drop=FALSE], x=grp[,!nocalc,drop=FALSE], s=subject))
+	}
+	colnames(mat) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
+	mat
+}
+
+
 .lvaRegressionReturnCommonParamMatrixTxSNPspecific <- function(fr, grp){
 	fr2 <- t(fr)
 	grp2 <- grp
@@ -298,5 +390,34 @@ setMethod("lva.internal", signature(x = "array"),
 	mat
 }
 
+.lvaRegressionReturnCommonParamMatrixTxSNPspecific.nlme <- function(fr, grp, subj){
+	fr2 <- t(fr)
+	grp2 <- grp
+	s <- subj
+	mat <- matrix(NA, ncol=8, nrow=ncol(fr2))
+	nocalc <- apply(fr2[,, drop=FALSE], 2, function(x){sum(!(is.na(x)))==0})
+	#y <- fr2[!nocalc,,drop=FALSE]
+	#x <- grp[,!nocalc,drop=FALSE]
+	x <- grp2
+	if(!(nocalc)){
+      for(i in 1:ncol(fr2)){
+		y <- fr2[,i,drop=FALSE]
+		mat2 <- matrix(NA, ncol=2, nrow=4)
+		nas <- (is.na(y[,i]) | is.na(x) | is.na(s))
+		few <- length(unique(x[!nas])) == 1
+		if(!few){
+		 df <- data.frame(res=y[!nas, i], exp=x[!nas], ran=s[!nas])
+		 m1 <- lme(res~exp, random=~1|ran, data=df)
+		 mat2[7:8] <- anova(m1)$'p-value'
+		 mat[i,] <- c(mat2)
+		}else{
+		 mat[i,] <- c(mat2)
+	    }
+	  }
+	}
+	colnames(mat) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
+
+	mat
+}
 
 
