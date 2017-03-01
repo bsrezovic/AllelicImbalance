@@ -15,14 +15,13 @@ data(GRvariants)
 
 
 }
-\author{
-Jesper R. Gadin, Lasse Folkersen
-}
 \seealso{
 \itemize{ \item The \code{\link{reads}} which is another example
 object }
 }
+\author{
+Jesper R. Gadin, Lasse Folkersen
+}
 \keyword{data}
 \keyword{example}
 \keyword{object}
-

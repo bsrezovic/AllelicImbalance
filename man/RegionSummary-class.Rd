@@ -2,13 +2,14 @@
 % Please edit documentation in R/RegionSummary-class.R
 \docType{class}
 \name{RegionSummary-class}
-\alias{RegionSummary}
 \alias{RegionSummary-class}
+\alias{RegionSummary}
 \alias{RegionSummary-method}
-\alias{basic}
-\alias{basic,RegionSummary-method}
+\alias{RegionSummary-class}
 \alias{sumnames}
 \alias{sumnames,RegionSummary-method}
+\alias{basic}
+\alias{basic,RegionSummary-method}
 \title{RegionSummary class}
 \usage{
 sumnames(x, ...)
@@ -40,4 +41,3 @@ Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{RegionSummary}
 \keyword{class}
-

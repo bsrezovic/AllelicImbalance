@@ -39,4 +39,3 @@ g <- inferGenotypes(ASEset)
 Jesper R. Gadin
 }
 \keyword{infer}
-

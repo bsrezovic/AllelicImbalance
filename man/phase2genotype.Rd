@@ -4,6 +4,8 @@
 \name{phase2genotype}
 \alias{phase2genotype}
 \alias{phase2genotype,array-method}
+\alias{phase2genotype}
+\alias{phase2genotype,array-method}
 \title{phase2genotype}
 \usage{
 phase2genotype(x, ...)
@@ -54,4 +56,3 @@ gt <- phase2genotype(p, ref, alt, return.class="matrix")
 Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{phase}
-

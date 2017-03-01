@@ -4,6 +4,8 @@
 \name{genotype2phase}
 \alias{genotype2phase}
 \alias{genotype2phase,matrix-method}
+\alias{genotype2phase}
+\alias{genotype2phase,matrix-method}
 \title{genotype2phase}
 \usage{
 genotype2phase(x, ...)
@@ -51,4 +53,3 @@ p <- genotype2phase(genomatrix, ref(ASEset))
 Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{phase}
-

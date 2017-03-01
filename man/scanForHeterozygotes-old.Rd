@@ -47,14 +47,13 @@ data(reads)
 s <- scanForHeterozygotes.old(reads,verbose=FALSE)
 
 }
-\author{
-Jesper R. Gadin, Lasse Folkersen
-}
 \seealso{
 \itemize{ \item The \code{\link{getAlleleCounts}} which is a
 function that count the number of reads overlapping a site.  }
 }
+\author{
+Jesper R. Gadin, Lasse Folkersen
+}
 \keyword{SNP}
 \keyword{heterozygote}
 \keyword{scan}
-

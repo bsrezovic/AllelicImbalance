@@ -5,6 +5,8 @@
 \alias{ASEset-barplot}
 \alias{barplot}
 \alias{barplot,ASEset-method}
+\alias{barplot}
+\alias{barplot,ASEset-method}
 \title{barplot ASEset objects}
 \usage{
 barplot(height, ...)
@@ -135,12 +137,11 @@ data(ASEset)
 barplot(ASEset[1])
 
 }
-\author{
-Jesper R. Gadin, Lasse Folkersen
-}
 \seealso{
 \itemize{ \item The \code{\link{ASEset}} class which the barplot
 function can be called up on.  }
 }
+\author{
+Jesper R. Gadin, Lasse Folkersen
+}
 \keyword{barplot}
-

@@ -4,6 +4,8 @@
 \name{getAlleleCounts}
 \alias{getAlleleCounts}
 \alias{getAlleleCounts,GAlignmentsList-method}
+\alias{getAlleleCounts}
+\alias{getAlleleCounts,GAlignmentsList-method}
 \title{snp count data}
 \usage{
 getAlleleCounts(BamList, ...)
@@ -71,14 +73,13 @@ strand='-')
 
 
 }
-\author{
-Jesper R. Gadin, Lasse Folkersen
-}
 \seealso{
 \itemize{ \item The \code{\link{scanForHeterozygotes}} which is a
 function to find possible heterozygote sites in a
 \code{\link[GenomicAlignments]{GAlignmentsList}} object }
 }
+\author{
+Jesper R. Gadin, Lasse Folkersen
+}
 \keyword{SNP}
 \keyword{count}
-

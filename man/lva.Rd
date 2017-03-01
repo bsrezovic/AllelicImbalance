@@ -3,8 +3,9 @@
 \docType{methods}
 \name{lva}
 \alias{lva}
-\alias{lva,ASEset-method}
 \alias{lva,array-method}
+\alias{lva}
+\alias{lva,ASEset-method}
 \title{lva}
 \usage{
 lva(x, ...)
@@ -96,4 +97,3 @@ lva(ab, rv2, r2, type="nlme")
 Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{phase}
-

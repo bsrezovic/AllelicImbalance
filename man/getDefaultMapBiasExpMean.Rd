@@ -3,9 +3,12 @@
 \docType{methods}
 \name{getDefaultMapBiasExpMean}
 \alias{getDefaultMapBiasExpMean}
-\alias{getDefaultMapBiasExpMean,ANY-method}
-\alias{getDefaultMapBiasExpMean,list-method}
 \alias{getDefaultMapBiasExpMean3D}
+\alias{getDefaultMapBiasExpMean,ANY-method}
+\alias{getDefaultMapBiasExpMean3D,ANY-method}
+\alias{getDefaultMapBiasExpMean}
+\alias{getDefaultMapBiasExpMean3D}
+\alias{getDefaultMapBiasExpMean,list-method}
 \alias{getDefaultMapBiasExpMean3D,ANY-method}
 \title{Map Bias}
 \usage{
@@ -51,4 +54,3 @@ Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{bias}
 \keyword{mapping}
-

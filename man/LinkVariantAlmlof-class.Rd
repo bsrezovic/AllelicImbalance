@@ -2,9 +2,10 @@
 % Please edit documentation in R/LinkVariantAlmlof-class.R
 \docType{class}
 \name{LinkVariantAlmlof-class}
-\alias{LinkVariantAlmlof}
 \alias{LinkVariantAlmlof-class}
+\alias{LinkVariantAlmlof}
 \alias{LinkVariantAlmlof-method}
+\alias{LinkVariantAlmlof-class}
 \alias{pvalue}
 \alias{pvalue,LinkVariantAlmlof-method}
 \title{LinkVariantAlmlof class}
@@ -34,4 +35,3 @@ Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{LinkVariantAlmlof}
 \keyword{class}
-

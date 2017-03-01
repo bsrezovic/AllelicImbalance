@@ -4,8 +4,9 @@
 \name{LinkVariantAlmlof-plot}
 \alias{LinkVariantAlmlof-plot}
 \alias{plot}
-\alias{plot,LinkVariantAlmlof,ANY-method}
 \alias{plot,LinkVariantAlmlof-method}
+\alias{plot}
+\alias{plot,LinkVariantAlmlof,ANY-method}
 \title{plot LinkVariantAlmlof objects}
 \usage{
 plot(x, y, ...)
@@ -61,4 +62,3 @@ plot(lv2[1])
 Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{plot}
-

@@ -2,11 +2,14 @@
 % Please edit documentation in R/GvizTrack-methods.R
 \docType{methods}
 \name{ASEset-gviztrack}
-\alias{ASEDAnnotationTrack}
-\alias{ASEDAnnotationTrack,ASEset-method}
 \alias{ASEset-gviztrack}
 \alias{CoverageDataTrack}
+\alias{ASEDAnnotationTrack}
 \alias{CoverageDataTrack,ASEset-method}
+\alias{ASEDAnnotationTrack,ASEset-method}
+\alias{ASEDAnnotationTrack}
+\alias{ASEDAnnotationTrack,ASEset-method}
+\alias{CoverageDataTrack}
 \title{ASEset-gviztrack ASEset objects}
 \usage{
 ASEDAnnotationTrack(x, GR = rowRanges(x), type = "fraction", strand = "*",
@@ -79,13 +82,12 @@ sizes <- c(0.5,rep(0.5/length(covTracks),length(covTracks)))
 
 
 }
-\author{
-Jesper R. Gadin
-}
 \seealso{
 \itemize{ \item The \code{\link{ASEset}} class which the functions
 can be called up on.}
 }
+\author{
+Jesper R. Gadin
+}
 \keyword{ASEDAnnotationTrack}
 \keyword{CoverageDataTrack}
-

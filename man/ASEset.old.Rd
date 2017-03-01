@@ -19,4 +19,3 @@ Jesper R. Gadin, Lasse Folkersen
 \keyword{data}
 \keyword{example}
 \keyword{object}
-

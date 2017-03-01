@@ -4,6 +4,8 @@
 \name{makeMaskedFasta}
 \alias{makeMaskedFasta}
 \alias{makeMaskedFasta,character-method}
+\alias{makeMaskedFasta}
+\alias{makeMaskedFasta,character-method}
 \title{makes masked fasta reference}
 \usage{
 makeMaskedFasta(fastaIn, ...)
@@ -42,4 +44,3 @@ Jesper R. Gadin
 \keyword{fasta}
 \keyword{masked}
 \keyword{reference}
-

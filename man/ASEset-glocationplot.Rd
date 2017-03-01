@@ -59,12 +59,11 @@ glocationplot(ASEset,strand='+')
 glocationplot(ASEset,type='count',strand='+')
 
 }
-\author{
-Jesper R. Gadin
-}
 \seealso{
 \itemize{ \item The \code{\link{ASEset}} class which the
 glocationplot function can be called up on.  }
 }
+\author{
+Jesper R. Gadin
+}
 \keyword{glocationplot}
-

@@ -42,4 +42,3 @@ Jesper R. Gadin
 }
 \keyword{annotation}
 \keyword{barplot}
-

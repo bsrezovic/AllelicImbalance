@@ -37,4 +37,3 @@ alt <- inferAltAllele(ASEset)
 Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{phase}
-

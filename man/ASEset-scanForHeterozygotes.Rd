@@ -5,6 +5,7 @@
 \alias{ASEset-scanForHeterozygotes}
 \alias{scanForHeterozygotes}
 \alias{scanForHeterozygotes,ASEset-method}
+\alias{scanForHeterozygotes}
 \alias{scanForHeterozygotes,GAlignmentsList-method}
 \title{scanForHeterozygotes}
 \usage{
@@ -59,14 +60,13 @@ data(reads)
 s <- scanForHeterozygotes(reads,verbose=FALSE)
 
 }
-\author{
-Jesper R. Gadin, Lasse Folkersen
-}
 \seealso{
 \itemize{ \item The \code{\link{getAlleleCounts}} which is a
 function that count the number of reads overlapping a site.  }
 }
+\author{
+Jesper R. Gadin, Lasse Folkersen
+}
 \keyword{SNP}
 \keyword{heterozygote}
 \keyword{scan}
-

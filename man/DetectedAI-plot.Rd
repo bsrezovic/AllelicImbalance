@@ -3,19 +3,20 @@
 \docType{methods}
 \name{DetectedAI-plot}
 \alias{DetectedAI-plot}
-\alias{detectedAI_vs_threshold_variable_multigraph_plot}
-\alias{detectedAI_vs_threshold_variable_multigraph_plot,DetectedAI-method}
-\alias{detectedAI_vs_threshold_variable_plot}
-\alias{detectedAI_vs_threshold_variable_plot,DetectedAI-method}
-\alias{frequency_vs_threshold_variable_multigraph_plot}
-\alias{frequency_vs_threshold_variable_multigraph_plot,DetectedAI-method}
 \alias{frequency_vs_threshold_variable_plot}
 \alias{frequency_vs_threshold_variable_plot,DetectedAI-class}
+\alias{frequency_vs_threshold_variable_plot}
 \alias{frequency_vs_threshold_variable_plot,DetectedAI-method}
-\alias{reference_frequency_density_vs_threshold_variable_multigraph_plot}
-\alias{reference_frequency_density_vs_threshold_variable_multigraph_plot,DetectedAI-method}
+\alias{detectedAI_vs_threshold_variable_plot}
+\alias{detectedAI_vs_threshold_variable_plot,DetectedAI-method}
 \alias{reference_frequency_density_vs_threshold_variable_plot}
 \alias{reference_frequency_density_vs_threshold_variable_plot,DetectedAI-method}
+\alias{detectedAI_vs_threshold_variable_multigraph_plot}
+\alias{detectedAI_vs_threshold_variable_multigraph_plot,DetectedAI-method}
+\alias{frequency_vs_threshold_variable_multigraph_plot}
+\alias{frequency_vs_threshold_variable_multigraph_plot,DetectedAI-method}
+\alias{reference_frequency_density_vs_threshold_variable_multigraph_plot}
+\alias{reference_frequency_density_vs_threshold_variable_multigraph_plot,DetectedAI-method}
 \title{DetectedAI plot}
 \usage{
 frequency_vs_threshold_variable_plot(x, ...)
@@ -97,4 +98,3 @@ frequency_vs_threshold_variable_multigraph_plot(dai)
 Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{list}
-

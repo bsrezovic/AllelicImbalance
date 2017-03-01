@@ -4,6 +4,8 @@
 \name{countAllelesFromBam}
 \alias{countAllelesFromBam}
 \alias{countAllelesFromBam,GRanges-method}
+\alias{countAllelesFromBam}
+\alias{countAllelesFromBam,GRanges-method}
 \title{alleleCounts from bam file}
 \usage{
 countAllelesFromBam(gr, ...)
@@ -53,4 +55,3 @@ Jesper R. Gadin
 }
 \keyword{allelecount}
 \keyword{counting}
-

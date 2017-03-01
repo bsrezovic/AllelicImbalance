@@ -3,8 +3,10 @@
 \docType{methods}
 \name{minFreqFilt}
 \alias{minFreqFilt}
-\alias{minFreqFilt,ASEset-method}
 \alias{minfreqFilt}
+\alias{minFreqFilt,ASEset-method}
+\alias{minFreqFilt}
+\alias{minFreqFilt,ASEset-method}
 \title{minFreqFilt methods}
 \usage{
 minFreqFilt(x, ...)
@@ -46,4 +48,3 @@ minFreqFilt(a)
 Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{filter}
-

@@ -4,6 +4,8 @@
 \name{phaseMatrix2Array}
 \alias{phaseMatrix2Array}
 \alias{phaseMatrix2Array,matrix-method}
+\alias{phaseMatrix2Array}
+\alias{phaseMatrix2Array,matrix-method}
 \title{phaseMatrix2Array}
 \usage{
 phaseMatrix2Array(x, ...)
@@ -42,4 +44,3 @@ ar <- phaseMatrix2Array(p)
 Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{phase}
-

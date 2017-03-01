@@ -1254,26 +1254,29 @@ function(GR, SNPloc, return.vector = FALSE, verbose = TRUE) {
 
     if (class(GR) != "GRanges") 
         stop(paste("GR must of class GRanges, not", class(GR)))
-    if (class(SNPloc) != "SNPlocs") 
+    if (!((class(SNPloc) == "ODLT_SNPlocs") | (class(SNPloc) == "SNPlocs")))
         stop(paste("SNPlocs must of class SNPlocs, not", class(SNPloc)))
     if (!exists("getSNPlocs")) 
         stop("There must exist a function called getSNPlocs, available from the SNPlocs.Hsapiens.dbSNP.xxxxxxx package. Try to load such package.")
     
-    # add chr to seqnames if not present
-    if (length(grep("^chr", seqnames(GR))) != length(GR)) {
-        if (length(grep("^chr", seqnames(GR))) != 0) 
-            stop("seqnames must all begin with 'chr'. In the GR it seemed that some, but not all, seqnames began with chr. Please correct manually")
-        seqlevels(GR) <- paste("chr", seqlevels(GR), sep = "")
-        # seqnames(GR)<-seqnames
-    }
+	if (any(!(seqlevels(GR) %in% seqlevels(SNPloc)) )){
+		stop("one or more seqlevels in GR are not present in SNPloc")
+	}
+    # remove chr from seqnames if present
+   # if (any(grepl("^chr", seqnames(GR))) != length(GR)) {
+   #     if (length(grep("^chr", seqnames(GR))) != 0) 
+   #         stop("seqnames must all begin with 'chr'. In the GR it seemed that some, but not all, seqnames began with chr. Please correct manually")
+   #     seqlevels(GR) <- paste("chr", seqlevels(GR), sep = "")
+   #     # seqnames(GR)<-seqnames
+   # }
     
-    # changing chr to ch to adapt to SNPloc
-    if (length(grep("^chr", seqnames(GR))) == length(GR)) {
-        # seqnames<-seqnames(GR)
-        seqlevels(GR) <- sub("^chr", "ch", seqlevels(GR))
-        # seqlevels(GR)<-as.character(unique(seqnames)) seqlevels(GR) <- levels(seqnames)
-        # seqnames(GR)<-seqnames
-    }
+    # changing chr to ch to adapt to SNPloc (not anymore)
+    #if (length(grep("^chr", seqnames(GR))) == length(GR)) {
+    #    # seqnames<-seqnames(GR)
+    #    seqlevels(GR) <- sub("^chr", "ch", seqlevels(GR))
+    #    # seqlevels(GR)<-as.character(unique(seqnames)) seqlevels(GR) <- levels(seqnames)
+    #    # seqnames(GR)<-seqnames
+    #}
     
     
     #SNPlocThisChr <- getSNPlocs(seqlevels(GR), as.GRanges = TRUE, caching = FALSE)
@@ -1314,8 +1317,8 @@ function(GR, SNPloc, return.vector = FALSE, verbose = TRUE) {
 	overlap2 <- findOverlaps(overlap1, GR, type="equal")
     names(GR)[subjectHits(overlap2)] <- mcols(overlap1)[["RefSNP_id"]][queryHits(overlap2)]
     
-    # change back to chr from ch
-    seqlevels(GR) <- sub("^ch", "chr", seqlevels(GR))
+    # change back to chr from ch (not needed anymore)
+    #seqlevels(GR) <- sub("^ch", "chr", seqlevels(GR))
 
 
     if (return.vector) {

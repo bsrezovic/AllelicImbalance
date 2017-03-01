@@ -4,6 +4,8 @@
 \name{lva.internal}
 \alias{lva.internal}
 \alias{lva.internal,array-method}
+\alias{lva.internal}
+\alias{lva.internal,array-method}
 \title{lva.internal}
 \usage{
 lva.internal(x, ...)
@@ -66,4 +68,3 @@ lva.internal(x=assays(rs)[["rs1"]],grp=grp, element=3)
 Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{phase}
-

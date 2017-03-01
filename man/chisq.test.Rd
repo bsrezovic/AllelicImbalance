@@ -4,6 +4,7 @@
 \name{chisq.test}
 \alias{chisq.test}
 \alias{chisq.test,ASEset-method}
+\alias{chisq.test,ASEset-method}
 \title{chi-square test}
 \usage{
 \S4method{chisq.test}{ASEset}(x, y = "*")
@@ -32,13 +33,12 @@ data(ASEset)
 chisq.test(ASEset)
 
 }
-\author{
-Jesper R. Gadin, Lasse Folkersen
-}
 \seealso{
 \itemize{ \item The \code{\link{binom.test}} which is another test
 that can be applied on an \link{ASEset} object.  }
 }
+\author{
+Jesper R. Gadin, Lasse Folkersen
+}
 \keyword{chi-square}
 \keyword{test}
-

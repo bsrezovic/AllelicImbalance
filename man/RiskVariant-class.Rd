@@ -2,15 +2,16 @@
 % Please edit documentation in R/RiskVariant-class.R
 \docType{class}
 \name{RiskVariant-class}
-\alias{RiskVariant}
 \alias{RiskVariant-class}
+\alias{RiskVariant}
 \alias{RiskVariant-method}
+\alias{RiskVariant-class}
+\alias{ref,RiskVariant-method}
+\alias{ref<-,RiskVariant,ANY-method}
 \alias{alt,RiskVariant-method}
 \alias{alt<-,RiskVariant,ANY-method}
 \alias{phase,RiskVariant-method}
 \alias{phase<-,RiskVariant-method}
-\alias{ref,RiskVariant-method}
-\alias{ref<-,RiskVariant,ANY-method}
 \title{RiskVariant class}
 \usage{
 \S4method{ref}{RiskVariant}(x)
@@ -50,4 +51,3 @@ Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{RiskVariant}
 \keyword{class}
-

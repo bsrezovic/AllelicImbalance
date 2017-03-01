@@ -4,6 +4,8 @@
 \name{randomRef}
 \alias{randomRef}
 \alias{randomRef,ASEset-method}
+\alias{randomRef}
+\alias{randomRef,ASEset-method}
 \title{Random ref allele from genotype}
 \usage{
 randomRef(x, ...)
@@ -41,4 +43,3 @@ ref(a) <- randomRef(a, source = 'alleleCounts')
 Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{mapbias}
-

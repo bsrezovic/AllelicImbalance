@@ -15,9 +15,6 @@ experiments of HapMap samples.
 #data(reads)
 
 }
-\author{
-Jesper R. Gadin, Lasse Folkersen
-}
 \references{
 Montgomery SB et al. Transcriptome genetics using second
 generation sequencing in a Caucasian population. Nature. 2010 Apr
@@ -27,7 +24,9 @@ generation sequencing in a Caucasian population. Nature. 2010 Apr
 \itemize{ \item The \code{\link{GRvariants}} which is another
 example object }
 }
+\author{
+Jesper R. Gadin, Lasse Folkersen
+}
 \keyword{data}
 \keyword{example}
 \keyword{object}
-

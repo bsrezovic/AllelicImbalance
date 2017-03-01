@@ -2,15 +2,24 @@
 % Please edit documentation in R/auxillary-functions-annotation.R
 \name{annotation-wrappers}
 \alias{annotation-wrappers}
-\alias{getAnnotationDataFrame}
-\alias{getCDSFromAnnotation}
-\alias{getCDSVector}
-\alias{getExonsFromAnnotation}
-\alias{getExonsVector}
 \alias{getGenesFromAnnotation}
 \alias{getGenesVector}
+\alias{getExonsFromAnnotation}
+\alias{getTranscriptsFromAnnotation}
+\alias{getCDSFromAnnotation}
+\alias{getExonsVector}
+\alias{getTranscriptsVector}
+\alias{getCDSVector}
+\alias{getAnnotationDataFrame}
+\alias{getGenesFromAnnotation}
+\alias{getGenesVector}
+\alias{getExonsFromAnnotation}
+\alias{getExonsVector}
 \alias{getTranscriptsFromAnnotation}
 \alias{getTranscriptsVector}
+\alias{getCDSFromAnnotation}
+\alias{getCDSVector}
+\alias{getAnnotationDataFrame}
 \title{AnnotationDb wrappers}
 \usage{
 getGenesFromAnnotation(OrgDb, GR, leftFlank = 0, rightFlank = 0,
@@ -123,4 +132,3 @@ Jesper R. Gadin, Lasse Folkersen
 \keyword{exons}
 \keyword{genes}
 \keyword{transcripts}
-

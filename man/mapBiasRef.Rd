@@ -4,6 +4,8 @@
 \name{mapBiasRef}
 \alias{mapBiasRef}
 \alias{mapBiasRef,ASEset-method}
+\alias{mapBiasRef}
+\alias{mapBiasRef,ASEset-method}
 \title{mapBias for reference allele}
 \usage{
 mapBiasRef(x, ...)
@@ -34,4 +36,3 @@ mat <- mapBiasRef(a)
 Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{mapbias}
-

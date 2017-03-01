@@ -4,6 +4,8 @@
 \alias{barplot-lattice-support}
 \alias{barplotLatticeCounts}
 \alias{barplotLatticeFraction}
+\alias{barplotLatticeFraction}
+\alias{barplotLatticeCounts}
 \title{lattice barplot inner functions for ASEset objects}
 \usage{
 barplotLatticeFraction(identifier, ...)
@@ -40,12 +42,11 @@ barplotLatticeFraction(identifier=name, x=a, astrand="+")
 barplotLatticeCounts(identifier=name,  x=a, astrand="+") 
 
 }
-\author{
-Jesper R. Gadin, Lasse Folkersen
-}
 \seealso{
 \itemize{ \item The \code{\link{ASEset}} class which the barplot
 function can be called up on.  }
 }
+\author{
+Jesper R. Gadin, Lasse Folkersen
+}
 \keyword{barplot}
-

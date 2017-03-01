@@ -4,6 +4,8 @@
 \name{getSnpIdFromLocation}
 \alias{getSnpIdFromLocation}
 \alias{getSnpIdFromLocation,GRanges-method}
+\alias{getSnpIdFromLocation}
+\alias{getSnpIdFromLocation,GRanges-method}
 \title{Get rsIDs from locations of SNP}
 \usage{
 getSnpIdFromLocation(GR, ...)
@@ -53,4 +55,3 @@ Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{SNP}
 \keyword{rs-id}
-

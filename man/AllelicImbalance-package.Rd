@@ -2,8 +2,8 @@
 % Please edit documentation in R/AllelicImbalance-package.R
 \docType{package}
 \name{AllelicImbalance-package}
-\alias{AllelicImbalance}
 \alias{AllelicImbalance-package}
+\alias{AllelicImbalance}
 \title{A package meant to provide all basic functions for high-throughput allele
 specific expression analysis}
 \description{
@@ -29,16 +29,16 @@ allele specific expression analysis is available. Two ways to go on could be
 to apply \code{\link{chisq.test}} or \code{\link{barplot}} on this ASEset
 object.
 }
-\author{
-Author: Jesper Robert Gadin Author: Lasse Folkersen
 
-Maintainer: Jesper Robert Gadin <j.r.gadin@gmail.com>
-}
 \references{
 Reference to published application note (work in progress)
 }
 \seealso{
 \itemize{ \item code?ASEset }
 }
-\keyword{package}
+\author{
+Author: Jesper Robert Gadin Author: Lasse Folkersen
 
+Maintainer: Jesper Robert Gadin <j.r.gadin@gmail.com>
+}
+\keyword{package}

@@ -4,6 +4,7 @@
 \name{refAllele}
 \alias{refAllele}
 \alias{refAllele,ASEset-method}
+\alias{refAllele}
 \title{Reference allele}
 \usage{
 refAllele(x, fasta)
@@ -33,4 +34,3 @@ Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{mapbias}
 \keyword{reference}
-

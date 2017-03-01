@@ -2,17 +2,18 @@
 % Please edit documentation in R/DetectedAI-class.R
 \docType{class}
 \name{DetectedAI-class}
-\alias{DetectedAI}
 \alias{DetectedAI-class}
+\alias{DetectedAI}
 \alias{DetectedAI-method}
+\alias{DetectedAI-class}
 \alias{referenceFrequency}
 \alias{referenceFrequency,DetectedAI-method}
+\alias{thresholdFrequency}
+\alias{thresholdFrequency,DetectedAI-method}
 \alias{thresholdCountSample}
 \alias{thresholdCountSample,DetectedAI-method}
 \alias{thresholdDeltaFrequency}
 \alias{thresholdDeltaFrequency,DetectedAI-method}
-\alias{thresholdFrequency}
-\alias{thresholdFrequency,DetectedAI-method}
 \alias{thresholdPvalue}
 \alias{thresholdPvalue,DetectedAI-method}
 \title{DetectedAI class}
@@ -65,4 +66,3 @@ Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{ASEset}
 \keyword{class}
-

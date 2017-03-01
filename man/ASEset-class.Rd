@@ -2,54 +2,72 @@
 % Please edit documentation in R/ASEset-class.R
 \docType{class}
 \name{ASEset-class}
-\alias{ASEset}
 \alias{ASEset-class}
+\alias{ASEset}
+\alias{alleleCounts}
+\alias{mapBias}
+\alias{fraction}
+\alias{arank}
+\alias{frequency}
+\alias{genotype}
+\alias{genotype<-}
+\alias{phase}
+\alias{phase<-}
+\alias{alleleCounts,ASEset-method}
+\alias{mapBias,ASEset-method}
+\alias{fraction,ASEset-method}
+\alias{arank,ASEset-method}
+\alias{frequency,ASEset-method}
+\alias{genotype,ASEset-method}
+\alias{genotype<-,ASEset-method}
+\alias{alleleCounts<-}
+\alias{alleleCounts<-,ASEset-method}
+\alias{phase,ASEset-method}
+\alias{phase<-,ASEset-method}
 \alias{alleleCounts}
 \alias{alleleCounts,ASEset-method}
 \alias{alleleCounts<-}
 \alias{alleleCounts<-,ASEset-method}
-\alias{alt}
-\alias{alt,ASEset-method}
-\alias{alt<-}
-\alias{alt<-,ASEset,ANY-method}
-\alias{altExist}
-\alias{altExist,ASEset-method}
-\alias{aquals}
-\alias{aquals,ASEset-method}
-\alias{aquals<-}
-\alias{aquals<-,ASEset-method}
-\alias{arank}
-\alias{arank,ASEset-method}
-\alias{countsPerSample}
-\alias{countsPerSample,ASEset-method}
-\alias{countsPerSnp}
-\alias{countsPerSnp,ASEset-method}
+\alias{mapBias}
+\alias{mapBias,ASEset-method}
 \alias{fraction}
 \alias{fraction,ASEset-method}
+\alias{arank}
 \alias{frequency}
-\alias{frequency,ASEset-method}
 \alias{genotype}
 \alias{genotype,ASEset-method}
 \alias{genotype<-}
 \alias{genotype<-,ASEset-method}
-\alias{mapBias}
-\alias{mapBias,ASEset-method}
-\alias{mapBias<-}
-\alias{mapBias<-,ASEset-method}
-\alias{maternalAllele}
-\alias{maternalAllele,ASEset-method}
-\alias{paternalAllele}
-\alias{paternalAllele,ASEset-method}
+\alias{countsPerSnp}
+\alias{countsPerSnp,ASEset-method}
+\alias{countsPerSample}
+\alias{countsPerSample,ASEset-method}
 \alias{phase}
 \alias{phase,ASEset-method}
 \alias{phase<-}
 \alias{phase<-,ASEset-method}
+\alias{mapBias<-}
+\alias{mapBias<-,ASEset-method}
+\alias{refExist}
+\alias{refExist,ASEset-method}
 \alias{ref}
 \alias{ref,ASEset-method}
 \alias{ref<-}
 \alias{ref<-,ASEset,ANY-method}
-\alias{refExist}
-\alias{refExist,ASEset-method}
+\alias{altExist}
+\alias{altExist,ASEset-method}
+\alias{alt}
+\alias{alt,ASEset-method}
+\alias{alt<-}
+\alias{alt<-,ASEset,ANY-method}
+\alias{aquals}
+\alias{aquals,ASEset-method}
+\alias{aquals<-}
+\alias{aquals<-,ASEset-method}
+\alias{maternalAllele}
+\alias{maternalAllele,ASEset-method}
+\alias{paternalAllele}
+\alias{paternalAllele,ASEset-method}
 \title{ASEset objects}
 \usage{
 alleleCounts(x, strand = "*", return.class = "list")
@@ -250,6 +268,7 @@ are in the 1st dimension, samples in the 2nd dimension and variants in the
 3rd dimension.} \item{verbose}{Makes function more talkative}
 \item{...}{arguments passed on to SummarizedExperiment constructor} }
 }
+
 \examples{
 
 
@@ -309,13 +328,12 @@ a <- ASEsetFromArrays(gr, countsUnknown=ar2)
 
 
 }
-\author{
-Jesper R. Gadin, Lasse Folkersen
-}
 \seealso{
 \itemize{ \item
 \code{\link[SummarizedExperiment]{RangedSummarizedExperiment}} objects. }
 }
+\author{
+Jesper R. Gadin, Lasse Folkersen
+}
 \keyword{ASEset}
 \keyword{class}
-

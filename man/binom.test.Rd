@@ -4,6 +4,7 @@
 \name{binom.test}
 \alias{binom.test}
 \alias{binom.test,ASEset-method}
+\alias{binom.test,ASEset-method}
 \title{binomial test}
 \usage{
 \S4method{binom.test}{ASEset}(x, n = "*")
@@ -32,13 +33,12 @@ binom.test(ASEset,'*')
 
 
 }
-\author{
-Jesper R. Gadin, Lasse Folkersen
-}
 \seealso{
 \itemize{ \item The \code{\link{chisq.test}} which is another test
 that can be applied on an \link{ASEset} object.  }
 }
+\author{
+Jesper R. Gadin, Lasse Folkersen
+}
 \keyword{binomial}
 \keyword{test}
-

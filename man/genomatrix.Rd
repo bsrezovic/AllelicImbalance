@@ -18,4 +18,3 @@ Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{data}
 \keyword{genotype}
-

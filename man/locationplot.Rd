@@ -5,6 +5,7 @@
 \alias{ASEset-locationplot}
 \alias{locationplot}
 \alias{locationplot,ASEset-method}
+\alias{locationplot,ASEset-method}
 \title{locationplot ASEset objects}
 \usage{
 locationplot(x, ...)
@@ -92,12 +93,11 @@ locationplot(ASEset[order(start(rowRanges(ASEset))),])
 locationplot(ASEset,type='count',strand='*')
 
 }
-\author{
-Jesper R. Gadin, Lasse Folkersen
-}
 \seealso{
 \itemize{ \item The \code{\link{ASEset}} class which the
 locationplot function can be called up on.  }
 }
+\author{
+Jesper R. Gadin, Lasse Folkersen
+}
 \keyword{locationplot}
-

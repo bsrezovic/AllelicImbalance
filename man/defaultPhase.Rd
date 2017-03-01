@@ -4,6 +4,8 @@
 \name{defaultPhase}
 \alias{defaultPhase}
 \alias{defaultPhase,numeric-method}
+\alias{defaultPhase}
+\alias{defaultPhase,numeric-method}
 \title{defaultPhase}
 \usage{
 defaultPhase(i, ...)
@@ -35,4 +37,3 @@ defaultPhase(i,j)
 Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{phase}
-

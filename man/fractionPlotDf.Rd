@@ -4,6 +4,8 @@
 \name{fractionPlotDf}
 \alias{fractionPlotDf}
 \alias{fractionPlotDf,ASEset-method}
+\alias{fractionPlotDf}
+\alias{fractionPlotDf,ASEset-method}
 \title{Plot Dataframe}
 \usage{
 fractionPlotDf(x, snp, strand = "*", top.fraction.criteria = "maxcount",
@@ -50,4 +52,3 @@ Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{phase}
 \keyword{plotDf}
-

@@ -37,13 +37,12 @@ data(ASEset)
 gbarplot(ASEset[1])
 
 }
-\author{
-Jesper R. Gadin
-}
 \seealso{
 \itemize{ \item The \code{\link{ASEset}} class which the gbarplot
 function can be called up on.  \item The \code{\link{barplot}} non trellis
 barplot.  }
 }
+\author{
+Jesper R. Gadin
+}
 \keyword{gbarplot}
-

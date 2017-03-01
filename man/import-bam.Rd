@@ -2,9 +2,11 @@
 % Please edit documentation in R/auxillary-methods.R
 \docType{methods}
 \name{import-bam}
+\alias{import-bam}
 \alias{impBamGAL}
 \alias{impBamGAL,character-method}
-\alias{import-bam}
+\alias{impBamGAL}
+\alias{impBamGAL,character-method}
 \title{Import Bam}
 \usage{
 impBamGAL(UserDir, ...)
@@ -61,4 +63,3 @@ Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{bam}
 \keyword{import}
-

@@ -4,6 +4,8 @@
 \name{minCountFilt}
 \alias{minCountFilt}
 \alias{minCountFilt,ASEset-method}
+\alias{minCountFilt}
+\alias{minCountFilt,ASEset-method}
 \title{minCountFilt methods}
 \usage{
 minCountFilt(x, ...)
@@ -45,4 +47,3 @@ minCountFilt(a)
 Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{filter}
-

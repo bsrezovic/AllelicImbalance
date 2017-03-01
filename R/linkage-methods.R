@@ -399,14 +399,14 @@ setMethod("lva.internal", signature(x = "array"),
 	#y <- fr2[!nocalc,,drop=FALSE]
 	#x <- grp[,!nocalc,drop=FALSE]
 	x <- grp2
-	if(!(nocalc)){
+	if(!(any(nocalc))){
       for(i in 1:ncol(fr2)){
-		y <- fr2[,i,drop=FALSE]
+		y <- fr2[,i,drop=TRUE]
 		mat2 <- matrix(NA, ncol=2, nrow=4)
-		nas <- (is.na(y[,i]) | is.na(x) | is.na(s))
+		nas <- (is.na(y) | is.na(x) | is.na(s))
 		few <- length(unique(x[!nas])) == 1
 		if(!few){
-		 df <- data.frame(res=y[!nas, i], exp=x[!nas], ran=s[!nas])
+		 df <- data.frame(res=y[!nas], exp=x[!nas], ran=s[!nas])
 		 m1 <- lme(res~exp, random=~1|ran, data=df)
 		 mat2[7:8] <- anova(m1)$'p-value'
 		 mat[i,] <- c(mat2)

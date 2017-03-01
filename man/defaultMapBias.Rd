@@ -4,6 +4,8 @@
 \name{defaultMapBias}
 \alias{defaultMapBias}
 \alias{defaultMapBias,ASEset-method}
+\alias{defaultMapBias}
+\alias{defaultMapBias,ASEset-method}
 \title{Generate default mapbias from genotype}
 \usage{
 defaultMapBias(x, ...)
@@ -40,4 +42,3 @@ a <- refAllele(ASEset.sim,fasta=fasta)
 Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{mapbias}
-

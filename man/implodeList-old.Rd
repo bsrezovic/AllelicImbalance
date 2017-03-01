@@ -26,4 +26,3 @@ implodeList.old(lst)
 Jesper R. Gadin
 }
 \keyword{implode}
-

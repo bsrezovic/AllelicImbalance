@@ -34,13 +34,12 @@ plots in the same window. This function add gene regions under the bars.
   data(ASEset)
 
 }
-\author{
-Jesper R. Gadin, Lasse Folkersen
-}
 \seealso{
 \itemize{ \item The \code{\link{locationplot}} which is uses this
 function internally.  \item The \code{\link{decorateWithExons}} which is
 another similar function that \code{\link{locationplot}} uses internally.  }
 }
+\author{
+Jesper R. Gadin, Lasse Folkersen
+}
 \keyword{internal}
-

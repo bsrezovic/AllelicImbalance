@@ -3,8 +3,9 @@
 \docType{methods}
 \name{regionSummary}
 \alias{regionSummary}
-\alias{regionSummary,ASEset-method}
 \alias{regionSummary,numeric-method}
+\alias{regionSummary}
+\alias{regionSummary,ASEset-method}
 \title{regionSummary}
 \usage{
 regionSummary(x, ...)
@@ -67,4 +68,3 @@ t <- regionSummary(a, region)
 Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{summary}
-

@@ -2,10 +2,10 @@
 % Please edit documentation in R/histplot-methods.R
 \docType{methods}
 \name{histplot}
-\alias{hist}
-\alias{hist,ASEset-method}
-\alias{hist,ReferenceBias-method}
 \alias{histplot}
+\alias{hist}
+\alias{hist,ReferenceBias-method}
+\alias{hist,ASEset-method}
 \title{histogram plots}
 \usage{
 \S4method{hist}{ASEset}(x, strand = "*", type = "mean", log = 1, ...)
@@ -41,4 +41,3 @@ Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{hist}
 \keyword{plot}
-

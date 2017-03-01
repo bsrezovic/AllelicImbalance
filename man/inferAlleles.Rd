@@ -45,4 +45,3 @@ i <- inferAlleles(ASEset)
 Jesper R. Gadin
 }
 \keyword{infer}
-

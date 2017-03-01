@@ -2,11 +2,15 @@
 % Please edit documentation in R/auxillary-methods.R
 \docType{methods}
 \name{import-bcf}
+\alias{import-bcf}
+\alias{impBcfGRL}
 \alias{impBcfGR}
+\alias{impBcfGRL,character-method}
 \alias{impBcfGR,character-method}
 \alias{impBcfGRL}
 \alias{impBcfGRL,character-method}
-\alias{import-bcf}
+\alias{impBcfGR}
+\alias{impBcfGR,character-method}
 \title{Import Bcf Selection}
 \usage{
 impBcfGRL(UserDir, ...)
@@ -58,15 +62,14 @@ pathToFiles <- system.file('extdata/ERP000101_subset', package='AllelicImbalance
 reads <- impBcfGRL(pathToFiles, searchArea, verbose=FALSE)
 
 }
-\author{
-Jesper R. Gadin, Lasse Folkersen
-}
 \seealso{
 \itemize{ \item The impBamGRL for importing bam files
 \item The \code{\link{getAlleleCounts}} for how to get allele(SNP) counts
 \item The \code{\link{scanForHeterozygotes}} for how to find possible
 heterozygote positions }
 }
+\author{
+Jesper R. Gadin, Lasse Folkersen
+}
 \keyword{bcf}
 \keyword{import}
-

@@ -5,6 +5,8 @@
 \alias{ASEset-filters}
 \alias{hetFilt}
 \alias{hetFilt,ASEset-method}
+\alias{hetFilt}
+\alias{hetFilt,ASEset-method}
 \title{genotype filter methods}
 \usage{
 hetFilt(x, ...)
@@ -39,4 +41,3 @@ hets <- hetFilt(a)
 Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{filter}
-

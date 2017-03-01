@@ -4,6 +4,8 @@
 \name{getAlleleQuality}
 \alias{getAlleleQuality}
 \alias{getAlleleQuality,GAlignmentsList-method}
+\alias{getAlleleQuality}
+\alias{getAlleleQuality,GAlignmentsList-method}
 \title{snp quality data}
 \usage{
 getAlleleQuality(BamList, ...)
@@ -71,4 +73,3 @@ Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{allele}
 \keyword{quality}
-

@@ -4,6 +4,8 @@
 \name{coverageMatrixListFromGAL}
 \alias{coverageMatrixListFromGAL}
 \alias{coverageMatrixListFromGAL,GAlignmentsList-method}
+\alias{coverageMatrixListFromGAL}
+\alias{coverageMatrixListFromGAL,GAlignmentsList-method}
 \title{coverage matrix of GAlignmentsList}
 \usage{
 coverageMatrixListFromGAL(BamList, ...)
@@ -40,4 +42,3 @@ covMatList <- coverageMatrixListFromGAL(BamList=r, strand='+')
 Jesper R. Gadin
 }
 \keyword{coverage}
-

@@ -4,6 +4,7 @@
 \name{detectAI}
 \alias{detectAI}
 \alias{detectAI,ASEset-method}
+\alias{detectAI,ASEset-method}
 \title{detectAI}
 \usage{
 detectAI(x, ...)
@@ -83,4 +84,3 @@ dai <- detectAI(a)
 Jesper R. Gadin
 }
 \keyword{detection}
-

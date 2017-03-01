@@ -49,4 +49,3 @@ Jesper R. Gadin
 }
 \keyword{barplot}
 \keyword{legend}
-

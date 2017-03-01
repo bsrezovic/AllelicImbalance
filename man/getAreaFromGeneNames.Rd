@@ -4,6 +4,8 @@
 \name{getAreaFromGeneNames}
 \alias{getAreaFromGeneNames}
 \alias{getAreaFromGeneNames,character-method}
+\alias{getAreaFromGeneNames}
+\alias{getAreaFromGeneNames,character-method}
 \title{Get Gene Area}
 \usage{
 getAreaFromGeneNames(genesymbols, ...)
@@ -61,4 +63,3 @@ Jesper R. Gadin, Lasse Folkersen
 }
 \keyword{genes}
 \keyword{locations}
-
