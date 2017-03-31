@@ -39,16 +39,18 @@ This function is used to try to identify the rs-IDs of SNPs in a GRanges
 object.
 }
 \examples{
+## The following example uses more than 2GB of memory which is more than
+## what 32-bit Windows can handle.
+is_32bit_windows <- .Platform$OS.type == "windows" &&
+                    .Platform$r_arch == "i386"
+if (!is_32bit_windows && require(SNPlocs.Hsapiens.dbSNP144.GRCh37)) {
+  #load example data
+  data(ASEset)
 
-#load example data
-data(ASEset)
-
-#get counts at the three positions specified in GRvariants
-if(require(SNPlocs.Hsapiens.dbSNP144.GRCh37)){
-updatedGRanges<-getSnpIdFromLocation(rowRanges(ASEset), SNPlocs.Hsapiens.dbSNP144.GRCh37)
-rowRanges(ASEset)<-updatedGRanges
-}
-
+  #get counts at the three positions specified in GRvariants
+  updatedGRanges <- getSnpIdFromLocation(rowRanges(ASEset),
+                                         SNPlocs.Hsapiens.dbSNP144.GRCh37)
+  rowRanges(ASEset) <- updatedGRanges
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen
