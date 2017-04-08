@@ -1227,14 +1227,18 @@ function(genesymbols, OrgDb, leftFlank = 0, rightFlank = 0,
 #' @keywords SNP rs-id
 #' @examples
 #' 
-#' #load example data
-#' data(ASEset)
+#' is_32bit_windows <- .Platform$OS.type == "windows" &&
+#'                   .Platform$r_arch == "i386"
+#' if (!is_32bit_windows && require(SNPlocs.Hsapiens.dbSNP144.GRCh37)) {
+#' 	#load example data
+#' 	data(ASEset)
+#'
+#'   #get counts at the three positions specified in GRvariants
+#'   updatedGRanges <- getSnpIdFromLocation(rowRanges(ASEset), 
+#'     SNPlocs.Hsapiens.dbSNP144.GRCh37)
+#    rowRanges(ASEset) <- updatedGRanges
+#' }
 #' 
-#' #get counts at the three positions specified in GRvariants
-#' if(require(SNPlocs.Hsapiens.dbSNP144.GRCh37)){
-#' updatedGRanges<-getSnpIdFromLocation(rowRanges(ASEset), SNPlocs.Hsapiens.dbSNP144.GRCh37)
-#' rowRanges(ASEset)<-updatedGRanges
-#'}
 #' 
 NULL
 
