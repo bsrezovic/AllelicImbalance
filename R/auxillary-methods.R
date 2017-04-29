@@ -873,7 +873,7 @@ function(BamList, GRvariants, strand = "*",
 	}
 
 	#Drop seqlevels in BamList that are not in GRvariants
-	#seqlevels(BamList,force=TRUE) <- seqlevels(GRvariants)
+	#seqlevels(BamList,pruning.mode="coarse") <- seqlevels(GRvariants)
 	seqinfo(GRvariants) <- merge(seqinfo(GRvariants), seqinfo(BamList))
 	seqlevels(GRvariants) <- seqlevelsInUse(GRvariants)
 
@@ -1285,7 +1285,7 @@ function(GR, SNPloc, return.vector = FALSE, verbose = TRUE) {
     
     #SNPlocThisChr <- getSNPlocs(seqlevels(GR), as.GRanges = TRUE, caching = FALSE)
     #
-    #seqlevels(SNPlocThisChr, force = TRUE) <- seqlevels(GR)
+    #seqlevels(SNPlocThisChr, pruning.mode="coarse") <- seqlevels(GR)
     ## seqlengths(GR) <- seqlengths(SNPlocThisChr)
 	#genome(SNPlocThisChr) <- genome(GR)
     #
@@ -1948,7 +1948,7 @@ function(BamList, GRvariants, fastq.format = "illumina.1.8",
 	}
 
 	#Drop seqlevels in BamList that are not in GRvariants
-	#seqlevels(BamList,force=TRUE) <- seqlevels(GRvariants)
+	#seqlevels(BamList,pruning.mode="coarse") <- seqlevels(GRvariants)
 	seqinfo(GRvariants) <- merge(seqinfo(GRvariants), seqinfo(BamList))
 	seqlevels(GRvariants) <- seqlevelsInUse(GRvariants)
 

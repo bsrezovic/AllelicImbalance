@@ -444,7 +444,7 @@ library(Gviz)
 #subset ASEset and reads
 x <- ASEset[,1:2]
 r <- reads[1:2]
-seqlevels(r, force=TRUE) <- seqlevels(x)
+seqlevels(r, pruning.mode="coarse") <- seqlevels(x)
 
 GR <- GRanges(seqnames=seqlevels(x),
  		ranges=IRanges(start=min(start(x)), end=max(end(x))),

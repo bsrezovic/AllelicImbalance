@@ -183,14 +183,14 @@ getGenesFromAnnotation <- function(OrgDb, GR, leftFlank = 0, rightFlank = 0, get
     # check that all levels in GR exist in annGR, if not exclude these levels
     if (sum(!levels(seqnames(GR)) %in% levels(seqnames(annGR))) > 0) {
         TFkeepLevels <- levels(seqnames(GR)) %in% levels(seqnames(annGR))
-        seqlevels(GR, force = FALSE) <- seqlevels(GR)[TFkeepLevels]
+        seqlevels(GR) <- seqlevels(GR)[TFkeepLevels]
         
     }
     
     # check that all levels in annGR exist in GR, if not exclude these levels
     if (sum(!levels(seqnames(annGR)) %in% levels(seqnames(GR))) > 0) {
         TFkeepLevels <- levels(seqnames(annGR)) %in% levels(seqnames(GR))
-        seqlevels(annGR, force = TRUE) <- seqlevels(annGR)[TFkeepLevels]
+        seqlevels(annGR, pruning.mode="coarse") <- seqlevels(annGR)[TFkeepLevels]
     }
     
     # the seqlevels comes in different orders. This will give the correct order.
@@ -279,7 +279,7 @@ getExonsFromAnnotation <- function(TxDb, GR, leftFlank = 0, rightFlank = 0, verb
     seqLevels <- sub("^chr", "", seqlevels(GR))
     seqlevels(GR) <- seqLevels
     
-    seqlevels(TxDb, force = TRUE) <- paste("chr", names(seqlengths(GR)), sep = "")
+    seqlevels(TxDb, pruning.mode="coarse") <- paste("chr", names(seqlengths(GR)), sep = "")
     
     # Get all exons from the active chromosomes By creating a GRanges from TxDb
     annGR <- exons(TxDb, columns = c("exon_id", "tx_name"))
@@ -291,14 +291,14 @@ getExonsFromAnnotation <- function(TxDb, GR, leftFlank = 0, rightFlank = 0, verb
     # check that all levels in GR exist in annGR, if not exclude these levels
     if (sum(!levels(seqnames(GR)) %in% levels(seqnames(annGR))) > 0) {
         TFkeepLevels <- levels(seqnames(GR)) %in% levels(seqnames(annGR))
-        seqlevels(GR, force = FALSE) <- seqlevels(GR)[TFkeepLevels]
+        seqlevels(GR) <- seqlevels(GR)[TFkeepLevels]
         
     }
     
     # check that all levels in annGR exist in GR, if not exclude these levels
     if (sum(!levels(seqnames(annGR)) %in% levels(seqnames(GR))) > 0) {
         TFkeepLevels <- levels(seqnames(annGR)) %in% levels(seqnames(GR))
-        seqlevels(annGR, force = TRUE) <- seqlevels(annGR)[TFkeepLevels]
+        seqlevels(annGR, pruning.mode="coarse") <- seqlevels(annGR)[TFkeepLevels]
     }
     
     # the seqlevels comes in different orders. This will give the correct order.
@@ -391,7 +391,7 @@ getTranscriptsFromAnnotation <- function(TxDb, GR, leftFlank = 0, rightFlank = 0
     seqLevels <- sub("^chr", "", seqlevels(GR))
     seqlevels(GR) <- seqLevels
     
-    seqlevels(TxDb, force = TRUE) <- paste("chr", names(seqlengths(GR)), sep = "")
+    seqlevels(TxDb, pruning.mode="coarse") <- paste("chr", names(seqlengths(GR)), sep = "")
     
     
     # Get all exons from the active chromosomes By creating a GRanges from TxDb
@@ -405,14 +405,14 @@ getTranscriptsFromAnnotation <- function(TxDb, GR, leftFlank = 0, rightFlank = 0
     # check that all levels in GR exist in annGR, if not exclude these levels
     if (sum(!levels(seqnames(GR)) %in% levels(seqnames(annGR))) > 0) {
         TFkeepLevels <- levels(seqnames(GR)) %in% levels(seqnames(annGR))
-        seqlevels(GR, force = FALSE) <- seqlevels(GR)[TFkeepLevels]
+        seqlevels(GR) <- seqlevels(GR)[TFkeepLevels]
         
     }
     
     # check that all levels in annGR exist in GR, if not exclude these levels
     if (sum(!levels(seqnames(annGR)) %in% levels(seqnames(GR))) > 0) {
         TFkeepLevels <- levels(seqnames(annGR)) %in% levels(seqnames(GR))
-        seqlevels(annGR, force = TRUE) <- seqlevels(annGR)[TFkeepLevels]
+        seqlevels(annGR, pruning.mode="coarse") <- seqlevels(annGR)[TFkeepLevels]
     }
     
     # the seqlevels comes in different orders. This will give the correct order.
@@ -487,7 +487,7 @@ getCDSFromAnnotation <- function(TxDb, GR, leftFlank = 0, rightFlank = 0, verbos
     seqLevels <- sub("^chr", "", seqlevels(GR))
     seqlevels(GR) <- seqLevels
     
-    seqlevels(TxDb, force = TRUE) <- paste("chr", names(seqlengths(GR)), sep = "")
+    seqlevels(TxDb, pruning.mode="coarse") <- paste("chr", names(seqlengths(GR)), sep = "")
     
     
     # Get all exons from the active chromosomes By creating a GRanges from TxDb
@@ -501,14 +501,14 @@ getCDSFromAnnotation <- function(TxDb, GR, leftFlank = 0, rightFlank = 0, verbos
     # check that all levels in GR exist in annGR, if not exclude these levels
     if (sum(!levels(seqnames(GR)) %in% levels(seqnames(annGR))) > 0) {
         TFkeepLevels <- levels(seqnames(GR)) %in% levels(seqnames(annGR))
-        seqlevels(GR, force = FALSE) <- seqlevels(GR)[TFkeepLevels]
+        seqlevels(GR) <- seqlevels(GR)[TFkeepLevels]
         
     }
     
     # check that all levels in annGR exist in GR, if not exclude these levels
     if (sum(!levels(seqnames(annGR)) %in% levels(seqnames(GR))) > 0) {
         TFkeepLevels <- levels(seqnames(annGR)) %in% levels(seqnames(GR))
-        seqlevels(annGR, force = TRUE) <- seqlevels(annGR)[TFkeepLevels]
+        seqlevels(annGR, pruning.mode="coarse") <- seqlevels(annGR)[TFkeepLevels]
     }
     
     # the seqlevels comes in different orders. This will give the correct order.
