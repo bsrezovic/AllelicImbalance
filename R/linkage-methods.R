@@ -372,8 +372,8 @@ setMethod("lva.internal", signature(x = "array"),
 							#zero counts (which logically should not exist, but does in one instance)
 							zc <- all(y[i,!nas ,3]==0)
 
-							#less than three we do not calculate
-							few3 <- length(s[!nas]) <=3
+							#less than four we do not calculate
+							few3 <- length(s[!nas]) <=5
 
 							if(!few & !few2 & !few3 & !zc){
 								df <- data.frame(res=y[i,!nas ,3], exp=x[!nas, i], ran=s[!nas])
