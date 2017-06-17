@@ -63,6 +63,13 @@ NULL
 #' lva(a, rv, r1c)
 #' lva(a, rv, r2)
 #'
+#' # Use covariates (integers or nuemric)
+#' cov <- data.frame(age=sample(20:70, ncol(a)), sex=rep(c(1,2), each=ncol(a)/2),  row.names=colnames(a))
+#' lva(a, rv, r1, covariates=cov)
+#' lva(a, rv, r1b, covariates=cov)
+#' lva(a, rv, r1c, covariates=cov)
+#' lva(a, rv, r2, covariates=cov)
+#'
 #' # link variant almlof (lva), using nlme
 #' a2 <- a
 #' ac <- assays(a2)[["countsPlus"]]
@@ -77,6 +84,7 @@ NULL
 #' lva(ab, rv2, r1b, type="nlme")
 #' lva(ab, rv2, r1c, type="nlme")
 #' lva(ab, rv2, r2, type="nlme")
+#'
 #' 
 NULL
 
@@ -92,11 +100,11 @@ setGeneric("lva", function(x, ...
 setMethod("lva", signature(x = "ASEset"),
 		function(x, rv, region, settings=list(),
 				 return.class="LinkVariantAlmlof", type="lm",
-				 verbose=FALSE,  ...
+				 verbose=FALSE, covariates=matrix(),  ...
 	){
 
 		#safety check
-		if(any(!colnames(x) %in% colnames(rv)) | any(!colnames(rv) %in% colnames(x))) 
+		if(any(!colnames(x) %in% colnames(rv)) | any(!colnames(rv) %in% colnames(x)))
 				stop("missmatch of colnames for x and rv")
 
 		if("threshold.distance" %in% names(settings)){
@@ -104,6 +112,7 @@ setMethod("lva", signature(x = "ASEset"),
 		}else{
 			distance <- 200000
 		}
+		#if(nrow(covariates)==ncol(x)){stop("nrow(covariates) must match ncol(x)")}
 
 		#region summary
 		rs <- regionSummary(x, region)
@@ -117,14 +126,15 @@ setMethod("lva", signature(x = "ASEset"),
 		rs2 <- rs[subjectHits(hits)]
 		rv2 <- rv[queryHits(hits),, drop=FALSE]
 		#make groups for regression based on (het hom het)
-		grp <- .groupBasedOnPhaseAndAlleleCombination(phase(rv2,return.class="array")[,,c(1, 2), drop=FALSE])
+		grp <- .groupBasedOnPhaseAndAlleleCombination(phase(rv2, return.class="array")[,,c(1, 2), drop=FALSE])
 		plotGroups <- .lvaGroups(mcols(rv2)[["ref"]], mcols(rv2)[["alt"]])
 		#call internal regression function	
 		if(type=="lm"){
-			mat <- lva.internal(x = assays(rs2)[["rs1"]], grp = t(grp), element = 3, type=type)
+			mat <- lva.internal(x = assays(rs2)[["rs1"]], grp = grp, element = 3, type=type)
 		}else if(type=="nlme"){
+			#covariates have not been implemented completely
 			mat <- lva.internal(x = assays(rs2)[["rs1"]], grp = t(grp), element = 3, type=type, 
-								subject=colData(rs2)[["subject.group"]])
+								subject=colData(rs2)[["subject.group"]], covariates=covariates)
 		}
 
 		#make txSNP specific lva test
@@ -252,13 +262,13 @@ setGeneric("lva.internal", function(x, ...
 #' @rdname lva.internal
 #' @export
 setMethod("lva.internal", signature(x = "array"),
-		function(x, grp, element=3, type="lm", subject=NULL, ...
+		function(x, grp, element=3, type="lm", subject=NULL, covariates=covariates, ...
 	){
 		
 		#unlist(.lvaRegressionPvalue(x, grp, element))
 		#normal regression
 		if(type=="lm"){
-		.lvaRegressionReturnCommonParamMatrix(x, grp, element)
+		.lvaRegressionReturnCommonParamMatrix(x, grp, element, cov=covariates)
 		#mixed models lme4 regression
 		} else if(type=="nlme"){
 			if(!is.null(subject)){
@@ -288,19 +298,30 @@ setMethod("lva.internal", signature(x = "array"),
 
 
 
-.lvaRegressionReturnCommonParamMatrix <- function(ar, grp, element){
+.lvaRegressionReturnCommonParamMatrix <- function(ar, grp, element, cov){
 
 	mat <- matrix(NA, ncol=dim(ar)[3], nrow=nrow(ar))
 	nocalc <- apply(ar[,,3, drop=FALSE], 1, function(x){sum(!(is.na(x)))==0})
 
+	#use covariates if they exist
+	cov2 <- cov
+	if(!length(cov)==1){
+	  if(!ncol(grp)==nrow(cov)) stop("grp and cov has to be same length")
+	  cov2 <-cov[!nocalc,drop=FALSE,]
+	}
+
 	#only make regression if there is at least one row possible to compute
 	if(any(!nocalc)){
-		mat[!nocalc,] <- t(sapply(which(!nocalc), function(i, y, x){
+		mat[!nocalc,] <- t(sapply(which(!nocalc), function(i, y, x, c){
 						mat2 <- matrix(NA, ncol=2, nrow=4)
-						s <-summary(lm(y[i, ,element]~x[, i]))$coefficients
-						mat2[,1:nrow(s)] <- s
+						covform <- paste(colnames(c), collapse="+")
+						if(!length(cov)==1) form <- formula(paste("y2~x2",covform, sep="+"))
+						if(length(cov)==1) form <- formula("y2~x2")
+						df <- cbind(c, data.frame(y2=y[i, ,element], x2=x[i, ]))
+						s <-summary(lm(form, data=df))$coefficients
+						mat2[,1:2] <- s[rownames(s) %in% c("(Intercept)","x2"),]
 						c(mat2)
-					}, y=ar[!nocalc,,,drop=FALSE], x=grp[,!nocalc,drop=FALSE]))
+					}, y=ar[!nocalc,,,drop=FALSE], x=grp[!nocalc,drop=FALSE,], c=cov2))
 	}
 	colnames(mat) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
 	mat

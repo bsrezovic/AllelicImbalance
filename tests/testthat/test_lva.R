@@ -50,7 +50,7 @@ test_that(paste("checking .lvaRegressionReturnCommonParamMatrix"), {
 	ar <- array(c(hets,homs,mean.fr, sd.fr, mean.delta, sd.delta, ai.up, ai.down), dim=c(3,8,2))
 	ar <- aperm(ar,c(3,1,2))
 	
-	grp <- t(matrix(c(1,1,3,2,2,3),nrow=2))
+	grp <- matrix(c(1,1,3,2,2,3),nrow=2)
 
 	#prepare expected data (values are from an execution of the linear model)
 	exp <- matrix(
@@ -60,7 +60,7 @@ test_that(paste("checking .lvaRegressionReturnCommonParamMatrix"), {
 	colnames(exp) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
 
 	#run tests
-	res <- .lvaRegressionReturnCommonParamMatrix(ar, grp, 3)
+	res <- .lvaRegressionReturnCommonParamMatrix(ar, grp, 3, cov=matrix())
 	
 	#test equality
     expect_equal(exp, res, tolerance=1e-6)
@@ -86,14 +86,14 @@ test_that(paste("checking .lvaRegressionReturnCommonParamMatrix"), {
 			  ncol=8, nrow=2,byrow=TRUE)
 	exp2 <- matrix(
 			c(0.23333333, 0.05, 0.31180478, 0.14433757, 0.7483315, 0.3464102, 0.5910148, 0.7877044,
-			  1.00000000, NaN, NaN, NaN, NA, NA, NA, NA),
+			  1.00000000, NaN, NaN, NaN, 1.00000000, NaN, NaN, NaN),
 			  ncol=8, nrow=2,byrow=TRUE)
 	colnames(exp1) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
 	colnames(exp2) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
 
 	#run tests
-	res1 <- .lvaRegressionReturnCommonParamMatrix(ar1, grp, 3)
-	res2 <- .lvaRegressionReturnCommonParamMatrix(ar2, grp, 3)
+	res1 <- .lvaRegressionReturnCommonParamMatrix(ar1, grp, 3, cov=matrix())
+	res2 <- .lvaRegressionReturnCommonParamMatrix(ar2, grp, 3, cov=matrix())
 	
 	#test equality
     expect_equal(exp1, res1, tolerance=1e-6)
@@ -116,7 +116,7 @@ test_that(paste("checking .lvaRegressionReturnCommonParamMatrix"), {
 	colnames(exp1) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
 
 	#run tests
-	res1 <- .lvaRegressionReturnCommonParamMatrix(ar1, grp, 3)
+	res1 <- .lvaRegressionReturnCommonParamMatrix(ar1, grp, 3, cov=matrix())
 	
 	#test equality
     expect_equal(exp1, res1, tolerance=1e-6)
