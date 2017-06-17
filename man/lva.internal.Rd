@@ -11,7 +11,7 @@
 lva.internal(x, ...)
 
 \S4method{lva.internal}{array}(x, grp, element = 3, type = "lm",
-  subject = NULL, ...)
+  subject = NULL, covariates = matrix(), ...)
 }
 \arguments{
 \item{x}{regionSummary array phased for maternal allele}
@@ -25,6 +25,8 @@ lva.internal(x, ...)
 \item{type}{which column in x contains the values to use with lm.}
 
 \item{subject}{which samples belongs to the same individual}
+
+\item{covariates}{add data.frame with covariates (only integers and numeric)}
 }
 \description{
 make an almlof regression for arrays (internal function)

@@ -11,7 +11,8 @@
 lva(x, ...)
 
 \S4method{lva}{ASEset}(x, rv, region, settings = list(),
-  return.class = "LinkVariantAlmlof", type = "lm", verbose = FALSE, ...)
+  return.class = "LinkVariantAlmlof", type = "lm", verbose = FALSE,
+  covariates = matrix(), ...)
 }
 \arguments{
 \item{x}{ASEset object with phase and 'ref'/'alt' allele information}
@@ -29,6 +30,8 @@ lva(x, ...)
 \item{type}{"lm" or "nlme", "nlme" needs subject information}
 
 \item{verbose}{logical, if set TRUE, then function will be more talkative}
+
+\item{covariates}{add data.frame with covariates (only integers and numeric)}
 }
 \description{
 make an almlof regression for arrays
@@ -77,6 +80,13 @@ lva(a, rv, r1b)
 lva(a, rv, r1c)
 lva(a, rv, r2)
 
+# Use covariates (integers or nuemric)
+cov <- data.frame(age=sample(20:70, ncol(a)), sex=rep(c(1,2), each=ncol(a)/2),  row.names=colnames(a))
+lva(a, rv, r1, covariates=cov)
+lva(a, rv, r1b, covariates=cov)
+lva(a, rv, r1c, covariates=cov)
+lva(a, rv, r2, covariates=cov)
+
 # link variant almlof (lva), using nlme
 a2 <- a
 ac <- assays(a2)[["countsPlus"]]
@@ -91,6 +101,7 @@ lva(ab, rv2, r1, type="nlme")
 lva(ab, rv2, r1b, type="nlme")
 lva(ab, rv2, r1c, type="nlme")
 lva(ab, rv2, r2, type="nlme")
+
 
 }
 \author{

@@ -147,6 +147,7 @@
 #' @importFrom stats dist
 #' @importFrom stats lm
 #' @importFrom stats setNames
+#' @importFrom stats formula
 #'
 #' @importFrom nlme lme
 #'

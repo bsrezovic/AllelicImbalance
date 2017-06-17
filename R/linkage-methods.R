@@ -20,6 +20,7 @@ NULL
 #' @param return.class 'LinkVariantAlmlof' (more options in future)
 #' @param verbose logical, if set TRUE, then function will be more talkative
 #' @param type "lm" or "nlme", "nlme" needs subject information
+#' @param covariates add data.frame with covariates (only integers and numeric)
 #' @param ... arguments to forward to internal functions
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords phase
@@ -217,6 +218,7 @@ setMethod("lva", signature(x = "ASEset"),
 #' @param element which column in x contains the values to use with lm.
 #' @param type which column in x contains the values to use with lm.
 #' @param subject which samples belongs to the same individual
+#' @param covariates add data.frame with covariates (only integers and numeric)
 #' @param ... arguments to forward to internal functions
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords phase
@@ -262,17 +264,17 @@ setGeneric("lva.internal", function(x, ...
 #' @rdname lva.internal
 #' @export
 setMethod("lva.internal", signature(x = "array"),
-		function(x, grp, element=3, type="lm", subject=NULL, covariates=covariates, ...
+		function(x, grp, element=3, type="lm", subject=NULL, covariates=matrix(), ...
 	){
 		
 		#unlist(.lvaRegressionPvalue(x, grp, element))
 		#normal regression
 		if(type=="lm"){
-		.lvaRegressionReturnCommonParamMatrix(x, grp, element, cov=covariates)
+			.lvaRegressionReturnCommonParamMatrix(ar=x, grp, element, covariates=covariates)
 		#mixed models lme4 regression
 		} else if(type=="nlme"){
 			if(!is.null(subject)){
-			.lvaRegressionReturnCommonParamMatrix.nlme(x, grp, subject, element)
+			.lvaRegressionReturnCommonParamMatrix.nlme(ar=x, grp, subject, element)
 			}else{
 				stop("subject cannot be null when using nlme method")
 			}
@@ -298,16 +300,16 @@ setMethod("lva.internal", signature(x = "array"),
 
 
 
-.lvaRegressionReturnCommonParamMatrix <- function(ar, grp, element, cov){
+.lvaRegressionReturnCommonParamMatrix <- function(ar, grp, element, covariates){
 
 	mat <- matrix(NA, ncol=dim(ar)[3], nrow=nrow(ar))
 	nocalc <- apply(ar[,,3, drop=FALSE], 1, function(x){sum(!(is.na(x)))==0})
 
 	#use covariates if they exist
-	cov2 <- cov
-	if(!length(cov)==1){
-	  if(!ncol(grp)==nrow(cov)) stop("grp and cov has to be same length")
-	  cov2 <-cov[!nocalc,drop=FALSE,]
+	cov2 <- covariates
+	if(!length(covariates)==1){
+	  if(!ncol(grp)==nrow(covariates)) stop("grp and cov has to be same length")
+	  cov2 <-covariates[!nocalc,drop=FALSE,]
 	}
 
 	#only make regression if there is at least one row possible to compute
