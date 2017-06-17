@@ -135,7 +135,7 @@ setMethod("lva", signature(x = "ASEset"),
 								type=type, covariates=covariates)
 		}else if(type=="nlme"){
 			#covariates have not been implemented completely
-			mat <- lva.internal(x = assays(rs2)[["rs1"]], grp = t(grp), element = 3, type=type, 
+			mat <- lva.internal(x = assays(rs2)[["rs1"]], grp = grp, element = 3, type=type, 
 								subject=colData(rs2)[["subject.group"]], covariates=covariates)
 		}
 
@@ -276,6 +276,7 @@ setMethod("lva.internal", signature(x = "array"),
 		} else if(type=="nlme"){
 			if(!is.null(subject)){
 			.lvaRegressionReturnCommonParamMatrix.nlme(ar=x, grp, subject, element)
+			#.lvaRegressionReturnCommonParamMatrix.nlme(ar, grp, subject, element)
 			}else{
 				stop("subject cannot be null when using nlme method")
 			}
@@ -324,7 +325,7 @@ setMethod("lva.internal", signature(x = "array"),
 						s <-summary(lm(form, data=df))$coefficients
 						mat2[,1:2] <- s[rownames(s) %in% c("(Intercept)","x2"),]
 						c(mat2)
-					}, y=ar[!nocalc,,,drop=FALSE], x=grp[!nocalc,drop=FALSE,], c=cov2))
+					}, y=ar[!nocalc,,,drop=FALSE], x=grp[!nocalc,,drop=FALSE], c=cov2))
 	}
 	colnames(mat) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
 	mat
@@ -364,11 +365,18 @@ setMethod("lva.internal", signature(x = "array"),
 		mat[!nocalc,] <- t(sapply(which(!nocalc), function(i, y, x, s){
 						#for(i in 1:5){
 							mat2 <- matrix(NA, ncol=2, nrow=4)
-							nas <- (is.na(y[i, ,element]) | is.na(x[, i]) | is.na(s))
+							nas <- (is.na(y[i, ,3]) | is.na(x[, i]) | is.na(s))
 							few <- length(unique(x[!nas,i])) == 1
 							few2 <- length(x[!nas,i]) == 2
-							if(!few & !few2){
-								df <- data.frame(res=y[i,!nas ,element], exp=x[!nas, i], ran=s[!nas])
+							
+							#zero counts (which logically should not exist, but does in one instance)
+							zc <- all(y[i,!nas ,3]==0)
+
+							#less than three we do not calculate
+							few3 <- length(s[!nas]) <=3
+
+							if(!few & !few2 & !few3 & !zc){
+								df <- data.frame(res=y[i,!nas ,3], exp=x[!nas, i], ran=s[!nas])
 								m1 <- lme(res~exp, random=~1|ran, data=df)
 								mat2[7:8] <- anova(m1)$'p-value'
 								c(mat2)
@@ -376,7 +384,7 @@ setMethod("lva.internal", signature(x = "array"),
 								c(mat2)
 							}
 						#}
-					}, y=ar[!nocalc,,,drop=FALSE], x=grp[,!nocalc,drop=FALSE], s=subject))
+					}, y=ar[!nocalc,,,drop=FALSE], x=t(grp)[,!nocalc,drop=FALSE], s=subject))
 	}
 	colnames(mat) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
 	mat
