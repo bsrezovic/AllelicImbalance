@@ -342,7 +342,8 @@ setMethod("lva.internal", signature(x = "array"),
 							mat2 <- matrix(NA, ncol=2, nrow=4)
 							nas <- (is.na(y[i, ,element]) | is.na(x[, i]) | is.na(s))
 							few <- length(unique(x[!nas,i])) == 1
-							if(!few){
+							few2 <- length(x[!nas,i]) == 2
+							if(!few & !few2){
 								df <- data.frame(res=y[i,!nas ,element], exp=x[!nas, i], ran=s[!nas])
 								m1 <- lme(res~exp, random=~1|ran, data=df)
 								mat2[7:8] <- anova(m1)$'p-value'
