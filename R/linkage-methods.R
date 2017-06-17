@@ -131,7 +131,8 @@ setMethod("lva", signature(x = "ASEset"),
 		plotGroups <- .lvaGroups(mcols(rv2)[["ref"]], mcols(rv2)[["alt"]])
 		#call internal regression function	
 		if(type=="lm"){
-			mat <- lva.internal(x = assays(rs2)[["rs1"]], grp = grp, element = 3, type=type)
+			mat <- lva.internal(x = assays(rs2)[["rs1"]], grp = grp, element = 3, 
+								type=type, covariates=covariates)
 		}else if(type=="nlme"){
 			#covariates have not been implemented completely
 			mat <- lva.internal(x = assays(rs2)[["rs1"]], grp = t(grp), element = 3, type=type, 
@@ -139,7 +140,7 @@ setMethod("lva", signature(x = "ASEset"),
 		}
 
 		#make txSNP specific lva test
-		rs2 <- .addLva2ASEset(rs2, grp, type=type)
+		rs2 <- .addLva2ASEset(rs2, grp, type=type, covariates=covariates)
 
 		#create return object
 		if(return.class=="LinkVariantAlmlof"){
@@ -184,13 +185,13 @@ setMethod("lva", signature(x = "ASEset"),
 		matrix(c(fir, sec, thi), ncol=3)
 }
 
-.addLva2ASEset <- function(rs2, grp, type){
+.addLva2ASEset <- function(rs2, grp, type, covariates=matrix()){
 		lst <- mcols(rs2)[["ASEsetMeta"]][[1]]
 		for(i in 1:length(lst)){
 		  fr <- assays(lst[[i]])[["matfreq"]]
 		  grp2 <- grp[i,]
 		  if(type=="lm"){ 
-				  lmcomparam <- .lvaRegressionReturnCommonParamMatrixTxSNPspecific(fr,grp2)
+				  lmcomparam <- .lvaRegressionReturnCommonParamMatrixTxSNPspecific(fr,grp2, covariates)
 		  }else if(type=="nlme"){
 				  subj <- colData(rs2)[["subject.group"]]
 				  lmcomparam <- .lvaRegressionReturnCommonParamMatrixTxSNPspecific.nlme(fr,grp2, subj)
@@ -317,8 +318,8 @@ setMethod("lva.internal", signature(x = "array"),
 		mat[!nocalc,] <- t(sapply(which(!nocalc), function(i, y, x, c){
 						mat2 <- matrix(NA, ncol=2, nrow=4)
 						covform <- paste(colnames(c), collapse="+")
-						if(!length(cov)==1) form <- formula(paste("y2~x2",covform, sep="+"))
-						if(length(cov)==1) form <- formula("y2~x2")
+						if(!length(c)==1) form <- formula(paste("y2~x2",covform, sep="+"))
+						if(length(c)==1) form <- formula("y2~x2")
 						df <- cbind(c, data.frame(y2=y[i, ,element], x2=x[i, ]))
 						s <-summary(lm(form, data=df))$coefficients
 						mat2[,1:2] <- s[rownames(s) %in% c("(Intercept)","x2"),]
@@ -382,11 +383,19 @@ setMethod("lva.internal", signature(x = "array"),
 }
 
 
-.lvaRegressionReturnCommonParamMatrixTxSNPspecific <- function(fr, grp){
+.lvaRegressionReturnCommonParamMatrixTxSNPspecific <- function(fr, grp, covariates=matrix()){
 	fr2 <- t(fr)
 	grp2 <- grp
 	mat <- matrix(NA, ncol=8, nrow=ncol(fr2))
 	nocalc <- apply(fr2[,, drop=FALSE], 2, function(x){sum(!(is.na(x)))==0})
+
+	#use covariates if they exist
+	cov2 <- covariates
+	if(!length(covariates)==1){
+	  if(!length(grp2)==nrow(covariates)) stop("grp and cov has to be same length")
+	  cov2 <-covariates[!nocalc,drop=FALSE,]
+	}
+
 		#y <- fr2[!nocalc,,drop=FALSE]
 		#x <- grp[,!nocalc,drop=FALSE]
 	    x <- grp2
@@ -394,22 +403,16 @@ setMethod("lva.internal", signature(x = "array"),
 			y <- fr2[,i]
 			mat2 <- matrix(NA, ncol=2, nrow=4)
 			if(!(nocalc[i])){
-			  s <-summary(lm(y~x))$coefficients
-			  mat2[,1:nrow(s)] <- s
+				covform <- paste(colnames(cov2), collapse="+")
+				if(!length(cov2)==1) form <- formula(paste("y2~x2",covform, sep="+"))
+				if(length(cov2)==1) form <- formula("y2~x2")
+				df <- cbind(cov2, data.frame(y2=y, x2=x))
+				s <-summary(lm(form, data=df))$coefficients
+				mat2[,1:2] <- s[rownames(s) %in% c("(Intercept)","x2"),]
 			  mat[i,] <- c(mat2)
 			}
 		}
 	colnames(mat) <- c("est1","est2","stderr1","stderr2","tvalue1","tvalue2","pvalue1","pvalue2")
-
-	#only make regression if there is at least one row possible to compute
-	#if(any(!nocalc)){
-	#	mat[!nocalc,] <- t(sapply(which(!nocalc), function(i, y, x){
-	#					mat2 <- matrix(NA, ncol=2, nrow=4)
-	#					s <-summary(lm(y[i, ]~x[, i]))$coefficients
-	#					mat2[,1:nrow(s)] <- s
-	#					c(mat2)
-	#				}, y=fr2[!nocalc,,drop=FALSE], x=grp[,!nocalc,drop=FALSE]))
-	#}
 
 	mat
 }
