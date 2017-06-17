@@ -310,7 +310,7 @@ setMethod("lva.internal", signature(x = "array"),
 	cov2 <- covariates
 	if(!length(covariates)==1){
 	  if(!ncol(grp)==nrow(covariates)) stop("grp and cov has to be same length")
-	  cov2 <-covariates[!nocalc,drop=FALSE,]
+	  #cov2 <-covariates[!nocalc,drop=FALSE,] #nocalc is for SNPs not samples
 	}
 
 	#only make regression if there is at least one row possible to compute
@@ -393,7 +393,7 @@ setMethod("lva.internal", signature(x = "array"),
 	cov2 <- covariates
 	if(!length(covariates)==1){
 	  if(!length(grp2)==nrow(covariates)) stop("grp and cov has to be same length")
-	  cov2 <-covariates[!nocalc,drop=FALSE,]
+	  #cov2 <-covariates[!nocalc,drop=FALSE,] #nocalc is for SNPs not samples
 	}
 
 		#y <- fr2[!nocalc,,drop=FALSE]
