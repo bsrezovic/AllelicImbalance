@@ -1,7 +1,7 @@
 Package: AllelicImbalance
 Type: Package
 Title: Investigates Allele Specific Expression
-Version: 1.17.0
+Version: 1.17.1
 Date: 2017-04-29
 Encoding: UTF-8
 Author: Jesper R Gadin, Lasse Folkersen
@@ -22,20 +22,20 @@ Suggests:
 Depends:
     R (>= 3.2.0),
     grid,
-    GenomicRanges,
+    GenomicRanges (>= 1.31.8),
     SummarizedExperiment (>= 0.2.0),
-    GenomicAlignments
+    GenomicAlignments (>= 1.15.6)
 Imports:
     methods,
     BiocGenerics,
     AnnotationDbi,
-    BSgenome,
-    VariantAnnotation,
-    Biostrings,
-    S4Vectors (>= 0.9.25),
-    IRanges,
-    Rsamtools,
-    GenomicFeatures,
+    BSgenome (>= 1.47.3),
+    VariantAnnotation (>= 1.25.11),
+    Biostrings (>= 2.47.6),
+    S4Vectors (>= 0.17.25),
+    IRanges (>= 2.13.12),
+    Rsamtools (>= 1.31.2),
+    GenomicFeatures (>= 1.31.3),
     Gviz,
     lattice,
     latticeExtra,

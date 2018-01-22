@@ -397,7 +397,6 @@ setMethod("scanForHeterozygotes", signature(BamList = "GAlignmentsList"),
     }
     
     
-    RangedData <- GRanges()
     chromosomeLevels <- unique(unlist(lapply(BamList, function(x) {
         levels(droplevels(runValue(seqnames(x))))
     })))
@@ -553,7 +552,7 @@ setMethod("impBamGAL", signature(UserDir = "character"),
 	UserDir <- sub("/$", "", UserDir)
 
     # Set parameters
-    which <- searchArea  #A GRanges, RangesList, RangedData, or missing object, from which a IRangesList instance will be constructed.
+    which <- searchArea  #A GRanges, IntegerRangesList, or missing object, from which a IRangesList instance will be constructed.
     what <- scanBamWhat()  #A character vector naming the fields to return. scanBamWhat() returns a vector of available fields. Fields are described on the scanBam help page.
     flag <- scanBamFlag(isUnmappedQuery = FALSE)
     

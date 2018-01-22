@@ -87,7 +87,7 @@ NULL
 #' @rdname import-bam-2
 impBamGRL.old <- function(UserDir, searchArea, verbose = TRUE) {
     # Set parameters
-    which <- searchArea  #A GRanges, RangesList, RangedData, or missing object, from which a IRangesList instance will be constructed.
+    which <- searchArea  #A GRanges, IntegerRangesList, or missing object, from which a IRangesList instance will be constructed.
     what <- scanBamWhat()  #A character vector naming the fields to return. scanBamWhat() returns a vector of available fields. Fields are described on the scanBam help page.
     flag <- scanBamFlag(isUnmappedQuery = FALSE)
     param <- ScanBamParam(flag = flag, which = which, what = what)  #store ScanBamParam in param.
@@ -424,7 +424,7 @@ scanForHeterozygotes.old <- function(BamList, minimumReadsAtPos = 20, maximumMaj
         stop("you may consume too much memory. If there is plenty of memory, then increase maxReads to allow more reads")
     }
     
-    RangedData <- GRanges()
+    ans <- GRanges()
     chromosomeLevels <- unique(unlist(lapply(BamList, function(x) {
         levels(droplevels(runValue(seqnames(x))))
     })))
@@ -498,22 +498,22 @@ scanForHeterozygotes.old <- function(BamList, minimumReadsAtPos = 20, maximumMaj
                   if (!all(!TFl)) {
                     GR <- GRanges(ranges = IRanges(start = (as.numeric(names(cpp[TFl])) + 
                       min(start(BamListHere)) - 1), width = 1), seqnames = chr)
-                    RangedData <- c(RangedData, GR)
+                    ans <- c(ans, GR)
                   }
                 }
             }
         }
     }
     # merge from all individuals
-    RangedData <- unique(RangedData)
+    ans <- unique(ans)
     
     # Add a Snp name based on position
-    if (!(length(RangedData) == 0)) {
-        names(RangedData) <- paste("chr", seqnames(RangedData), "_", start(RangedData), 
+    if (!(length(ans) == 0)) {
+        names(ans) <- paste("chr", seqnames(ans), "_", start(ans),
             sep = "")
         
     }
-    return(RangedData)
+    return(ans)
 }
 
 
