@@ -159,21 +159,25 @@ setMethod("ASEDAnnotationTrack", signature(x = "ASEset"), function(x, GR = rowRa
     }
 
     # plot the fraction
-    deTrack <- AnnotationTrack(range = ranges, genome = genome(x), id = rownames(x), 
-        name = trackName, stacking = "squish", fun = details, 
-		detailsFunArgs = c(ylab=e$ylab,
-						   xlab=e$xlab,
-						   deAnnoPlot = e$deAnnoPlot,
-						   cex.mainvec = e$cex.mainvec,
-						   mainvec=list(list(e$mainvec)),
-						   type=type, 
-						   x=x, 
-						   astrand=strand, 
-						   ids=list(list(rownames(x))),
-						   middleLine=e$middleLine,
-						   top.fraction.criteria=e$top.fraction.criteria
-						)
-		)
+    deTrack <- AnnotationTrack(
+		range = ranges,
+		genome = genome(x),
+		id = rownames(x),
+		name = trackName,
+		stacking = "squish",
+		fun = details,
+		detailsFunArgs = list(
+			ylab = e$ylab,
+			xlab = e$xlab,
+			deAnnoPlot = e$deAnnoPlot,
+			cex.mainvec = e$cex.mainvec,
+			mainvec=list(list(e$mainvec)),
+			type = type,
+			x = x,
+			astrand = strand,
+			ids = list(list(rownames(x))),
+			middleLine = e$middleLine,
+			top.fraction.criteria = e$top.fraction.criteria))
     deTrack
 })
 
