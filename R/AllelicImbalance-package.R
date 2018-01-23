@@ -41,7 +41,6 @@
 #' 
 #' @importFrom Biostrings subseq
 #' @importFrom Biostrings DNAStringSet
-#' @importFrom Biostrings append
 #' 
 #' @importFrom Rsamtools scanBamWhat
 #' @importFrom Rsamtools ScanBamParam
