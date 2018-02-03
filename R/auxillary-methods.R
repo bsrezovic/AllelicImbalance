@@ -2,42 +2,41 @@
 NULL
 
 #' phaseMatrix2Array
-#' 
+#'
 #' used to convert the phase from the visually friendly matrix to array.
-#' 
+#'
 #' A more effectice way of store the phase data in the ASEset object
 #'
 #' @name phaseMatrix2Array
 #' @rdname phaseMatrix2Array
 #' @aliases phaseMatrix2Array,matrix-method
 #' @docType methods
-#' @param x matrix see examples 
+#' @param x matrix see examples
 #' @param dimnames list with dimnames
 #' @param ... arguments to forward to internal functions
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords phase
 #' @examples
-#' 
+#'
 #' #load data
-#' data(ASEset) 
+#' data(ASEset)
 #' a <- ASEset
 #'
-#' #example phase matrix 
+#' #example phase matrix
 #' p1 <- matrix(sample(c(1,0),replace=TRUE, size=nrow(a)*ncol(a)),nrow=nrow(a), ncol(a))
 #' p2 <- matrix(sample(c(1,0),replace=TRUE, size=nrow(a)*ncol(a)),nrow=nrow(a), ncol(a))
 #' p <- matrix(paste(p1,sample(c("|","|","/"), size=nrow(a)*ncol(a), replace=TRUE), p2, sep=""),
 #' 	nrow=nrow(a), ncol(a))
 #'
 #' ar <- phaseMatrix2Array(p)
-#' 
+#'
 NULL
 
 #' @rdname phaseMatrix2Array
 #' @export
-setGeneric("phaseMatrix2Array", function(x, ... 
-	){
+setGeneric("phaseMatrix2Array", function(x, ...)
     standardGeneric("phaseMatrix2Array")
-})
+)
 
 #' @rdname phaseMatrix2Array
 #' @export
@@ -50,41 +49,41 @@ setMethod("phaseMatrix2Array", signature(x = "matrix"),
 		mat <- as.integer(upsplit[seq(1, length(upsplit), by=3)])
 		pat <- as.integer(upsplit[seq(3, length(upsplit), by=3)])
 		phased <- as.integer(upsplit[seq.int(from=2, to=length(upsplit), by=3)]=="|")
-	
+
 		array(c(mat, pat, phased), dim=c(nrow(x), ncol(x), 3),
 			  dimnames = dimnames)
-		
+
 })
 
 #' phaseArray2phaseMatrix
-#' 
+#'
 #' used to convert the phase from the visually friendly matrix to array.
-#' 
+#'
 #' A more effectice way of store the phase data in the ASEset object
 #'
 #' @name phaseArray2phaseMatrix
 #' @rdname phaseArray2phaseMatrix
 #' @aliases phaseArray2phaseMatrix,array-method
 #' @docType methods
-#' @param x array see examples 
+#' @param x array see examples
 #' @param ... arguments to forward to internal functions
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords phase
 #' @examples
-#' 
+#'
 #' #load data
-#' data(ASEset) 
+#' data(ASEset)
 #' a <- ASEset
 #'
-#' #example phase matrix 
+#' #example phase matrix
 #' p1 <- matrix(sample(c(1,0),replace=TRUE, size=nrow(a)*ncol(a)),nrow=nrow(a), ncol(a))
 #' p2 <- matrix(sample(c(1,0),replace=TRUE, size=nrow(a)*ncol(a)),nrow=nrow(a), ncol(a))
 #' p <- matrix(paste(p1,sample(c("|","|","/"), size=nrow(a)*ncol(a), replace=TRUE), p2, sep=""),
 #' 	nrow=nrow(a), ncol(a))
-#' 
+#'
 #' ar <- phaseMatrix2Array(p)
 #'
-#' #Convert back 
+#' #Convert back
 #' mat <- phaseArray2phaseMatrix(ar)
 #'
 NULL
@@ -116,7 +115,7 @@ setMethod("phaseArray2phaseMatrix", signature(x = "array"),
 {
 	pha <- matrix("/", ncol=ncol(x), nrow=nrow(x))
 	pha[x[,,3]==1] <- "|"
-	
+
 	nas <- is.na(x[,,1]) | is.na(x[,,2])
 	merg <- paste(x[,,1], pha, x[,,2], sep="")
 	merg[nas] <- NA
@@ -126,19 +125,19 @@ setMethod("phaseArray2phaseMatrix", signature(x = "array"),
 
 
 #' Plot Dataframe
-#' 
+#'
 #' Summarizes information to ease creating plots
-#' 
-#' Main purpose is to reduce the amount of overall code and ease maintenance. 
+#'
+#' Main purpose is to reduce the amount of overall code and ease maintenance.
 #'
 #' top.fraction.criteria can take three options, maxcount, ref and phase. The top
-#' allele will be every second row in the data frame, with start from row 2. 
-#' The maxcount argument will put the allele with most reads on top of the 
+#' allele will be every second row in the data frame, with start from row 2.
+#' The maxcount argument will put the allele with most reads on top of the
 #' bivariate fraction. Similarly the ref argument will put always the reference
 #' allele on top. The phase arguments puts the maternal phase always on top.
 #' The top.fraction.criteria for the ref or phase arguments requires that both ref
 #' and alt is set in mcols(ASEset).
-#' 
+#'
 #'
 #' @name fractionPlotDf
 #' @rdname fractionPlotDf
@@ -152,8 +151,8 @@ setMethod("phaseArray2phaseMatrix", signature(x = "array"),
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords phase plotDf
 #' @examples
-#' 
-#' #test on example ASEset 
+#'
+#' #test on example ASEset
 #' data(ASEset)
 #' a <- ASEset
 #' df <- fractionPlotDf(a, 1, strand="+")
@@ -163,10 +162,10 @@ NULL
 
 #' @rdname fractionPlotDf
 #' @export
-setGeneric("fractionPlotDf", function(x, snp,  strand="*", top.fraction.criteria="maxcount", ... 
-	){
+setGeneric("fractionPlotDf", function(x, snp,  strand="*", top.fraction.criteria="maxcount", ...
+	)
     standardGeneric("fractionPlotDf")
-})
+)
 
 #' @rdname fractionPlotDf
 #' @export
@@ -178,10 +177,10 @@ setMethod("fractionPlotDf", signature(x = "ASEset"),
 	# maxcount
 	# ref
 	# phase
-	
-	if(class(snp)=="integer"){
+
+	if(is,integer(snp)){
 		snprow <- snp
-	}else if(class(snp)=="character"){
+	}else if(is.character(snp)){
 		snprow <- which(rownames(x) %in% snp  )
 	}else{
 		# If the class of snp is not approprite there will be an informative error message from
@@ -213,13 +212,13 @@ setMethod("fractionPlotDf", signature(x = "ASEset"),
 		phase <- rep(c("paternal","maternal"), ncol(x))
 
 	}else if(top.fraction.criteria=="ref"){
-		
+
 		if(!sum(c("ref", "alt") %in% names(mcols(x))) == 2 ){
 			stop("ref and alt has to be set in mcols to use phase option")
 		}
 
 		alleles <- as.vector(t(matrix(c(rep(mcols(x[snprow])[,"alt"],ncol(x)),rep(mcols(x[snprow])[,"ref"], ncol(x))), ncol=2, nrow=ncol(x))))
-		
+
 	}else if(top.fraction.criteria=="maxcount"){
 
 		#arank(x[snprow],return.class="matrix")[c(1,2)]
@@ -247,9 +246,9 @@ setMethod("fractionPlotDf", signature(x = "ASEset"),
 })
 
 #' defaultPhase
-#' 
+#'
 #' used to populate the phase slot in an ASEset object
-#' 
+#'
 #' will set everything to 0
 #'
 #' @name defaultPhase
@@ -257,13 +256,13 @@ setMethod("fractionPlotDf", signature(x = "ASEset"),
 #' @aliases defaultPhase,numeric-method
 #' @docType methods
 #' @param i number of rows
-#' @param j number of columns 
+#' @param j number of columns
 #' @param ... arguments to forward to internal functions
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords phase
 #' @examples
-#' 
-#' 
+#'
+#'
 #' i <- 5
 #' j <- 10
 #' defaultPhase(i,j)
@@ -289,20 +288,19 @@ setMethod("defaultPhase", signature("numeric"),
     p2 <- matrix(rep(0, i*j), nrow=i, ncol=j)
     matrix(paste(p1,rep("/", i*j), p2, sep=""),i, j)
 
-	
 })
 
 
 
 #' scanForHeterozygotes
-#' 
+#'
 #' Identifies the positions of SNPs found in BamGR reads.
-#' 
+#'
 #' This function scans all reads stored in a \code{GAlignmentsList} for
 #' possible heterozygote positions. The user can balance the sensitivity of the
 #' search by modifying the minimumReadsAtPos, maximumMajorAlleleFrequency and
 #' minimumBiAllelicFrequency arguments.
-#' 
+#'
 #' @name ASEset-scanForHeterozygotes
 #' @rdname ASEset-scanForHeterozygotes
 #' @aliases ASEset-scanForHeterozygotes scanForHeterozygotes scanForHeterozygotes,ASEset-method
@@ -331,10 +329,10 @@ setMethod("defaultPhase", signature("numeric"),
 #' function that count the number of reads overlapping a site.  }
 #' @keywords scan SNP heterozygote
 #' @examples
-#' 
+#'
 #' data(reads)
 #' s <- scanForHeterozygotes(reads,verbose=FALSE)
-#' 
+#'
 NULL
 
 #' @rdname ASEset-scanForHeterozygotes
@@ -345,92 +343,90 @@ setGeneric("scanForHeterozygotes", function(BamList, ...){
 
 #' @rdname ASEset-scanForHeterozygotes
 #' @export
-setMethod("scanForHeterozygotes", signature(BamList = "GAlignmentsList"), 
+setMethod("scanForHeterozygotes", signature(BamList = "GAlignmentsList"),
 		  function(BamList, minimumReadsAtPos = 20,
-			maximumMajorAlleleFrequency = 0.90, minimumMinorAlleleFrequency = 0.1, 
+			maximumMajorAlleleFrequency = 0.90, minimumMinorAlleleFrequency = 0.1,
 			minimumBiAllelicFrequency = 0.9, verbose = TRUE, ...) {
-    
+
     # if just one element of, make list (which is a convenient way of handling this
     # input type)
-    if (class(BamList) == "GAlignments") {
+    if (is(BamList, "GAlignments")) {
         BamList <- GAlignmentsList(BamList)
     }
-    if (class(BamList) == "GRanges") {
+    if (is(BamList, "GRanges")) {
         BamList <- GRangesList(BamList)
     }
-    
-    if (class(minimumReadsAtPos) != "numeric") 
-        stop(paste("minimumReadsAtPos must be of class numeric, not", class(minimumReadsAtPos)))
-    if (length(minimumReadsAtPos) != 1) 
+
+    if (!is.numeric(minimumReadsAtPos))
+        stop(paste("minimumReadsAtPos must be a numeric vector, not a", class(minimumReadsAtPos)))
+    if (length(minimumReadsAtPos) != 1)
         stop(paste("minimumReadsAtPos must be of length 1, not", length(minimumReadsAtPos)))
-    if (class(maximumMajorAlleleFrequency) != "numeric") 
-        stop(paste("maximumMajorAlleleFrequency must be of class numeric, not", class(maximumMajorAlleleFrequency)))
-    if (length(maximumMajorAlleleFrequency) != 1) 
+    if (!is.numeric(maximumMajorAlleleFrequency))
+        stop(paste("maximumMajorAlleleFrequency must be a numeric vector, not a", class(maximumMajorAlleleFrequency)))
+    if (length(maximumMajorAlleleFrequency) != 1)
         stop(paste("maximumMajorAlleleFrequency must be of length 1, not", length(maximumMajorAlleleFrequency)))
-    if (maximumMajorAlleleFrequency < 0 | maximumMajorAlleleFrequency > 1) 
+    if (maximumMajorAlleleFrequency < 0 | maximumMajorAlleleFrequency > 1)
         stop("maximumMajorAlleleFrequency must be between 0 and 1")
-    if (class(minimumBiAllelicFrequency) != "numeric") 
-        stop(paste("minimumBiAllelicFrequency must be of class numeric, not", class(minimumBiAllelicFrequency)))
-    if (length(minimumBiAllelicFrequency) != 1) 
+    if (!is.numeric(minimumBiAllelicFrequency))
+        stop(paste("minimumBiAllelicFrequency must be a numeric vector, not a", class(minimumBiAllelicFrequency)))
+    if (length(minimumBiAllelicFrequency) != 1)
         stop(paste("minimumBiAllelicFrequency must be of length 1, not", length(minimumBiAllelicFrequency)))
-    if (minimumBiAllelicFrequency < 0 | maximumMajorAlleleFrequency > 1) 
+    if (minimumBiAllelicFrequency < 0 | maximumMajorAlleleFrequency > 1)
         stop("minimumBiAllelicFrequency must be between 0 and 1")
-    if (class(verbose) != "logical") 
-        stop(paste("verbose must be of class logical, not", class(verbose)))
-    if (length(verbose) != 1) 
+    if (!is.logical(verbose))
+        stop(paste("verbose must be of a logical, not a", class(verbose)))
+    if (length(verbose) != 1)
         stop(paste("verbose must be of length 1, not", length(verbose)))
-    
+
     # checking that BamList format is ok (has to be done quite carefully for the
     # list-class gappedAlignments
-    if (class(BamList) == "GRangesList") 
+    if (is(BamList, "GRangesList"))
         stop("The use of GRangesList is not recommended. Use BamImpGAList or BamImpGAPList")
-    if (class(BamList) != "GAlignmentsList") 
-        stop("The class of the BamList has to be a GAlignmentsList")
-    
+    if (is(BamList, "GAlignmentsList"))
+        stop("BamList has to be a GAlignmentsList object")
+
     # checks specific for GAlignments
-    if (unique(unlist(lapply(BamList, class))) == "GAlignments") {
+    if (all(vapply(BamList, is, logical(1), "GAlignments"))) {
         if (!all(unlist(lapply(BamList, function(x) {
             all(c("cigar", "qwidth") %in% colnames(mcols(x)))
         })))) {
             stop("BamList given as GAlignmentsLists of GAlignments objects must contain mcols named qwidth and cigar")
         }
     }
-    
-    
+
+
     chromosomeLevels <- unique(unlist(lapply(BamList, function(x) {
         levels(droplevels(runValue(seqnames(x))))
     })))
-    
+
 	#create pos to extract
 	x <- BamList
 	x <- GAlignmentsList(lapply(x,function(y){
 			strand(y)<- "*"
-			y	
+			y
 	}))
 	x <- reduce(granges(unlist(x)))
 	pos <- unlist(mapply(width(x), start(x), FUN = function(y, z){z:(z+y-1)}))
 	chrnames <- unlist(mapply(as.character(seqnames(x)),width(x), FUN=rep))
 	#strand.vec <- unlist(mapply(as.character(strand(x)),width(x), FUN=rep))
-	my_IGPOI <- GRanges(seqnames=chrnames, ranges=IRanges(start=pos, width=1), 
+	my_IGPOI <- GRanges(seqnames=chrnames, ranges=IRanges(start=pos, width=1),
 						strand="*")
 
 	#empty array that handles only four nucleotides + one del columns
 	dimnames = list(paste("pos",1:length(my_IGPOI), sep=""), names(BamList), c("A", "C", "G", "T"))
 	ar <- array(NA, c(length(my_IGPOI), length(BamList), 4),
-				 dimnames = dimnames)  
+				 dimnames = dimnames)
 
-			
 	for (i in 1:length(BamList)) {
-		if (verbose) 
-			cat(paste("Investigating sample", i), "out of", length(BamList), 
+		if (verbose)
+			cat(paste("Investigating sample", i), "out of", length(BamList),
 			  "\n")
-		
+
 		# extract samples
 		gal <- BamList[[i]]
-		
+
 		if (!(length(gal) == 0)) {
-                
-			seqlevels(gal) <- seqlevels(my_IGPOI) 
+			seqlevels(gal) <- seqlevels(my_IGPOI)
 			qseq <- mcols(gal)$seq
 
 			nuclpiles <- pileLettersAt(qseq, seqnames(gal), start(gal), cigar(gal),
@@ -438,11 +434,11 @@ setMethod("scanForHeterozygotes", signature(BamList = "GAlignmentsList"),
 			# fill array
 			nstr <- strsplit(as.character(nuclpiles), "")
 			for (k in 1:length(my_IGPOI)) {
-				ar[k, i, ] <- c(sum(nstr[[k]] %in% "A"), sum(nstr[[k]] %in% "C"), sum(nstr[[k]] %in% 
-					"G"), sum(nstr[[k]] %in% "T"))  
+				ar[k, i, ] <- c(sum(nstr[[k]] %in% "A"), sum(nstr[[k]] %in% "C"), sum(nstr[[k]] %in%
+					"G"), sum(nstr[[k]] %in% "T"))
 			}
 		}
-	}	
+	}
 
 	#mat <- apply(ar, c(1,3),sum, na.rm=TRUE)
 	allele.count.tot <- apply(ar, c(1,2), sum)
@@ -471,10 +467,10 @@ setMethod("scanForHeterozygotes", signature(BamList = "GAlignmentsList"),
 	ar.rank2b <- aperm(ar.rank2, c(3,2,1))
 
 	#subset ref allele frequencies
-	maj.al.fr <- aperm(array(ar3[ar.rank1b],dim=dim(ar2)[2:1], 
+	maj.al.fr <- aperm(array(ar3[ar.rank1b],dim=dim(ar2)[2:1],
 					   dimnames=dimnames(ar2)[2:1]),c(2,1))
-					   
-	min.al.fr <- aperm(array(ar3[ar.rank2b],dim=dim(ar2)[2:1], 
+
+	min.al.fr <- aperm(array(ar3[ar.rank2b],dim=dim(ar2)[2:1],
 					   dimnames=dimnames(ar2)[2:1]),c(2,1))
 
 	#check conditions
@@ -483,30 +479,30 @@ setMethod("scanForHeterozygotes", signature(BamList = "GAlignmentsList"),
 	tf3 <- apply(((min.al.fr + maj.al.fr) >= minimumBiAllelicFrequency),1,any)
 
 	toBeReturned <- my_IGPOI[tf1&tf2&tf3]
-    
+
     #add an SNP name based on position
     if (!(length(toBeReturned) == 0)) {
-        names(toBeReturned) <- paste("chr", seqnames(toBeReturned), "_", start(toBeReturned), 
+        names(toBeReturned) <- paste("chr", seqnames(toBeReturned), "_", start(toBeReturned),
             sep = "")
-        
+
     }
 
     return(toBeReturned)
 })
 
 #' Import Bam
-#' 
+#'
 #' Imports a specified genomic region from a bam file using a GRanges
 #' object as search area.
-#' 
+#'
 #' If the sequence data is strand-specific you may want to set XStag=TRUE. The
 #' strand specific information has then to be stored in the meta columns with
 #' column name 'XS'. If the aligner did not set the XS-tag and the data is strand-
 #' specific it is still be possible to infer the strand from the bit flags after importing
-#' the reads to R. Depending on the strand-specific protocol different combinations of the 
-#' flags will have to be used. For illumina fr-secondstrand, 83 and 163 are minus strand 
+#' the reads to R. Depending on the strand-specific protocol different combinations of the
+#' flags will have to be used. For illumina fr-secondstrand, 83 and 163 are minus strand
 #' reads and 99 and 147 are plus strand reads.
-#' 
+#'
 #' @name import-bam
 #' @rdname import-bam
 #' @aliases import-bam impBamGAL impBamGAL,character-method
@@ -523,19 +519,19 @@ setMethod("scanForHeterozygotes", signature(BamList = "GAlignmentsList"),
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords bam import
 #' @examples
-#' 
+#'
 #' #Declare searchArea
 #' searchArea <- GRanges(seqnames=c('17'), ranges=IRanges(79478301,79478361))
-#' 
-#' #Relative or full path  
+#'
+#' #Relative or full path
 #' pathToFiles <- system.file('extdata/ERP000101_subset', package='AllelicImbalance')
-#' 
+#'
 #' #all files in directory
 #' reads <- impBamGAL(pathToFiles,searchArea,verbose=FALSE)
 #' #specified files in directory
 #' reads <- impBamGAL(pathToFiles,searchArea,
 #'				files=c("ERR009160.bam", "ERR009167.bam"),verbose=FALSE)
-#' 
+#'
 NULL
 
 #' @rdname import-bam
@@ -546,7 +542,7 @@ setGeneric("impBamGAL", function(UserDir, ...){
 
 #' @rdname import-bam
 #' @export
-setMethod("impBamGAL", signature(UserDir = "character"), 
+setMethod("impBamGAL", signature(UserDir = "character"),
 	function(UserDir, searchArea, files = NULL, XStag = FALSE, verbose = TRUE, ...) {
 
 	UserDir <- sub("/$", "", UserDir)
@@ -555,7 +551,7 @@ setMethod("impBamGAL", signature(UserDir = "character"),
     which <- searchArea  #A GRanges, IntegerRangesList, or missing object, from which a IRangesList instance will be constructed.
     what <- scanBamWhat()  #A character vector naming the fields to return. scanBamWhat() returns a vector of available fields. Fields are described on the scanBam help page.
     flag <- scanBamFlag(isUnmappedQuery = FALSE)
-    
+
     if (XStag) {
         param <- ScanBamParam(flag = flag, which = which, what = what, tag = "XS")  #store ScanBamParam in param.
     } else {
@@ -571,23 +567,23 @@ setMethod("impBamGAL", signature(UserDir = "character"),
 		bamFiles <- .mergeDirAndFilename(bamDir, files)
 	}
 
-    if (length(bamFiles) == 0) 
+    if (length(bamFiles) == 0)
         stop(paste("No bam files found in", bamDir))
     if (!all(file.exists(paste(bamFiles, ".bai", sep = "")))) {
-        if (verbose) 
-            cat(paste("The bam files in UserDir are required to also have .bam.bai index files in the same directory. Trying to run indexBam function on each"), 
+        if (verbose)
+            cat(paste("The bam files in UserDir are required to also have .bam.bai index files in the same directory. Trying to run indexBam function on each"),
                 "\n")
         indexBam(bamFiles)
         if (!all(file.exists(paste(bamFiles, ".bai", sep = "")))) {
             stop("The bam files in UserDir are required to also have .bam.bai index files.")
         } else {
-            if (verbose) 
-                cat(paste("Succesfully indexed all bamFiles in UserDir", UserDir), 
+            if (verbose)
+                cat(paste("Succesfully indexed all bamFiles in UserDir", UserDir),
                   "\n")
         }
     }
     bamFilesList <- BamFileList(bamFiles)  #store all the .bam paths in a BamFile.
-    
+
     # check that sequences in searchArea are actually found in the bam files
     header <- scanBamHeader(bamFiles)
     checkSeqNameExists <- function(bamHeader, requestedSeqNames) {
@@ -601,10 +597,10 @@ setMethod("impBamGAL", signature(UserDir = "character"),
         for (sampleName in names(seqNotFoundErrors)) {
             seqNotFounds <- c(seqNotFounds, as.character(seqnames(searchArea)[!seqNotFoundErrors[[sampleName]]]))
         }
-        stop(paste("The following seq name(s) not found in the bam files:", paste(sort(unique(seqNotFounds)), 
+        stop(paste("The following seq name(s) not found in the bam files:", paste(sort(unique(seqNotFounds)),
             collapse = ", ")))
     }
-    
+
     # Loop through, open scanBam, store in GRList and then close each object in the
     # BamFileList object.
     BamGAL <- list()
@@ -613,33 +609,33 @@ setMethod("impBamGAL", signature(UserDir = "character"),
         # Description
         bf <- bamFilesList[[bamName]]
         open(bf)
-        if (verbose) 
-            cat(paste("Reading bam file", i, "with filename", basename(bamName)), 
+        if (verbose)
+            cat(paste("Reading bam file", i, "with filename", basename(bamName)),
                 "\n")  #Print information to the user
         GappedAlign <- readGAlignments(bf, param = param)
-        
+
         BamGAL[[basename(bamName)]] <- GappedAlign
-        
-        if (verbose) 
+
+        if (verbose)
             cat(paste("stored", basename(bamName), "in BamGAL"), "\n")
         gc()
         close(bf)
         i <- i + 1
     }
     BamGAL <- GAlignmentsList(BamGAL)
-    
+
     return(BamGAL)
 })
 
 
 
 #' Import Bcf Selection
-#' 
+#'
 #' Imports a selection of a bcf file or files specified by a GenomicRanges
 #' object as search area.
-#' 
+#'
 #' A wrapper to import bcf files into R in the form of GenomicRanges objects.
-#' 
+#'
 #' @name import-bcf
 #' @rdname import-bcf
 #' @aliases import-bcf impBcfGRL impBcfGR impBcfGRL,character-method impBcfGR,character-method
@@ -662,21 +658,21 @@ setMethod("impBamGAL", signature(UserDir = "character"),
 #' heterozygote positions }
 #' @keywords bcf import
 #' @examples
-#' 
+#'
 #' #Declare searchArea
 #' searchArea <- GRanges(seqnames=c('17'), ranges=IRanges(79478301,79478361))
-#' 
-#' #Relative or full path  
+#'
+#' #Relative or full path
 #' pathToFiles <- system.file('extdata/ERP000101_subset', package='AllelicImbalance')
-#' 
+#'
 #' #import
 #' reads <- impBcfGRL(pathToFiles, searchArea, verbose=FALSE)
-#' 
+#'
 NULL
 
 #' @rdname import-bcf
 #' @export
-setGeneric("impBcfGRL", function(UserDir, ... 
+setGeneric("impBcfGRL", function(UserDir, ...
 	){
     standardGeneric("impBcfGRL")
 })
@@ -688,7 +684,7 @@ setMethod("impBcfGRL", signature(UserDir = "character"),
 
 
 	UserDir <- sub("/$", "", UserDir)
-    
+
     # Set parameters
     if (is.null(searchArea)) {
         param <- ScanBcfParam()
@@ -699,13 +695,13 @@ setMethod("impBcfGRL", signature(UserDir = "character"),
     bcfDir <- normalizePath(UserDir)  #Point to the directory containing your Bam files and its respective bam.bai files.
     allFiles <- list.files(bcfDir, full.names = TRUE)  #list files in a folder.
     bcfFiles <- allFiles[grep(".bcf$", allFiles)]  #list only the files ending in .bam .
-    if (length(bcfFiles) == 0) 
+    if (length(bcfFiles) == 0)
         stop(paste("No bcf files were found in", UserDir))
-    
+
     # bcfFilesList <- BcfFileList(bcfFiles) #store all the .bam paths in a BamFile.
     if (!all(file.exists(paste(bcfFiles, ".bci", sep = "")))) {
-        if (verbose) 
-            cat("Did not find bci files for all bcf files. Trying the indexBcf function obtain these", 
+        if (verbose)
+            cat("Did not find bci files for all bcf files. Trying the indexBcf function obtain these",
                 "\n")
         for (bcfFile in bcfFiles) {
             indexBcf(bcfFile)
@@ -714,30 +710,30 @@ setMethod("impBcfGRL", signature(UserDir = "character"),
             stop("The bcf files in UserDir are required to also have .bcf.bci index files. Run the indexBcf function in package Rsamtools on each bam file.")
         }
     }
-    
+
     # Loop through, open scanBam, store in GRList and then close each object in the
     # BamFileList object.
     BcfGRL <- GRangesList()
     for (i in 1:length(bcfFiles)) {
-        
+
         bcf <- suppressWarnings(scanBcf(file = bcfFiles[i], param = param))
-        
+
         # need to protect against empty bcf files
         if (length(bcf[["POS"]]) == 0) {
-            GRangeBcf <- GRanges(seqnames = vector(), ranges = IRanges(start = vector(), 
+            GRangeBcf <- GRanges(seqnames = vector(), ranges = IRanges(start = vector(),
                 width = vector()), ref = vector(), alt = vector(), qual = vector())
             bcfName <- bcfFiles[i]
             BcfGRL[[basename(bcfName)]] <- GRangeBcf
-            
+
         } else {
             # if they are not empty we just proceed as usual
             ranges <- IRanges(start = bcf[["POS"]], width = 1L)
-            GRangeBcf <- GRanges(seqnames = as.character(bcf[["CHROM"]]), ranges = ranges, 
+            GRangeBcf <- GRanges(seqnames = as.character(bcf[["CHROM"]]), ranges = ranges,
                 ref = bcf[["REF"]], alt = bcf[["ALT"]], qual = bcf[["QUAL"]])
             # Store GRangeBam in BamGRL (which is the GRange List object)
             bcfName <- bcfFiles[i]
             BcfGRL[[basename(bcfName)]] <- GRangeBcf
-            if (verbose) 
+            if (verbose)
                 cat(paste("stored", basename(bcfName), "in BcfGRL"), "\n")
             gc()
         }
@@ -747,7 +743,7 @@ setMethod("impBcfGRL", signature(UserDir = "character"),
 
 #' @rdname import-bcf
 #' @export
-setGeneric("impBcfGR", function(UserDir, ... 
+setGeneric("impBcfGR", function(UserDir, ...
 	){
     standardGeneric("impBcfGR")
 })
@@ -764,10 +760,10 @@ setMethod("impBcfGR", signature(UserDir = "character"),
 })
 
 #' snp count data
-#' 
+#'
 #' Given the positions of known SNPs, this function returns allele counts from
 #' a BamGRL object
-#' 
+#'
 #' This function is used to retrieve the allele counts from specified positions
 #' in a set of RNA-seq reads. The \code{BamList} argument will typically have
 #' been created using the \code{impBamGAL} function on bam-files. The
@@ -780,7 +776,7 @@ setMethod("impBcfGR", signature(UserDir = "character"),
 #' (and unknown strand reads in case these are found in the bam file). '*' is
 #' the default behaviour and can be used when the RNA-seq experiments strand
 #' information is not available.
-#' 
+#'
 #' @name getAlleleCounts
 #' @rdname getAlleleCounts
 #' @aliases getAlleleCounts getAlleleCounts,GAlignmentsList-method
@@ -804,29 +800,29 @@ setMethod("impBcfGR", signature(UserDir = "character"),
 #' \code{\link[GenomicAlignments]{GAlignmentsList}} object }
 #' @keywords SNP count
 #' @examples
-#' 
+#'
 #' #load example data
 #' data(reads)
 #' data(GRvariants)
-#' 
-#' 
+#'
+#'
 #' #get counts at the three positions specified in GRvariants
 #' alleleCount <- getAlleleCounts(BamList=reads,GRvariants,
 #' strand='*')
-#' 
-#' #if the reads had contained stranded data, these two calls would 
+#'
+#' #if the reads had contained stranded data, these two calls would
 #' #have given the correct input objects for getAlleleCounts
 #' alleleCountPlus <- getAlleleCounts(BamList=reads,GRvariants,
 #' strand='+')
 #' alleleCountMinus <- getAlleleCounts(BamList=reads,GRvariants,
 #' strand='-')
-#' 
-#' 
+#'
+#'
 NULL
 
 #' @rdname getAlleleCounts
 #' @export
-setGeneric("getAlleleCounts", function(BamList, ... 
+setGeneric("getAlleleCounts", function(BamList, ...
 	){
     standardGeneric("getAlleleCounts")
 })
@@ -835,22 +831,22 @@ setGeneric("getAlleleCounts", function(BamList, ...
 #' @export
 setMethod("getAlleleCounts", signature(BamList = "GAlignmentsList"),
 function(BamList, GRvariants, strand = "*",
-						return.class = "list", verbose = TRUE, ...) { 
-    
-    
-    if (!class(BamList) %in% c("GAlignments", "GAlignmentsList")) {
-        stop("BamList has to be of class GAlignments or GAlignmnetsList\n")
+						return.class = "list", verbose = TRUE, ...) {
+
+
+    if (!(is(BamList, "GAlignments") || is(BamList, "GAlignmentsList"))) {
+        stop("BamList has to be a GAlignments or GAlignmnetsList object\n")
     }
     # if just one element of, make list (which is a convenient way of
 	# handling this input type)
-    # 
-    if (class(BamList) == "GAlignments") {
+    #
+    if (is(BamList, "GAlignments")) {
         BamList <- GAlignmentsList(BamList)
     }
-    
+
     # check for strand name
-    if (!class(strand) == "character") {
-        stop("strand has to be of class character")
+    if (!is.character(strand)) {
+        stop("strand has to be a character vector")
     }
     if (!length(strand) == 1) {
         stop("strand has to be of length 1")
@@ -858,16 +854,16 @@ function(BamList, GRvariants, strand = "*",
     if (!sum(strand %in% c("+", "-", "*")) > 0) {
         stop("strand parameter has to be either '+', '-' or '*' ")
     }
-    
+
     # if the user sent in the GRangesList for GRvariants,
 	# take out only the unique entries.
-    # 
-    if (class(GRvariants) == "GRangesList") {
-        GRvariants <- unique(unlist(GRvariants, use.names = FALSE)) 
+    #
+    if (is(GRvariants, "GRangesList")) {
+        GRvariants <- unique(unlist(GRvariants, use.names = FALSE))
     }
-   
+
 	#if BamList is not list, make it a list
-	if(class(BamList)=="GAlignments"){
+	if(is(BamList, "GAlignments")){
 		BamList <- GAlignmentsList(BamList)
 	}
 
@@ -881,24 +877,24 @@ function(BamList, GRvariants, strand = "*",
    # if (!identical(seqlevels(BamList), seqlevels(GRvariants))) {
    #     stop("!identical(seqlevels(BamList), seqlevels(GRvariants))\n")
    # }
-    
+
     # checking that GRvariants is ok
-    if (class(GRvariants) != "GRanges") 
-        stop(paste("GRvariants must be of class GRanges, not",
+    if (!is(GRvariants, "GRanges"))
+        stop(paste("GRvariants must be a GRanges object, not a",
 				   class(GRvariants)))
-    if (length(GRvariants) == 0) 
+    if (length(GRvariants) == 0)
         stop("GRvariants was given as an empty GRanges object.",
 			 " There can be no Snps retrieved by getAlleleCount then")
-    if (any(width(GRvariants) != 1)) 
+    if (any(width(GRvariants) != 1))
         stop("GRvariants can contain only entries of width=1,",
 			 " corresponding to SNPs.")
-    
+
     # checking that verbose is ok
-    if (class(verbose) != "logical") 
-        stop(paste("verbose must be of class logical, not", class(verbose)))
-    if (length(verbose) != 1) 
+    if (!is.logical(verbose))
+        stop(paste("verbose must be a logical, not a", class(verbose)))
+    if (length(verbose) != 1)
         stop(paste("verbose must be of length 1, not", length(verbose)))
-    
+
     # make row-names
     if (sum(grepl("chr", seqnames(GRvariants))) > 0) {
         snpNames <- paste(seqnames(GRvariants),
@@ -907,7 +903,7 @@ function(BamList, GRvariants, strand = "*",
         snpNames <- paste("chr", seqnames(GRvariants),
 						  "_", start(GRvariants), sep = "")
     }
-    
+
 	# needs name, need a more general solution here
 	if(length(names(BamList)) == 0){
 		warning("no set names for list, new names will be sample1,2,3,etc")
@@ -917,49 +913,49 @@ function(BamList, GRvariants, strand = "*",
 	#empty array that handles only four nucleotides + one del columns
     dimnames = list(snpNames, names(BamList), c("A", "C", "G", "T"))
     ar1 <- array(NA, c(length(GRvariants), length(BamList), 4),
-				 dimnames = dimnames)  
-    
+				 dimnames = dimnames)
+
     # use strand choice to only get reads from that strand
     if (!strand == "*") {
         BamList <- GAlignmentsList(mapply(function(x, y) {
             x[y]
         }, BamList, strand(BamList) == strand))
     }
-    
+
     for (j in 1:length(names(BamList))) {
         sample <- names(BamList)[j]
-        if (verbose) 
+        if (verbose)
             cat("sample ", sample, "\n")
-        
+
         gal <- BamList[[j]]
 		my_IGPOI <- GRvariants
-		seqlevels(gal) <- seqlevels(my_IGPOI) 
+		seqlevels(gal) <- seqlevels(my_IGPOI)
 		qseq <- mcols(gal)$seq
-        
-#        nuclpiles <- pileLettersAt(mcols(gal)[, "seq"], seqnames(gal), start(gal), 
+
+#        nuclpiles <- pileLettersAt(mcols(gal)[, "seq"], seqnames(gal), start(gal),
 #            cigar(gal), GRvariants)
 #
 		nuclpiles <- pileLettersAt(qseq, seqnames(gal), start(gal), cigar(gal),
 							                                 my_IGPOI)
-        
+
         # fill array
         nstr <- strsplit(as.character(nuclpiles), "")
         for (k in 1:length(GRvariants)) {
-            ar1[k, j, ] <- c(sum(nstr[[k]] %in% "A"), sum(nstr[[k]] %in% "C"), sum(nstr[[k]] %in% 
-                "G"), sum(nstr[[k]] %in% "T"))  
+            ar1[k, j, ] <- c(sum(nstr[[k]] %in% "A"), sum(nstr[[k]] %in% "C"), sum(nstr[[k]] %in%
+                "G"), sum(nstr[[k]] %in% "T"))
         }
-        
+
     }
-    
+
     # check return.type argument
     if (return.class == "list") {
         alleleCountList <- list()
         for (i in 1:nrow(ar1)) {
             mat <- ar1[i, , ]
-			if(class(mat)=="integer"){
+			if(is.integer(mat)){
 				mat <- t(as.matrix(mat))
 			}
-            if (class(mat) == "numeric") {
+            if (is.numeric(mat)) {
                 mat <- t(mat)
                 colnames(mat) <- dimnames[[3]]
             } else {
@@ -978,16 +974,16 @@ function(BamList, GRvariants, strand = "*",
 })
 
 #' Map Bias
-#' 
+#'
 #' an allele frequency array
-#' 
+#'
 #' This function will assume there is no bias that comes from the mapping of
 #' reads, and therefore create a matrix with expected frequency of 0.5 for each
 #' allele.
-#' 
+#'
 #' @name getDefaultMapBiasExpMean
 #' @rdname getDefaultMapBiasExpMean
-#' @aliases getDefaultMapBiasExpMean getDefaultMapBiasExpMean3D 
+#' @aliases getDefaultMapBiasExpMean getDefaultMapBiasExpMean3D
 #' getDefaultMapBiasExpMean,ANY-method getDefaultMapBiasExpMean3D,ANY-method
 #' @aliases getDefaultMapBiasExpMean getDefaultMapBiasExpMean3D
 #' @docType methods
@@ -999,27 +995,27 @@ function(BamList, GRvariants, strand = "*",
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords mapping bias
 #' @examples
-#' 
+#'
 #' #load example data
 #' data(ASEset)
 #' #access SnpAfList
 #' alleleCountList <- alleleCounts(ASEset)
 #' #get default map bias exp mean
 #' matExpMean <- getDefaultMapBiasExpMean(alleleCountList)
-#' 
-#' 
+#'
+#'
 NULL
 
 #' @rdname getDefaultMapBiasExpMean
 #' @export
-setGeneric("getDefaultMapBiasExpMean", function(alleleCountList, ... 
+setGeneric("getDefaultMapBiasExpMean", function(alleleCountList, ...
 	){
     standardGeneric("getDefaultMapBiasExpMean")
 })
 
 #' @rdname getDefaultMapBiasExpMean
 #' @export
-setGeneric("getDefaultMapBiasExpMean3D", function(alleleCountList, ... 
+setGeneric("getDefaultMapBiasExpMean3D", function(alleleCountList, ...
 	){
     standardGeneric("getDefaultMapBiasExpMean3D")
 })
@@ -1028,17 +1024,17 @@ setGeneric("getDefaultMapBiasExpMean3D", function(alleleCountList, ...
 #' @export
 setMethod("getDefaultMapBiasExpMean", signature(alleleCountList = "list"),
  function(alleleCountList) {
-    
+
     l <- lapply(alleleCountList, function(x) {
         ap <- apply(x, 2, sum)
         char <- names(sort(ap, decreasing = TRUE))[1:2]
-        
+
         v <- rep(0, length(colnames(x)))
         v[colnames(x) %in% char] <- 0.5
         v
     })
-    
-    MapBiasExpMean <- matrix(unlist(l), byrow = TRUE, nrow = length(alleleCountList), 
+
+    MapBiasExpMean <- matrix(unlist(l), byrow = TRUE, nrow = length(alleleCountList),
         ncol = 4, dimnames = list(c(names(alleleCountList)), colnames(alleleCountList[[1]])))  # alleleCountList[[1]] assumes that in each list the colnames are the same.
     MapBiasExpMean
 })
@@ -1048,21 +1044,21 @@ setMethod("getDefaultMapBiasExpMean", signature(alleleCountList = "list"),
 #' @export
 setMethod("getDefaultMapBiasExpMean3D", signature(alleleCountList = "ANY"),
 function(alleleCountList) {
-   
-	if(class(alleleCountList)=="list"){
+
+	if(is.list(alleleCountList)){
 		MapBiasExpMean <- getDefaultMapBiasExpMean(alleleCountList)
 		# make 3D array
 		MapBiasExpMean3D <- array(NA, c(length(alleleCountList),
-										length(unlist(unique(lapply(alleleCountList, 
+										length(unlist(unique(lapply(alleleCountList,
 			rownames)))), 4))  #empty array
 		for (i in 1:length(unlist(unique(lapply(alleleCountList, rownames))))) {
 			MapBiasExpMean3D[, i, ] <- MapBiasExpMean
 		}
-	}else if(class(alleleCountList)=="array"){
+	}else if(is.array(alleleCountList)){
 		# make 3D array
 		MapBiasExpMean3D <- alleleCountList
 		mapbiasmat <- t(apply(apply(alleleCountList,c(1,3),sum),
-					1, function(x){rank(x,ties.method="first")}))						
+					1, function(x){rank(x,ties.method="first")}))
 		mapbiasmat[mapbiasmat==1] <- 0.5
 		mapbiasmat[mapbiasmat==2] <- 0.5
 		mapbiasmat[mapbiasmat==3] <- 0
@@ -1075,21 +1071,21 @@ function(alleleCountList) {
 })
 
 #' Get Gene Area
-#' 
+#'
 #' Given a character vector with genesymbols and an OrgDb object, this function
 #' returns a GRanges giving the coordinates of the genes.
-#' 
+#'
 #' This function is a convenience function that can be used to determine which
 #' genomic coordinates to specify to e.g. \code{impBamGAL} when retrieving
 #' reads.
-#' 
+#'
 #' The function cannot handle genes that do not exist in the annotation. To
 #' remove these please set the na.rm=TRUE.
-#' 
+#'
 #' @name getAreaFromGeneNames
 #' @rdname getAreaFromGeneNames
-#' @aliases getAreaFromGeneNames 
-#' getAreaFromGeneNames,character-method 
+#' @aliases getAreaFromGeneNames
+#' getAreaFromGeneNames,character-method
 #' @docType methods
 #' @param genesymbols A character vector that contains genesymbols of genes
 #' from which we wish to retrieve the coordinates
@@ -1107,19 +1103,19 @@ function(alleleCountList) {
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords genes locations
 #' @examples
-#' 
+#'
 #' #load example data
 #' data(ASEset)
-#' 
+#'
 #' #get counts at the three positions specified in GRvariants
 #' library(org.Hs.eg.db )
 #' searchArea<-getAreaFromGeneNames(c('PAX8','TLR7'), org.Hs.eg.db)
-#' 
+#'
 NULL
 
 #' @rdname getAreaFromGeneNames
 #' @export
-setGeneric("getAreaFromGeneNames", function(genesymbols, ... 
+setGeneric("getAreaFromGeneNames", function(genesymbols, ...
 	){
     standardGeneric("getAreaFromGeneNames")
 })
@@ -1127,68 +1123,68 @@ setGeneric("getAreaFromGeneNames", function(genesymbols, ...
 #' @rdname getAreaFromGeneNames
 #' @export
 setMethod("getAreaFromGeneNames", signature(genesymbols = "character"),
-function(genesymbols, OrgDb, leftFlank = 0, rightFlank = 0, 
+function(genesymbols, OrgDb, leftFlank = 0, rightFlank = 0,
     na.rm = FALSE, verbose = TRUE) {
-    
+
     # start up sets
-    if (!class(genesymbols) %in% c("character")) 
-        stop(paste("genesymbols must be of class character, not:", class(genesymbols)))
-    
-    if (!class(OrgDb) %in% c("OrgDb")) 
-        stop(paste("OrgDb must be of class OrgDb, not:", class(OrgDb)))
-    
-    if (!class(leftFlank) %in% c("numeric")) 
-        stop(paste("leftFlank must be of class numeric, not:", class(leftFlank)))
-    if (length(leftFlank) != 1) 
-        stop(paste("leftFlank must be of length 1, not:", length(leftFlank)))
-    if (leftFlank < 0) 
+    if (!is.character(genesymbols))
+        stop(paste("genesymbols must be a character vector, not a", class(genesymbols)))
+
+    if (!is(OrgDb, "OrgDb"))
+        stop(paste("OrgDb must be an OrgDb object, not a", class(OrgDb)))
+
+    if (!is.numeric(leftFlank))
+        stop(paste("leftFlank must be a numeric vector, not a", class(leftFlank)))
+    if (length(leftFlank) != 1)
+        stop(paste("leftFlank must be of length 1, not", length(leftFlank)))
+    if (leftFlank < 0)
         stop(paste("leftFlank must be equal to or larger than 0"))
-    
-    if (!class(rightFlank) %in% c("numeric")) 
-        stop(paste("rightFlank must be of class numeric, not:", class(rightFlank)))
-    if (length(rightFlank) != 1) 
-        stop(paste("rightFlank must be of length 1, not:", length(rightFlank)))
-    if (rightFlank < 0) 
+
+    if (!is.numeric(rightFlank))
+        stop(paste("rightFlank must be of a numeric vector, not a", class(rightFlank)))
+    if (length(rightFlank) != 1)
+        stop(paste("rightFlank must be of length 1, not", length(rightFlank)))
+    if (rightFlank < 0)
         stop(paste("rightFlank must be equal to or larger than 0"))
-    
-    if (!class(verbose) %in% c("logical")) 
-        stop(paste("verbose must be of class logical, not:", class(verbose)))
-    if (length(verbose) != 1) 
-        stop(paste("verbose must be of length 1, not:", length(verbose)))
-    
+
+    if (!is.logical(verbose))
+        stop(paste("verbose must be a logical, not a", class(verbose)))
+    if (length(verbose) != 1)
+        stop(paste("verbose must be of length 1, not", length(verbose)))
+
     # retrieving data
     colsFilter <- c("CHR", "CHRLOC", "CHRLOCEND", "SYMBOL")
     s <- suppressWarnings(select(OrgDb, keys = genesymbols, columns = colsFilter, keytype = "SYMBOL"))
-    
+
     missing <- genesymbols[!genesymbols %in% s[, "SYMBOL"]]
     if (verbose & length(missing) > 0) {
-        cat(paste("Did not find information on these", length(missing), "genes:", 
+        cat(paste("Did not find information on these", length(missing), "genes:",
             paste(missing, collapse = ", ")), "\n")
     } else {
-        if (verbose) 
+        if (verbose)
             cat("Found all requested genes in annotation", "\n")
     }
-    
+
     # remove NAs
     if (na.rm == TRUE) {
-        s <- s[!(is.na(s[, "CHR"]) | is.na(s[, "CHRLOC"]) | is.na(s[, "CHRLOCEND"])), 
+        s <- s[!(is.na(s[, "CHR"]) | is.na(s[, "CHRLOC"]) | is.na(s[, "CHRLOCEND"])),
             ]
     } else {
-        warningGenes <- s[is.na(s[, "CHR"]) | is.na(s[, "CHRLOC"]) | is.na(s[, "CHRLOCEND"]), 
+        warningGenes <- s[is.na(s[, "CHR"]) | is.na(s[, "CHRLOC"]) | is.na(s[, "CHRLOCEND"]),
             ]
         if (!nrow(warningGenes) == 0) {
             warning(paste(warningGenes[, "SYMBOL"], "had NAs", "\n"), "you better remove these genes from your 'genesymbols'")
         }
     }
-    
+
     strand <- rep("+", nrow(s))
     TFstrand <- s[, "CHRLOC"] < 0
     strand[TFstrand] <- "-"
-    
-    searchArea <- GRanges(seqnames = paste("chr", s[, "CHR"], sep = ""), ranges = IRanges(abs(s[, 
-        "CHRLOC"]) - leftFlank, abs(s[, "CHRLOCEND"]) + rightFlank), strand = strand, 
+
+    searchArea <- GRanges(seqnames = paste("chr", s[, "CHR"], sep = ""), ranges = IRanges(abs(s[,
+        "CHRLOC"]) - leftFlank, abs(s[, "CHRLOCEND"]) + rightFlank), strand = strand,
         symbol = s[["SYMBOL"]])
-    
+
     searchArea <- reduce(searchArea, with.revmap = TRUE)
     l <- lapply(searchArea$revmap, function(x) {
         paste(unique(s[x, "SYMBOL"]), collapse = ",")
@@ -1196,22 +1192,22 @@ function(genesymbols, OrgDb, leftFlank = 0, rightFlank = 0,
     mcols(searchArea)[, "symbol"] <- unlist(l)
     # remove the mapping column
     mcols(searchArea)[["revmap"]] <- NULL
-    
+
     return(searchArea)
 })
 
 #' Get rsIDs from locations of SNP
-#' 
+#'
 #' Given a GRanges object of SNPs and a SNPlocs annotation, this function
 #' attempts to replace the names of the GRanges object entries with rs-IDs.
-#' 
+#'
 #' This function is used to try to identify the rs-IDs of SNPs in a GRanges
 #' object.
-#' 
+#'
 #' @name getSnpIdFromLocation
 #' @rdname getSnpIdFromLocation
-#' @aliases getSnpIdFromLocation 
-#' getSnpIdFromLocation,GRanges-method 
+#' @aliases getSnpIdFromLocation
+#' getSnpIdFromLocation,GRanges-method
 #' @docType methods
 #' @param GR A \code{GRanges} that contains positions of SNPs to look up
 #' @param SNPloc A \code{SNPlocs object} containing information on SNP
@@ -1225,7 +1221,7 @@ function(genesymbols, OrgDb, leftFlank = 0, rightFlank = 0,
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords SNP rs-id
 #' @examples
-#' 
+#'
 #' is_32bit_windows <- .Platform$OS.type == "windows" &&
 #'                   .Platform$r_arch == "i386"
 #' if (!is_32bit_windows && require(SNPlocs.Hsapiens.dbSNP144.GRCh37)) {
@@ -1233,17 +1229,17 @@ function(genesymbols, OrgDb, leftFlank = 0, rightFlank = 0,
 #' 	data(ASEset)
 #'
 #'   #get counts at the three positions specified in GRvariants
-#'   updatedGRanges <- getSnpIdFromLocation(rowRanges(ASEset), 
+#'   updatedGRanges <- getSnpIdFromLocation(rowRanges(ASEset),
 #'     SNPlocs.Hsapiens.dbSNP144.GRCh37)
 #    rowRanges(ASEset) <- updatedGRanges
 #' }
-#' 
-#' 
+#'
+#'
 NULL
 
 #' @rdname getSnpIdFromLocation
 #' @export
-setGeneric("getSnpIdFromLocation", function(GR, ... 
+setGeneric("getSnpIdFromLocation", function(GR, ...
 	){
     standardGeneric("getSnpIdFromLocation")
 })
@@ -1252,27 +1248,27 @@ setGeneric("getSnpIdFromLocation", function(GR, ...
 #' @export
 setMethod("getSnpIdFromLocation", signature(GR = "GRanges"),
 function(GR, SNPloc, return.vector = FALSE, verbose = TRUE) {
-   
+
 	#genome <- genome(GR)
 
-    if (class(GR) != "GRanges") 
-        stop(paste("GR must of class GRanges, not", class(GR)))
-    if (!((class(SNPloc) == "ODLT_SNPlocs") | (class(SNPloc) == "SNPlocs")))
-        stop(paste("SNPlocs must of class SNPlocs, not", class(SNPloc)))
-    if (!exists("getSNPlocs")) 
+    if (!is(GR, "GRanges"))
+        stop(paste("GR must be a GRanges object, not a", class(GR)))
+    if (!is(SNPloc, "SNPlocs"))
+        stop(paste("SNPlocs must be a SNPlocs object, not a", class(SNPloc)))
+    if (!exists("getSNPlocs"))
         stop("There must exist a function called getSNPlocs, available from the SNPlocs.Hsapiens.dbSNP.xxxxxxx package. Try to load such package.")
-    
+
 	if (any(!(seqlevels(GR) %in% seqlevels(SNPloc)) )){
 		stop("one or more seqlevels in GR are not present in SNPloc")
 	}
     # remove chr from seqnames if present
    # if (any(grepl("^chr", seqnames(GR))) != length(GR)) {
-   #     if (length(grep("^chr", seqnames(GR))) != 0) 
+   #     if (length(grep("^chr", seqnames(GR))) != 0)
    #         stop("seqnames must all begin with 'chr'. In the GR it seemed that some, but not all, seqnames began with chr. Please correct manually")
    #     seqlevels(GR) <- paste("chr", seqlevels(GR), sep = "")
    #     # seqnames(GR)<-seqnames
    # }
-    
+
     # changing chr to ch to adapt to SNPloc (not anymore)
     #if (length(grep("^chr", seqnames(GR))) == length(GR)) {
     #    # seqnames<-seqnames(GR)
@@ -1280,8 +1276,8 @@ function(GR, SNPloc, return.vector = FALSE, verbose = TRUE) {
     #    # seqlevels(GR)<-as.character(unique(seqnames)) seqlevels(GR) <- levels(seqnames)
     #    # seqnames(GR)<-seqnames
     #}
-    
-    
+
+
     #SNPlocThisChr <- getSNPlocs(seqlevels(GR), as.GRanges = TRUE, caching = FALSE)
     #
     #seqlevels(SNPlocThisChr, pruning.mode="coarse") <- seqlevels(GR)
@@ -1290,15 +1286,15 @@ function(GR, SNPloc, return.vector = FALSE, verbose = TRUE) {
     #
     #overlaps <- findOverlaps(GR, SNPlocThisChr)
     #
-    #if (verbose) 
-    #    cat(paste("Replacing position-based SNP name with rs-ID for", length(overlaps), 
+    #if (verbose)
+    #    cat(paste("Replacing position-based SNP name with rs-ID for", length(overlaps),
     #        "SNP(s)"), "\n")
     #
     ## replace name in GR for(i in 1:length(overlaps)){
     ## snp<-paste('rs',mcols(SNPlocThisChr[subjectHits(overlaps[i])])[,'RefSNP_id'],sep='')
     ## names(GR)[queryHits(overlaps[i])] <-snp }
     #
-    #snp <- paste("rs", mcols(SNPlocThisChr[subjectHits(overlaps)])[, "RefSNP_id"], 
+    #snp <- paste("rs", mcols(SNPlocThisChr[subjectHits(overlaps)])[, "RefSNP_id"],
     #    sep = "")
 
 	if(any(is.na(genome(GR)))| any(is.null(genome(GR)))){
@@ -1306,7 +1302,7 @@ function(GR, SNPloc, return.vector = FALSE, verbose = TRUE) {
 	}
 
 	if(!(unique(genome(GR))==unique(genome(SNPloc)))){
-		message("setting the GR genome to the same as SNPloc, 
+		message("setting the GR genome to the same as SNPloc,
 				which is a requirement to make overlap calculations")
 		genome(GR) <- genome(SNPloc)
 	}
@@ -1316,10 +1312,10 @@ function(GR, SNPloc, return.vector = FALSE, verbose = TRUE) {
 #	strand(overlap1) <- "*"
 #	mcols(overlap1) <- NULL
 #	names(GR) <- NULL
-	
+
 	overlap2 <- findOverlaps(overlap1, GR, type="equal")
     names(GR)[subjectHits(overlap2)] <- mcols(overlap1)[["RefSNP_id"]][queryHits(overlap2)]
-    
+
     # change back to chr from ch (not needed anymore)
     #seqlevels(GR) <- sub("^ch", "chr", seqlevels(GR))
 
@@ -1329,21 +1325,21 @@ function(GR, SNPloc, return.vector = FALSE, verbose = TRUE) {
     } else {
         return(GR)
     }
-    
+
 })
 
 #' coverage matrix of GAlignmentsList
-#' 
+#'
 #' Get coverage per nucleotide for reads covering a region
-#' 
+#'
 #' a convenience function to get the coverage from a list of reads stored in
 #' GAlignmnetsList, and returns by default a list with one matrix, and
 #' information about the genomic start and stop positions.
-#' 
+#'
 #' @name coverageMatrixListFromGAL
 #' @rdname coverageMatrixListFromGAL
-#' @aliases coverageMatrixListFromGAL 
-#' coverageMatrixListFromGAL,GAlignmentsList-method 
+#' @aliases coverageMatrixListFromGAL
+#' coverageMatrixListFromGAL,GAlignmentsList-method
 #' @docType methods
 #' @param BamList GAlignmentsList containing reads over the region to calculate
 #' coverage
@@ -1353,16 +1349,16 @@ function(GR, SNPloc, return.vector = FALSE, verbose = TRUE) {
 #' @author Jesper R. Gadin
 #' @keywords coverage
 #' @examples
-#' 
+#'
 #' r <- reads
 #' seqlevels(r) <- '17'
 #' covMatList <- coverageMatrixListFromGAL(BamList=r, strand='+')
-#' 
+#'
 NULL
 
 #' @rdname coverageMatrixListFromGAL
 #' @export
-setGeneric("coverageMatrixListFromGAL", function(BamList, ... 
+setGeneric("coverageMatrixListFromGAL", function(BamList, ...
 	){
     standardGeneric("coverageMatrixListFromGAL")
 })
@@ -1371,16 +1367,16 @@ setGeneric("coverageMatrixListFromGAL", function(BamList, ...
 #' @export
 setMethod("coverageMatrixListFromGAL", signature(BamList = "GAlignmentsList"),
 function(BamList, strand = "*", ignore.empty.bam.row = TRUE) {
-    
+
     # If having common start and end points for all gviz track objects the matrix
     # will start on the specific start regardless if there are reads in the bamList
     # or not.
-    
+
     # TODO, to conveniently access data without loading into memory, the bam file
     # should be read again by using the argument BamPath.
-    
+
     GAL <- BamList
-    
+
     # Could be good with a check that the matrix is not longer than CNTNAP2 -
     # 2300000bp long which is the longest gene But will wait with that.
     pstrand = FALSE
@@ -1401,30 +1397,30 @@ function(BamList, strand = "*", ignore.empty.bam.row = TRUE) {
             stop("strand has to be '+' or '-' if not NULL\n")
         }
     }
-    
+
     if (!length(seqlevels(GAL)) == 1) {
         stop("can only be one seq level\n")
     }
-    
+
     # get start and end before filtering on strand, will make things easier
     # downstream.
     suppressWarnings(bamStart <- min(min(start(GAL))))
     suppressWarnings(bamEnd <- max(max(end(GAL))))
     bamWidth <- bamEnd - bamStart + 1
-    
+
     # if(is.null(start) | is.null(end)){
     start <- bamStart
     end <- bamEnd
     width <- bamWidth
     # }
-    
+
     if (pstrand) {
         GALp <- GAL[strand(GAL) == "+"]
     }
     if (mstrand) {
         GALm <- GAL[strand(GAL) == "-"]
     }
-    
+
     if (pstrand) {
         matP <- matrix(0, ncol = (width), nrow = length(GAL))
     }
@@ -1437,8 +1433,8 @@ function(BamList, strand = "*", ignore.empty.bam.row = TRUE) {
     if (mstrand) {
         rownames(matM) <- names(GAL)
     }
-    ################################################## 
-    
+    ##################################################
+
     covVecFromGA <- function(GA) {
         mcols(GA) <- NULL
         one <- unlist(grglist(GA))
@@ -1446,7 +1442,7 @@ function(BamList, strand = "*", ignore.empty.bam.row = TRUE) {
         cov <- as.integer(window(covRle, start, end))
         cov
     }
-    
+
     if (pstrand) {
         for (i in 1:length(GALp)) {
             matP[i, ] <- covVecFromGA(GALp[[i]])
@@ -1457,7 +1453,7 @@ function(BamList, strand = "*", ignore.empty.bam.row = TRUE) {
             matM[i, ] <- covVecFromGA(GALm[[i]])
         }
     }
-    
+
     # make mat from matP or matM
     if (strand=="+") {
         mat <- matP
@@ -1468,7 +1464,7 @@ function(BamList, strand = "*", ignore.empty.bam.row = TRUE) {
     if (strand=="*") {
         mat <- matM+matP
     }
-    
+
     if (strand=="both") {
         mat <- list(plus=matP,minus=matM)
     }
@@ -1485,29 +1481,29 @@ function(BamList, strand = "*", ignore.empty.bam.row = TRUE) {
     } else {
         stop("strand must be present")
     }
-    
+
     retList
 })
 
 #' alleleCounts from bam file
-#' 
-#' count alleles before creating ASEse.
-#' 
-#' counts the alleles in a bam file based on GRanges positions. 
 #'
-#' Important excerpt from the details section of the internal applyPileups 
+#' count alleles before creating ASEse.
+#'
+#' counts the alleles in a bam file based on GRanges positions.
+#'
+#' Important excerpt from the details section of the internal applyPileups
 #'  function: Regardless of 'param' values, the algorithm follows samtools by
 #'  excluding reads flagged as unmapped, secondary, duplicate, or
 #'  failing quality control.
-#' 
+#'
 #' @name countAllelesFromBam
 #' @rdname countAllelesFromBam
-#' @aliases countAllelesFromBam 
-#' countAllelesFromBam,GRanges-method 
+#' @aliases countAllelesFromBam
+#' countAllelesFromBam,GRanges-method
 #' @docType methods
 #' @param gr GRanges that contains SNPs of interest
 #' @param pathToDir path to directory of bam files
-#' @param flag specify one flag to use as filter, default is no filtering. 
+#' @param flag specify one flag to use as filter, default is no filtering.
 #' allowed flags are 99, 147, 83 and 163
 #' @param scanBamFlag set a custom flag to use as filter
 #' @param return.class type of class for the returned object
@@ -1523,12 +1519,12 @@ function(BamList, strand = "*", ignore.empty.bam.row = TRUE) {
 #' ##not run at the moment
 #' #pathToDir <- system.file('inst/extdata/ERP000101_subset', package='AllelicImbalance')
 #' #ar <- countAllelesFromBam(gr, pathToDir)
-#'  
+#'
 NULL
 
 #' @rdname countAllelesFromBam
 #' @export
-setGeneric("countAllelesFromBam", function(gr, ... 
+setGeneric("countAllelesFromBam", function(gr, ...
 	){
     standardGeneric("countAllelesFromBam")
 })
@@ -1546,7 +1542,7 @@ function(gr, pathToDir, flag=NULL, scanBamFlag=NULL, return.class="array", verbo
 	}
 	if (!all(file.exists(paste(bamFiles, ".bai", sep = "")))) {
 		if (verbose) {
-			cat(paste("The bam files in UserDir are required to also have", ".bam.bai index files.", 
+			cat(paste("The bam files in UserDir are required to also have", ".bam.bai index files.",
 				" Trying to run indexBam function on each", "\n"), )
 		}
 		indexBam(bamFiles)
@@ -1554,12 +1550,12 @@ function(gr, pathToDir, flag=NULL, scanBamFlag=NULL, return.class="array", verbo
 			stop("The bam files in UserDir are required to also have", ".bam.bai index files.")
 		} else {
 			if (verbose) {
-				cat(paste("Succesfully indexed all bamFiles in UserDir", pathToDir, 
+				cat(paste("Succesfully indexed all bamFiles in UserDir", pathToDir,
 				  "\n"))
 			}
 		}
 	}
-	
+
 	#scanBamFlag
 	if(is.null(scanBamFlag) & is.null(flag)){
 		flag <- scanBamFlag()
@@ -1577,12 +1573,12 @@ function(gr, pathToDir, flag=NULL, scanBamFlag=NULL, return.class="array", verbo
 			stop(paste("flag values can only be 99 147 83 or 163",
 					   "the input flag value was", flag,sep=" "))
 		}
-		
+
 		if(flag==99){
 
 			flag=scanBamFlag( isPaired = TRUE,
 					isProperPair = TRUE,
-					isFirstMateRead = TRUE,	
+					isFirstMateRead = TRUE,
 					isMateMinusStrand = TRUE
 					)
 		}else if(flag==83){
@@ -1590,23 +1586,23 @@ function(gr, pathToDir, flag=NULL, scanBamFlag=NULL, return.class="array", verbo
 			flag=scanBamFlag(
 					isPaired = TRUE,
 					isProperPair = TRUE,
-					isFirstMateRead = TRUE,	
+					isFirstMateRead = TRUE,
 					isMinusStrand = TRUE
 					)
 		}else if(flag==147){
-		
+
 			flag=scanBamFlag(
 					isPaired = TRUE,
 					isProperPair = TRUE,
-					isFirstMateRead = FALSE,	
+					isFirstMateRead = FALSE,
 					isMinusStrand = TRUE
 					)
 		}else if(flag==163){
-		
+
 			flag=scanBamFlag(
 					isPaired = TRUE,
 					isProperPair = TRUE,
-					isFirstMateRead = FALSE,	
+					isFirstMateRead = FALSE,
 					isMateMinusStrand = TRUE
 					)
 		}
@@ -1617,16 +1613,16 @@ function(gr, pathToDir, flag=NULL, scanBamFlag=NULL, return.class="array", verbo
 		cat("sam flag used:",flag,"\n")
 	}
 	fls <- PileupFiles(bamFiles)
-	
+
 	countF <-
 		function(x){
 		x[["seq"]][-5,,1]
 
-	}                     
+	}
 
 	which <- gr
 	p1 <- ApplyPileupsParam(flag=flag,
-							which=which, 
+							which=which,
 							minBaseQuality = 0L,
 							what="seq",
 							yieldBy = "position",
@@ -1638,25 +1634,25 @@ function(gr, pathToDir, flag=NULL, scanBamFlag=NULL, return.class="array", verbo
 	res <- applyPileups(fls, countF, param=p1)
 
 	ar <- array(unlist(res), dim=c(4, length(fls), length(which)),
-				dimnames=list(c("A","C","G","T"), 
-							  names(fls), 
+				dimnames=list(c("A","C","G","T"),
+							  names(fls),
 							  names(which)))
 	ar <- aperm(ar,dim=c(3,2,1))
-	
+
 	ar
 })
 
 #' ASEset from bam file
-#' 
+#'
 #' count alleles and create an ASEset direct from bam file instead of reading into R first.
-#' 
-#' counts the alleles in a bam file based on GRanges positions. 
-#' 
-#' 
+#'
+#' counts the alleles in a bam file based on GRanges positions.
+#'
+#'
 #' @name ASEsetFromBam
 #' @rdname ASEsetFromBam
-#' @aliases ASEsetFromBam 
-#' ASEsetFromBam,GRanges-method 
+#' @aliases ASEsetFromBam
+#' ASEsetFromBam,GRanges-method
 #' @docType methods
 #' @param gr GenomicRanges of SNPs to create ASEset for
 #' @param PE if paired end or not (default: TRUE)
@@ -1675,12 +1671,12 @@ function(gr, pathToDir, flag=NULL, scanBamFlag=NULL, return.class="array", verbo
 #' ##no execution at the moment
 #' #pathToDir <- system.file('inst/extdata/ERP000101_subset', package='AllelicImbalance')
 #' #a <- ASEsetFromBam(gr, pathToDir)
-#'  
+#'
 NULL
 
 #' @rdname ASEsetFromBam
 #' @export
-setGeneric("ASEsetFromBam", function(gr, ... 
+setGeneric("ASEsetFromBam", function(gr, ...
 	){
     standardGeneric("ASEsetFromBam")
 })
@@ -1705,30 +1701,30 @@ setMethod("ASEsetFromBam", signature(gr = "GRanges"),
 		arp2 <- countAllelesFromBam(gr, pathToDir, flag=147)
 		arp <- arp1 + arp2
 	}
-	
+
 	#ASEsetFromArray
 	if(!strandUnknown){
-		a <- ASEsetFromArrays(gr, countsPlus = arp, 
+		a <- ASEsetFromArrays(gr, countsPlus = arp,
 			countsMinus = arm)
 
-	}else{	
-		a <- ASEsetFromArrays(gr, countsUnknown = arp+arm) 
+	}else{
+		a <- ASEsetFromArrays(gr, countsUnknown = arp+arm)
 	}
 	a
 })
 
 #' makes masked fasta reference
-#' 
+#'
 #' Replaces all selected positions in a fasta file with the character N
-#' 
+#'
 #' @name makeMaskedFasta
 #' @rdname makeMaskedFasta
-#' @aliases makeMaskedFasta 
-#' makeMaskedFasta,character-method 
+#' @aliases makeMaskedFasta
+#' makeMaskedFasta,character-method
 #' @docType methods
 #' @param fastaIn character string of the path for the fasta file to be used
 #' @param fastaOut character string of the path for the masked fasta file (no extension)
-#' @param posToReplace GRanges object with the genomic ranges to replace 
+#' @param posToReplace GRanges object with the genomic ranges to replace
 #' @param splitOnSeqlevels write on file for each seqlevel to save memory
 #' @param verbose makes function more talkative
 #' @param ... arguments to pass on
@@ -1737,16 +1733,16 @@ setMethod("ASEsetFromBam", signature(gr = "GRanges"),
 #' @examples
 #'
 #' data(ASEset.sim)
-#' gr <- rowRanges(ASEset.sim) 
+#' gr <- rowRanges(ASEset.sim)
 #' fastaIn <- system.file('extdata/hg19.chr17.subset.fa', package='AllelicImbalance')
-#' makeMaskedFasta(fastaIn=fastaIn, fastaOut="fastaOut",posToReplace=gr) 
-#' 
-#'  
+#' makeMaskedFasta(fastaIn=fastaIn, fastaOut="fastaOut",posToReplace=gr)
+#'
+#'
 NULL
 
 #' @rdname makeMaskedFasta
 #' @export
-setGeneric("makeMaskedFasta", function(fastaIn, ... 
+setGeneric("makeMaskedFasta", function(fastaIn, ...
 	){
     standardGeneric("makeMaskedFasta")
 })
@@ -1773,7 +1769,7 @@ function(fastaIn, fastaOut, posToReplace, splitOnSeqlevels=TRUE, verbose=TRUE){
 		cat("finished creating new index file")
 	}
 	#indexFa(fl) #creates a new file as index in the same directory but
-	#with extension *.fai 
+	#with extension *.fai
 
 	#open,scan,close file
 	open(fl)
@@ -1803,7 +1799,7 @@ function(fastaIn, fastaOut, posToReplace, splitOnSeqlevels=TRUE, verbose=TRUE){
 		#library("seqinr")
 		outfile <- paste(fastaOut,chr,".fa",sep="")
 
-		write.fasta(as.character(seq),names=chr, file.out=outfile, nbchar=80)	
+		write.fasta(as.character(seq),names=chr, file.out=outfile, nbchar=80)
 		if(verbose){cat("wrote chr",chr,"to file\n")}
 
 		gc()
@@ -1814,13 +1810,13 @@ function(fastaIn, fastaOut, posToReplace, splitOnSeqlevels=TRUE, verbose=TRUE){
 
 
 #' global analysis wrapper
-#' 
+#'
 #' A wrapper to make a global analysis based on paths for BAM, VCF and GFF files
-#' 
+#'
 #' @name gba
 #' @rdname gba
-#' @aliases gba 
-#' gba,character-method 
+#' @aliases gba
+#' gba,character-method
 #' @docType methods
 #' @param pathBam path to bam file
 #' @param pathVcf path to vcf file
@@ -1832,12 +1828,12 @@ function(fastaIn, fastaOut, posToReplace, splitOnSeqlevels=TRUE, verbose=TRUE){
 #' @examples
 #'
 #' #empty as function doesn't exist
-#' 
+#'
 NULL
 
 #' @rdname gba
 #' @export
-setGeneric("gba", function(pathBam, ... 
+setGeneric("gba", function(pathBam, ...
 	){
     standardGeneric("gba")
 })
@@ -1848,18 +1844,17 @@ setMethod("gba", signature(pathBam = "character"),
 function(pathBam,pathVcf,pathGFF=NULL, verbose){
 
 	#summarize counts
-	
+
 	#detectAI
 
-	
 })
 
 
 #' snp quality data
-#' 
+#'
 #' Given the positions of known SNPs, this function returns allele quality from
 #' a BamGRL object
-#' 
+#'
 #' This function is used to retrieve the allele quality strings from specified positions
 #' in a set of RNA-seq reads. The \code{BamList} argument will typically have
 #' been created using the \code{impBamGAL} function on bam-files. The
@@ -1868,12 +1863,12 @@ function(pathBam,pathVcf,pathGFF=NULL, verbose){
 #' heterozygote locations (e.g. using \code{scanForHeterozygotes}). The
 #' GRvariants will currently only accept locations having width=1,
 #' corresponding to bi-allelic SNPs. The strand type information will be kept in the
-#' returned object. If the strand is marked as unknown "*", it will be forced to the "+" 
-#' strand. 
+#' returned object. If the strand is marked as unknown "*", it will be forced to the "+"
+#' strand.
 #'
 #' quaity information is extracted from the BamList object, and requires the presence of
 #' mcols(BamList)[["qual"]] to contain quality sequences.
-#' 
+#'
 #' @name getAlleleQuality
 #' @rdname getAlleleQuality
 #' @aliases getAlleleQuality getAlleleQuality,GAlignmentsList-method
@@ -1891,25 +1886,25 @@ function(pathBam,pathVcf,pathGFF=NULL, verbose){
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords allele quality
 #' @examples
-#' 
+#'
 #' #load example data
 #' data(reads)
 #' data(GRvariants)
-#' 
+#'
 #' #get counts at the three positions specified in GRvariants
 #' alleleQualityArray <- getAlleleQuality(BamList=reads,GRvariants)
-#' 
+#'
 #' #place in ASEset object
 #' alleleCountsArray <- getAlleleCounts(BamList=reads,GRvariants,
 #'                      strand='*', return.class="array")
-#' 
-#' 	a <- ASEsetFromArrays(GRvariants, countsUnknown = alleleCountsArray) 
-#' 	aquals(a) <- alleleQualityArray	
+#'
+#' 	a <- ASEsetFromArrays(GRvariants, countsUnknown = alleleCountsArray)
+#' 	aquals(a) <- alleleQualityArray
 NULL
 
 #' @rdname getAlleleQuality
 #' @export
-setGeneric("getAlleleQuality", function(BamList, ... 
+setGeneric("getAlleleQuality", function(BamList, ...
 	){
     standardGeneric("getAlleleQuality")
 })
@@ -1918,31 +1913,31 @@ setGeneric("getAlleleQuality", function(BamList, ...
 #' @export
 setMethod("getAlleleQuality", signature(BamList = "GAlignmentsList"),
 function(BamList, GRvariants, fastq.format = "illumina.1.8",
-						return.class = "array", verbose = TRUE, ...) { 
+						return.class = "array", verbose = TRUE, ...) {
 
 	if(!return.class %in% c("array")){
 		stop("return.class has to be array")
 	}
-    
-    if (!class(BamList) %in% c("GAlignments", "GAlignmentsList")) {
-        stop("BamList has to be of class GAlignments or GAlignmnetsList\n")
+
+    if (!(is(BamList, "GAlignments") || is(BamList, "GAlignmentsList"))) {
+        stop("BamList has to be a GAlignments or GAlignmnetsList object\n")
     }
     # if just one element of, make list (which is a convenient way of
 	# handling this input type)
-    # 
-    if (class(BamList) == "GAlignments") {
+    #
+    if (is(BamList, "GAlignments")) {
         BamList <- GAlignmentsList(BamList)
     }
-    
+
     # if the user sent in the GRangesList for GRvariants,
 	# take out only the unique entries.
-    # 
-    if (class(GRvariants) == "GRangesList") {
-        GRvariants <- unique(unlist(GRvariants, use.names = FALSE)) 
+    #
+    if (is(GRvariants, "GRangesList")) {
+        GRvariants <- unique(unlist(GRvariants, use.names = FALSE))
     }
-   
+
 	#if BamList is not list, make it a list
-	if(class(BamList)=="GAlignments"){
+	if(is(BamList, "GAlignments")){
 		BamList <- GAlignmentsList(BamList)
 	}
 
@@ -1956,24 +1951,24 @@ function(BamList, GRvariants, fastq.format = "illumina.1.8",
    # if (!identical(seqlevels(BamList), seqlevels(GRvariants))) {
    #     stop("!identical(seqlevels(BamList), seqlevels(GRvariants))\n")
    # }
-    
+
     # checking that GRvariants is ok
-    if (class(GRvariants) != "GRanges") 
-        stop(paste("GRvariants must be of class GRanges, not",
+    if (!is(GRvariants, "GRanges"))
+        stop(paste("GRvariants must be a GRanges object, not a",
 				   class(GRvariants)))
-    if (length(GRvariants) == 0) 
+    if (length(GRvariants) == 0)
         stop("GRvariants was given as an empty GRanges object.",
 			 " There can be no Snps retrieved by getAlleleCount then")
-    if (any(width(GRvariants) != 1)) 
+    if (any(width(GRvariants) != 1))
         stop("GRvariants can contain only entries of width=1,",
 			 " corresponding to SNPs.")
-    
+
     # checking that verbose is ok
-    if (class(verbose) != "logical") 
-        stop(paste("verbose must be of class logical, not", class(verbose)))
-    if (length(verbose) != 1) 
+    if (!is.logical(verbose))
+        stop(paste("verbose must be a logical, not a", class(verbose)))
+    if (length(verbose) != 1)
         stop(paste("verbose must be of length 1, not", length(verbose)))
-    
+
     # make row-names
     if (sum(grepl("chr", seqnames(GRvariants))) > 0) {
         snpNames <- paste(seqnames(GRvariants),
@@ -1982,7 +1977,7 @@ function(BamList, GRvariants, fastq.format = "illumina.1.8",
         snpNames <- paste("chr", seqnames(GRvariants),
 						  "_", start(GRvariants), sep = "")
     }
-    
+
 	# needs name, need a more general solution here
 	if(length(names(BamList)) == 0){
 		warning("no set names for list, new names will be sample1,2,3,etc")
@@ -1998,26 +1993,26 @@ function(BamList, GRvariants, fastq.format = "illumina.1.8",
 	#empty array that handles only four nucleotides + one del columns
     dimnames = list(snpNames, names(BamList), dim3, c("+","-"))
     ar1 <- array(NA, c(length(GRvariants), length(BamList), length(dim3), 2),
-				 dimnames = dimnames)  
-    
+				 dimnames = dimnames)
+
     # force all "*" on "+" strand
 	un1 <- strand(BamList)=="*"
-	un2 <- any(un1) 
+	un2 <- any(un1)
 	if(any(un2)){
 		strand(BamList)[un2][un1[un2]] <- "+"
 	}
-    
+
     for (j in 1:length(names(BamList))) {
         sample <- names(BamList)[j]
-        if (verbose) 
+        if (verbose)
             cat("sample ", sample, "\n")
-        
+
 		my_IGPOI <- GRvariants
 
 		# + strand
         gal <- BamList[[j]][strand(BamList[[j]]) == "+"]
-		seqlevels(gal) <- seqlevels(my_IGPOI) 
-        
+		seqlevels(gal) <- seqlevels(my_IGPOI)
+
 		nuclpiles <- pileLettersAt(mcols(gal)$qual, seqnames(gal), start(gal), cigar(gal),
 							                                 my_IGPOI)
         # fill array
@@ -2029,16 +2024,15 @@ function(BamList, GRvariants, fastq.format = "illumina.1.8",
 			tbl <- table(factor(unlist(strsplit(as.character(nuclpiles[k]), "")),
 					   levels=dim3, labels=dim3))
 			ar1[k, j, names(tbl), "+"] <- as.integer(tbl)
-		
         }
 
 		# - strand
         gal <- BamList[[j]][strand(BamList[[j]]) == "-"]
-		seqlevels(gal) <- seqlevels(my_IGPOI) 
-        
+		seqlevels(gal) <- seqlevels(my_IGPOI)
+
 		nuclpiles <- pileLettersAt(mcols(gal)$qual, seqnames(gal), start(gal), cigar(gal),
 							                                 my_IGPOI)
-        
+
         # fill array
         nstr <- factor(unlist(strsplit(as.character(nuclpiles), "")),
 					   levels=dim3, labels=dim3)
@@ -2050,7 +2044,7 @@ function(BamList, GRvariants, fastq.format = "illumina.1.8",
 			ar1[k, j, names(tbl), "-"] <- as.integer(tbl)
         }
     }
-    
+
 	if (return.class == "array") {
         ar1
     } else {
@@ -2060,27 +2054,27 @@ function(BamList, GRvariants, fastq.format = "illumina.1.8",
 
 
 #' genotype2phase
-#' 
+#'
 #' used to convert the genomatrix from the visually friendly matrix to phase array.
-#' 
+#'
 #' To not introduce redundant information in the ASEset object, the genotype matrix is
 #' translated to a phase matrix, containing the same information.
-#' Does not allow tri-allelic or multi-allelic SNPs, and if present the multi-allelic 
-#' SNPs will lose the least occuring genotype. 
-#' 
-#' This function can handle indels, but if the reference allele is not provided, the 
+#' Does not allow tri-allelic or multi-allelic SNPs, and if present the multi-allelic
+#' SNPs will lose the least occuring genotype.
+#'
+#' This function can handle indels, but if the reference allele is not provided, the
 #' rank matrix which is temporary created might use lots of memory, depending on the
-#' amount of indels among the genotypes. As conclusion, it is preferable to send in 
+#' amount of indels among the genotypes. As conclusion, it is preferable to send in
 #' reference genome when converting to phase.
 #'
 #' levels information is only important if the reference allele has to be guessed,
-#' and so if reference information is provided, the levels argument can be ignored. 
+#' and so if reference information is provided, the levels argument can be ignored.
 #'
 #' @name genotype2phase
 #' @rdname genotype2phase
 #' @aliases genotype2phase,matrix-method
 #' @docType methods
-#' @param x matrix see examples 
+#' @param x matrix see examples
 #' @param ref reference alleles
 #' @param return.class 'array' or 'list'
 #' @param levels vector of expected alleles
@@ -2088,17 +2082,17 @@ function(BamList, GRvariants, fastq.format = "illumina.1.8",
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords phase
 #' @examples
-#' 
+#'
 #' #load example data
-#' data(genomatrix) 
-#' data(ASEset) 
+#' data(genomatrix)
+#' data(ASEset)
 #' p <- genotype2phase(genomatrix, ref(ASEset))
-#' 
+#'
 NULL
 
 #' @rdname genotype2phase
 #' @export
-setGeneric("genotype2phase", function(x, ... 
+setGeneric("genotype2phase", function(x, ...
 	){
     standardGeneric("genotype2phase")
 })
@@ -2110,8 +2104,8 @@ setMethod("genotype2phase", signature(x = "matrix"),
 	){
 
 	#check x
-	if(!class(x)=="matrix"){
-		stop("x is not of class matrix")
+	if(!is.matrix(x)){
+		stop("x is not of a matrix")
 	}
 
 	#checks return.class
@@ -2140,7 +2134,7 @@ setMethod("genotype2phase", signature(x = "matrix"),
 	if(return.class=="list"){
 		list(phase=p,ref=ref,alt=alt)
 	}else if(return.class=="array"){
-		p		
+		p
 	}
 })
 
@@ -2149,7 +2143,7 @@ setMethod("genotype2phase", signature(x = "matrix"),
 ###
 
 #split a genotype matrix into an array of two dimensions(one for each allele)
-.splitGenotypeMatrix <- 
+.splitGenotypeMatrix <-
 	function(genomatrix, ...)	{
 	str <- unlist(strsplit(genomatrix,"/"))
 	inx <- which(is.na(str))
@@ -2159,17 +2153,17 @@ setMethod("genotype2phase", signature(x = "matrix"),
 	aperm(array(val[id], dim=c(2, nrow(genomatrix), ncol(genomatrix))),c(2,3,1))
 }
 
-#from a genotype array of two dimensions, count occurences of each allele for 
+#from a genotype array of two dimensions, count occurences of each allele for
 #each snp
-.splitGenotypeCount <- 
+.splitGenotypeCount <-
 	function(x, levels=c("A", "C", "G", "T"), ...)
 {
 	mat <- matrix(aperm(x, c(3,2,1)), ncol(x)*2, nrow(x))
 	t(apply(mat, 2, function(x){table(factor(x, levels=levels))}))
 }
 
-#from matrix rank the alleles for each SNP 
-.splitGenotypeRank <- 
+#from matrix rank the alleles for each SNP
+.splitGenotypeRank <-
 	function(x, levels=colnames(x), ...)
 {
 	mat <- t(apply(x, 1, function(x){sort(x, decreasing=TRUE, index.return=TRUE)$ix}))
@@ -2188,27 +2182,27 @@ setMethod("genotype2phase", signature(x = "matrix"),
 
 
 #' phase2genotype
-#' 
+#'
 #' Convert the phase from the internally stored phase, ref and alt information
-#' 
+#'
 #' To not introduce redundant information in the ASEset object, the genotype matrix is
 #' accessed from the phase matrix, which together with ref and alt allele information
 #' contains the same information(not taken into account three-allelic or more SNPs).
-#' 
+#'
 #' The genotype matrix retrieved from an ASEset object can differ from the genotype matrix
 #' stored in the object if reference and alternative alleles were not used or has changed
-#' since the phase genotype matrix was stored. Basically, it is preferable to provide 
+#' since the phase genotype matrix was stored. Basically, it is preferable to provide
 #' reference and alternative information when storing the genotype matrix.
 #'
-#' If possible, it is better to not use a genotype matrix, but instead relying completely 
-#' on storing a phase matrix(or array) together with reference and alternative allele 
+#' If possible, it is better to not use a genotype matrix, but instead relying completely
+#' on storing a phase matrix(or array) together with reference and alternative allele
 #' information.
 #'
 #' @name phase2genotype
 #' @rdname phase2genotype
 #' @aliases phase2genotype,array-method
 #' @docType methods
-#' @param x array see examples 
+#' @param x array see examples
 #' @param ref reference allele vector
 #' @param alt alternative allele vector
 #' @param return.class 'matrix' or 'array'
@@ -2216,21 +2210,21 @@ setMethod("genotype2phase", signature(x = "matrix"),
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords phase
 #' @examples
-#' 
+#'
 #' #load example data
-#' data(ASEset) 
+#' data(ASEset)
 #' data(genomatrix)
 #' p <- genotype2phase(genomatrix, ref(ASEset), return.class="array")
 #' ref <- ref(ASEset)
 #' alt <- inferAltAllele(ASEset)
 #'
 #' gt <- phase2genotype(p, ref, alt, return.class="matrix")
-#' 
+#'
 NULL
 
 #' @rdname phase2genotype
 #' @export
-setGeneric("phase2genotype", function(x, ... 
+setGeneric("phase2genotype", function(x, ...
 	){
     standardGeneric("phase2genotype")
 })
@@ -2265,13 +2259,13 @@ setMethod("phase2genotype", signature(x = "array"),
 
 	mat[x[,,1]==0 & !namat] <- matrix(ref, nrow(x), ncol(x))[x[,,1]==0 & !namat]
 	pat[x[,,2]==0 & !napat] <- matrix(ref, nrow(x), ncol(x))[x[,,2]==0 & !napat]
-	
+
 	mat[namat] <- NA
 	pat[napat] <- NA
 
 	pha[x[,,3]==1] <- "|"
 
-	array(c(mat, pat, pha), dim=c(dim(x)), 
+	array(c(mat, pat, pha), dim=c(dim(x)),
 		  dimnames=list(NULL, NULL, c("mat","pat", "phased")))
 }
 
@@ -2291,13 +2285,13 @@ setMethod("phase2genotype", signature(x = "array"),
 
 ##
 ## DNAStringSet2character
-## 
+##
 ## forces e.g. simplelist of variants to an atomic character vector
-## 
+##
 ## @name DNAStringSet2character
 ## @rdname DNAStringSet2character
 ## @aliases DNAStringSet2character
-## DNAStringSet2character,DNAStringSet-method 
+## DNAStringSet2character,DNAStringSet-method
 ## @docType methods
 ## @param x DNAStringSet
 ## @param verbose makes function more talkative
@@ -2307,12 +2301,12 @@ setMethod("phase2genotype", signature(x = "array"),
 ## @examples
 ##
 ## #empty as function doesn't exist
-## 
+##
 #NULL
 #
 ## @rdname gba
 ## @export
-#setGeneric("DNAStringSet2character", function(x, ... 
+#setGeneric("DNAStringSet2character", function(x, ...
 #	){
 #    standardGeneric("DNAStringSet2character")
 #})
@@ -2321,12 +2315,12 @@ setMethod("phase2genotype", signature(x = "array"),
 ## @export
 #setMethod("DNAStringSet2character", signature(x = "character"),
 #function(x, verbose){
-#	
+#
 #	if(any(width(x)>1)){
 #		stop("One or more variants are not bi-allelic SNPs")
 #	}
 #	as.character(x)
-#	
+#
 #)
 #
 #

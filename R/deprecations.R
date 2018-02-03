@@ -28,7 +28,7 @@ realCigarPosition <- function()
 	    .Deprecated("realCigarPosition",msg="no longer serving any purpose in the AllelicImbalance package and is deprecated")
 }
 
-#was deprecated 2015-03-24 
+#was deprecated 2015-03-24
 impBamGRL <- function()
 {
 	    .Deprecated("impBamGRL.old",msg="no longer serving any purpose in the AllelicImbalance package and is deprecated")
@@ -40,20 +40,20 @@ getAlleleCount <- function() {
 }
 
 #' Import Bam-2
-#' 
+#'
 #' Imports bla bal bal a specified genomic region from a bam file using a GenomicRanges
 #' object as search area.
-#' 
+#'
 #' These functions are right  on tahea wrappers to import bam files into R and store them into
 #' either GRanges, GAlignments or GappedAlignmentpairs objects.
-#' 
+#'
 #' It is recommended to use the impBamGAL() which takes information of gaps
 #' into account. It is also possible to use the other variants as well, but
 #' then pre-filtering becomes important keps to understand because gapped, intron-spanning reads
 #' will cause problems. This is because the GRanges objects can not handle if
 #' gaps are present and will then give a wrong result when calculating the
 #' allele (SNP) count table.
-#' 
+#'
 #' @name import-bam-2
 #' @rdname import-bam-2
 #' @aliases import-bam-2 impBamGRL
@@ -72,14 +72,14 @@ getAlleleCount <- function() {
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords bam import
 #' @examples
-#' 
+#'
 #' #Declare searchArea
 #' searchArea <- GRanges(seqnames=c('17'), ranges=IRanges(79478301,79478361))
-#' 
-#' #Relative or full path  
+#'
+#' #Relative or full path
 #' pathToFiles <- system.file('extdata/ERP000101_subset', package='AllelicImbalance')
-#' 
-#' 
+#'
+#'
 #' @export impBamGRL
 NULL
 
@@ -91,7 +91,7 @@ impBamGRL.old <- function(UserDir, searchArea, verbose = TRUE) {
     what <- scanBamWhat()  #A character vector naming the fields to return. scanBamWhat() returns a vector of available fields. Fields are described on the scanBam help page.
     flag <- scanBamFlag(isUnmappedQuery = FALSE)
     param <- ScanBamParam(flag = flag, which = which, what = what)  #store ScanBamParam in param.
-    
+
     # Point to correct directory and create a BamFileList object
     bamDir <- normalizePath(UserDir)
     allFiles <- list.files(bamDir, full.names = TRUE)
@@ -101,7 +101,7 @@ impBamGRL.old <- function(UserDir, searchArea, verbose = TRUE) {
     }
     if (!all(file.exists(paste(bamFiles, ".bai", sep = "")))) {
         if (verbose) {
-            cat(paste("The bam files in UserDir are required to also have", ".bam.bai index files.", 
+            cat(paste("The bam files in UserDir are required to also have", ".bam.bai index files.",
                 " Trying to run indexBam function on each", "\n"), )
         }
         indexBam(bamFiles)
@@ -109,14 +109,14 @@ impBamGRL.old <- function(UserDir, searchArea, verbose = TRUE) {
             stop("The bam files in UserDir are required to also have", ".bam.bai index files.")
         } else {
             if (verbose) {
-                cat(paste("Succesfully indexed all bamFiles in UserDir", UserDir, 
+                cat(paste("Succesfully indexed all bamFiles in UserDir", UserDir,
                   "\n"))
             }
         }
     }
     # store all the .bam paths in a BamFile.
     bamFilesList <- BamFileList(bamFiles)
-    
+
     # check that sequences in searchArea are actually found in the bam files
     header <- scanBamHeader(bamFiles)
     checkSeqNameExists <- function(bamHeader, requestedSeqNames) {
@@ -130,10 +130,10 @@ impBamGRL.old <- function(UserDir, searchArea, verbose = TRUE) {
         for (sampleName in names(seqNotFoundErrors)) {
             seqNotFounds <- c(seqNotFounds, as.character(seqnames(searchArea)[!seqNotFoundErrors[[sampleName]]]))
         }
-        stop(paste("The following seq name(s) not found in the bam files:", paste(sort(unique(seqNotFounds)), 
+        stop(paste("The following seq name(s) not found in the bam files:", paste(sort(unique(seqNotFounds)),
             collapse = ", ")))
     }
-    
+
     # Loop through, open scanBam, store in GRList and then close each object in the
     # BamFileList object.
     i <- 1
@@ -143,20 +143,20 @@ impBamGRL.old <- function(UserDir, searchArea, verbose = TRUE) {
         bf <- bamFilesList[[bamName]]
         open(bf)
         if (verbose) {
-            cat(paste("Reading bam file", i, "with filename", basename(bamName)), 
+            cat(paste("Reading bam file", i, "with filename", basename(bamName)),
                 "\n")
         }
         bam <- scanBam(bf, param = param)
         # Description
         for (rangeName in names(bam)) {
-            
+
             # if NA values your in trouble. That means the read didnt map
             ranges <- IRanges(start = bam[[rangeName]][["pos"]], width = cigarWidthAlongReferenceSpace(bam[[rangeName]][["cigar"]]))
-            GRangeBam <- GRanges(seqnames = as.character(bam[[rangeName]][["rname"]]), 
-                ranges = ranges, strand = bam[[rangeName]][["strand"]], names = bam[[rangeName]][["qname"]], 
-                flag = bam[[rangeName]][["flag"]], cigar = bam[[rangeName]][["cigar"]], 
-                mapq = bam[[rangeName]][["mapq"]], mpos = bam[[rangeName]][["mpos"]], 
-                isize = bam[[rangeName]][["isize"]], seq = bam[[rangeName]][["seq"]], 
+            GRangeBam <- GRanges(seqnames = as.character(bam[[rangeName]][["rname"]]),
+                ranges = ranges, strand = bam[[rangeName]][["strand"]], names = bam[[rangeName]][["qname"]],
+                flag = bam[[rangeName]][["flag"]], cigar = bam[[rangeName]][["cigar"]],
+                mapq = bam[[rangeName]][["mapq"]], mpos = bam[[rangeName]][["mpos"]],
+                isize = bam[[rangeName]][["isize"]], seq = bam[[rangeName]][["seq"]],
                 qual = bam[[rangeName]][["qual"]])
             # This way of merging the different chromosomes to the same GRangeObject is maybe
             # not the best way. Later try to store them in a separate list, and then unlist
@@ -184,13 +184,13 @@ impBamGRL.old <- function(UserDir, searchArea, verbose = TRUE) {
 NULL
 
 #' realCigarPosition
-#' 
+#'
 #' From a GAlignments calculate the real corresponding position for each read
 #' based on its cigar.
-#' 
+#'
 #' The main intention for these functions are to be the internal functions for
 #' \code{scanForHeterozygotes} and \code{getAlleleCount}.
-#' 
+#'
 #' @name cigar-utilities
 #' @rdname cigar-utilities
 #' @aliases cigar-utilities realCigarPosition realCigarPositions
@@ -209,10 +209,10 @@ NULL
 #' \code{\link[GenomicAlignments]{GAlignmentsList}} object }
 #' @keywords internal
 #' @examples
-#' 
+#'
 #'   RleCigarList <-  cigarToRleList('3M4I93M')
 #'   BpPos <- 5
-#' 
+#'
 #'   newPos <- realCigarPosition.old(RleCigar=RleCigarList[[1]], BpPos)
 #'   newPositions <- realCigarPositions.old(RleCigar=RleCigarList[[1]])
 #'   newPositionsList <- realCigarPositionsList.old(RleCigarList=RleCigarList)
@@ -221,28 +221,28 @@ NULL
 #' @rdname cigar-utilities
 #' @export
 realCigarPosition.old <- function(RleCigar, BpPos) {
-    
+
     # because of speed issues, checks are best performed outside this function.
-    if (!class(RleCigar) == "Rle") {
-        stop("class must be Rle")
+    if (!is(RleCigar, "Rle")) {
+        stop("RleCigar must an Rle object")
     }
-    
+
     e <- as.character(RleCigar)
-    
+
     # changeVector
     v <- rep(0, length = length(e))
     names(v) <- e
-    
+
     v[e == "M"] <- 1
-    v[e == "I"] <- unlist(lapply(runLength(RleCigar)[runValue(RleCigar) == "I"], 
+    v[e == "I"] <- unlist(lapply(runLength(RleCigar)[runValue(RleCigar) == "I"],
         function(x) {
             c(x + 1, rep(1, x - 1))
         }))
     # v[e=='D'] <- 0 #already zero v[e=='N'] <- 0 #already zero
-    
+
     # sum all until interesting position
     cs <- cumsum(v)
-    
+
     if (names(cs[BpPos]) == "D") {
         retPos <- 0
     } else if (names(cs[BpPos]) == "N") {
@@ -263,34 +263,34 @@ realCigarPosition.old <- function(RleCigar, BpPos) {
 #' @export
 realCigarPositions.old <- function(RleCigar) {
     # returns a vector that have order all positions to match with the cigar
-    
+
     # because of speed issues, checks are best performed outside this function.
-    if (!class(RleCigar) == "Rle") {
-        stop("class must be Rle")
+    if (!is(RleCigar, "Rle")) {
+        stop("RleCigar must be an Rle object")
     }
-    
-    
+
+
     e <- as.character(RleCigar)
     # make a new representation vector
     v <- rep(0, length = length(e))
     names(v) <- e
-    
+
     v[e == "M"] <- 1
-    v[e == "I"] <- unlist(lapply(runLength(RleCigar)[runValue(RleCigar) == "I"], 
+    v[e == "I"] <- unlist(lapply(runLength(RleCigar)[runValue(RleCigar) == "I"],
         function(x) {
             c(x + 1, rep(1, x - 1))
         }))
     # v[e=='D'] <- 0 v[e=='N'] <- 0
-    
+
     # sum all until interesting position
     cs <- cumsum(v)
-    
+
     cs <- cs[!names(cs) == "D"]
     cs <- cs[!names(cs) == "N"]
 
 	#remove matches overexeeding the length of the read
 	cs <- cs[!cs>length(v)]
-    
+
     cs
 }
 
@@ -298,32 +298,32 @@ realCigarPositions.old <- function(RleCigar) {
 #' @rdname cigar-utilities
 #' @export
 realCigarPositionsList.old <- function(RleCigarList) {
-    
+
     # because of speed issues, checks are best performed outside this function.
-    if (!class(RleCigarList) == "CompressedRleList") {
-        stop("class must be Rle")
+    if (!is(RleCigarList, "RleList")) {
+        stop("RleCigarList must be an RleList object")
     }
-    
+
     lapply(RleCigarList, function(RleCigar) {
         e <- as.character(RleCigar)
         # make a new representation vector
         v <- rep(0, length = length(e))
         names(v) <- e
-        
+
         v[e == "M"] <- 1
-        v[e == "I"] <- unlist(lapply(runLength(RleCigar)[runValue(RleCigar) == "I"], 
+        v[e == "I"] <- unlist(lapply(runLength(RleCigar)[runValue(RleCigar) == "I"],
             function(x) {
                 c(x + 1, rep(1, x - 1))
             }))
         # v[e=='D'] <- 0 v[e=='N'] <- 0
-        
+
         # sum all until interesting position
         cs <- cumsum(v)
-        
+
         cs <- cs[!names(cs) == "D"]
         cs <- cs[!names(cs) == "N"]
 
-        
+
 		#remove matches overexeeding the length of the read
 		cs <- cs[!cs>length(v)]
 
@@ -336,14 +336,14 @@ realCigarPositionsList.old <- function(RleCigarList) {
 # will be removed in short
 #####
 #' scanForHeterozygotes-old
-#' 
+#'
 #' Identifies the positions of SNPs found in BamGR reads.
-#' 
+#'
 #' This function scans all reads stored in a \code{GAlignmentsList} for
 #' possible heterozygote positions. The user can balance the sensitivity of the
 #' search by modifying the minimumReadsAtPos, maximumMajorAlleleFrequency and
 #' minimumBiAllelicFrequency arguments.
-#' 
+#'
 #' @rdname scanForHeterozygotes-old
 #' @param BamList A \code{GAlignmentsList object}
 #' @param minimumReadsAtPos minimum number of reads required to call a SNP at a
@@ -365,121 +365,121 @@ realCigarPositionsList.old <- function(RleCigarList) {
 #' function that count the number of reads overlapping a site.  }
 #' @keywords scan SNP heterozygote
 #' @examples
-#' 
+#'
 #' data(reads)
 #' s <- scanForHeterozygotes.old(reads,verbose=FALSE)
-#' 
+#'
 #' @export scanForHeterozygotes.old
-scanForHeterozygotes.old <- function(BamList, minimumReadsAtPos = 20, maximumMajorAlleleFrequency = 0.9, 
+scanForHeterozygotes.old <- function(BamList, minimumReadsAtPos = 20, maximumMajorAlleleFrequency = 0.9,
     minimumBiAllelicFrequency = 0.9, maxReads = 15000, verbose = TRUE) {
-    
+
     # if just one element of, make list (which is a convenient way of handling this
     # input type)
-    if (class(BamList) == "GAlignments") {
+    if (is(BamList, "GAlignments")) {
         BamList <- GAlignmentsList(BamList)
     }
-    if (class(BamList) == "GRanges") {
+    if (is(BamList, "GRanges")) {
         BamList <- GRangesList(BamList)
     }
-    
-    if (class(minimumReadsAtPos) != "numeric") 
-        stop(paste("minimumReadsAtPos must be of class numeric, not", class(minimumReadsAtPos)))
-    if (length(minimumReadsAtPos) != 1) 
+
+    if (!is.numeric(minimumReadsAtPos))
+        stop(paste("minimumReadsAtPos must be a numeric vector, not a", class(minimumReadsAtPos)))
+    if (length(minimumReadsAtPos) != 1)
         stop(paste("minimumReadsAtPos must be of length 1, not", length(minimumReadsAtPos)))
-    if (class(maximumMajorAlleleFrequency) != "numeric") 
-        stop(paste("maximumMajorAlleleFrequency must be of class numeric, not", class(maximumMajorAlleleFrequency)))
-    if (length(maximumMajorAlleleFrequency) != 1) 
+    if (!is.numeric(maximumMajorAlleleFrequency))
+        stop(paste("maximumMajorAlleleFrequency must be a numeric vector, not a", class(maximumMajorAlleleFrequency)))
+    if (length(maximumMajorAlleleFrequency) != 1)
         stop(paste("maximumMajorAlleleFrequency must be of length 1, not", length(maximumMajorAlleleFrequency)))
-    if (maximumMajorAlleleFrequency < 0 | maximumMajorAlleleFrequency > 1) 
+    if (maximumMajorAlleleFrequency < 0 | maximumMajorAlleleFrequency > 1)
         stop("maximumMajorAlleleFrequency must be between 0 and 1")
-    if (class(minimumBiAllelicFrequency) != "numeric") 
-        stop(paste("minimumBiAllelicFrequency must be of class numeric, not", class(minimumBiAllelicFrequency)))
-    if (length(minimumBiAllelicFrequency) != 1) 
+    if (!is.numeric(minimumBiAllelicFrequency))
+        stop(paste("minimumBiAllelicFrequency must be a numeric vector, not a", class(minimumBiAllelicFrequency)))
+    if (length(minimumBiAllelicFrequency) != 1)
         stop(paste("minimumBiAllelicFrequency must be of length 1, not", length(minimumBiAllelicFrequency)))
-    if (minimumBiAllelicFrequency < 0 | maximumMajorAlleleFrequency > 1) 
+    if (minimumBiAllelicFrequency < 0 | maximumMajorAlleleFrequency > 1)
         stop("minimumBiAllelicFrequency must be between 0 and 1")
-    if (class(verbose) != "logical") 
-        stop(paste("verbose must be of class logical, not", class(verbose)))
-    if (length(verbose) != 1) 
+    if (!is.logical(verbose))
+        stop(paste("verbose must be a logical, not a", class(verbose)))
+    if (length(verbose) != 1)
         stop(paste("verbose must be of length 1, not", length(verbose)))
-    
+
     # checking that BamList format is ok (has to be done quite carefully for the
     # list-class gappedAlignments
-    if (class(BamList) == "GRangesList") 
+    if (is(BamList, "GRangesList"))
         stop("The use of GRangesList is not recommended. Use BamImpGAList or BamImpGAPList")
-    if (class(BamList) != "GAlignmentsList") 
-        stop("The class of the BamList has to be a GAlignmentsList")
-    
+    if (!is(BamList, "GAlignmentsList"))
+        stop("BamList has to be a GAlignmentsList object")
+
     # checks specific for GAlignments
-    if (unique(unlist(lapply(BamList, class))) == "GAlignments") {
+    if (all(vapply(BamList, is, logical(1), "GAlignments"))) {
         if (!all(unlist(lapply(BamList, function(x) {
             all(c("cigar", "qwidth") %in% colnames(mcols(x)))
         })))) {
             stop("BamList given as GAlignmentsLists of GAlignments objects must contain mcols named qwidth and cigar")
         }
     }
-    
+
     # check that we dont create a too large and memory-consuming matrix
     if (sum(unlist(lapply(BamList, length)) > maxReads) > 0) {
         stop("you may consume too much memory. If there is plenty of memory, then increase maxReads to allow more reads")
     }
-    
+
     ans <- GRanges()
     chromosomeLevels <- unique(unlist(lapply(BamList, function(x) {
         levels(droplevels(runValue(seqnames(x))))
     })))
-    
+
     for (chr in chromosomeLevels) {
-        if (verbose) 
+        if (verbose)
             cat(paste("Investigating chromosome", chr), "\n")
-        
+
         BamListchr <- GAlignmentsList(mapply(function(x, y) {
             x[y]
         }, BamList, seqnames(BamList) == chr))
-        
-        
+
+
         for (sample in 1:length(BamListchr)) {
-            if (verbose) 
-                cat(paste("Investigating sample", sample), "out of", length(BamListchr), 
+            if (verbose)
+                cat(paste("Investigating sample", sample), "out of", length(BamListchr),
                   "\n")
-            
+
             # extract samples
             BamListHere <- BamListchr[[sample]]
-            
+
             if (!(length(BamListHere) == 0)) {
-                
+
                 # then iterate over all reads
                 cigarRle <- cigarToRleList(mcols(BamListHere)[, "cigar"])
                 toKeep <- realCigarPositionsList.old(cigarRle)
-                
+
                 seq <- mcols(BamListHere)[, "seq"]
                 charList <- strsplit(as.character(seq), "")
-                
+
                 start <- start(BamListHere) - min(start(BamListHere)) + 1
-                
+
                 nw <- max(end(BamListHere)) - min(start(BamListHere)) + 2
-                
+
                 # populate matrix
-                new <- matrix(NA, nrow = max(end(BamListHere)) - min(start(BamListHere)) + 
+                new <- matrix(NA, nrow = max(end(BamListHere)) - min(start(BamListHere)) +
                   1, ncol = length(BamListHere))
                 for (i in 1:ncol(new)) {
                   new[start[i]:(start[i] + length(toKeep[[i]]) - 1), i] <- charList[[i]][toKeep[[i]]]
-                  
+
                 }
-                
+
                 # set rownames
                 rownames(new) <- as.character(1:(nw - 1))
-                
+
                 new <- new[apply(!is.na(new), 1, sum) > minimumReadsAtPos, ]
-                
+
                 if (!nrow(new) == 0) {
-                  
+
                   # tabulate countsPerPosition (cpp)
                   cpp <- apply(new, 1, table)
-                  
+
                   TFl <- unlist(lapply(cpp, function(x) {
                     if (length(x) > 1) {
-                      
+
                       MajorAlleleFrequency <- x[order(x, decreasing = TRUE)[1]]/sum(x)
                       if (MajorAlleleFrequency < maximumMajorAlleleFrequency) {
                         MinorAlleleFrequency <- x[order(x, decreasing = TRUE)[2]]/sum(x)
@@ -496,7 +496,7 @@ scanForHeterozygotes.old <- function(BamList, minimumReadsAtPos = 20, maximumMaj
                     }
                   }))
                   if (!all(!TFl)) {
-                    GR <- GRanges(ranges = IRanges(start = (as.numeric(names(cpp[TFl])) + 
+                    GR <- GRanges(ranges = IRanges(start = (as.numeric(names(cpp[TFl])) +
                       min(start(BamListHere)) - 1), width = 1), seqnames = chr)
                     ans <- c(ans, GR)
                   }
@@ -506,29 +506,29 @@ scanForHeterozygotes.old <- function(BamList, minimumReadsAtPos = 20, maximumMaj
     }
     # merge from all individuals
     ans <- unique(ans)
-    
+
     # Add a Snp name based on position
     if (!(length(ans) == 0)) {
         names(ans) <- paste("chr", seqnames(ans), "_", start(ans),
             sep = "")
-        
+
     }
     return(ans)
 }
 
 
 #' implode list of arguments into environment
-#' 
+#'
 #' apply on list of variables to be put in the local environment
-#' 
-#' help the propagation of e.g. graphical paramters 
-#' 
+#'
+#' help the propagation of e.g. graphical paramters
+#'
 #' @rdname implodeList-old
 #' @param x list of variables
 #' @author Jesper R. Gadin
 #' @keywords implode
 #' @examples
-#' 
+#'
 #' lst <- list(hungry='yes', thirsty='no')
 #' implodeList.old(lst)
 #' #the check ls()
@@ -536,6 +536,6 @@ scanForHeterozygotes.old <- function(BamList, minimumReadsAtPos = 20, maximumMaj
 #' @export implodeList.old
 implodeList.old <- function(x) {
     oname <- deparse(substitute(x))
-    eval(parse(text = paste0("for(i in 1:length(", oname, ")){assign(names(", oname, 
+    eval(parse(text = paste0("for(i in 1:length(", oname, ")){assign(names(", oname,
         ")[i],", oname, "[[i]])}")), parent.frame())
-} 
+}
