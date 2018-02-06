@@ -178,7 +178,7 @@ setMethod("fractionPlotDf", signature(x = "ASEset"),
 	# ref
 	# phase
 
-	if(is,integer(snp)){
+	if(is.integer(snp)){
 		snprow <- snp
 	}else if(is.character(snp)){
 		snprow <- which(rownames(x) %in% snp  )
