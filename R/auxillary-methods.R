@@ -382,7 +382,7 @@ setMethod("scanForHeterozygotes", signature(BamList = "GAlignmentsList"),
     # list-class gappedAlignments
     if (is(BamList, "GRangesList"))
         stop("The use of GRangesList is not recommended. Use BamImpGAList or BamImpGAPList")
-    if (is(BamList, "GAlignmentsList"))
+    if (!is(BamList, "GAlignmentsList"))
         stop("BamList has to be a GAlignmentsList object")
 
     # checks specific for GAlignments
