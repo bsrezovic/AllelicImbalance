@@ -200,10 +200,16 @@ setMethod("regionSummary", signature("ASEset"),
 		}else{
 			idn <- "nameless"
 		}
-		new <- unlist(grl)
-		mcols(new)[["regionIndex"]] <- DataFrame(lvl1=idx)
-		mcols(new)[["regionIndexName"]] <- DataFrame(lvl1=idn)
-		new
+		# Don't unlist if 'grl' is not a GRangesList object (e.g.
+		# a GRanges object).
+                if (is(grl , "GRangesList")){
+			gr <- unlist(grl)
+                }else{
+			gr <- grl
+		}
+		mcols(gr)[["regionIndex"]] <- DataFrame(lvl1=idx)
+		mcols(gr)[["regionIndexName"]] <- DataFrame(lvl1=idn)
+		gr
 }
 
 #return granges for each bin (index has to be sorted)
