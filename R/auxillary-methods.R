@@ -1789,7 +1789,7 @@ function(fastaIn, fastaOut, posToReplace, splitOnSeqlevels=TRUE, verbose=TRUE){
 		seq <- scanFa(fl,param=searchArea)
 
 		#replace the SNPs with N
-		toReplace <- unique(as.integer(ranges(posToReplace)))
+		toReplace <- unique(IRanges:::unlist_as_integer(ranges(posToReplace)))
 		seq <- seq[[1]]
 		seq[toReplace] <- "N"
 
