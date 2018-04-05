@@ -26,10 +26,10 @@ A more effectice way of store the phase data in the ASEset object
 \examples{
 
 #load data
-data(ASEset) 
+data(ASEset)
 a <- ASEset
 
-#example phase matrix 
+#example phase matrix
 p1 <- matrix(sample(c(1,0),replace=TRUE, size=nrow(a)*ncol(a)),nrow=nrow(a), ncol(a))
 p2 <- matrix(sample(c(1,0),replace=TRUE, size=nrow(a)*ncol(a)),nrow=nrow(a), ncol(a))
 p <- matrix(paste(p1,sample(c("|","|","/"), size=nrow(a)*ncol(a), replace=TRUE), p2, sep=""),
@@ -37,7 +37,7 @@ p <- matrix(paste(p1,sample(c("|","|","/"), size=nrow(a)*ncol(a), replace=TRUE),
 
 ar <- phaseMatrix2Array(p)
 
-#Convert back 
+#Convert back
 mat <- phaseArray2phaseMatrix(ar)
 
 }

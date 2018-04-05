@@ -797,7 +797,7 @@ setMethod("impBcfGR", signature(UserDir = "character"),
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @seealso \itemize{ \item The \code{\link{scanForHeterozygotes}} which is a
 #' function to find possible heterozygote sites in a
-#' \code{\link[GenomicAlignments]{GAlignmentsList}} object }
+#' GenomicAlignments object }
 #' @keywords SNP count
 #' @examples
 #'

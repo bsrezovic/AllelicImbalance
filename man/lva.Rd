@@ -81,7 +81,8 @@ lva(a, rv, r1c)
 lva(a, rv, r2)
 
 # Use covariates (integers or nuemric)
-cov <- data.frame(age=sample(20:70, ncol(a)), sex=rep(c(1,2), each=ncol(a)/2),  row.names=colnames(a))
+cov <- data.frame(age=sample(20:70, ncol(a)), sex=rep(c(1,2), each=ncol(a)/2),  
+row.names=colnames(a))
 lva(a, rv, r1, covariates=cov)
 lva(a, rv, r1b, covariates=cov)
 lva(a, rv, r1c, covariates=cov)

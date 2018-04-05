@@ -120,10 +120,6 @@ a <- ASEsetFromCountList(rowRanges, countListPlus=countListPlus,
 countListMinus=countListMinus, colData=colData)
 
 }
-\seealso{
-\itemize{ \item
-\code{\link[SummarizedExperiment]{RangedSummarizedExperiment}} objects. }
-}
 \author{
 Jesper R. Gadin, Lasse Folkersen
 }

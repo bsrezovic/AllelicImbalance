@@ -46,7 +46,7 @@ it is generated through scanning the same bam-files as in \code{BamList} for
 heterozygote locations (e.g. using \code{scanForHeterozygotes}). The
 GRvariants will currently only accept locations having width=1,
 corresponding to bi-allelic SNPs. The strand type information will be kept in the
-returned object. If the strand is marked as unknown "*", it will be forced to the "+" 
+returned object. If the strand is marked as unknown "*", it will be forced to the "+"
 strand.
 
 quaity information is extracted from the BamList object, and requires the presence of
@@ -65,8 +65,8 @@ alleleQualityArray <- getAlleleQuality(BamList=reads,GRvariants)
 alleleCountsArray <- getAlleleCounts(BamList=reads,GRvariants,
                      strand='*', return.class="array")
 
-	a <- ASEsetFromArrays(GRvariants, countsUnknown = alleleCountsArray) 
-	aquals(a) <- alleleQualityArray	
+	a <- ASEsetFromArrays(GRvariants, countsUnknown = alleleCountsArray)
+	aquals(a) <- alleleQualityArray
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

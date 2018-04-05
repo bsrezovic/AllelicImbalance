@@ -41,7 +41,7 @@ ASEset is used. see '?mapBias'.
 }
 \examples{
 
-data(ASEset) 
+data(ASEset)
 a <- ASEset
 # Add phase
 set.seed(1)

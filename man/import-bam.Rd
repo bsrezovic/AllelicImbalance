@@ -39,8 +39,8 @@ If the sequence data is strand-specific you may want to set XStag=TRUE. The
 strand specific information has then to be stored in the meta columns with
 column name 'XS'. If the aligner did not set the XS-tag and the data is strand-
 specific it is still be possible to infer the strand from the bit flags after importing
-the reads to R. Depending on the strand-specific protocol different combinations of the 
-flags will have to be used. For illumina fr-secondstrand, 83 and 163 are minus strand 
+the reads to R. Depending on the strand-specific protocol different combinations of the
+flags will have to be used. For illumina fr-secondstrand, 83 and 163 are minus strand
 reads and 99 and 147 are plus strand reads.
 }
 \examples{
@@ -48,7 +48,7 @@ reads and 99 and 147 are plus strand reads.
 #Declare searchArea
 searchArea <- GRanges(seqnames=c('17'), ranges=IRanges(79478301,79478361))
 
-#Relative or full path  
+#Relative or full path
 pathToFiles <- system.file('extdata/ERP000101_subset', package='AllelicImbalance')
 
 #all files in directory

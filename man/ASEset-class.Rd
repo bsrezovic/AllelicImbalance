@@ -183,8 +183,7 @@ paternalAllele(x, ...)
 An object of class ASEset containing location information and allele
 counts for a number of SNPs measured in a number of samples on various
 strand, as well as mapBias information. All data is stored in a manner
-similar to the \code{\link[SummarizedExperiment]{RangedSummarizedExperiment}}
-class.
+similar to the SummarizedExperiment class.
 }
 \description{
 Object that holds allele counts, genomic positions and map-bias for a set of
@@ -327,10 +326,6 @@ gr <- GRanges(seqnames=c("chr2"), ranges=IRanges(start=1:dim(ar2)[1], width=1), 
 a <- ASEsetFromArrays(gr, countsUnknown=ar2)
 
 
-}
-\seealso{
-\itemize{ \item
-\code{\link[SummarizedExperiment]{RangedSummarizedExperiment}} objects. }
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

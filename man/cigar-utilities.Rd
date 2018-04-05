@@ -47,11 +47,6 @@ The main intention for these functions are to be the internal functions for
   newPositions <- realCigarPositions.old(RleCigar=RleCigarList[[1]])
   newPositionsList <- realCigarPositionsList.old(RleCigarList=RleCigarList)
 }
-\seealso{
-\itemize{ \item The \code{\link{scanForHeterozygotes}} which is a
-function to find possible heterozygote sites in a
-\code{\link[GenomicAlignments]{GAlignmentsList}} object }
-}
 \author{
 Jesper R. Gadin
 }

@@ -32,8 +32,8 @@ Summarizes information to ease creating plots
 Main purpose is to reduce the amount of overall code and ease maintenance.
 
 top.fraction.criteria can take three options, maxcount, ref and phase. The top
-allele will be every second row in the data frame, with start from row 2. 
-The maxcount argument will put the allele with most reads on top of the 
+allele will be every second row in the data frame, with start from row 2.
+The maxcount argument will put the allele with most reads on top of the
 bivariate fraction. Similarly the ref argument will put always the reference
 allele on top. The phase arguments puts the maternal phase always on top.
 The top.fraction.criteria for the ref or phase arguments requires that both ref
@@ -41,7 +41,7 @@ and alt is set in mcols(ASEset).
 }
 \examples{
 
-#test on example ASEset 
+#test on example ASEset
 data(ASEset)
 a <- ASEset
 df <- fractionPlotDf(a, 1, strand="+")

@@ -64,7 +64,7 @@ data(GRvariants)
 alleleCount <- getAlleleCounts(BamList=reads,GRvariants,
 strand='*')
 
-#if the reads had contained stranded data, these two calls would 
+#if the reads had contained stranded data, these two calls would
 #have given the correct input objects for getAlleleCounts
 alleleCountPlus <- getAlleleCounts(BamList=reads,GRvariants,
 strand='+')
@@ -76,7 +76,7 @@ strand='-')
 \seealso{
 \itemize{ \item The \code{\link{scanForHeterozygotes}} which is a
 function to find possible heterozygote sites in a
-\code{\link[GenomicAlignments]{GAlignmentsList}} object }
+GenomicAlignments object }
 }
 \author{
 Jesper R. Gadin, Lasse Folkersen

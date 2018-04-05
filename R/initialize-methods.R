@@ -45,8 +45,6 @@ NULL
 #' @note \code{ASEsetFromCountList} requires the same input data as a
 #' RangedSummarizedExperiment, but with minimum one assay for the allele counts.
 #' @author Jesper R. Gadin, Lasse Folkersen
-#' @seealso \itemize{ \item
-#' \code{\link[SummarizedExperiment]{RangedSummarizedExperiment}} objects. }
 #' @keywords ASEset ASEsetFromCountList
 #' @examples
 #' 

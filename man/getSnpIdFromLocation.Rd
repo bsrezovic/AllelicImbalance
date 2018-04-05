@@ -47,7 +47,7 @@ if (!is_32bit_windows && require(SNPlocs.Hsapiens.dbSNP144.GRCh37)) {
 	data(ASEset)
 
   #get counts at the three positions specified in GRvariants
-  updatedGRanges <- getSnpIdFromLocation(rowRanges(ASEset), 
+  updatedGRanges <- getSnpIdFromLocation(rowRanges(ASEset),
     SNPlocs.Hsapiens.dbSNP144.GRCh37)
 }
 

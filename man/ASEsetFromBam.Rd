@@ -43,7 +43,7 @@ gr <- GRvariants
 ##no execution at the moment
 #pathToDir <- system.file('inst/extdata/ERP000101_subset', package='AllelicImbalance')
 #a <- ASEsetFromBam(gr, pathToDir)
- 
+
 }
 \author{
 Jesper R. Gadin

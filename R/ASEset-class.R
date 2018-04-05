@@ -55,8 +55,8 @@ NULL
 #' @return An object of class ASEset containing location information and allele
 #' counts for a number of SNPs measured in a number of samples on various
 #' strand, as well as mapBias information. All data is stored in a manner
-#' similar to the \code{\link[SummarizedExperiment]{RangedSummarizedExperiment}}
-#' class.
+#' similar to the SummarizedExperiment class.
+#' 
 #' @section Table: table(...)
 #' 
 #' \describe{
@@ -102,8 +102,6 @@ NULL
 #'
 #'
 #' @author Jesper R. Gadin, Lasse Folkersen
-#' @seealso \itemize{ \item
-#' \code{\link[SummarizedExperiment]{RangedSummarizedExperiment}} objects. }
 #' @keywords class ASEset
 #' @examples
 #' 

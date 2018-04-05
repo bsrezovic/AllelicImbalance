@@ -33,17 +33,17 @@ contains the same information(not taken into account three-allelic or more SNPs)
 
 The genotype matrix retrieved from an ASEset object can differ from the genotype matrix
 stored in the object if reference and alternative alleles were not used or has changed
-since the phase genotype matrix was stored. Basically, it is preferable to provide 
+since the phase genotype matrix was stored. Basically, it is preferable to provide
 reference and alternative information when storing the genotype matrix.
 
-If possible, it is better to not use a genotype matrix, but instead relying completely 
-on storing a phase matrix(or array) together with reference and alternative allele 
+If possible, it is better to not use a genotype matrix, but instead relying completely
+on storing a phase matrix(or array) together with reference and alternative allele
 information.
 }
 \examples{
 
 #load example data
-data(ASEset) 
+data(ASEset)
 data(genomatrix)
 p <- genotype2phase(genomatrix, ref(ASEset), return.class="array")
 ref <- ref(ASEset)

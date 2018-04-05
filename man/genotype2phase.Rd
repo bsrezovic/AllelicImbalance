@@ -30,12 +30,12 @@ used to convert the genomatrix from the visually friendly matrix to phase array.
 \details{
 To not introduce redundant information in the ASEset object, the genotype matrix is
 translated to a phase matrix, containing the same information.
-Does not allow tri-allelic or multi-allelic SNPs, and if present the multi-allelic 
+Does not allow tri-allelic or multi-allelic SNPs, and if present the multi-allelic
 SNPs will lose the least occuring genotype.
 
-This function can handle indels, but if the reference allele is not provided, the 
+This function can handle indels, but if the reference allele is not provided, the
 rank matrix which is temporary created might use lots of memory, depending on the
-amount of indels among the genotypes. As conclusion, it is preferable to send in 
+amount of indels among the genotypes. As conclusion, it is preferable to send in
 reference genome when converting to phase.
 
 levels information is only important if the reference allele has to be guessed,
@@ -44,8 +44,8 @@ and so if reference information is provided, the levels argument can be ignored.
 \examples{
 
 #load example data
-data(genomatrix) 
-data(ASEset) 
+data(genomatrix)
+data(ASEset)
 p <- genotype2phase(genomatrix, ref(ASEset))
 
 }

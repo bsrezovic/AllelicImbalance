@@ -55,7 +55,7 @@ each bcf file in \code{UserDir}. If there is not, then the functions
 #Declare searchArea
 searchArea <- GRanges(seqnames=c('17'), ranges=IRanges(79478301,79478361))
 
-#Relative or full path  
+#Relative or full path
 pathToFiles <- system.file('extdata/ERP000101_subset', package='AllelicImbalance')
 
 #import
