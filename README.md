@@ -50,8 +50,9 @@ Alternatively, you can easily install the release version of **AllelicImbalance*
 Bioconductor.
 
 ```r
-source("http://bioconductor.org/biocLite.R")
-biocLite("AllelicImbalance")
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("AllelicImbalance")
 ```
 
 ## Citation
