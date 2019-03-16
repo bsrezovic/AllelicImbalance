@@ -46,7 +46,7 @@ object as search area.
 A wrapper to import bcf files into R in the form of GenomicRanges objects.
 }
 \note{
-Make sure there is a complementary index file \code{*.bcf.bci} for
+Make sure there is a complementary index file \code{*.bcf.csi} for
 each bcf file in \code{UserDir}. If there is not, then the functions
 \code{impBcfGRL} and \code{impBcfGR} will try to create them.
 }

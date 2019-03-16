@@ -648,7 +648,7 @@ setMethod("impBamGAL", signature(UserDir = "character"),
 #' @param ... parameters to pass on
 #' @return \code{BcfImpGRList} returns a GRangesList object.  \code{BcfImpGR}
 #' returns one GRanges object of all unique entries from one or more bcf files.
-#' @note Make sure there is a complementary index file \code{*.bcf.bci} for
+#' @note Make sure there is a complementary index file \code{*.bcf.csi} for
 #' each bcf file in \code{UserDir}. If there is not, then the functions
 #' \code{impBcfGRL} and \code{impBcfGR} will try to create them.
 #' @author Jesper R. Gadin, Lasse Folkersen
@@ -699,15 +699,15 @@ setMethod("impBcfGRL", signature(UserDir = "character"),
         stop(paste("No bcf files were found in", UserDir))
 
     # bcfFilesList <- BcfFileList(bcfFiles) #store all the .bam paths in a BamFile.
-    if (!all(file.exists(paste(bcfFiles, ".bci", sep = "")))) {
+    if (!all(file.exists(paste(bcfFiles, ".csi", sep = "")))) {
         if (verbose)
-            cat("Did not find bci files for all bcf files. Trying the indexBcf function obtain these",
+            cat("Did not find csi files for all bcf files. Trying the indexBcf function obtain these",
                 "\n")
         for (bcfFile in bcfFiles) {
             indexBcf(bcfFile)
         }
-        if (!all(file.exists(paste(bcfFiles, ".bci", sep = "")))) {
-            stop("The bcf files in UserDir are required to also have .bcf.bci index files. Run the indexBcf function in package Rsamtools on each bam file.")
+        if (!all(file.exists(paste(bcfFiles, ".csi", sep = "")))) {
+            stop("The bcf files in UserDir are required to also have .bcf.csi index files. Run the indexBcf function in package Rsamtools on each bam file.")
         }
     }
 

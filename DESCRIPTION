@@ -1,8 +1,8 @@
 Package: AllelicImbalance
 Type: Package
 Title: Investigates Allele Specific Expression
-Version: 1.21.0
-Date: 2017-04-29
+Version: 1.21.1
+Date: 2019-03-08
 Encoding: UTF-8
 Author: Jesper R Gadin, Lasse Folkersen
 Maintainer: Jesper R Gadin <j.r.gadin@gmail.com>
@@ -34,7 +34,7 @@ Imports:
     Biostrings (>= 2.47.6),
     S4Vectors (>= 0.17.25),
     IRanges (>= 2.13.12),
-    Rsamtools (>= 1.31.2),
+    Rsamtools (>= 1.99.3),
     GenomicFeatures (>= 1.31.3),
     Gviz,
     lattice,
