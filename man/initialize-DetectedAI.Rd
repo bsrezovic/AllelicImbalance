@@ -10,8 +10,8 @@ DetectedAIFromArray(x = "ASEset", strand = "*",
   threshold.count.sample = NULL, threshold.delta.frequency = NULL,
   threshold.pvalue = NULL, threshold.frequency.names = NULL,
   threshold.count.sample.names = NULL,
-  threshold.delta.frequency.names = NULL, threshold.pvalue.names = NULL,
-  ...)
+  threshold.delta.frequency.names = NULL,
+  threshold.pvalue.names = NULL, ...)
 }
 \arguments{
 \item{x}{\code{ASEset}}

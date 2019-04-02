@@ -4,7 +4,6 @@
 \name{binom.test}
 \alias{binom.test}
 \alias{binom.test,ASEset-method}
-\alias{binom.test,ASEset-method}
 \title{binomial test}
 \usage{
 \S4method{binom.test}{ASEset}(x, n = "*")

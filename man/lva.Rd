@@ -4,7 +4,6 @@
 \name{lva}
 \alias{lva}
 \alias{lva,array-method}
-\alias{lva}
 \alias{lva,ASEset-method}
 \title{lva}
 \usage{

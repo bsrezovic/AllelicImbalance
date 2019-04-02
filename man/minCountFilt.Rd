@@ -4,8 +4,6 @@
 \name{minCountFilt}
 \alias{minCountFilt}
 \alias{minCountFilt,ASEset-method}
-\alias{minCountFilt}
-\alias{minCountFilt,ASEset-method}
 \title{minCountFilt methods}
 \usage{
 minCountFilt(x, ...)

@@ -5,7 +5,6 @@
 \alias{GlobalAnalysis-class}
 \alias{GlobalAnalysis}
 \alias{GlobalAnalysis-method}
-\alias{GlobalAnalysis-class}
 \title{GlobalAnalysis class}
 \arguments{
 \item{x}{ASEset object or list of ASEsets}

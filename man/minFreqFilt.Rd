@@ -5,14 +5,13 @@
 \alias{minFreqFilt}
 \alias{minfreqFilt}
 \alias{minFreqFilt,ASEset-method}
-\alias{minFreqFilt}
-\alias{minFreqFilt,ASEset-method}
 \title{minFreqFilt methods}
 \usage{
 minFreqFilt(x, ...)
 
-\S4method{minFreqFilt}{ASEset}(x, strand = "*", threshold.frequency = 0.1,
-  replace.with = "zero", return.class = "ASEset", sum = "all")
+\S4method{minFreqFilt}{ASEset}(x, strand = "*",
+  threshold.frequency = 0.1, replace.with = "zero",
+  return.class = "ASEset", sum = "all")
 }
 \arguments{
 \item{x}{\code{ASEset} object}

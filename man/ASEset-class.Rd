@@ -24,28 +24,10 @@
 \alias{alleleCounts<-,ASEset-method}
 \alias{phase,ASEset-method}
 \alias{phase<-,ASEset-method}
-\alias{alleleCounts}
-\alias{alleleCounts,ASEset-method}
-\alias{alleleCounts<-}
-\alias{alleleCounts<-,ASEset-method}
-\alias{mapBias}
-\alias{mapBias,ASEset-method}
-\alias{fraction}
-\alias{fraction,ASEset-method}
-\alias{arank}
-\alias{frequency}
-\alias{genotype}
-\alias{genotype,ASEset-method}
-\alias{genotype<-}
-\alias{genotype<-,ASEset-method}
 \alias{countsPerSnp}
 \alias{countsPerSnp,ASEset-method}
 \alias{countsPerSample}
 \alias{countsPerSample,ASEset-method}
-\alias{phase}
-\alias{phase,ASEset-method}
-\alias{phase<-}
-\alias{phase<-,ASEset-method}
 \alias{mapBias<-}
 \alias{mapBias<-,ASEset-method}
 \alias{refExist}
@@ -76,8 +58,8 @@ alleleCounts(x, strand = "*", return.class = "list")
 
 alleleCounts(x, ...) <- value
 
-\S4method{alleleCounts}{ASEset}(x, strand = "*", return.class = "array",
-  ...) <- value
+\S4method{alleleCounts}{ASEset}(x, strand = "*",
+  return.class = "array", ...) <- value
 
 mapBias(x, ...)
 
@@ -88,7 +70,8 @@ fraction(x, ...)
 \S4method{fraction}{ASEset}(x, strand = "*",
   top.fraction.criteria = "maxcount", verbose = FALSE, ...)
 
-arank(x, return.type = "names", return.class = "list", strand = "*", ...)
+arank(x, return.type = "names", return.class = "list", strand = "*",
+  ...)
 
 frequency(x, ...)
 

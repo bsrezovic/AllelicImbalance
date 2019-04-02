@@ -5,7 +5,6 @@
 \alias{DetectedAI-plot}
 \alias{frequency_vs_threshold_variable_plot}
 \alias{frequency_vs_threshold_variable_plot,DetectedAI-class}
-\alias{frequency_vs_threshold_variable_plot}
 \alias{frequency_vs_threshold_variable_plot,DetectedAI-method}
 \alias{detectedAI_vs_threshold_variable_plot}
 \alias{detectedAI_vs_threshold_variable_plot,DetectedAI-method}

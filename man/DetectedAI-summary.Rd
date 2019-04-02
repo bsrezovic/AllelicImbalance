@@ -7,10 +7,6 @@
 \alias{frequency_vs_threshold_variable_summary,DetectedAI-method}
 \alias{detectedAI_vs_threshold_variable_summary}
 \alias{detectedAI_vs_threshold_variable_summary,DetectedAI-method}
-\alias{frequency_vs_threshold_variable_summary}
-\alias{frequency_vs_threshold_variable_summary,DetectedAI-method}
-\alias{detectedAI_vs_threshold_variable_summary}
-\alias{detectedAI_vs_threshold_variable_summary,DetectedAI-method}
 \alias{usedSNPs_vs_threshold_variable_summary}
 \alias{usedSNPs_vs_threshold_variable_summary,DetectedAI-method}
 \title{DetectedAI summary}

@@ -5,7 +5,6 @@
 \alias{DetectedAI-class}
 \alias{DetectedAI}
 \alias{DetectedAI-method}
-\alias{DetectedAI-class}
 \alias{referenceFrequency}
 \alias{referenceFrequency,DetectedAI-method}
 \alias{thresholdFrequency}

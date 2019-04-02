@@ -4,8 +4,6 @@
 \name{ASEsetFromBam}
 \alias{ASEsetFromBam}
 \alias{ASEsetFromBam,GRanges-method}
-\alias{ASEsetFromBam}
-\alias{ASEsetFromBam,GRanges-method}
 \title{ASEset from bam file}
 \usage{
 ASEsetFromBam(gr, ...)

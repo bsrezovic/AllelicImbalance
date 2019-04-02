@@ -4,13 +4,12 @@
 \name{phase2genotype}
 \alias{phase2genotype}
 \alias{phase2genotype,array-method}
-\alias{phase2genotype}
-\alias{phase2genotype,array-method}
 \title{phase2genotype}
 \usage{
 phase2genotype(x, ...)
 
-\S4method{phase2genotype}{array}(x, ref, alt, return.class = "matrix", ...)
+\S4method{phase2genotype}{array}(x, ref, alt, return.class = "matrix",
+  ...)
 }
 \arguments{
 \item{x}{array see examples}

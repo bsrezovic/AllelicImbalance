@@ -4,8 +4,6 @@
 \name{mapBiasRef}
 \alias{mapBiasRef}
 \alias{mapBiasRef,ASEset-method}
-\alias{mapBiasRef}
-\alias{mapBiasRef,ASEset-method}
 \title{mapBias for reference allele}
 \usage{
 mapBiasRef(x, ...)

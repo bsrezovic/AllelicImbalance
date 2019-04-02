@@ -5,7 +5,6 @@
 \alias{LinkVariantAlmlof-plot}
 \alias{plot}
 \alias{plot,LinkVariantAlmlof-method}
-\alias{plot}
 \alias{plot,LinkVariantAlmlof,ANY-method}
 \title{plot LinkVariantAlmlof objects}
 \usage{

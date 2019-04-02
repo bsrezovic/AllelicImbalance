@@ -4,15 +4,13 @@
 \name{getAlleleQuality}
 \alias{getAlleleQuality}
 \alias{getAlleleQuality,GAlignmentsList-method}
-\alias{getAlleleQuality}
-\alias{getAlleleQuality,GAlignmentsList-method}
 \title{snp quality data}
 \usage{
 getAlleleQuality(BamList, ...)
 
 \S4method{getAlleleQuality}{GAlignmentsList}(BamList, GRvariants,
-  fastq.format = "illumina.1.8", return.class = "array", verbose = TRUE,
-  ...)
+  fastq.format = "illumina.1.8", return.class = "array",
+  verbose = TRUE, ...)
 }
 \arguments{
 \item{BamList}{A \code{GAlignmentsList object} or \code{GRangesList object}

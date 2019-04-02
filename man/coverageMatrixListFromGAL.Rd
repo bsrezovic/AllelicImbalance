@@ -4,14 +4,12 @@
 \name{coverageMatrixListFromGAL}
 \alias{coverageMatrixListFromGAL}
 \alias{coverageMatrixListFromGAL,GAlignmentsList-method}
-\alias{coverageMatrixListFromGAL}
-\alias{coverageMatrixListFromGAL,GAlignmentsList-method}
 \title{coverage matrix of GAlignmentsList}
 \usage{
 coverageMatrixListFromGAL(BamList, ...)
 
-\S4method{coverageMatrixListFromGAL}{GAlignmentsList}(BamList, strand = "*",
-  ignore.empty.bam.row = TRUE)
+\S4method{coverageMatrixListFromGAL}{GAlignmentsList}(BamList,
+  strand = "*", ignore.empty.bam.row = TRUE)
 }
 \arguments{
 \item{BamList}{GAlignmentsList containing reads over the region to calculate

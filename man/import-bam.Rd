@@ -5,8 +5,6 @@
 \alias{import-bam}
 \alias{impBamGAL}
 \alias{impBamGAL,character-method}
-\alias{impBamGAL}
-\alias{impBamGAL,character-method}
 \title{Import Bam}
 \usage{
 impBamGAL(UserDir, ...)

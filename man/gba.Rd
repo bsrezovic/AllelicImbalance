@@ -4,8 +4,6 @@
 \name{gba}
 \alias{gba}
 \alias{gba,character-method}
-\alias{gba}
-\alias{gba,character-method}
 \title{global analysis wrapper}
 \usage{
 gba(pathBam, ...)

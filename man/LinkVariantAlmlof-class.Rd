@@ -5,7 +5,6 @@
 \alias{LinkVariantAlmlof-class}
 \alias{LinkVariantAlmlof}
 \alias{LinkVariantAlmlof-method}
-\alias{LinkVariantAlmlof-class}
 \alias{pvalue}
 \alias{pvalue,LinkVariantAlmlof-method}
 \title{LinkVariantAlmlof class}

@@ -4,14 +4,12 @@
 \name{getAreaFromGeneNames}
 \alias{getAreaFromGeneNames}
 \alias{getAreaFromGeneNames,character-method}
-\alias{getAreaFromGeneNames}
-\alias{getAreaFromGeneNames,character-method}
 \title{Get Gene Area}
 \usage{
 getAreaFromGeneNames(genesymbols, ...)
 
-\S4method{getAreaFromGeneNames}{character}(genesymbols, OrgDb, leftFlank = 0,
-  rightFlank = 0, na.rm = FALSE, verbose = TRUE)
+\S4method{getAreaFromGeneNames}{character}(genesymbols, OrgDb,
+  leftFlank = 0, rightFlank = 0, na.rm = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{genesymbols}{A character vector that contains genesymbols of genes

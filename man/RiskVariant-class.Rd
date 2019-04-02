@@ -5,7 +5,6 @@
 \alias{RiskVariant-class}
 \alias{RiskVariant}
 \alias{RiskVariant-method}
-\alias{RiskVariant-class}
 \alias{ref,RiskVariant-method}
 \alias{ref<-,RiskVariant,ANY-method}
 \alias{alt,RiskVariant-method}

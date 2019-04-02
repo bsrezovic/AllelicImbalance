@@ -4,8 +4,6 @@
 \name{multiAllelicFilt}
 \alias{multiAllelicFilt}
 \alias{multiAllelicFilt,ASEset-method}
-\alias{multiAllelicFilt}
-\alias{multiAllelicFilt,ASEset-method}
 \title{multi-allelic filter methods}
 \usage{
 multiAllelicFilt(x, ...)

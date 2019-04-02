@@ -4,8 +4,6 @@
 \name{lva.internal}
 \alias{lva.internal}
 \alias{lva.internal,array-method}
-\alias{lva.internal}
-\alias{lva.internal,array-method}
 \title{lva.internal}
 \usage{
 lva.internal(x, ...)

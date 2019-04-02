@@ -5,8 +5,6 @@
 \alias{ASEset-filters}
 \alias{hetFilt}
 \alias{hetFilt,ASEset-method}
-\alias{hetFilt}
-\alias{hetFilt,ASEset-method}
 \title{genotype filter methods}
 \usage{
 hetFilt(x, ...)

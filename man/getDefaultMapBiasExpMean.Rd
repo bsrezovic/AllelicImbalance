@@ -6,10 +6,7 @@
 \alias{getDefaultMapBiasExpMean3D}
 \alias{getDefaultMapBiasExpMean,ANY-method}
 \alias{getDefaultMapBiasExpMean3D,ANY-method}
-\alias{getDefaultMapBiasExpMean}
-\alias{getDefaultMapBiasExpMean3D}
 \alias{getDefaultMapBiasExpMean,list-method}
-\alias{getDefaultMapBiasExpMean3D,ANY-method}
 \title{Map Bias}
 \usage{
 getDefaultMapBiasExpMean(alleleCountList, ...)

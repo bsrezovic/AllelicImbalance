@@ -4,16 +4,16 @@
 \name{detectAI}
 \alias{detectAI}
 \alias{detectAI,ASEset-method}
-\alias{detectAI,ASEset-method}
 \title{detectAI}
 \usage{
 detectAI(x, ...)
 
-\S4method{detectAI}{ASEset}(x, return.class = "DetectedAI", strand = "*",
-  threshold.frequency = 0, threshold.count.sample = 1,
+\S4method{detectAI}{ASEset}(x, return.class = "DetectedAI",
+  strand = "*", threshold.frequency = 0, threshold.count.sample = 1,
   threshold.delta.frequency = 0, threshold.pvalue = 0.05,
-  inferGenotype = FALSE, random.ref = FALSE, function.test = "binom.test",
-  verbose = TRUE, gc = FALSE, biasMatrix = FALSE)
+  inferGenotype = FALSE, random.ref = FALSE,
+  function.test = "binom.test", verbose = TRUE, gc = FALSE,
+  biasMatrix = FALSE)
 }
 \arguments{
 \item{x}{ASEset}

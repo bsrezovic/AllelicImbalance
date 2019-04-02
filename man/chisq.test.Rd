@@ -4,7 +4,6 @@
 \name{chisq.test}
 \alias{chisq.test}
 \alias{chisq.test,ASEset-method}
-\alias{chisq.test,ASEset-method}
 \title{chi-square test}
 \usage{
 \S4method{chisq.test}{ASEset}(x, y = "*")

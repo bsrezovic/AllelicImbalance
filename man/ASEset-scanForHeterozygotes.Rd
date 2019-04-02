@@ -5,7 +5,6 @@
 \alias{ASEset-scanForHeterozygotes}
 \alias{scanForHeterozygotes}
 \alias{scanForHeterozygotes,ASEset-method}
-\alias{scanForHeterozygotes}
 \alias{scanForHeterozygotes,GAlignmentsList-method}
 \title{scanForHeterozygotes}
 \usage{

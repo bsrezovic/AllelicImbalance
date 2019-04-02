@@ -4,7 +4,6 @@
 \name{regionSummary}
 \alias{regionSummary}
 \alias{regionSummary,numeric-method}
-\alias{regionSummary}
 \alias{regionSummary,ASEset-method}
 \title{regionSummary}
 \usage{

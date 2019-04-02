@@ -5,7 +5,6 @@
 \alias{RegionSummary-class}
 \alias{RegionSummary}
 \alias{RegionSummary-method}
-\alias{RegionSummary-class}
 \alias{sumnames}
 \alias{sumnames,RegionSummary-method}
 \alias{basic}

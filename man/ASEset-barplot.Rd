@@ -5,24 +5,22 @@
 \alias{ASEset-barplot}
 \alias{barplot}
 \alias{barplot,ASEset-method}
-\alias{barplot}
-\alias{barplot,ASEset-method}
 \title{barplot ASEset objects}
 \usage{
 barplot(height, ...)
 
-\S4method{barplot}{ASEset}(height, type = "count", sampleColour.top = NULL,
-  sampleColour.bot = NULL, legend = TRUE, pValue = TRUE, strand = "*",
-  testValue = NULL, testValue2 = NULL, OrgDb = NULL, TxDb = NULL,
-  annotationType = c("gene", "exon", "transcript"), main = NULL,
-  ylim = NULL, yaxis = TRUE, xaxis = FALSE, ylab = TRUE,
-  ylab.text = NULL, xlab.text = "samples", xlab = TRUE,
-  legend.colnames = "", las.ylab = 1, las.xlab = 2, cex.main = 1,
-  cex.pValue = 0.7, cex.ylab = 0.7, cex.xlab = 0.7, cex.legend = 0.6,
-  add = FALSE, lowerLeftCorner = c(0, 0), size = c(1, 1),
-  addHorizontalLine = 0.5, add.frame = TRUE,
-  filter.pValue.fraction = 0.99, legend.fill.size = 1,
-  legend.interspace = 1, verbose = FALSE,
+\S4method{barplot}{ASEset}(height, type = "count",
+  sampleColour.top = NULL, sampleColour.bot = NULL, legend = TRUE,
+  pValue = TRUE, strand = "*", testValue = NULL, testValue2 = NULL,
+  OrgDb = NULL, TxDb = NULL, annotationType = c("gene", "exon",
+  "transcript"), main = NULL, ylim = NULL, yaxis = TRUE,
+  xaxis = FALSE, ylab = TRUE, ylab.text = NULL,
+  xlab.text = "samples", xlab = TRUE, legend.colnames = "",
+  las.ylab = 1, las.xlab = 2, cex.main = 1, cex.pValue = 0.7,
+  cex.ylab = 0.7, cex.xlab = 0.7, cex.legend = 0.6, add = FALSE,
+  lowerLeftCorner = c(0, 0), size = c(1, 1), addHorizontalLine = 0.5,
+  add.frame = TRUE, filter.pValue.fraction = 0.99,
+  legend.fill.size = 1, legend.interspace = 1, verbose = FALSE,
   top.fraction.criteria = "maxcount", cex.annotation = 0.7,
   ypos.annotation = 0, annotation.interspace = 1, ...)
 }

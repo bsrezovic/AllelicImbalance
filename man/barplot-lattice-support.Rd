@@ -4,8 +4,6 @@
 \alias{barplot-lattice-support}
 \alias{barplotLatticeCounts}
 \alias{barplotLatticeFraction}
-\alias{barplotLatticeFraction}
-\alias{barplotLatticeCounts}
 \title{lattice barplot inner functions for ASEset objects}
 \usage{
 barplotLatticeFraction(identifier, ...)
