@@ -28,13 +28,13 @@ test_that(paste("test store and access of phase"), {
 	#check 
     expect_that(rownames(res), equals(rownames(x)))
     expect_that(colnames(res), equals(colnames(x)))
-    expect_that(as.vector(res)[1:4], equals(c("1/0","1|1","0|1","0|1")))
-    expect_that(as.vector(res)[57:60], equals(c("1|0","0/1","0|1","1/0")))
+    expect_that(as.vector(res)[1:4], equals(c("1|1","0/0","1/0","1/0")))
+    expect_that(as.vector(res)[57:60], equals(c("0/0","0|1","0|0","1/0")))
 
     expect_that(rownames(res2), equals(rownames(x)))
     expect_that(colnames(res2), equals(colnames(x)))
-    expect_that(as.vector(res2)[1:4], equals(c(1,1,0,0)))
-    expect_that(as.vector(res2)[177:180], equals(c(1,0,1,0)))
+    expect_that(as.vector(res2)[1:4], equals(c(1,0,1,1)))
+    expect_that(as.vector(res2)[177:180], equals(c(0,1,1,0)))
 
 })
 
