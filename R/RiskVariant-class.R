@@ -108,10 +108,10 @@ setMethod("phase<-", signature(x = "RiskVariant"), function(x,value) {
 			stop("dimension of value does not correspond to the values of object RiskVariant")	
 		}
 		
-		assays(x)[["phase"]] <- phaseMatrix2Array(value, dimnames=NULL)
+		assays(x, withDimnames=FALSE)[["phase"]] <- phaseMatrix2Array(value, dimnames=NULL)
 
 	}else if(class(value)=="array"){
-		assays(x)[["phase"]] <- value
+		assays(x, withDimnames=FALSE)[["phase"]] <- value
 	}
 	
 	x

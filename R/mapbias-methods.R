@@ -106,7 +106,7 @@ setGeneric("defaultMapBias", function(x,... ){
 #' @export
 setMethod("defaultMapBias", signature(x = "ASEset"), function(x, return.class="array"){
 
-		if (!("genotype" %in% names(assays(x)))) {
+		if (!("genotype" %in% assayNames(x))) {
 			stop(paste("genotype matrix is not present as assay in",
 					   " ASEset object, see '?inferGenotypes' "))
 		}
@@ -137,7 +137,7 @@ setMethod("defaultMapBias", signature(x = "ASEset"), function(x, return.class="a
 		if(return.class=="array"){
 			ar
 		}else if(return.class=="ASEset"){
-			assays(x)[["mapBias"]] <- ar
+			assays(x, withDimnames=FALSE)[["mapBias"]] <- ar
 			x
 		}
 })
@@ -243,7 +243,7 @@ setGeneric("mapBiasRef", function(x,... ){
 setMethod("mapBiasRef", signature(x = "ASEset"), function(x){
 
 	#check presence of mapBias array
-    if (!("mapBias" %in% names(assays(x)))) {
+    if (!("mapBias" %in% assayNames(x))) {
 		stop("column name 'ref' in mcols(x) is required")
 		stop(paste("genotype matrix is not present as assay in",
 				   " ASEset object, see '?inferGenotypes' ",

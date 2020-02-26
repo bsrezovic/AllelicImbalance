@@ -78,7 +78,7 @@ NULL
 #' 
 #' \item{x}{threshold.count.samples} if sample has fewer counts the function
 #' return NA.
-#'	
+#'
 #' }
 #' @section Constructor: ASEsetFromCountList(rowRanges, countListNonStranded =
 #' NULL, countListPlus = NULL, countListMinus = NULL, countListUnknown = NULL,
@@ -188,17 +188,17 @@ setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*",
 
 	#check if the assays are present
 	if(strand=="+" ){
-		if(!"countsPlus" %in% names(assays(x))){
+		if(!"countsPlus" %in% assayNames(x)){
 			stop(paste("strand",strand,"is not present in ASEset object",sep=""))
 		}
 	}
 	if(strand=="-" ){
-		if(!"countsMinus" %in% names(assays(x))){
+		if(!"countsMinus" %in% assayNames(x)){
 			stop(paste("strand",strand,"is not present in ASEset object",sep=""))
 		}
 	}
 	if(strand=="*" ){
-		if(!("countsMinus" %in% names(assays(x)) | "countsPlus" %in% names(assays(x)))){
+		if(!("countsMinus" %in% assayNames(x) | "countsPlus" %in% assayNames(x))){
 			stop(paste("for strand '*' at least one of '+' or '-' is required to be",
 					   " present in ASEset object. Old ASEsets set the '*' strand in",
 					   " countsUnknown, but that has been deprecated. If so, move your counts",
@@ -208,7 +208,7 @@ setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*",
 		}
 	}
 	if(strand=="both" ){
-		if(!"countsMinus" %in% names(assays(x)) & "countsPlus" %in% names(assays(x))){
+		if(!"countsMinus" %in% assayNames(x) & "countsPlus" %in% assayNames(x)){
 			stop(paste("for strand 'both' both '+' and '-' is required to be",
 					   " present in the ASEset object",sep=""))
 		}
@@ -221,9 +221,9 @@ setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*",
         ar <- assays(x)[["countsMinus"]]
     } else if (strand == "*") {
 
-		if(!("countsMinus" %in% names(assays(x)))){
+		if(!("countsMinus" %in% assayNames(x))){
 			ar <- assays(x)[["countsPlus"]]
-		}else if(!("countsPlus" %in% names(assays(x)))){
+		}else if(!("countsPlus" %in% assayNames(x))){
 			ar <- assays(x)[["countsMinus"]]
 		}else{
 			ar <- assays(x)[["countsMinus"]] + assays(x)[["countsPlus"]]
@@ -244,17 +244,17 @@ setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*",
 
 	}else if(return.class=="list"){
 
-		
+
 		if(strand=="both"){
 			strands <- 2
-			alleleCountList2 <- list()	
+			alleleCountList2 <- list()
 		}else{
 			strands <- 1
 		}
 		for( j in 1:strands){
 
 			alleleCountList <- list()
-		
+
 			for (i in 1:nrow(ar)) {
 				if(strand=="both"){
 					mat <- ar[i, , ,j]
@@ -279,13 +279,13 @@ setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*",
 				alleleCountList2[[j]] <- alleleCountList
 			}
 		}
-		
+
 		if(strand=="both"){
 			names(alleleCountList2) <- c("+","-")
 			alleleCountList2
-		}else{	
+		}else{
 			alleleCountList
-		}	
+		}
 	}else{
 		stop("return.class has to be 'list' or 'array'")
 	}
@@ -296,13 +296,13 @@ setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*",
 ### helpers for alleleCounts
 ###
 .plusStrandCountsExists <- function(x){
-	"countsPlus" %in% names(assays(x))
+	"countsPlus" %in% assayNames(x)
 }
 .minusStrandCountsExists <- function(x){
-	"countsMinus" %in% names(assays(x))
+	"countsMinus" %in% assayNames(x)
 }
 .unknownStrandCountsExists <- function(x){
-	"countsUnknown" %in% names(assays(x))
+	"countsUnknown" %in% assayNames(x)
 }
 
 
@@ -336,13 +336,13 @@ setReplaceMethod("alleleCounts", "ASEset",
     }
     
 
-	
+
 	#check that value has the right dimensions (make validObject method)
-	#if(!all(dim(value)==dim(assays(x)[["countsUnknown"]]))){
+	#if(!all(dim(value)==dim(assays(x, withDimnames=FALSE)[["countsUnknown"]]))){
 	#	stop("dimensions in replacement object is not correct")
 	#}
 
-	assays(x)[[el]][] <- value
+	assays(x, withDimnames=FALSE)[[el]][] <- value
 
 	#return object
 	x
@@ -372,12 +372,12 @@ setMethod("mapBias", signature(x = "ASEset"), function(x,
 				rownames(mat) <- colnames(x)
 			}
 			colnames(mat) <- x@variants
-			
+
 			mapBiasList[[i]] <- mat
 		}
 		# add snp id
 		names(mapBiasList) <- rownames(x)
-		
+
 		return(mapBiasList)
 	}
     
@@ -403,7 +403,7 @@ setMethod("fraction", signature(x = "ASEset"), function(x, strand = "*",
 
 	#check and use top.fraction.criteria=="phase"
 	if(top.fraction.criteria=="phase"){
-		if(!"phase" %in% names(assays(x))){
+		if(!"phase" %in% assayNames(x)){
 			stop("the phase slot has not been initialized")
 		}
 		if(is.null(assays(x)[["phase"]])){
@@ -456,7 +456,7 @@ setGeneric("arank", function(x, return.type = "names",
 
 setMethod("arank", signature(x = "ASEset"), function(x, return.type = "names", 
 	return.class = "list", strand = "*", ...) {
-	
+
 	if(return.class=="matrix"){
 		if (return.type == "names") {
 			ar <- t(apply(apply(alleleCounts(x,
@@ -469,7 +469,7 @@ setMethod("arank", signature(x = "ASEset"), function(x, return.type = "names",
 
 			mat <- matrix(x@variants[ar2],ncol=4, nrow=nrow(x), byrow=FALSE,
 					  dimnames=list(dimnames(ar)[[1]],c(1,2,3,4)))
-		
+
 			return(mat)
 		}else if (return.type == "rank") {
 			return(t(apply(apply(alleleCounts(x,
@@ -482,7 +482,7 @@ setMethod("arank", signature(x = "ASEset"), function(x, return.type = "names",
 	}else if(return.class=="list"){
 
 		acounts <- alleleCounts(x, strand = strand)
-		
+
 		if (return.type == "names") {
 			lapply(acounts, function(x) {
 				names(sort(apply(x, 2, sum), decreasing = TRUE))
@@ -531,7 +531,7 @@ setMethod("arank", signature(x = "ASEset"), function(x, return.type = "names",
 #
 #	df()
 #
-#})	
+#})
 
 #' @rdname ASEset-class
 #' @export 
@@ -574,7 +574,7 @@ setGeneric("genotype", function(x, ...){
 setMethod("genotype", signature(x = "ASEset"), function(x,
 			return.class="matrix"){
 
-    if (!("phase" %in% names(assays(x)))) {
+    if (!("phase" %in% assayNames(x))) {
 		stop(paste("phase is not present in assays in",
 				   " ASEset object, see '?inferGenotypes' "))
     }
@@ -600,20 +600,20 @@ setGeneric("genotype<-", function(x, value){
 #' @rdname ASEset-class
 #' @export 
 setMethod("genotype<-", signature(x = "ASEset"), function(x, value){
-	
+
 	#check dimensions
 	if(!nrow(x)==nrow(value)){
-		stop("nrow(x) is not equal to nrow(value)")	
+		stop("nrow(x) is not equal to nrow(value)")
 	}
 	if(!ncol(x)==ncol(value)){
-		stop("ncol(x) is not equal to ncol(value)")	
+		stop("ncol(x) is not equal to ncol(value)")
 	}
 	#check prexence of ref
 	if(!"ref" %in% names(mcols(x))){
-		stop("ref() is not set in ASEset")	
+		stop("ref() is not set in ASEset")
 	}
 
-	assays(x)[["phase"]] <- genotype2phase(value, ref(x))	
+	assays(x, withDimnames=FALSE)[["phase"]] <- genotype2phase(value, ref(x))
 	x
 })
 
@@ -700,15 +700,15 @@ setMethod("phase<-", signature(x = "ASEset"), function(x,value) {
 	if(class(value)=="matrix") {
 
 		if(!identical(dim(x),dim(value))){
-			stop("dimension of value does not correspond to the values of object ASEset")	
+			stop("dimension of value does not correspond to the values of object ASEset")
 		}
-	
-		assays(x)[["phase"]] <- phaseMatrix2Array(value,dimnames=dimnames(x))
+
+		assays(x, withDimnames=FALSE)[["phase"]] <- phaseMatrix2Array(value,dimnames=dimnames(x))
 
 	}else if(class(value)=="array"){
-		assays(x)[["phase"]] <- value
+		assays(x, withDimnames=FALSE)[["phase"]] <- value
 	}
-	
+
 	x
 })
 
@@ -723,7 +723,7 @@ setGeneric("mapBias<-", function(x, value){
 setMethod("mapBias<-", signature(x = "ASEset"), function(x,value) {
 
 	if(class(value)=="array") {
-		assays(x)[["mapBias"]] <- value
+		assays(x, withDimnames=FALSE)[["mapBias"]] <- value
 	}else {
 		stop("class has to be array")
 	}
@@ -751,7 +751,7 @@ setGeneric("ref")
 setMethod("ref", signature(x = "ASEset"), function(x) {
 
 		mcols(x)[["ref"]]
-	
+
 })
 
 #' @rdname ASEset-class
@@ -769,7 +769,7 @@ setMethod("ref<-", signature(x = "ASEset"), function(x, value) {
 
 		stop("wrong class")
 	}
-	
+
 	x
 })
 
@@ -794,7 +794,7 @@ setGeneric("alt")
 setMethod("alt", signature(x = "ASEset"), function(x) {
 
 		mcols(x)[["alt"]]
-	
+
 })
 
 #' @rdname ASEset-class
@@ -812,7 +812,7 @@ setMethod("alt<-", signature(x = "ASEset"), function(x, value) {
 
 		stop("wrong class")
 	}
-	
+
 	x
 })
 
@@ -841,10 +841,10 @@ setMethod("aquals<-", signature(x = "ASEset"), function(x,value) {
 	if(class(value)=="array") {
 
 		if(!identical(dim(x),dim(value)[1:2])){
-			stop("dimension of value does not correspond to the values of object ASEset")	
+			stop("dimension of value does not correspond to the values of object ASEset")
 		}
-	
-		assays(x)[["aquals"]] <- value
+
+		assays(x, withDimnames=FALSE)[["aquals"]] <- value
 
 	}
 	x
@@ -865,9 +865,9 @@ setMethod("maternalAllele", signature(x = "ASEset"),
 		mat <- phase(x,return.class="array")[,,1]
 		ref <- mcols(x)[["ref"]]
 		alt <- mcols(x)[["alt"]]
-	
+
 		apply(t(mat),1,function(y, ref, alt){
-			
+
 			vec <- rep(NA,length(y))
 			if(any(y == 1)){
 				vec[y == 1] <- alt[y == 1]
@@ -893,9 +893,9 @@ setMethod("paternalAllele", signature(x = "ASEset"),
 		mat <- phase(x,return.class="array")[,,2]
 		ref <- mcols(x)[["ref"]]
 		alt <- mcols(x)[["alt"]]
-	
+
 		apply(t(mat),1,function(y, ref, alt){
-			
+
 			vec <- rep(NA,length(y))
 			if(any(y == 1)){
 				vec[y == 1] <- alt[y == 1]
@@ -933,7 +933,7 @@ setMethod("paternalAllele", signature(x = "ASEset"),
 #
 #.set_ASEset_ref <- function(x, value)
 #{
-#	message("value1: ", paste0(value, collapse=", "))	
+#	message("value1: ", paste0(value, collapse=", "))
 #    ## Use 'x@width[]' instead of 'x@width' so the right value is recycled.
 #	ref(x)[] <- value
 #	x
