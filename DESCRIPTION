@@ -1,8 +1,8 @@
 Package: AllelicImbalance
 Type: Package
 Title: Investigates Allele Specific Expression
-Version: 1.21.2
-Date: 2019-04-02
+Version: 1.21.3
+Date: 2020-04-05
 Encoding: UTF-8
 Author: Jesper R Gadin, Lasse Folkersen
 Maintainer: Jesper R Gadin <j.r.gadin@gmail.com>
@@ -20,7 +20,7 @@ Suggests:
     knitr,
     rmarkdown
 Depends:
-    R (>= 3.2.0),
+    R (>= 4.0.0),
     grid,
     GenomicRanges (>= 1.31.8),
     SummarizedExperiment (>= 0.2.0),
