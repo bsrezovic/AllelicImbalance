@@ -8,9 +8,14 @@
 \usage{
 getAlleleQuality(BamList, ...)
 
-\S4method{getAlleleQuality}{GAlignmentsList}(BamList, GRvariants,
-  fastq.format = "illumina.1.8", return.class = "array",
-  verbose = TRUE, ...)
+\S4method{getAlleleQuality}{GAlignmentsList}(
+  BamList,
+  GRvariants,
+  fastq.format = "illumina.1.8",
+  return.class = "array",
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{BamList}{A \code{GAlignmentsList object} or \code{GRangesList object}

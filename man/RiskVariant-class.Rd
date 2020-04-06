@@ -31,8 +31,6 @@
 \item{value}{argument used for replacement}
 
 \item{return.class}{type of class returned eg. "list or ""array".}
-
-\item{...}{pass arguments to internal functions}
 }
 \description{
 Object that holds results from AI detection.

@@ -8,8 +8,14 @@
 \usage{
 minCountFilt(x, ...)
 
-\S4method{minCountFilt}{ASEset}(x, strand = "*", threshold.counts = 1,
-  sum = "all", replace.with = "zero", return.class = "ASEset")
+\S4method{minCountFilt}{ASEset}(
+  x,
+  strand = "*",
+  threshold.counts = 1,
+  sum = "all",
+  replace.with = "zero",
+  return.class = "ASEset"
+)
 }
 \arguments{
 \item{x}{\code{ASEset} object}

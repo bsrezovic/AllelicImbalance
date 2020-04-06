@@ -103,17 +103,17 @@ ASEsetFromCountList <- function(rowRanges, countListUnknown = NULL, countListPlu
     
     if (verbose) {
         cat("rowRanges\n")
-        cat(class(rowRanges))
+        cat(class(rowRanges)[1])
         cat("countListPlus\n")
-        cat(class(countListPlus))
+        cat(class(countListPlus)[1])
         cat("countListMinus\n")
-        cat(class(countListMinus))
+        cat(class(countListMinus)[1])
         cat("countListUnknown\n")
-        cat(class(countListUnknown))
+        cat(class(countListUnknown)[1])
         cat("colData\n")
-        cat(class(colData))
+        cat(class(colData)[1])
         cat("mapBiasExpMean\n")
-        cat(class(mapBiasExpMean))
+        cat(class(mapBiasExpMean)[1])
     }
 
     # check that at least one of the countList options are not null
@@ -190,7 +190,7 @@ ASEsetFromCountList <- function(rowRanges, countListUnknown = NULL, countListPlu
     
     # check mapBiasExpMean
     if (!(is.null(mapBiasExpMean))) {
-        if (!class(mapBiasExpMean) == "array") {
+        if (!class(mapBiasExpMean)[1] == "array") {
             stop("mapBiasExpMean has to be of class array")
         }
         if (!length(dim(mapBiasExpMean)) == 3) {
@@ -304,7 +304,7 @@ ASEsetFromArrays <- function(rowRanges, countsUnknown = NULL, countsPlus = NULL,
     
     # check mapBiasExpMean
     if (!(is.null(mapBiasExpMean))) {
-        if (!class(mapBiasExpMean) == "array") {
+        if (!class(mapBiasExpMean)[1] == "array") {
             stop("mapBiasExpMean has to be of class array")
         }
         if (!length(dim(mapBiasExpMean)) == 3) {
@@ -499,7 +499,7 @@ GAnalysis <- function(
 	){
 	object <- new("GlobalAnalysis", data = list())
 
-		if(!class(x)=="ASEset"){
+		if(!class(x)[1]=="ASEset"){
 			stop("x must be of class ASEset")
 		}
 

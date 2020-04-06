@@ -4,9 +4,14 @@
 \alias{scanForHeterozygotes.old}
 \title{scanForHeterozygotes-old}
 \usage{
-scanForHeterozygotes.old(BamList, minimumReadsAtPos = 20,
-  maximumMajorAlleleFrequency = 0.9, minimumBiAllelicFrequency = 0.9,
-  maxReads = 15000, verbose = TRUE)
+scanForHeterozygotes.old(
+  BamList,
+  minimumReadsAtPos = 20,
+  maximumMajorAlleleFrequency = 0.9,
+  minimumBiAllelicFrequency = 0.9,
+  maxReads = 15000,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{BamList}{A \code{GAlignmentsList object}}

@@ -8,8 +8,15 @@
 \usage{
 countAllelesFromBam(gr, ...)
 
-\S4method{countAllelesFromBam}{GRanges}(gr, pathToDir, flag = NULL,
-  scanBamFlag = NULL, return.class = "array", verbose = TRUE, ...)
+\S4method{countAllelesFromBam}{GRanges}(
+  gr,
+  pathToDir,
+  flag = NULL,
+  scanBamFlag = NULL,
+  return.class = "array",
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{gr}{GRanges that contains SNPs of interest}

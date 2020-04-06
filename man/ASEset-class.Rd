@@ -58,8 +58,7 @@ alleleCounts(x, strand = "*", return.class = "list")
 
 alleleCounts(x, ...) <- value
 
-\S4method{alleleCounts}{ASEset}(x, strand = "*",
-  return.class = "array", ...) <- value
+\S4method{alleleCounts}{ASEset}(x, strand = "*", return.class = "array", ...) <- value
 
 mapBias(x, ...)
 
@@ -67,11 +66,15 @@ mapBias(x, ...)
 
 fraction(x, ...)
 
-\S4method{fraction}{ASEset}(x, strand = "*",
-  top.fraction.criteria = "maxcount", verbose = FALSE, ...)
+\S4method{fraction}{ASEset}(
+  x,
+  strand = "*",
+  top.fraction.criteria = "maxcount",
+  verbose = FALSE,
+  ...
+)
 
-arank(x, return.type = "names", return.class = "list", strand = "*",
-  ...)
+arank(x, return.type = "names", return.class = "list", strand = "*", ...)
 
 frequency(x, ...)
 
@@ -85,13 +88,11 @@ genotype(x) <- value
 
 countsPerSnp(x, ...)
 
-\S4method{countsPerSnp}{ASEset}(x, return.class = "matrix",
-  return.type = "mean", strand = "*")
+\S4method{countsPerSnp}{ASEset}(x, return.class = "matrix", return.type = "mean", strand = "*")
 
 countsPerSample(x, ...)
 
-\S4method{countsPerSample}{ASEset}(x, return.class = "matrix",
-  return.type = "mean", strand = "*")
+\S4method{countsPerSample}{ASEset}(x, return.class = "matrix", return.type = "mean", strand = "*")
 
 phase(x, ...)
 

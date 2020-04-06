@@ -203,7 +203,7 @@ setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*",
 					   " present in ASEset object. Old ASEsets set the '*' strand in",
 					   " countsUnknown, but that has been deprecated. If so, move your counts",
 					   " to the plus or minus slot instead ",
-					   " assays(yourASEset)[['countsPlus']] <- assays(yourASEset)[['countsUnknown']]",
+					   " assays(yourASEset, withDimnames=FALSE)[['countsPlus']] <- assays(yourASEset)[['countsUnknown']]",
 					   sep=""))
 		}
 	}
@@ -261,10 +261,10 @@ setMethod("alleleCounts", signature(x = "ASEset"), function(x, strand = "*",
 				}else{
 					mat <- ar[i, , ]
 				}
-				if (class(mat) == "integer") {
+				if (class(mat)[1] == "integer") {
 					mat <- t(as.matrix(mat))
 				}
-				if (class(mat) == "numeric") {
+				if (class(mat)[1] == "numeric") {
 					mat <- t(mat)
 				}
 				colnames(mat) <- x@variants
@@ -342,7 +342,7 @@ setReplaceMethod("alleleCounts", "ASEset",
 	#	stop("dimensions in replacement object is not correct")
 	#}
 
-	assays(x)[[el]][] <- value
+	assays(x, withDimnames=FALSE)[[el]][] <- value
 
 	#return object
 	x
@@ -367,7 +367,7 @@ setMethod("mapBias", signature(x = "ASEset"), function(x,
 		mapBiasList <- list()
 		for (i in 1:nrow(x)) {
 			mat <- assays(x)[["mapBias"]][i, , ]
-			if (class(mat) == "numeric") {
+			if (class(mat)[1] == "numeric") {
 				dim(mat) <- c(1, 4)
 				rownames(mat) <- colnames(x)
 			}
@@ -612,8 +612,9 @@ setMethod("genotype<-", signature(x = "ASEset"), function(x, value){
 	if(!"ref" %in% names(mcols(x))){
 		stop("ref() is not set in ASEset")	
 	}
-
-	assays(x)[["phase"]] <- genotype2phase(value, ref(x))	
+        #It would be better to not allow withDimnames=FALSE
+        #I suspect that we need to change something in the init object to fix that.
+	assays(x, withDimnames=FALSE)[["phase"]] <- genotype2phase(value, ref(x))	
 	x
 })
 
@@ -697,16 +698,16 @@ setGeneric("phase<-", function(x, value){
 #' @export 
 setMethod("phase<-", signature(x = "ASEset"), function(x,value) {
 
-	if(class(value)=="matrix") {
+	if(class(value)[1]=="matrix") {
 
 		if(!identical(dim(x),dim(value))){
 			stop("dimension of value does not correspond to the values of object ASEset")	
 		}
 	
-		assays(x)[["phase"]] <- phaseMatrix2Array(value,dimnames=dimnames(x))
+		assays(x, withDimnames=FALSE)[["phase"]] <- phaseMatrix2Array(value,dimnames=dimnames(x))
 
-	}else if(class(value)=="array"){
-		assays(x)[["phase"]] <- value
+	}else if(class(value)[1]=="array"){
+		assays(x, withDimnames=FALSE)[["phase"]] <- value
 	}
 	
 	x
@@ -722,8 +723,8 @@ setGeneric("mapBias<-", function(x, value){
 #' @export 
 setMethod("mapBias<-", signature(x = "ASEset"), function(x,value) {
 
-	if(class(value)=="array") {
-		assays(x)[["mapBias"]] <- value
+	if(class(value)[1]=="array") {
+		assays(x, withDimnames=FALSE)[["mapBias"]] <- value
 	}else {
 		stop("class has to be array")
 	}
@@ -762,7 +763,7 @@ setGeneric("ref<-")
 #' @export 
 setMethod("ref<-", signature(x = "ASEset"), function(x, value) {
 
-	if(class(value)=="character") {
+	if(class(value)[1]=="character") {
 
 		mcols(x)[["ref"]] <- value
 	}else{
@@ -805,7 +806,7 @@ setGeneric("alt<-")
 #' @export 
 setMethod("alt<-", signature(x = "ASEset"), function(x, value) {
 
-	if(class(value)=="character") {
+	if(class(value)[1]=="character") {
 
 		mcols(x)[["alt"]] <- value
 	}else{
@@ -838,13 +839,13 @@ setGeneric("aquals<-", function(x, value){
 #' @export 
 setMethod("aquals<-", signature(x = "ASEset"), function(x,value) {
 
-	if(class(value)=="array") {
+	if(class(value)[1]=="array") {
 
 		if(!identical(dim(x),dim(value)[1:2])){
 			stop("dimension of value does not correspond to the values of object ASEset")	
 		}
 	
-		assays(x)[["aquals"]] <- value
+		assays(x, withDimnames=FALSE)[["aquals"]] <- value
 
 	}
 	x

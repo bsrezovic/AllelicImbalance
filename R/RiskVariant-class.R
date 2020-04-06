@@ -14,7 +14,6 @@ NULL
 #' @param x RiskVariant object or list of RiskVariants
 #' @param return.class type of class returned eg. "list or ""array".
 #' @param value argument used for replacement
-#' @param ... pass arguments to internal functions
 #'
 #' @author Jesper R. Gadin, Lasse Folkersen
 #' @keywords class RiskVariant
@@ -102,16 +101,16 @@ setMethod("phase", signature(x = "RiskVariant"), function(x,
 #' @export 
 setMethod("phase<-", signature(x = "RiskVariant"), function(x,value) {
 
-	if(class(value)=="matrix") {
+	if(class(value)[1]=="matrix") {
 
 		if(!identical(dim(x),dim(value))){
 			stop("dimension of value does not correspond to the values of object RiskVariant")	
 		}
 		
-		assays(x)[["phase"]] <- phaseMatrix2Array(value, dimnames=NULL)
+		assays(x, withDimnames=FALSE)[["phase"]] <- phaseMatrix2Array(value, dimnames=NULL)
 
-	}else if(class(value)=="array"){
-		assays(x)[["phase"]] <- value
+	}else if(class(value)[1]=="array"){
+		assays(x, withDimnames=FALSE)[["phase"]] <- value
 	}
 	
 	x

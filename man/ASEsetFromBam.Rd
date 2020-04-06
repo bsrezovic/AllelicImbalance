@@ -8,9 +8,15 @@
 \usage{
 ASEsetFromBam(gr, ...)
 
-\S4method{ASEsetFromBam}{GRanges}(gr, pathToDir, PE = TRUE,
-  flagsMinusStrand = c(83, 163), flagsPlusStrand = c(99, 147),
-  strandUnknown = FALSE, ...)
+\S4method{ASEsetFromBam}{GRanges}(
+  gr,
+  pathToDir,
+  PE = TRUE,
+  flagsMinusStrand = c(83, 163),
+  flagsPlusStrand = c(99, 147),
+  strandUnknown = FALSE,
+  ...
+)
 }
 \arguments{
 \item{gr}{GenomicRanges of SNPs to create ASEset for}

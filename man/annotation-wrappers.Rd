@@ -13,32 +13,49 @@
 \alias{getAnnotationDataFrame}
 \title{AnnotationDb wrappers}
 \usage{
-getGenesFromAnnotation(OrgDb, GR, leftFlank = 0, rightFlank = 0,
-  getUCSC = FALSE, verbose = FALSE)
+getGenesFromAnnotation(
+  OrgDb,
+  GR,
+  leftFlank = 0,
+  rightFlank = 0,
+  getUCSC = FALSE,
+  verbose = FALSE
+)
 
-getGenesVector(OrgDb, GR, leftFlank = 0, rightFlank = 0,
-  verbose = FALSE)
+getGenesVector(OrgDb, GR, leftFlank = 0, rightFlank = 0, verbose = FALSE)
 
-getExonsFromAnnotation(TxDb, GR, leftFlank = 0, rightFlank = 0,
-  verbose = FALSE)
+getExonsFromAnnotation(
+  TxDb,
+  GR,
+  leftFlank = 0,
+  rightFlank = 0,
+  verbose = FALSE
+)
 
-getExonsVector(TxDb, GR, leftFlank = 0, rightFlank = 0,
-  verbose = FALSE)
+getExonsVector(TxDb, GR, leftFlank = 0, rightFlank = 0, verbose = FALSE)
 
-getTranscriptsFromAnnotation(TxDb, GR, leftFlank = 0, rightFlank = 0,
-  verbose = FALSE)
+getTranscriptsFromAnnotation(
+  TxDb,
+  GR,
+  leftFlank = 0,
+  rightFlank = 0,
+  verbose = FALSE
+)
 
-getTranscriptsVector(TxDb, GR, leftFlank = 0, rightFlank = 0,
-  verbose = FALSE)
+getTranscriptsVector(TxDb, GR, leftFlank = 0, rightFlank = 0, verbose = FALSE)
 
-getCDSFromAnnotation(TxDb, GR, leftFlank = 0, rightFlank = 0,
-  verbose = FALSE)
+getCDSFromAnnotation(TxDb, GR, leftFlank = 0, rightFlank = 0, verbose = FALSE)
 
-getCDSVector(TxDb, GR, leftFlank = 0, rightFlank = 0,
-  verbose = FALSE)
+getCDSVector(TxDb, GR, leftFlank = 0, rightFlank = 0, verbose = FALSE)
 
-getAnnotationDataFrame(GR, strand = "+", annotationType = NULL,
-  OrgDb = NULL, TxDb = NULL, verbose = FALSE)
+getAnnotationDataFrame(
+  GR,
+  strand = "+",
+  annotationType = NULL,
+  OrgDb = NULL,
+  TxDb = NULL,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{OrgDb}{An \code{OrgDb} object}

@@ -88,28 +88,28 @@ NULL
 getGenesFromAnnotation <- function(OrgDb, GR, leftFlank = 0, rightFlank = 0, getUCSC = FALSE, 
     verbose = FALSE) {
     # checks
-    if (class(OrgDb) != "OrgDb") 
-        stop(paste("OrgDb must of class OrgDb, not", class(OrgDb)))
+    if (class(OrgDb)[1] != "OrgDb") 
+        stop(paste("OrgDb must of class OrgDb, not", class(OrgDb)[1]))
     
-    if (class(GR) != "GRanges") 
-        stop(paste("GR must of class GRanges, not", class(GR)))
+    if (class(GR)[1] != "GRanges") 
+        stop(paste("GR must of class GRanges, not", class(GR)[1]))
     
-    if (!class(leftFlank) %in% c("numeric")) 
-        stop(paste("leftFlank must be of class numeric, not:", class(leftFlank)))
+    if (!class(leftFlank)[1] %in% c("numeric")) 
+        stop(paste("leftFlank must be of class numeric, not:", class(leftFlank)[1]))
     if (length(leftFlank) != 1) 
         stop(paste("leftFlank must be of length 1, not:", length(leftFlank)))
     if (leftFlank < 0) 
         stop(paste("leftFlank must be equal to or larger than 0"))
     
-    if (!class(rightFlank) %in% c("numeric")) 
-        stop(paste("rightFlank must be of class numeric, not:", class(rightFlank)))
+    if (!class(rightFlank)[1] %in% c("numeric")) 
+        stop(paste("rightFlank must be of class numeric, not:", class(rightFlank)[1]))
     if (length(rightFlank) != 1) 
         stop(paste("rightFlank must be of length 1, not:", length(rightFlank)))
     if (rightFlank < 0) 
         stop(paste("rightFlank must be equal to or larger than 0"))
     
-    if (!class(getUCSC) %in% c("logical")) 
-        stop(paste("getUCSC must be of class logical, not:", class(getUCSC)))
+    if (!class(getUCSC)[1] %in% c("logical")) 
+        stop(paste("getUCSC must be of class logical, not:", class(getUCSC)[1]))
     if (length(getUCSC) != 1) 
         stop(paste("getUCSC must be of length 1, not:", length(getUCSC)))
     
@@ -119,8 +119,8 @@ getGenesFromAnnotation <- function(OrgDb, GR, leftFlank = 0, rightFlank = 0, get
         getUCSC <- FALSE
     }
     
-    if (!class(verbose) %in% c("logical")) 
-        stop(paste("verbose must be of class logical, not:", class(verbose)))
+    if (!class(verbose)[1] %in% c("logical")) 
+        stop(paste("verbose must be of class logical, not:", class(verbose)[1]))
     if (length(verbose) != 1) 
         stop(paste("verbose must be of length 1, not:", length(verbose)))
     
@@ -250,28 +250,28 @@ getGenesVector <- function(OrgDb, GR, leftFlank = 0, rightFlank = 0, verbose = F
 getExonsFromAnnotation <- function(TxDb, GR, leftFlank = 0, rightFlank = 0, verbose = FALSE) {
     
     # checks
-    if (class(TxDb) != "TxDb") 
-        stop(paste("GR must of class TxDb, not", class(TxDb)))
+    if (class(TxDb)[1] != "TxDb") 
+        stop(paste("GR must of class TxDb, not", class(TxDb)[1]))
     
-    if (class(GR) != "GRanges") 
-        stop(paste("GR must of class GRanges, not", class(GR)))
+    if (class(GR)[1] != "GRanges") 
+        stop(paste("GR must of class GRanges, not", class(GR)[1]))
     
-    if (!class(leftFlank) %in% c("numeric")) 
-        stop(paste("leftFlank must be of class numeric, not:", class(leftFlank)))
+    if (!class(leftFlank)[1] %in% c("numeric")) 
+        stop(paste("leftFlank must be of class numeric, not:", class(leftFlank)[1]))
     if (length(leftFlank) != 1) 
         stop(paste("leftFlank must be of length 1, not:", length(leftFlank)))
     if (leftFlank < 0) 
         stop(paste("leftFlank must be equal to or larger than 0"))
     
-    if (!class(rightFlank) %in% c("numeric")) 
-        stop(paste("rightFlank must be of class numeric, not:", class(rightFlank)))
+    if (!class(rightFlank)[1] %in% c("numeric")) 
+        stop(paste("rightFlank must be of class numeric, not:", class(rightFlank)[1]))
     if (length(rightFlank) != 1) 
         stop(paste("rightFlank must be of length 1, not:", length(rightFlank)))
     if (rightFlank < 0) 
         stop(paste("rightFlank must be equal to or larger than 0"))
     
-    if (!class(verbose) %in% c("logical")) 
-        stop(paste("verbose must be of class logical, not:", class(verbose)))
+    if (!class(verbose)[1] %in% c("logical")) 
+        stop(paste("verbose must be of class logical, not:", class(verbose)[1]))
     if (length(verbose) != 1) 
         stop(paste("verbose must be of length 1, not:", length(verbose)))
     
@@ -360,28 +360,28 @@ getTranscriptsFromAnnotation <- function(TxDb, GR, leftFlank = 0, rightFlank = 0
     verbose = FALSE) {
     
     # checks
-    if (class(TxDb) != "TxDb") 
-        stop(paste("GR must of class TxDb, not", class(TxDb)))
+    if (class(TxDb)[1] != "TxDb") 
+        stop(paste("GR must of class TxDb, not", class(TxDb)[1]))
     
-    if (class(GR) != "GRanges") 
-        stop(paste("GR must of class GRanges, not", class(GR)))
+    if (class(GR)[1] != "GRanges") 
+        stop(paste("GR must of class GRanges, not", class(GR)[1]))
     
-    if (!class(leftFlank) %in% c("numeric")) 
-        stop(paste("leftFlank must be of class numeric, not:", class(leftFlank)))
+    if (!class(leftFlank)[1] %in% c("numeric")) 
+        stop(paste("leftFlank must be of class numeric, not:", class(leftFlank)[1]))
     if (length(leftFlank) != 1) 
         stop(paste("leftFlank must be of length 1, not:", length(leftFlank)))
     if (leftFlank < 0) 
         stop(paste("leftFlank must be equal to or larger than 0"))
     
-    if (!class(rightFlank) %in% c("numeric")) 
-        stop(paste("rightFlank must be of class numeric, not:", class(rightFlank)))
+    if (!class(rightFlank)[1] %in% c("numeric")) 
+        stop(paste("rightFlank must be of class numeric, not:", class(rightFlank)[1]))
     if (length(rightFlank) != 1) 
         stop(paste("rightFlank must be of length 1, not:", length(rightFlank)))
     if (rightFlank < 0) 
         stop(paste("rightFlank must be equal to or larger than 0"))
     
-    if (!class(verbose) %in% c("logical")) 
-        stop(paste("verbose must be of class logical, not:", class(verbose)))
+    if (!class(verbose)[1] %in% c("logical")) 
+        stop(paste("verbose must be of class logical, not:", class(verbose)[1]))
     if (length(verbose) != 1) 
         stop(paste("verbose must be of length 1, not:", length(verbose)))
     
@@ -458,28 +458,28 @@ getCDSFromAnnotation <- function(TxDb, GR, leftFlank = 0, rightFlank = 0, verbos
     # other types like RNA.
     
     # checks
-    if (class(TxDb) != "TxDb") 
-        stop(paste("GR must of class TxDb, not", class(TxDb)))
+    if (class(TxDb)[1] != "TxDb") 
+        stop(paste("GR must of class TxDb, not", class(TxDb)[1]))
     
-    if (class(GR) != "GRanges") 
-        stop(paste("GR must of class GRanges, not", class(GR)))
+    if (class(GR)[1] != "GRanges") 
+        stop(paste("GR must of class GRanges, not", class(GR)[1]))
     
-    if (!class(leftFlank) %in% c("numeric")) 
-        stop(paste("leftFlank must be of class numeric, not:", class(leftFlank)))
+    if (!class(leftFlank)[1] %in% c("numeric")) 
+        stop(paste("leftFlank must be of class numeric, not:", class(leftFlank)[1]))
     if (length(leftFlank) != 1) 
         stop(paste("leftFlank must be of length 1, not:", length(leftFlank)))
     if (leftFlank < 0) 
         stop(paste("leftFlank must be equal to or larger than 0"))
     
-    if (!class(rightFlank) %in% c("numeric")) 
-        stop(paste("rightFlank must be of class numeric, not:", class(rightFlank)))
+    if (!class(rightFlank)[1] %in% c("numeric")) 
+        stop(paste("rightFlank must be of class numeric, not:", class(rightFlank)[1]))
     if (length(rightFlank) != 1) 
         stop(paste("rightFlank must be of length 1, not:", length(rightFlank)))
     if (rightFlank < 0) 
         stop(paste("rightFlank must be equal to or larger than 0"))
     
-    if (!class(verbose) %in% c("logical")) 
-        stop(paste("verbose must be of class logical, not:", class(verbose)))
+    if (!class(verbose)[1] %in% c("logical")) 
+        stop(paste("verbose must be of class logical, not:", class(verbose)[1]))
     if (length(verbose) != 1) 
         stop(paste("verbose must be of length 1, not:", length(verbose)))
     
@@ -636,20 +636,20 @@ getAnnotationDataFrame <- function(GR, strand = "+", annotationType = NULL, OrgD
 decorateWithGenes <- function(x, genesInRegion, xlim, ylim, chromosome) {
     
     # check the input variables
-    if (class(xlim) != "integer") 
+    if (class(xlim)[1] != "integer") 
         xlim <- as.numeric(xlim)
-    if (class(xlim) != "numeric") 
-        stop(paste("xlim must be of class numeric, not", class(xlim)))
+    if (class(xlim)[1] != "numeric") 
+        stop(paste("xlim must be of class numeric, not", class(xlim)[1]))
     if (length(xlim) != 2) 
         stop(paste("xlim must be of length 2, not", length(xlim)))
-    if (class(ylim) != "integer") 
+    if (class(ylim)[1] != "integer") 
         ylim <- as.numeric(ylim)
-    if (class(ylim) != "numeric") 
-        stop(paste("ylim must be of class numeric, not", class(ylim)))
+    if (class(ylim)[1] != "numeric") 
+        stop(paste("ylim must be of class numeric, not", class(ylim)[1]))
     if (length(ylim) != 2) 
         stop(paste("ylim must be of length 2, not", length(ylim)))
-    if (class(chromosome) != "character") 
-        stop(paste("chromosome must be of class character, not", class(chromosome)))
+    if (class(chromosome)[1] != "character") 
+        stop(paste("chromosome must be of class character, not", class(chromosome)[1]))
     if (length(chromosome) != 1) 
         stop(paste("chromosome must be of length 1, not", length(chromosome)))
     if (!chromosome %in% unique(seqnames(genesInRegion))) {
@@ -725,24 +725,24 @@ decorateWithGenes <- function(x, genesInRegion, xlim, ylim, chromosome) {
 decorateWithExons <- function(x, exonsInRegion, xlim, ylim, chromosome) {
     
     # check the input variables
-    if (class(exonsInRegion) != "GRanges") 
-        stop(paste("exonsInRegion must be of class GRanges, not", class(exonsInRegion)))
+    if (class(exonsInRegion)[1] != "GRanges") 
+        stop(paste("exonsInRegion must be of class GRanges, not", class(exonsInRegion)[1]))
     if (!"tx_name" %in% colnames(mcols(exonsInRegion))) 
         stop("exonsInRegion must contain an mcol variable named 'tx_name'")
-    if (class(xlim) != "integer") 
+    if (class(xlim)[1] != "integer") 
         xlim <- as.numeric(xlim)
-    if (class(xlim) != "numeric") 
-        stop(paste("xlim must be of class numeric, not", class(xlim)))
+    if (class(xlim)[1] != "numeric") 
+        stop(paste("xlim must be of class numeric, not", class(xlim)[1]))
     if (length(xlim) != 2) 
         stop(paste("xlim must be of length 2, not", length(xlim)))
-    if (class(ylim) != "integer") 
+    if (class(ylim)[1] != "integer") 
         ylim <- as.numeric(ylim)
-    if (class(ylim) != "numeric") 
-        stop(paste("ylim must be of class numeric, not", class(ylim)))
+    if (class(ylim)[1] != "numeric") 
+        stop(paste("ylim must be of class numeric, not", class(ylim)[1]))
     if (length(ylim) != 2) 
         stop(paste("ylim must be of length 2, not", length(ylim)))
-    if (class(chromosome) != "character") 
-        stop(paste("chromosome must be of class character, not", class(chromosome)))
+    if (class(chromosome)[1] != "character") 
+        stop(paste("chromosome must be of class character, not", class(chromosome)[1]))
     if (length(chromosome) != 1) 
         stop(paste("chromosome must be of length 1, not", length(chromosome)))
     if (!chromosome %in% unique(seqnames(exonsInRegion))) {

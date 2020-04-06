@@ -10,10 +10,15 @@
 \usage{
 scanForHeterozygotes(BamList, ...)
 
-\S4method{scanForHeterozygotes}{GAlignmentsList}(BamList,
-  minimumReadsAtPos = 20, maximumMajorAlleleFrequency = 0.9,
-  minimumMinorAlleleFrequency = 0.1, minimumBiAllelicFrequency = 0.9,
-  verbose = TRUE, ...)
+\S4method{scanForHeterozygotes}{GAlignmentsList}(
+  BamList,
+  minimumReadsAtPos = 20,
+  maximumMajorAlleleFrequency = 0.9,
+  minimumMinorAlleleFrequency = 0.1,
+  minimumBiAllelicFrequency = 0.9,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{BamList}{A \code{GAlignmentsList object}}

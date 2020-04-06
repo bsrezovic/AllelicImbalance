@@ -9,9 +9,17 @@
 \usage{
 lva(x, ...)
 
-\S4method{lva}{ASEset}(x, rv, region, settings = list(),
-  return.class = "LinkVariantAlmlof", type = "lm", verbose = FALSE,
-  covariates = matrix(), ...)
+\S4method{lva}{ASEset}(
+  x,
+  rv,
+  region,
+  settings = list(),
+  return.class = "LinkVariantAlmlof",
+  type = "lm",
+  verbose = FALSE,
+  covariates = matrix(),
+  ...
+)
 }
 \arguments{
 \item{x}{ASEset object with phase and 'ref'/'alt' allele information}
@@ -91,7 +99,7 @@ lva(a, rv, r2, covariates=cov)
 a2 <- a
 ac <- assays(a2)[["countsPlus"]]
 jit <- sample(c(seq(-0.10,0,length=5), seq(0,0.10,length=5)), size=length(ac) , replace=TRUE)
-assays(a2)[["countsPlus"]] <- round(ac * (1+jit),0)
+assays(a2, withDimnames=FALSE)[["countsPlus"]] <- round(ac * (1+jit),0)
 ab <- cbind(a, a2)
 colData(ab)[["subject.group"]] <- c(1:ncol(a),1:ncol(a))
 rv2 <- rv[,c(1:ncol(a),1:ncol(a))]

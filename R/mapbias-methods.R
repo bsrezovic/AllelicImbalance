@@ -137,7 +137,7 @@ setMethod("defaultMapBias", signature(x = "ASEset"), function(x, return.class="a
 		if(return.class=="array"){
 			ar
 		}else if(return.class=="ASEset"){
-			assays(x)[["mapBias"]] <- ar
+			assays(x, withDimnames=FALSE)[["mapBias"]] <- ar
 			x
 		}
 })

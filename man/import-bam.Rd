@@ -9,8 +9,14 @@
 \usage{
 impBamGAL(UserDir, ...)
 
-\S4method{impBamGAL}{character}(UserDir, searchArea, files = NULL,
-  XStag = FALSE, verbose = TRUE, ...)
+\S4method{impBamGAL}{character}(
+  UserDir,
+  searchArea,
+  files = NULL,
+  XStag = FALSE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{UserDir}{The relative or full path of folder containing bam files.}

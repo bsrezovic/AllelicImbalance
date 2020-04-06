@@ -358,23 +358,23 @@ setMethod("scanForHeterozygotes", signature(BamList = "GAlignmentsList"),
     }
 
     if (!is.numeric(minimumReadsAtPos))
-        stop(paste("minimumReadsAtPos must be a numeric vector, not a", class(minimumReadsAtPos)))
+        stop(paste("minimumReadsAtPos must be a numeric vector, not a", class(minimumReadsAtPos)[1]))
     if (length(minimumReadsAtPos) != 1)
         stop(paste("minimumReadsAtPos must be of length 1, not", length(minimumReadsAtPos)))
     if (!is.numeric(maximumMajorAlleleFrequency))
-        stop(paste("maximumMajorAlleleFrequency must be a numeric vector, not a", class(maximumMajorAlleleFrequency)))
+        stop(paste("maximumMajorAlleleFrequency must be a numeric vector, not a", class(maximumMajorAlleleFrequency)[1]))
     if (length(maximumMajorAlleleFrequency) != 1)
         stop(paste("maximumMajorAlleleFrequency must be of length 1, not", length(maximumMajorAlleleFrequency)))
     if (maximumMajorAlleleFrequency < 0 | maximumMajorAlleleFrequency > 1)
         stop("maximumMajorAlleleFrequency must be between 0 and 1")
     if (!is.numeric(minimumBiAllelicFrequency))
-        stop(paste("minimumBiAllelicFrequency must be a numeric vector, not a", class(minimumBiAllelicFrequency)))
+        stop(paste("minimumBiAllelicFrequency must be a numeric vector, not a", class(minimumBiAllelicFrequency)[1]))
     if (length(minimumBiAllelicFrequency) != 1)
         stop(paste("minimumBiAllelicFrequency must be of length 1, not", length(minimumBiAllelicFrequency)))
     if (minimumBiAllelicFrequency < 0 | maximumMajorAlleleFrequency > 1)
         stop("minimumBiAllelicFrequency must be between 0 and 1")
     if (!is.logical(verbose))
-        stop(paste("verbose must be of a logical, not a", class(verbose)))
+        stop(paste("verbose must be of a logical, not a", class(verbose)[1]))
     if (length(verbose) != 1)
         stop(paste("verbose must be of length 1, not", length(verbose)))
 
@@ -881,7 +881,7 @@ function(BamList, GRvariants, strand = "*",
     # checking that GRvariants is ok
     if (!is(GRvariants, "GRanges"))
         stop(paste("GRvariants must be a GRanges object, not a",
-				   class(GRvariants)))
+				   class(GRvariants)[1]))
     if (length(GRvariants) == 0)
         stop("GRvariants was given as an empty GRanges object.",
 			 " There can be no Snps retrieved by getAlleleCount then")
@@ -891,7 +891,7 @@ function(BamList, GRvariants, strand = "*",
 
     # checking that verbose is ok
     if (!is.logical(verbose))
-        stop(paste("verbose must be a logical, not a", class(verbose)))
+        stop(paste("verbose must be a logical, not a", class(verbose)[1]))
     if (length(verbose) != 1)
         stop(paste("verbose must be of length 1, not", length(verbose)))
 
@@ -1128,27 +1128,27 @@ function(genesymbols, OrgDb, leftFlank = 0, rightFlank = 0,
 
     # start up sets
     if (!is.character(genesymbols))
-        stop(paste("genesymbols must be a character vector, not a", class(genesymbols)))
+        stop(paste("genesymbols must be a character vector, not a", class(genesymbols)[1]))
 
     if (!is(OrgDb, "OrgDb"))
-        stop(paste("OrgDb must be an OrgDb object, not a", class(OrgDb)))
+        stop(paste("OrgDb must be an OrgDb object, not a", class(OrgDb)[1]))
 
     if (!is.numeric(leftFlank))
-        stop(paste("leftFlank must be a numeric vector, not a", class(leftFlank)))
+        stop(paste("leftFlank must be a numeric vector, not a", class(leftFlank)[1]))
     if (length(leftFlank) != 1)
         stop(paste("leftFlank must be of length 1, not", length(leftFlank)))
     if (leftFlank < 0)
         stop(paste("leftFlank must be equal to or larger than 0"))
 
     if (!is.numeric(rightFlank))
-        stop(paste("rightFlank must be of a numeric vector, not a", class(rightFlank)))
+        stop(paste("rightFlank must be of a numeric vector, not a", class(rightFlank)[1]))
     if (length(rightFlank) != 1)
         stop(paste("rightFlank must be of length 1, not", length(rightFlank)))
     if (rightFlank < 0)
         stop(paste("rightFlank must be equal to or larger than 0"))
 
     if (!is.logical(verbose))
-        stop(paste("verbose must be a logical, not a", class(verbose)))
+        stop(paste("verbose must be a logical, not a", class(verbose)[1]))
     if (length(verbose) != 1)
         stop(paste("verbose must be of length 1, not", length(verbose)))
 
@@ -1252,9 +1252,9 @@ function(GR, SNPloc, return.vector = FALSE, verbose = TRUE) {
 	#genome <- genome(GR)
 
     if (!is(GR, "GRanges"))
-        stop(paste("GR must be a GRanges object, not a", class(GR)))
+        stop(paste("GR must be a GRanges object, not a", class(GR)[1]))
     if (!is(SNPloc, "SNPlocs"))
-        stop(paste("SNPlocs must be a SNPlocs object, not a", class(SNPloc)))
+        stop(paste("SNPlocs must be a SNPlocs object, not a", class(SNPloc)[1]))
     if (!exists("getSNPlocs"))
         stop("There must exist a function called getSNPlocs, available from the SNPlocs.Hsapiens.dbSNP.xxxxxxx package. Try to load such package.")
 
@@ -1955,7 +1955,7 @@ function(BamList, GRvariants, fastq.format = "illumina.1.8",
     # checking that GRvariants is ok
     if (!is(GRvariants, "GRanges"))
         stop(paste("GRvariants must be a GRanges object, not a",
-				   class(GRvariants)))
+				   class(GRvariants)[1]))
     if (length(GRvariants) == 0)
         stop("GRvariants was given as an empty GRanges object.",
 			 " There can be no Snps retrieved by getAlleleCount then")
@@ -1965,7 +1965,7 @@ function(BamList, GRvariants, fastq.format = "illumina.1.8",
 
     # checking that verbose is ok
     if (!is.logical(verbose))
-        stop(paste("verbose must be a logical, not a", class(verbose)))
+        stop(paste("verbose must be a logical, not a", class(verbose)[1]))
     if (length(verbose) != 1)
         stop(paste("verbose must be of length 1, not", length(verbose)))
 
@@ -2129,7 +2129,7 @@ setMethod("genotype2phase", signature(x = "matrix"),
 		alt <- .splitGenotypePickAltAllele(sgr, ref)
 	}
 
-	p <-  array(c((!sgm == ref)*1, rep(0, length(sgm[,,1]))),dim= c(nrow(x), ncol(x), 3))
+	p <-  array(c((!sgm == ref)*1, rep(0, length(sgm[,,1]))),dim= c(nrow(x), ncol(x), 3), dimnames=list(rownames(x), colnames(x), NULL))
 
 	if(return.class=="list"){
 		list(phase=p,ref=ref,alt=alt)

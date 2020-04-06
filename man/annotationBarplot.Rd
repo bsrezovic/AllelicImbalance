@@ -4,8 +4,16 @@
 \alias{annotationBarplot}
 \title{add annotation to AllelicImbalance barplot}
 \usage{
-annotationBarplot(strand, snp, lowerLeftCorner, annDfPlus, annDfMinus,
-  cex = 0.7, ypos = 0, interspace = 1)
+annotationBarplot(
+  strand,
+  snp,
+  lowerLeftCorner,
+  annDfPlus,
+  annDfMinus,
+  cex = 0.7,
+  ypos = 0,
+  interspace = 1
+)
 }
 \arguments{
 \item{strand}{strand, "+", "-", "*" or "both"}

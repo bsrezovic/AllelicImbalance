@@ -8,8 +8,7 @@
 \usage{
 getSnpIdFromLocation(GR, ...)
 
-\S4method{getSnpIdFromLocation}{GRanges}(GR, SNPloc,
-  return.vector = FALSE, verbose = TRUE)
+\S4method{getSnpIdFromLocation}{GRanges}(GR, SNPloc, return.vector = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{GR}{A \code{GRanges} that contains positions of SNPs to look up}

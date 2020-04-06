@@ -34,7 +34,7 @@
 .multiUnlist.index <- function(lst, expand.lowest.level=FALSE){
 	
 	list.idx.vec <- function(this, i=vector(),vec = vector()) {
-		  if(class(this) == "GRanges") {
+		  if(class(this)[1] == "GRanges") {
 			  return(c(vec,i,length(this)))
 	  } else {
 			return(
@@ -59,7 +59,7 @@
 	
 	list.idx.vec <- function(this, i=vector(),vec = vector(), nms=names(this)) {
 		
-		  if(class(this) == "GRanges") {
+		  if(class(this)[1] == "GRanges") {
 			  return(c(vec, nms[i], length(this)))
 		  }else {
 			return(
@@ -90,7 +90,7 @@
 
 .region.list.populate <- function(ar, idx.mat, idx.mat.names ){
 
-	if(!class(idx.mat) == "matrix") {
+	if(!class(idx.mat)[1] == "matrix") {
 		l <- lapply(unique(idx.mat), 
 			   function(i, a, m){ 
 				   a[,,m==i] 

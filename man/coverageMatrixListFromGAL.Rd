@@ -8,8 +8,7 @@
 \usage{
 coverageMatrixListFromGAL(BamList, ...)
 
-\S4method{coverageMatrixListFromGAL}{GAlignmentsList}(BamList,
-  strand = "*", ignore.empty.bam.row = TRUE)
+\S4method{coverageMatrixListFromGAL}{GAlignmentsList}(BamList, strand = "*", ignore.empty.bam.row = TRUE)
 }
 \arguments{
 \item{BamList}{GAlignmentsList containing reads over the region to calculate

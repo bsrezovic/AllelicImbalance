@@ -8,9 +8,13 @@
 \usage{
 multiAllelicFilt(x, ...)
 
-\S4method{multiAllelicFilt}{ASEset}(x, strand = "*",
-  threshold.count.sample = 10, threshold.frequency = 0.1,
-  filterOver = "eachSample")
+\S4method{multiAllelicFilt}{ASEset}(
+  x,
+  strand = "*",
+  threshold.count.sample = 10,
+  threshold.frequency = 0.1,
+  filterOver = "eachSample"
+)
 }
 \arguments{
 \item{x}{\code{ASEset} object}

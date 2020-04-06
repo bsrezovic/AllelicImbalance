@@ -8,12 +8,21 @@
 \usage{
 detectAI(x, ...)
 
-\S4method{detectAI}{ASEset}(x, return.class = "DetectedAI",
-  strand = "*", threshold.frequency = 0, threshold.count.sample = 1,
-  threshold.delta.frequency = 0, threshold.pvalue = 0.05,
-  inferGenotype = FALSE, random.ref = FALSE,
-  function.test = "binom.test", verbose = TRUE, gc = FALSE,
-  biasMatrix = FALSE)
+\S4method{detectAI}{ASEset}(
+  x,
+  return.class = "DetectedAI",
+  strand = "*",
+  threshold.frequency = 0,
+  threshold.count.sample = 1,
+  threshold.delta.frequency = 0,
+  threshold.pvalue = 0.05,
+  inferGenotype = FALSE,
+  random.ref = FALSE,
+  function.test = "binom.test",
+  verbose = TRUE,
+  gc = FALSE,
+  biasMatrix = FALSE
+)
 }
 \arguments{
 \item{x}{ASEset}
@@ -54,16 +63,16 @@ quad allelic SNPs. If 'all' then all of bi tri and quad allelic SNPs will use th
 threshold. Everything under the treshold will be regarded as noise. 'all' will return 
 a matrix with snps as rows and uni bi tri and quad will be columns. For this function
 Anything that will return TRUE for tri-allelicwill also return TRUE for uni and bi-allelic
-for the same SNP an Sample.
+for the same SNP an Sample. 
 
 return.type 'ref' return only AI when reference allele is more expressed. 'alt' return only
 AI when alternative allele is more expressed or 'all' for both 'ref' and 'alt' alleles.
 Reference allele is the one present in the reference genome on the forward strand.
 
-threshold.delta.frequency and function.test will use the value in mapBias(x) as expected value.
+threshold.delta.frequency and function.test will use the value in mapBias(x) as expected value. 
 
 function.test will use the two most expressed alleles for testing. Make therefore sure there
-are no tri-allelic SNPs or somatic mutations among the SNPs in the ASEset.
+are no tri-allelic SNPs or somatic mutations among the SNPs in the ASEset. 
 
 inferGenotype(), set TRUE it should be used with as much samples as possible. If you split up the
 samples and run detectAI() on each sample separately, please make sure you have inferred 

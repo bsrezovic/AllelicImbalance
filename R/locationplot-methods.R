@@ -86,8 +86,8 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
 	}
     
     # check type
-    if (class(type) != "character") 
-        stop(paste("type should be of class character, not", class(type)))
+    if (class(type)[1] != "character") 
+        stop(paste("type should be of class character, not", class(type)[1]))
     if (length(type) != 1) 
         stop(paste("type should be of length 1, not", length(type)))
     okPlotTypes <- c("fraction", "count")
@@ -96,8 +96,8 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
             collapse = ", "), sep = ""))
     
     # check strand
-    if (class(strand) != "character") 
-        stop(paste("strand should be of class character, not", class(strand)))
+    if (class(strand)[1] != "character") 
+        stop(paste("strand should be of class character, not", class(strand)[1]))
     if (length(strand) != 1) 
         stop(paste("strand should be of length 1, not", length(strand)))
     okStrandTypes <- c("both", "+", "-", "*")
@@ -138,17 +138,17 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
     # check if annotation is present, and if it is, then check if it is the right
     # class.
     if (!is.null(OrgDb)) {
-        if (!class(OrgDb) %in% c("OrgDb")) 
-            stop(paste("if given, annotation should be of class OrgDb, not", class(OrgDb)))
+        if (!class(OrgDb)[1] %in% c("OrgDb")) 
+            stop(paste("if given, annotation should be of class OrgDb, not", class(OrgDb)[1]))
     }
     if (!is.null(TxDb)) {
-        if (!class(TxDb) %in% c("TxDb")) 
-            stop(paste("if given, annotation should be of class TxDb, not", class(TxDb)))
+        if (!class(TxDb)[1] %in% c("TxDb")) 
+            stop(paste("if given, annotation should be of class TxDb, not", class(TxDb)[1]))
     }
     
     # check verbose argument is a logical with length 1
-    if (class(verbose) != "logical") 
-        stop(paste("verbose should be of class logical, not", class(verbose)))
+    if (class(verbose)[1] != "logical") 
+        stop(paste("verbose should be of class logical, not", class(verbose)[1]))
     if (length(verbose) != 1) 
         stop(paste("verbose should be of length 1, not", length(verbose)))
     
@@ -221,7 +221,7 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
     }
     
     # check legend.colnames
-    if (!class(legend.colnames) == "character") {
+    if (!class(legend.colnames)[1] == "character") {
         stop("legend.colnames has to be of class character")
     }
     
@@ -235,35 +235,35 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
     
     # check main
     if (!is.null(main)) {
-        if (!class(main) == "character") {
+        if (!class(main)[1] == "character") {
             stop("main has to be of class character")
         }
     }
     
     # check cex.main
-    if (!class(cex.main) == "numeric") {
+    if (!class(cex.main)[1] == "numeric") {
         if (cex.main <= 0 | !length(cex.main) == 1) 
             stop("cex.main has to be of class numeric, and have length 1, and a value above 0")
     }
     # check cex.ylab
-    if (!class(cex.ylab) == "numeric") {
+    if (!class(cex.ylab)[1] == "numeric") {
         if (cex.ylab <= 0 | !length(cex.ylab) == 1) 
             stop("cex.ylab has to be of class numeric, and have length 1, and a value above 0")
     }
     # check cex.legend
-    if (!class(cex.legend) == "numeric") {
+    if (!class(cex.legend)[1] == "numeric") {
         if (cex.legend <= 0 | !length(cex.legend) == 1) 
             stop("cex.legend has to be of class numeric, and have length 1, and a value above 0 ")
     }
     
     # check OrgDb
     if (!is.null(OrgDb)) {
-        if (!class(OrgDb) == "OrgDb") {
+        if (!class(OrgDb)[1] == "OrgDb") {
             stop("class of OrgDb has to be an OrgDb class")
         }
     }
     if (!is.null(TxDb)) {
-        if (!class(TxDb) == "TxDb") {
+        if (!class(TxDb)[1] == "TxDb") {
             stop("class of TxDb has to be a TxDb class")
         }
     }

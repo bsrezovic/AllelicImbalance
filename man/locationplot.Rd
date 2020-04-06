@@ -9,13 +9,30 @@
 \usage{
 locationplot(x, ...)
 
-\S4method{locationplot}{ASEset}(x, type = "fraction", strand = "*",
-  yaxis = TRUE, xaxis = FALSE, xlab = FALSE, ylab = TRUE,
-  xlab.text = "", ylab.text = "", legend.colnames = "",
-  size = c(0.8, 1), main = NULL, pValue = FALSE, cex.main = 0.7,
-  cex.ylab = 0.6, cex.legend = 0.5, OrgDb = NULL, TxDb = NULL,
-  verbose = TRUE, top.fraction.criteria = "maxcount",
-  allow.whole.chromosome = FALSE, ...)
+\S4method{locationplot}{ASEset}(
+  x,
+  type = "fraction",
+  strand = "*",
+  yaxis = TRUE,
+  xaxis = FALSE,
+  xlab = FALSE,
+  ylab = TRUE,
+  xlab.text = "",
+  ylab.text = "",
+  legend.colnames = "",
+  size = c(0.8, 1),
+  main = NULL,
+  pValue = FALSE,
+  cex.main = 0.7,
+  cex.ylab = 0.6,
+  cex.legend = 0.5,
+  OrgDb = NULL,
+  TxDb = NULL,
+  verbose = TRUE,
+  top.fraction.criteria = "maxcount",
+  allow.whole.chromosome = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{an ASEset object.}

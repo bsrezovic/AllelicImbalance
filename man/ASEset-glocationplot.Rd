@@ -7,9 +7,19 @@
 \alias{glocationplot,ASEset-method}
 \title{glocationplot ASEset objects}
 \usage{
-glocationplot(x, type = "fraction", strand = "*", BamGAL = NULL,
-  GenomeAxisTrack = FALSE, trackNameDeAn = paste("deTrack", type),
-  TxDb = NULL, sizes = NULL, add = FALSE, verbose = FALSE, ...)
+glocationplot(
+  x,
+  type = "fraction",
+  strand = "*",
+  BamGAL = NULL,
+  GenomeAxisTrack = FALSE,
+  trackNameDeAn = paste("deTrack", type),
+  TxDb = NULL,
+  sizes = NULL,
+  add = FALSE,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{an ASEset object.}

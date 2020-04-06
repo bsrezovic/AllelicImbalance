@@ -9,8 +9,7 @@
 \usage{
 regionSummary(x, ...)
 
-\S4method{regionSummary}{ASEset}(x, region, strand = "*",
-  return.class = "RegionSummary", ...)
+\S4method{regionSummary}{ASEset}(x, region, strand = "*", return.class = "RegionSummary", ...)
 }
 \arguments{
 \item{x}{ASEset object}

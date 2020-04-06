@@ -8,8 +8,13 @@
 \usage{
 makeMaskedFasta(fastaIn, ...)
 
-\S4method{makeMaskedFasta}{character}(fastaIn, fastaOut, posToReplace,
-  splitOnSeqlevels = TRUE, verbose = TRUE)
+\S4method{makeMaskedFasta}{character}(
+  fastaIn,
+  fastaOut,
+  posToReplace,
+  splitOnSeqlevels = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{fastaIn}{character string of the path for the fasta file to be used}

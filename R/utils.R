@@ -60,7 +60,7 @@ NULL
 #when we need to make sure the input is character
 #returns target as character and issues a warning if the input wasnt
 .verboseCoerceToCharacter <- function(x){
-	if(!class(x)=="character"){
+	if(!class(x)[1]=="character"){
 		warning("arg was not of type character, and will therefore be coerced to character")
 		as.character(x)
 	}else x
@@ -68,7 +68,7 @@ NULL
 
 #convert NA to FALSE
 .Na2False <- function(x){
-	if(class(x[1])=="numeric" | class(x[1])=="integer") 
+	if(class(x[1])[1]=="numeric" | class(x[1])[1]=="integer") 
 		stop("not possible to replace a numeric or integer with FALSE and get the expected result")
 	x[is.na(x)] <- FALSE
 	x

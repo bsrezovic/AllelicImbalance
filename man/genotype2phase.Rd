@@ -8,8 +8,13 @@
 \usage{
 genotype2phase(x, ...)
 
-\S4method{genotype2phase}{matrix}(x, ref = NULL,
-  return.class = "array", levels = c("A", "C", "G", "T"), ...)
+\S4method{genotype2phase}{matrix}(
+  x,
+  ref = NULL,
+  return.class = "array",
+  levels = c("A", "C", "G", "T"),
+  ...
+)
 }
 \arguments{
 \item{x}{matrix see examples}

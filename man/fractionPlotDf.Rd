@@ -6,11 +6,9 @@
 \alias{fractionPlotDf,ASEset-method}
 \title{Plot Dataframe}
 \usage{
-fractionPlotDf(x, snp, strand = "*",
-  top.fraction.criteria = "maxcount", ...)
+fractionPlotDf(x, snp, strand = "*", top.fraction.criteria = "maxcount", ...)
 
-\S4method{fractionPlotDf}{ASEset}(x, snp, strand = "*",
-  top.fraction.criteria = "maxcount", ...)
+\S4method{fractionPlotDf}{ASEset}(x, snp, strand = "*", top.fraction.criteria = "maxcount", ...)
 }
 \arguments{
 \item{x}{ASEset}

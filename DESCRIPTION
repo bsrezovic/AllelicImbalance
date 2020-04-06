@@ -1,7 +1,7 @@
 Package: AllelicImbalance
 Type: Package
 Title: Investigates Allele Specific Expression
-Version: 1.21.3
+Version: 1.21.2
 Date: 2020-04-05
 Encoding: UTF-8
 Author: Jesper R Gadin, Lasse Folkersen
@@ -79,4 +79,4 @@ Collate:
     'simulation-methods.R'
     'summary-methods.R'
     'utils.R'
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0

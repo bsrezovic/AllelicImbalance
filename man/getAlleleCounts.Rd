@@ -8,8 +8,14 @@
 \usage{
 getAlleleCounts(BamList, ...)
 
-\S4method{getAlleleCounts}{GAlignmentsList}(BamList, GRvariants,
-  strand = "*", return.class = "list", verbose = TRUE, ...)
+\S4method{getAlleleCounts}{GAlignmentsList}(
+  BamList,
+  GRvariants,
+  strand = "*",
+  return.class = "list",
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{BamList}{A \code{GAlignmentsList object} or \code{GRangesList object}

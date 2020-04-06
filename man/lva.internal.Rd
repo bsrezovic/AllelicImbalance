@@ -8,8 +8,15 @@
 \usage{
 lva.internal(x, ...)
 
-\S4method{lva.internal}{array}(x, grp, element = 3, type = "lm",
-  subject = NULL, covariates = matrix(), ...)
+\S4method{lva.internal}{array}(
+  x,
+  grp,
+  element = 3,
+  type = "lm",
+  subject = NULL,
+  covariates = matrix(),
+  ...
+)
 }
 \arguments{
 \item{x}{regionSummary array phased for maternal allele}

@@ -6,9 +6,15 @@
 \alias{inferAlleles,ASEset-method}
 \title{inference of SNPs of ASEset}
 \usage{
-inferAlleles(x, strand = "*", return.type = "bi",
-  threshold.frequency = 0, threshold.count.sample = 1,
-  inferOver = "eachSample", allow.NA = FALSE)
+inferAlleles(
+  x,
+  strand = "*",
+  return.type = "bi",
+  threshold.frequency = 0,
+  threshold.count.sample = 1,
+  inferOver = "eachSample",
+  allow.NA = FALSE
+)
 }
 \arguments{
 \item{x}{ASEset}

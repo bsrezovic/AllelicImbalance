@@ -5,9 +5,14 @@
 \alias{inferGenotypes,ASEset-method}
 \title{infererence of genotypes from ASEset count data}
 \usage{
-inferGenotypes(x, strand = "*", return.class = "matrix",
-  return.allele.allowed = "bi", threshold.frequency = 0,
-  threshold.count.sample = 1)
+inferGenotypes(
+  x,
+  strand = "*",
+  return.class = "matrix",
+  return.allele.allowed = "bi",
+  threshold.frequency = 0,
+  threshold.count.sample = 1
+)
 }
 \arguments{
 \item{x}{ASEset}

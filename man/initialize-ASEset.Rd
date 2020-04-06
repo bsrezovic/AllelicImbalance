@@ -6,15 +6,32 @@
 \alias{ASEsetFromArrays}
 \title{Initialize ASEset}
 \usage{
-ASEsetFromCountList(rowRanges, countListUnknown = NULL,
-  countListPlus = NULL, countListMinus = NULL, colData = NULL,
-  mapBiasExpMean = NULL, phase = NULL, aquals = NULL,
-  verbose = FALSE, ...)
+ASEsetFromCountList(
+  rowRanges,
+  countListUnknown = NULL,
+  countListPlus = NULL,
+  countListMinus = NULL,
+  colData = NULL,
+  mapBiasExpMean = NULL,
+  phase = NULL,
+  aquals = NULL,
+  verbose = FALSE,
+  ...
+)
 
-ASEsetFromArrays(rowRanges, countsUnknown = NULL, countsPlus = NULL,
-  countsMinus = NULL, colData = NULL, mapBiasExpMean = NULL,
-  phase = NULL, genotype = NULL, aquals = NULL, verbose = FALSE,
-  ...)
+ASEsetFromArrays(
+  rowRanges,
+  countsUnknown = NULL,
+  countsPlus = NULL,
+  countsMinus = NULL,
+  colData = NULL,
+  mapBiasExpMean = NULL,
+  phase = NULL,
+  genotype = NULL,
+  aquals = NULL,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{rowRanges}{A \code{GenomicRanges object} that contains the variants of

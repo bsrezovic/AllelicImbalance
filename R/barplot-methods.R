@@ -108,8 +108,8 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
             collapse = ", "), sep = ""))
     
     # check verbose
-    if (class(verbose) != "logical") 
-        stop(paste("verbose should be of class logical, not", class(verbose)))
+    if (class(verbose)[1] != "logical") 
+        stop(paste("verbose should be of class logical, not", class(verbose)[1]))
     if (length(verbose) != 1) 
         stop(paste("verbose should be of length 1, not", length(verbose)))
     
@@ -175,15 +175,15 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     
     # check testValue
     if (!is.null(testValue)) {
-        if (!class(testValue) == "numeric" & !class(testValue) == "matrix") {
+        if (!class(testValue)[1] == "numeric" & !class(testValue)[1] == "matrix") {
             stop("wrong class for testValue")
         }
-        if (!class(testValue) == "matrix") {
+        if (!class(testValue)[1] == "matrix") {
             if (!sum(dim(testValue) == rev(dim(x))) == 2) {
                 stop("wrong dimensions of testValue")
             }
         }
-        if (!class(testValue) == "numeric") {
+        if (!class(testValue)[1] == "numeric") {
             if (!length(testValue) == ncol(x)) {
                 stop("wrong dimensions of testValue")
             }
@@ -191,15 +191,15 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     }
     # check testValue2
     if (!is.null(testValue2)) {
-        if (!class(testValue2) == "numeric" & !class(testValue2) == "matrix") {
+        if (!class(testValue2)[1] == "numeric" & !class(testValue2)[1] == "matrix") {
             stop("wrong class for testValue")
         }
-        if (!class(testValue2) == "matrix") {
+        if (!class(testValue2)[1] == "matrix") {
             if (!sum(dim(testValue2) == rev(dim(x))) == 2) {
                 stop("wrong dimensions of testValue")
             }
         }
-        if (!class(testValue2) == "numeric") {
+        if (!class(testValue2)[1] == "numeric") {
             if (!length(testValue2) == ncol(x)) {
                 stop("wrong dimensions of testValue")
             }
@@ -217,8 +217,8 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
             warning("an ylim argument given to barplot with type fraction is ignored")
             ylim <- NULL
         } else {
-            if (class(ylim) != "numeric") 
-                stop(paste("if given, ylim must be of class numeric, not", class(ylim)))
+            if (class(ylim)[1] != "numeric") 
+                stop(paste("if given, ylim must be of class numeric, not", class(ylim)[1]))
             if (length(ylim) != 2) 
                 stop(paste("if given, ylim must be of length 2, not", length(ylim)))
             if (ylim[2] < ylim[1]) 
@@ -263,12 +263,12 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     
     # check OrgDb
     if (!is.null(OrgDb)) {
-        if (!class(OrgDb) == "OrgDb") {
+        if (!class(OrgDb)[1] == "OrgDb") {
             stop("class of OrgDb has to be an OrgDb class")
         }
     }
     if (!is.null(TxDb)) {
-        if (!class(TxDb) == "TxDb") {
+        if (!class(TxDb)[1] == "TxDb") {
             stop("class of TxDb has to be a TxDb class")
         }
     }
@@ -282,7 +282,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     
     # check main
     if (!is.null(main)) {
-        if (!class(main) == "character") {
+        if (!class(main)[1] == "character") {
             stop("main has to be of class character")
         }
     }
@@ -320,12 +320,12 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     }
     
     # check legend.colnames
-    if (!class(legend.colnames) == "character") {
+    if (!class(legend.colnames)[1] == "character") {
         stop("legend.colnames has to be of class character")
     }
     
     # check las.ylab
-    if (!class(las.ylab) == "numeric" & !class(las.ylab) == "integer") {
+    if (!class(las.ylab)[1] == "numeric" & !class(las.ylab)[1] == "integer") {
         stop("las.ylab has to be of class numeric or integer")
     }
     if (!las.ylab == 1 & !las.ylab == 2) {
@@ -333,7 +333,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     }
     
     # check las.xlab
-    if (!class(las.xlab) == "numeric" & !class(las.xlab) == "integer") {
+    if (!class(las.xlab)[1] == "numeric" & !class(las.xlab)[1] == "integer") {
         stop("las.xlab has to be of class numeric or integer")
     }
     if (!las.xlab == 1 & !las.xlab == 2) {
@@ -341,23 +341,23 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     }
     
     # check cex all of them
-    if (!class(cex.main) == "numeric") {
+    if (!class(cex.main)[1] == "numeric") {
         if (cex.main <= 0 | !length(cex.main) == 1) 
             stop("cex.main has to be of class numeric, and have length 1, and a value above 0 ")
     }
-    if (!class(cex.pValue) == "numeric") {
+    if (!class(cex.pValue)[1] == "numeric") {
         if (cex.pValue > 1 | cex.pValue <= 0 | !length(cex.pValue) == 1) 
             stop("cex.pValue has to be of class numeric, and have length 1, and a value above 0")
     }
-    if (!class(cex.ylab) == "numeric") {
+    if (!class(cex.ylab)[1] == "numeric") {
         if (cex.ylab <= 0 | !length(cex.ylab) == 1) 
             stop("cex.ylab has to be of class numeric, and have length 1, and a value above 0 ")
     }
-    if (!class(cex.xlab) == "numeric") {
+    if (!class(cex.xlab)[1] == "numeric") {
         if (cex.xlab <= 0 | !length(cex.xlab) == 1) 
             stop("cex.xlab has to be of class numeric, and have length 1, and a value above 0 ")
     }
-    if (!class(cex.legend) == "numeric") {
+    if (!class(cex.legend)[1] == "numeric") {
         if (cex.legend <= 0 | !length(cex.legend) == 1) 
             stop("cex.legend has to be of class numeric, and have length 1, and a value above 0 ")
     }
@@ -371,7 +371,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     }
     
     # check lowerLeftCorner
-    if (!class(lowerLeftCorner) == "numeric" & !class(lowerLeftCorner) == "integer") {
+    if (!class(lowerLeftCorner)[1] == "numeric" & !class(lowerLeftCorner)[1] == "integer") {
         stop("lowerLeftCorner has to be of class numeric or integer")
     }
     if (!length(lowerLeftCorner) == 2) {
@@ -379,7 +379,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     }
     
     # check size
-    if (!class(size) == "numeric" & !class(size) == "integer") {
+    if (!class(size)[1] == "numeric" & !class(size)[1] == "integer") {
         stop("size has to be of class numeric or integer")
     }
     if (!length(size) == 2) {
@@ -388,7 +388,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     
     # check addHorizontalLine
     if (!is.null(addHorizontalLine)) {
-        if (!class(addHorizontalLine) == "numeric") {
+        if (!class(addHorizontalLine)[1] == "numeric") {
             stop("addHorizontalLine has to be either NULL or of class numeric")
         }
         if (!length(addHorizontalLine) == 1) {
@@ -408,7 +408,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
     }
     
     # check filter.pValue.fraction=0.99
-    if (!class(filter.pValue.fraction) == "numeric") {
+    if (!class(filter.pValue.fraction)[1] == "numeric") {
         stop("filter.pValue.fraction has to be of class numeric")
     }
     if (!length(filter.pValue.fraction) == 1) {
@@ -622,7 +622,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                   
                   # check pValue slot
                   if (!is.null(testValue)) {
-                    if (class(testValue) == "matrix") {
+                    if (class(testValue)[1] == "matrix") {
                       text(xat, apply(heightsOfRectangles, 2, max), signif(testValue[, 
                         i], 1), cex = cex.pValue, adj = c(0.5, 0.01))
                     } else {
@@ -945,7 +945,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                   
                   # check pValue slot
                   if (!is.null(testValue)) {
-                    if (class(testValue) == "matrix") {
+                    if (class(testValue)[1] == "matrix") {
                       text(xat, apply(middleLine + heightsOfRectanglesPlus, 2, max), 
                         signif(testValue[, i], 1), cex = cex.pValue, adj = c(0.4, 
                           -0.3))
@@ -963,7 +963,7 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
                     
                   }
                   if (!is.null(testValue2)) {
-                    if (class(testValue) == "matrix") {
+                    if (class(testValue)[1] == "matrix") {
                       text(xat, apply(barMinusEdge, 2, min), signif(testValue2[, 
                         i], 1), cex = cex.pValue, adj = c(0.4, 1, 1))
                     } else {

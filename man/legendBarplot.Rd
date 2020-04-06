@@ -4,9 +4,19 @@
 \alias{legendBarplot}
 \title{add legend to AllelicImbalance barplot}
 \usage{
-legendBarplot(lowerLeftCorner, size, rownames, colnames, boxsize = 1,
-  boxspace = 1, fgCol, bgCol, ylegendPos = 1, xlegendPos = 0.96,
-  cex = 1)
+legendBarplot(
+  lowerLeftCorner,
+  size,
+  rownames,
+  colnames,
+  boxsize = 1,
+  boxspace = 1,
+  fgCol,
+  bgCol,
+  ylegendPos = 1,
+  xlegendPos = 0.96,
+  cex = 1
+)
 }
 \arguments{
 \item{lowerLeftCorner}{position of the plot to add legend to (default c(0,0))}

@@ -204,8 +204,6 @@ NULL
 #' where each element i a vector with the corrected positions to be subsetted
 #' from a read.
 #' @author Jesper R. Gadin
-#' @seealso \itemize{ \item The \code{\link{scanForHeterozygotes}}, which is a
-#' function to find possible heterozygote sites in a GenomicAlignments
 #' @keywords internal
 #' @examples
 #'
