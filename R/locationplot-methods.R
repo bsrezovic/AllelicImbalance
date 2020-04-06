@@ -108,26 +108,26 @@ setMethod("locationplot", signature(x = "ASEset"), function(x, type = "fraction"
     # check if strand type is present in object
     if (strand == "+") {
         el <- "countsPlus"
-        if (!(el %in% names(assays(x)))) {
+        if (!(el %in% assayNames(x))) {
             stop("strand is not present as assay in ASEset object")
         }
     } else if (strand == "-") {
         el <- "countsMinus"
-        if (!(el %in% names(assays(x)))) {
+        if (!(el %in% assayNames(x))) {
             stop("strand is not present as assay in ASEset object")
         }
     } else if (strand == "*") {
         el <- c("countsPlus","countsMinus")
-        if (sum(el %in% names(assays(x)))==0) {
+        if (sum(el %in% assayNames(x))==0) {
             stop("neither plus or minus strand not present as assay in ASEset object")
         }
     } else if (strand == "both") {
         el <- "countsPlus"
-        if (!(el %in% names(assays(x)))) {
+        if (!(el %in% assayNames(x))) {
             stop("strand is not present as assay in ASEset object")
         }
         el <- "countsMinus"
-        if (!(el %in% names(assays(x)))) {
+        if (!(el %in% assayNames(x))) {
             stop("strand is not present as assay in ASEset object")
         }
     } else {

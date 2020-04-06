@@ -103,7 +103,7 @@ setMethod("regionSummary", signature("ASEset"),
 		ai.dir <- .aiRegionDirectionFromMaternalPhaseMapBiasAndIndex(fr, mb, idx)
 
 		#For Meta infor, split ASEset and put into a DataFrame with same nrows as return object
-		assays(x,withDimnames=FALSE)[["matfreq"]] <- t(fr)
+		assays(x, withDimnames=FALSE)[["matfreq"]] <- t(fr)
 		xdf <- .makeMetaASEsetDataFrameForRegionSummary(x, idx)
 
 		#make array

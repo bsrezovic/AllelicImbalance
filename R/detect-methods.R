@@ -76,7 +76,7 @@ setMethod("detectAI", signature(x = "ASEset"), function(x,
 		genotype(x) <- inferGenotypes(x,threshold.frequency = 0.05, return.allele.allowed ="bi")
 	}
 	#check for presence of genotype data
-    if (!("genotype" %in% names(assays(x)))) {
+    if (!("genotype" %in% assayNames(x))) {
 		stop(paste("genotype matrix is not present as assay in",
 				   " ASEset object, see '?inferGenotypes' ",
 				   "or set 'inferGenotypes=TRUE'"))

@@ -126,26 +126,26 @@ setMethod("barplot", signature(height = "ASEset"), function(height, type = "coun
 	#
     #if (strand == "+") {
     #    el <- "countsPlus"
-    #    if (!(el %in% names(assays(x)))) {
+    #    if (!(el %in% assayNames(x))) {
     #        stop("strand is not present as assay in ASEset object")
     #    }
     #} else if (strand == "-") {
     #    el <- "countsMinus"
-    #    if (!(el %in% names(assays(x)))) {
+    #    if (!(el %in% assayNames(x))) {
     #        stop("strand is not present as assay in ASEset object")
     #    }
     #} else if (strand == "*") {
     #    el <- "countsUnknown"
-    #    if (!(el %in% names(assays(x)))) {
+    #    if (!(el %in% assayNames(x))) {
     #        stop("strand is not present as assay in ASEset object")
     #    }
     #} else if (strand == "both") {
     #    el <- "countsPlus"
-    #    if (!(el %in% names(assays(x)))) {
+    #    if (!(el %in% assayNames(x))) {
     #        stop("strand is not present as assay in ASEset object")
     #    }
     #    el <- "countsMinus"
-    #    if (!(el %in% names(assays(x)))) {
+    #    if (!(el %in% assayNames(x))) {
     #        stop("strand is not present as assay in ASEset object")
     #    }
     #} else {
