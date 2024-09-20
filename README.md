@@ -1,19 +1,8 @@
-<a href="http://www.bioconductor.org/packages/devel/bioc/html/AllelicImbalance.html#since"><img border="0" src="http://www.bioconductor.org/shields/years-in-bioc/AllelicImbalance.svg" title="How long since the package was first in a develd Bioconductor version (or is it in devel only)."></a> <a href="http://bioconductor.org/packages/stats/bioc/AllelicImbalance.html"><img border="0" src="http://www.bioconductor.org/shields/downloads/AllelicImbalance.svg" title="Percentile (top 5/20/50% or 'available') of downloads over last 6 full months. Comparison is done across all package categories (software, annotation, experiment)."></a> <a href="https://support.bioconductor.org/t/AllelicImbalance/"><img border="0" src="http://www.bioconductor.org/shields/posts/AllelicImbalance.svg" title="Support site activity, last 6 months: tagged questions/avg. answers per question/avg. comments per question/accepted answers, or 0 if no tagged posts."></a> <a href="http://www.bioconductor.org/packages/devel/bioc/html/AllelicImbalance.html#svn_source"><img border="0" src="http://www.bioconductor.org/shields/commits/bioc/AllelicImbalance.svg" title="average Subversion commits (to the devel branch) per month for the last 6 months"></a>
 
-Status: Travis CI [![Build Status](https://travis-ci.org/pappewaio/AllelicImbalance.svg?branch=master)](https://travis-ci.org/pappewaio/AllelicImbalance)
-
-Bioc-release <a href="http://www.bioconductor.org/packages/release/bioc/html/AllelicImbalance.html#archives"><img border="0" src="http://www.bioconductor.org/shields/availability/release/AllelicImbalance.svg" title="Whether the package is available on all platforms; click for details."></a> <a href="http://bioconductor.org/checkResults/release/bioc-LATEST/AllelicImbalance/"><img border="0" src="http://www.bioconductor.org/shields/build/release/bioc/AllelicImbalance.svg" title="build results; click for full report"></a>
-
-Bioc-devel <a href="http://www.bioconductor.org/packages/devel/bioc/html/AllelicImbalance.html#archives"><img border="0" src="http://www.bioconductor.org/shields/availability/devel/AllelicImbalance.svg" title="Whether the package is available on all platforms; click for details."></a> <a href="http://bioconductor.org/checkResults/devel/bioc-LATEST/AllelicImbalance/"><img border="0" src="http://www.bioconductor.org/shields/build/devel/bioc/AllelicImbalance.svg" title="build results; click for full report"></a>
-
-The Bioc-release and Bioc-devel builds are updated every day at 10:30AM Seattle
-time.
-
-The latest bioconductor releases and the bioconductor development branch can be
-found either on [github][bioc-mirror-branches] or at the home of
-[bioconductor][bioc-home], 
-* [release][bioc-release]
-* [devel][bioc-devel]
+This is a fork of the AllelicImbalance package (original dev page at https://github.com/pappewaio/AllelicImbalance).
+It solves some bugs that cropped up due to the package not being updated in a while. All of these are in functions that
+ retrieve gene names / manipulate tabular data. Core allele imbalance analysis functions remain unchanged.
+If used please cite the original authors cited below.
 
 # AllelicImbalance
 
@@ -43,17 +32,9 @@ Installation of the devel version of this package from Github requires the
 ```r
 install.packages("devtools")
 library(devtools)
-install_github("pappewaio/AllelicImbalance")
+install_github("bsrezovic/AllelicImbalance")
 ```
 
-Alternatively, you can easily install the release version of **AllelicImbalance** from
-Bioconductor.
-
-```r
-if (!requireNamespace("BiocManager", quietly=TRUE))
-    install.packages("BiocManager")
-BiocManager::install("AllelicImbalance")
-```
 
 ## Citation
 
@@ -62,13 +43,6 @@ Jesper R. Gådin, Ferdinand M. van’t Hooft, Per Eriksson and Lasse Folkersen.
 and visualizing allele expression imbalance data from RNA sequencing. BMC
 Bioinformatics. [link](http://www.biomedcentral.com/1471-2105/16/194)
 
-## Bug Reports / Issues
-
-The official development site for `AllelicImbalance` is at
-https://github.com/pappewaio/AllelicImbalance. For bug-reports / issues /
-comments regarding the development branch you may preferably submit there, and
-for the release version it might be more appropriate to submit at the
-bioconductor support-site which can be found [HERE][bioc-support-site]
 
 
 [vignette-release]: http://bioconductor.org/packages/release/bioc/vignettes/AllelicImbalance/inst/doc/AllelicImbalance-vignette.pdf "AllelicImbalance Vignette"
