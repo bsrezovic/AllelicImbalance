@@ -183,7 +183,10 @@ getGenesFromAnnotation <- function(OrgDb, GR, leftFlank = 0, rightFlank = 0, get
     # check that all levels in GR exist in annGR, if not exclude these levels
     if (sum(!levels(seqnames(GR)) %in% levels(seqnames(annGR))) > 0) {
         TFkeepLevels <- levels(seqnames(GR)) %in% levels(seqnames(annGR))
-        seqlevels(GR) <- seqlevels(GR)[TFkeepLevels]
+        #seqlevels(GR) <- seqlevels(GR)[TFkeepLevels]  # DEPRECATED
+        ### Added by bsrezovic
+        seqlevels(GR, pruning.mode = "coarse") <- seqlevels(annGR)
+        
         
     }
     
@@ -194,8 +197,10 @@ getGenesFromAnnotation <- function(OrgDb, GR, leftFlank = 0, rightFlank = 0, get
     }
     
     # the seqlevels comes in different orders. This will give the correct order.
-    seqlevels(GR) <- seqlevels(annGR)
-    
+    #seqlevels(GR) <- seqlevels(annGR)  # DEPRECATED
+    ### Added by bsrezovic
+    seqlevels(GR, pruning.mode="coarse") <-  seqlevels(annGR)
+    ###
     # find overlaps between annGR and Snps incl. flank region
     GenesInRegion <- subsetByOverlaps(annGR, GR)  #put in flankSize here when you have time ;)
     seqlengths(GenesInRegion) <- seqlengths(GR)
@@ -210,7 +215,13 @@ getGenesVector <- function(OrgDb, GR, leftFlank = 0, rightFlank = 0, verbose = F
     GenesInRegion <- getGenesFromAnnotation(OrgDb, GR, leftFlank = leftFlank, rightFlank = rightFlank, 
         verbose = FALSE)
     
-    seqlevels(GR) <- seqlevels(GenesInRegion)
+    #seqlevels(GR) <- seqlevels(GenesInRegion)  #DEPRECATED
+    ### ADDED by bsrezovic
+    
+    seqLevels <- sub("^chr", "", seqlevels(GR)) 
+    seqlevels(GR) <- seqLevels #ditto
+    seqlevels(GR, pruning.mode="coarse") <- seqlevels(GenesInRegion)
+    ###
     
     # remove duplicate symbol names if same symbol merge regions
     symbolList <- unique(mcols(GenesInRegion)[["Symbol"]])
